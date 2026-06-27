@@ -1427,7 +1427,7 @@ nav button {
 
 /* Polished FAQ management surface */
 .table-card {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .table-card > .section-title {
@@ -1452,6 +1452,7 @@ nav button {
 .table-tools {
   grid-template-columns: minmax(260px, 1.2fr) minmax(190px, 260px) auto;
   gap: 14px;
+  align-items: end;
   margin: 18px 0 12px;
   padding: 16px;
   border-radius: 22px;
@@ -1548,6 +1549,8 @@ nav button {
 
 .table-wrap {
   margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid rgba(39, 88, 75, 0.1);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.54);
@@ -1591,7 +1594,9 @@ nav button {
 
 .pagination-actions {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
 }
 
@@ -1631,7 +1636,7 @@ table {
 }
 
 .actions-col-width {
-  width: 130px;
+  width: 150px;
 }
 
 thead th {
@@ -1724,10 +1729,14 @@ td small {
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 34px;
   padding: 7px 11px;
   border-radius: 999px;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .link:hover {
@@ -1736,6 +1745,22 @@ td small {
 
 .link.danger {
   color: #ff8a80;
+}
+
+@media (max-width: 1100px) {
+  .table-tools,
+  .pagination-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .result-count,
+  .pagination-actions {
+    justify-self: stretch;
+  }
+
+  .pagination-actions {
+    justify-content: space-between;
+  }
 }
 
 @media (max-width: 750px) {
