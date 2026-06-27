@@ -96,8 +96,14 @@
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 16V3M7 8l5-5 5 5M5 13v7h14v-7"></path>
             </svg>
-            ورود از Excel</button
-          ><input #fileInput hidden type="file" accept=".xlsx" (change)="importFile($event)" />
+            ورود از Excel / Word</button
+          ><input
+            #fileInput
+            hidden
+            type="file"
+            accept=".xlsx,.docx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            (change)="importFile($event)"
+          />
         </div>
         <form (ngSubmit)="saveFaq()">
           <label class="wide"

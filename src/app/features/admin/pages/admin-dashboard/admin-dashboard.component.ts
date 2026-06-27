@@ -16,6 +16,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ExcelReaderService } from '../../../../core/services/excel-reader.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
@@ -77,6 +78,7 @@ export class AdminDashboardComponent implements OnInit {
     readonly auth: AuthService,
     private readonly api: ApiService,
     private readonly excelReader: ExcelReaderService,
+    private readonly wordReader: WordReaderService,
     private readonly faqImportMapper: FaqImportMapperService,
     private readonly errorMessages: ErrorMessageService,
     private readonly notifications: NotificationService,
@@ -160,16 +162,15 @@ export class AdminDashboardComponent implements OnInit {
     if (!file) return;
 
     try {
-      const dataset = await this.excelReader.read(file);
-      const payload = this.faqImportMapper.mapRows(dataset.rows);
+      const payload = await this.buildImportPayload(file);
       if (!payload.length) {
-        this.notifications.error('ساختار Excel معتبر نیست', 'ستون‌های «سؤال» و «پاسخ» در فایل پیدا نشدند.');
+        this.notifications.error('?????? ???? ????? ????', '???? ? ???? ???? ???? ?? ???? ???? ???.');
         return;
       }
       this.pendingConfirmation = { type: 'import', payload };
       this.changeDetector.markForCheck();
     } catch {
-      this.notifications.error('خواندن فایل ممکن نیست', 'فایل Excel خراب است یا قالب پشتیبانی‌شده‌ای ندارد.');
+      this.notifications.error('?????? ???? ???? ????', '???? ???? Excel ?? ???? .xlsx ?? Word ?? ???? .docx ????.');
     }
   }
 
@@ -224,6 +225,18 @@ export class AdminDashboardComponent implements OnInit {
 
   private emptyForm(): FaqPayload {
     return { question: '', answer: '', category: '', keywords: '' };
+  }
+
+  private async buildImportPayload(file: File): Promise<FaqPayload[]> {
+    if (/\.xlsx$/i.test(file.name)) {
+      const dataset = await this.excelReader.read(file);
+      return this.faqImportMapper.mapRows(dataset.rows);
+    }
+    if (/\.docx$/i.test(file.name)) {
+      const text = await this.wordReader.read(file);
+      return this.faqImportMapper.mapWordText(text);
+    }
+    throw new Error('UNSUPPORTED_IMPORT_FILE');
   }
 
   private showError(error: unknown, fallback: string): void {
