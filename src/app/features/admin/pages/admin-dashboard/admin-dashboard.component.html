@@ -141,11 +141,15 @@
         <div class="table-tools">
           <label>
             <span>جست‌وجو در FAQ</span>
-            <input [(ngModel)]="searchTerm" placeholder="سؤال، پاسخ یا کلمه کلیدی..." />
+            <input
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onFaqFiltersChanged()"
+              placeholder="سؤال، پاسخ یا کلمه کلیدی..."
+            />
           </label>
           <label>
             <span>دسته‌بندی</span>
-            <select [(ngModel)]="categoryFilter">
+            <select [(ngModel)]="categoryFilter" (ngModelChange)="onFaqFiltersChanged()">
               <option value="">همه دسته‌ها</option>
               <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
             </select>
@@ -196,7 +200,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let faq of filteredFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
+              <tr *ngFor="let faq of paginatedFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
                 <td class="select-col">
                   <input
                     type="checkbox"
@@ -219,6 +223,43 @@
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="pagination-bar" *ngIf="filteredFaqs.length">
+          <div class="pagination-summary">
+            نمایش {{ paginationStart.toLocaleString('fa-IR') }} تا
+            {{ paginationEnd.toLocaleString('fa-IR') }} از
+            {{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه
+          </div>
+          <label class="page-size">
+            تعداد در صفحه
+            <select [ngModel]="pageSize" (ngModelChange)="setPageSize($event)">
+              <option *ngFor="let option of pageSizeOptions" [ngValue]="option">
+                {{ option.toLocaleString('fa-IR') }}
+              </option>
+            </select>
+          </label>
+          <div class="pagination-actions">
+            <button
+              type="button"
+              class="ghost"
+              [disabled]="currentPage === 1"
+              (click)="goToPage(currentPage - 1)"
+            >
+              قبلی
+            </button>
+            <span
+              >صفحه {{ currentPage.toLocaleString('fa-IR') }} از
+              {{ totalPages.toLocaleString('fa-IR') }}</span
+            >
+            <button
+              type="button"
+              class="ghost"
+              [disabled]="currentPage === totalPages"
+              (click)="goToPage(currentPage + 1)"
+            >
+              بعدی
+            </button>
+          </div>
         </div>
       </section>
     </ng-container>

@@ -47,6 +47,9 @@ export class AdminDashboardComponent implements OnInit {
   saving = false;
   searchTerm = '';
   categoryFilter = '';
+  currentPage = 1;
+  pageSize = 10;
+  readonly pageSizeOptions = [10, 20, 50];
   pendingConfirmation: PendingConfirmation | null = null;
   selectedFaqIds = new Set<number>();
 
@@ -65,6 +68,23 @@ export class AdminDashboardComponent implements OnInit {
       const searchable = `${faq.question} ${faq.answer} ${faq.keywords}`.toLocaleLowerCase('fa');
       return matchesCategory && (!query || searchable.includes(query));
     });
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredFaqs.length / this.pageSize));
+  }
+
+  get paginatedFaqs(): FaqRecord[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredFaqs.slice(start, start + this.pageSize);
+  }
+
+  get paginationStart(): number {
+    return this.filteredFaqs.length ? (this.currentPage - 1) * this.pageSize + 1 : 0;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredFaqs.length);
   }
 
   get selectedCount(): number {
@@ -121,6 +141,7 @@ export class AdminDashboardComponent implements OnInit {
       next: ({ faqs, conversations }) => {
         this.faqs = faqs;
         this.conversations = conversations;
+        this.normalizePaginationPage();
         this.loading = false;
         if (showNotification) {
           this.notifications.info('اطلاعات به‌روز شد', 'آخرین FAQها و گزارش‌های کاربران دریافت شدند.');
@@ -207,6 +228,19 @@ export class AdminDashboardComponent implements OnInit {
     const ids = [...this.selectedFaqIds];
     if (!ids.length) return;
     this.pendingConfirmation = { type: 'bulk-delete', ids };
+  }
+
+  onFaqFiltersChanged(): void {
+    this.currentPage = 1;
+  }
+
+  setPageSize(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
   }
 
   resetForm(): void {
@@ -309,6 +343,7 @@ export class AdminDashboardComponent implements OnInit {
         this.selectedFaqIds.forEach((id) => {
           if (!existingIds.has(id)) this.selectedFaqIds.delete(id);
         });
+        this.normalizePaginationPage();
         this.saving = false;
         this.changeDetector.markForCheck();
       },
@@ -318,6 +353,10 @@ export class AdminDashboardComponent implements OnInit {
 
   private emptyForm(): FaqPayload {
     return { question: '', answer: '', category: '', keywords: '' };
+  }
+
+  private normalizePaginationPage(): void {
+    this.currentPage = Math.min(Math.max(this.currentPage, 1), this.totalPages);
   }
 
   private async buildImportPayload(file: File): Promise<FaqPayload[]> {
