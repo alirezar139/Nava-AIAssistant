@@ -339,6 +339,54 @@ textarea:focus {
   font-size: 9px;
   white-space: nowrap;
 }
+.selection-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(248, 251, 249, 0.72);
+}
+.selection-toolbar .select-all {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.selection-toolbar input,
+.select-col input {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  accent-color: var(--primary-800);
+}
+.selection-toolbar span {
+  color: var(--primary-800);
+  font-size: 10px;
+  font-weight: 700;
+}
+.selection-toolbar button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.selection-toolbar .ghost {
+  color: #536762;
+  background: #e7eeea;
+}
+.selection-toolbar .bulk-delete {
+  color: #fff;
+  background: #a4514c;
+}
+.selection-toolbar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -359,6 +407,14 @@ td {
 }
 td:first-child {
   max-width: 420px;
+}
+.select-col {
+  width: 72px;
+  max-width: 72px;
+  text-align: center;
+}
+tr.selected td {
+  background: rgba(47, 121, 103, 0.1);
 }
 td b,
 td small {

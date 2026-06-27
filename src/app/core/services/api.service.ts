@@ -29,6 +29,10 @@ export class ApiService {
     return this.http.delete<void>(`${this.apiUrl}/faqs/${id}`);
   }
 
+  deleteFaqs(ids: number[]): Observable<{ count: number }> {
+    return this.http.post<{ count: number }>(`${this.apiUrl}/faqs/bulk-delete`, { ids });
+  }
+
   importFaqs(payload: FaqPayload[]): Observable<{ count: number }> {
     return this.http.post<{ count: number }>(`${this.apiUrl}/faqs/import`, payload);
   }

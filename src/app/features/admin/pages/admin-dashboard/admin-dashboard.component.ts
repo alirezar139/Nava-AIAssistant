@@ -21,7 +21,10 @@ import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
 
-type PendingConfirmation = { type: 'delete'; faq: FaqRecord } | { type: 'import'; payload: FaqPayload[] };
+type PendingConfirmation =
+  | { type: 'delete'; faq: FaqRecord }
+  | { type: 'bulk-delete'; ids: number[] }
+  | { type: 'import'; payload: FaqPayload[] };
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -44,6 +47,7 @@ export class AdminDashboardComponent implements OnInit {
   searchTerm = '';
   categoryFilter = '';
   pendingConfirmation: PendingConfirmation | null = null;
+  selectedFaqIds = new Set<number>();
 
   get uniqueUserCount(): number {
     return new Set(this.conversations.map((item) => item.username)).size;
@@ -62,16 +66,34 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  get selectedCount(): number {
+    return this.selectedFaqIds.size;
+  }
+
+  get allFilteredSelected(): boolean {
+    return Boolean(this.filteredFaqs.length) && this.filteredFaqs.every((faq) => this.selectedFaqIds.has(faq.id));
+  }
+
+  get someFilteredSelected(): boolean {
+    return this.filteredFaqs.some((faq) => this.selectedFaqIds.has(faq.id));
+  }
+
   get confirmationTitle(): string {
-    return this.pendingConfirmation?.type === 'delete' ? 'حذف FAQ' : 'جایگزینی پایگاه دانش';
+    if (this.pendingConfirmation?.type === 'delete') return '??? FAQ';
+    if (this.pendingConfirmation?.type === 'bulk-delete') return '??? ????? FAQ';
+    return '???????? ?????? ????';
   }
 
   get confirmationText(): string {
     if (this.pendingConfirmation?.type === 'delete') {
-      return `FAQ «${this.pendingConfirmation.faq.question}» برای همیشه حذف شود؟`;
+      return `FAQ ?${this.pendingConfirmation.faq.question}? ???? ????? ??? ????`;
+    }
+    if (this.pendingConfirmation?.type === 'bulk-delete') {
+      const count = this.pendingConfirmation.ids.length;
+      return `${count.toLocaleString('fa-IR')} FAQ ?????????? ???? ????? ??? ?????`;
     }
     const count = this.pendingConfirmation?.payload.length ?? 0;
-    return `${count.toLocaleString('fa-IR')} ردیف جایگزین FAQهای فعلی شوند؟`;
+    return `${count.toLocaleString('fa-IR')} ???? ??????? FAQ??? ???? ?????`;
   }
 
   constructor(
@@ -108,7 +130,7 @@ export class AdminDashboardComponent implements OnInit {
 
   saveFaq(): void {
     if (!this.form.question.trim() || !this.form.answer.trim()) {
-      this.notifications.error('اطلاعات ناقص است', 'برای ذخیره FAQ، سؤال و پاسخ را کامل کنید.');
+      this.notifications.error('??????? ???? ???', '???? ????? FAQ? ???? ? ???? ?? ???? ????.');
       return;
     }
     this.saving = true;
@@ -119,14 +141,12 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.resetForm();
         this.notifications.success(
-          isEditing ? 'FAQ به‌روزرسانی شد' : 'FAQ اضافه شد',
-          isEditing
-            ? 'تغییرات پرسش و پاسخ با موفقیت در پایگاه دانش ذخیره شد.'
-            : 'پرسش و پاسخ جدید با موفقیت به پایگاه دانش اضافه شد.'
+          isEditing ? 'FAQ ??????????? ??' : 'FAQ ????? ??',
+          isEditing ? '??????? ???? ? ???? ????? ??.' : '???? ? ???? ???? ?? ?????? ???? ????? ??.'
         );
         this.loadFaqs();
       },
-      error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
+      error: (error: unknown) => this.showError(error, '????? FAQ ????? ???.')
     });
   }
 
@@ -143,6 +163,34 @@ export class AdminDashboardComponent implements OnInit {
 
   deleteFaq(faq: FaqRecord): void {
     this.pendingConfirmation = { type: 'delete', faq };
+  }
+
+  toggleFaqSelection(faqId: number, checked: boolean): void {
+    if (checked) {
+      this.selectedFaqIds.add(faqId);
+    } else {
+      this.selectedFaqIds.delete(faqId);
+    }
+  }
+
+  toggleAllFiltered(checked: boolean): void {
+    this.filteredFaqs.forEach((faq) => {
+      if (checked) {
+        this.selectedFaqIds.add(faq.id);
+      } else {
+        this.selectedFaqIds.delete(faq.id);
+      }
+    });
+  }
+
+  clearSelection(): void {
+    this.selectedFaqIds.clear();
+  }
+
+  deleteSelectedFaqs(): void {
+    const ids = [...this.selectedFaqIds];
+    if (!ids.length) return;
+    this.pendingConfirmation = { type: 'bulk-delete', ids };
   }
 
   resetForm(): void {
@@ -188,23 +236,37 @@ export class AdminDashboardComponent implements OnInit {
     if (confirmation.type === 'delete') {
       this.api.deleteFaq(confirmation.faq.id).subscribe({
         next: () => {
-          this.notifications.success('FAQ حذف شد', 'مورد انتخاب‌شده از پایگاه دانش حذف شد.');
+          this.selectedFaqIds.delete(confirmation.faq.id);
+          this.notifications.success('FAQ ??? ??', '???? ?????????? ?? ?????? ???? ??? ??.');
           this.loadFaqs();
         },
-        error: (error: unknown) => this.showError(error, 'حذف FAQ انجام نشد.')
+        error: (error: unknown) => this.showError(error, '??? FAQ ????? ???.')
+      });
+      return;
+    }
+
+    if (confirmation.type === 'bulk-delete') {
+      this.api.deleteFaqs(confirmation.ids).subscribe({
+        next: ({ count }) => {
+          confirmation.ids.forEach((id) => this.selectedFaqIds.delete(id));
+          this.notifications.success('FAQ?? ??? ????', `${count.toLocaleString('fa-IR')} ???? ?? ?????? ???? ??? ??.`);
+          this.loadFaqs();
+        },
+        error: (error: unknown) => this.showError(error, '??? ????? FAQ ????? ???.')
       });
       return;
     }
 
     this.api.importFaqs(confirmation.payload).subscribe({
       next: ({ count }) => {
+        this.selectedFaqIds.clear();
         this.notifications.success(
-          'ورود Excel تکمیل شد',
-          `${count.toLocaleString('fa-IR')} FAQ با موفقیت وارد پایگاه دانش شد.`
+          '???? ???? ????? ??',
+          `${count.toLocaleString('fa-IR')} FAQ ?? ?????? ???? ?????? ???? ??.`
         );
         this.loadFaqs();
       },
-      error: (error: unknown) => this.showError(error, 'ورود اطلاعات Excel انجام نشد.')
+      error: (error: unknown) => this.showError(error, '???? ??????? ???? ????? ???.')
     });
   }
 
@@ -216,6 +278,10 @@ export class AdminDashboardComponent implements OnInit {
     this.api.getFaqs().subscribe({
       next: (faqs) => {
         this.faqs = faqs;
+        const existingIds = new Set(faqs.map((faq) => faq.id));
+        this.selectedFaqIds.forEach((id) => {
+          if (!existingIds.has(id)) this.selectedFaqIds.delete(id);
+        });
         this.saving = false;
         this.changeDetector.markForCheck();
       },

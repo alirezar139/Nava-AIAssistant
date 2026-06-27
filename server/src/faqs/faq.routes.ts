@@ -45,6 +45,20 @@ faqRouter.post('/import', requireAuth(['admin']), async (request, response) => {
   response.json({ count: result.data.length });
 });
 
+faqRouter.post('/bulk-delete', requireAuth(['admin']), async (request, response) => {
+  const result = z.object({ ids: z.array(z.number().int().positive()).min(1) }).safeParse(request.body);
+  if (!result.success) {
+    sendError(response, 400, 'FAQ_BULK_DELETE_INVALID', 'شناسه‌های FAQ برای حذف معتبر نیستند.');
+    return;
+  }
+
+  const ids = new Set(result.data.ids);
+  const previousCount = database.data.faqs.length;
+  database.data.faqs = database.data.faqs.filter((faq) => !ids.has(faq.id));
+  await database.write();
+  response.json({ count: previousCount - database.data.faqs.length });
+});
+
 faqRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
   const result = faqSchema.safeParse(request.body);
   const faq = database.data.faqs.find((item) => item.id === Number(request.params['id']));

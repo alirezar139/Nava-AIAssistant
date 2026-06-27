@@ -153,6 +153,22 @@
           </label>
           <span class="result-count">{{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه</span>
         </div>
+        <div class="selection-toolbar" *ngIf="faqs.length">
+          <label class="select-all">
+            <input
+              type="checkbox"
+              [checked]="allFilteredSelected"
+              [indeterminate]="someFilteredSelected && !allFilteredSelected"
+              (change)="toggleAllFiltered($any($event.target).checked)"
+            />
+            ?????? ??? ????? ????
+          </label>
+          <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} ???? ?????? ???</span>
+          <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">???????? ??????</button>
+          <button type="button" class="danger bulk-delete" [disabled]="!selectedCount || saving" (click)="deleteSelectedFaqs()">
+            ??? ?????????????
+          </button>
+        </div>
         <div class="empty" *ngIf="!loading && !faqs.length">هنوز FAQ ثبت نشده است.</div>
         <div class="empty" *ngIf="faqs.length && !filteredFaqs.length">نتیجه‌ای مطابق فیلترها پیدا نشد.</div>
         <div class="table-wrap" *ngIf="filteredFaqs.length">
@@ -166,7 +182,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let faq of filteredFaqs">
+              <tr *ngFor="let faq of filteredFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
+                <td class="select-col">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedFaqIds.has(faq.id)"
+                    (change)="toggleFaqSelection(faq.id, $any($event.target).checked)"
+                  />
+                </td>
                 <td>
                   <b>{{ faq.question }}</b
                   ><small>{{ faq.answer }}</small>
