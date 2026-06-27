@@ -141,11 +141,21 @@
         <div class="table-tools">
           <label>
             <span>جست‌وجو در FAQ</span>
-            <input
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onFaqFiltersChanged()"
-              placeholder="سؤال، پاسخ یا کلمه کلیدی..."
-            />
+            <div class="search-field">
+              <input
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onFaqFiltersChanged()"
+                placeholder="سؤال، پاسخ، دسته‌بندی یا کلمه کلیدی..."
+              />
+              <button
+                type="button"
+                *ngIf="searchTerm"
+                (click)="clearFaqSearch()"
+                aria-label="پاک‌کردن جست‌وجو"
+              >
+                ×
+              </button>
+            </div>
           </label>
           <label>
             <span>دسته‌بندی</span>
@@ -272,8 +282,28 @@
         </div>
         <small>{{ conversations.length.toLocaleString('fa-IR') }} گفتگو</small>
       </div>
+      <div class="table-tools reports-search" *ngIf="conversations.length">
+        <label>
+          <span>جست‌وجو در گزارش‌ها</span>
+          <div class="search-field">
+            <input [(ngModel)]="reportSearchTerm" placeholder="نام کاربر، سؤال یا پاسخ دستیار..." />
+            <button
+              type="button"
+              *ngIf="reportSearchTerm"
+              (click)="clearReportSearch()"
+              aria-label="پاک‌کردن جست‌وجوی گزارش‌ها"
+            >
+              ×
+            </button>
+          </div>
+        </label>
+        <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
+      </div>
       <div class="empty" *ngIf="!conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
-      <div class="reports" *ngFor="let item of conversations">
+      <div class="empty" *ngIf="conversations.length && !filteredConversations.length">
+        نتیجه‌ای مطابق جست‌وجو پیدا نشد.
+      </div>
+      <div class="reports" *ngFor="let item of filteredConversations">
         <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
         <div class="report-content">
           <div class="report-meta">

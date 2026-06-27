@@ -46,6 +46,7 @@ export class AdminDashboardComponent implements OnInit {
   loading = true;
   saving = false;
   searchTerm = '';
+  reportSearchTerm = '';
   categoryFilter = '';
   currentPage = 1;
   pageSize = 10;
@@ -65,9 +66,21 @@ export class AdminDashboardComponent implements OnInit {
     const query = this.searchTerm.trim().toLocaleLowerCase('fa');
     return this.faqs.filter((faq) => {
       const matchesCategory = !this.categoryFilter || faq.category === this.categoryFilter;
-      const searchable = `${faq.question} ${faq.answer} ${faq.keywords}`.toLocaleLowerCase('fa');
+      const searchable = `${faq.question} ${faq.answer} ${faq.category} ${faq.keywords}`.toLocaleLowerCase(
+        'fa'
+      );
       return matchesCategory && (!query || searchable.includes(query));
     });
+  }
+
+  get filteredConversations(): ConversationRecord[] {
+    const query = this.reportSearchTerm.trim().toLocaleLowerCase('fa');
+    if (!query) return this.conversations;
+    return this.conversations.filter((item) =>
+      `${item.userFullName} ${item.username} ${item.question} ${item.answer}`
+        .toLocaleLowerCase('fa')
+        .includes(query)
+    );
   }
 
   get totalPages(): number {
@@ -232,6 +245,15 @@ export class AdminDashboardComponent implements OnInit {
 
   onFaqFiltersChanged(): void {
     this.currentPage = 1;
+  }
+
+  clearFaqSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 1;
+  }
+
+  clearReportSearch(): void {
+    this.reportSearchTerm = '';
   }
 
   setPageSize(size: number): void {

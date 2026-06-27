@@ -1476,6 +1476,43 @@ nav button {
   background: rgba(255, 255, 255, 0.86);
 }
 
+.search-field {
+  position: relative;
+}
+
+.search-field input {
+  width: 100%;
+  padding-left: 42px;
+}
+
+.search-field button {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  color: #537369;
+  background: rgba(219, 235, 229, 0.9);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.search-field button:hover {
+  color: #173f36;
+  background: rgba(199, 224, 216, 0.96);
+}
+
+.reports-search {
+  grid-template-columns: minmax(260px, 1fr) auto;
+}
+
 .result-count {
   min-width: 92px;
   min-height: 42px;
