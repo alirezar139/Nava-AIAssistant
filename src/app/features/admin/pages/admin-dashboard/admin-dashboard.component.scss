@@ -1118,6 +1118,25 @@ tbody tr:hover td {
   backdrop-filter: blur(28px) saturate(145%);
   animation: modal-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.edit-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  text-align: right;
+}
+.edit-modal .section-title {
+  margin-bottom: 22px;
+  text-align: right;
+}
+.edit-modal .section-title h2 {
+  margin: 6px 0 0;
+}
+.edit-form {
+  grid-template-columns: 1fr 1fr;
+}
+.edit-form textarea {
+  min-height: 170px;
+}
 .modal-icon {
   display: grid;
   place-items: center;

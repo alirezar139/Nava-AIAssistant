@@ -42,6 +42,7 @@ export class AdminDashboardComponent implements OnInit {
   activeTab: 'faqs' | 'reports' = 'faqs';
   editingId: number | null = null;
   form: FaqPayload = this.emptyForm();
+  editForm: FaqPayload = this.emptyForm();
   loading = true;
   saving = false;
   searchTerm = '';
@@ -136,16 +137,10 @@ export class AdminDashboardComponent implements OnInit {
       return;
     }
     this.saving = true;
-    const editingId = this.editingId;
-    const isEditing = editingId !== null;
-    const request = isEditing ? this.api.updateFaq(editingId, this.form) : this.api.createFaq(this.form);
-    request.subscribe({
+    this.api.createFaq(this.form).subscribe({
       next: () => {
         this.resetForm();
-        this.notifications.success(
-          isEditing ? 'FAQ به\u200cروزرسانی شد' : 'FAQ اضافه شد',
-          isEditing ? 'تغییرات پرسش و پاسخ ذخیره شد.' : 'پرسش و پاسخ جدید به پایگاه دانش اضافه شد.'
-        );
+        this.notifications.success('FAQ اضافه شد', 'پرسش و پاسخ جدید به پایگاه دانش اضافه شد.');
         this.loadFaqs();
       },
       error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
@@ -154,13 +149,32 @@ export class AdminDashboardComponent implements OnInit {
 
   editFaq(faq: FaqRecord): void {
     this.editingId = faq.id;
-    this.form = {
+    this.editForm = {
       question: faq.question,
       answer: faq.answer,
       category: faq.category,
       keywords: faq.keywords
     };
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  saveEditedFaq(): void {
+    const editingId = this.editingId;
+    if (editingId === null) return;
+    if (!this.editForm.question.trim() || !this.editForm.answer.trim()) {
+      this.notifications.error('اطلاعات ناقص است', 'برای ذخیره FAQ، سؤال و پاسخ را کامل کنید.');
+      return;
+    }
+
+    this.saving = true;
+    this.api.updateFaq(editingId, this.editForm).subscribe({
+      next: () => {
+        this.saving = false;
+        this.closeEditDialog();
+        this.notifications.success('FAQ به\u200cروزرسانی شد', 'تغییرات پرسش و پاسخ ذخیره شد.');
+        this.loadFaqs();
+      },
+      error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
+    });
   }
 
   deleteFaq(faq: FaqRecord): void {
@@ -197,8 +211,13 @@ export class AdminDashboardComponent implements OnInit {
 
   resetForm(): void {
     this.form = this.emptyForm();
-    this.editingId = null;
     this.saving = false;
+  }
+
+  closeEditDialog(): void {
+    if (this.saving) return;
+    this.editingId = null;
+    this.editForm = this.emptyForm();
   }
 
   openFilePicker(): void {

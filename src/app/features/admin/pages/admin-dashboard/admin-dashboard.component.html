@@ -90,7 +90,7 @@
         <div class="section-title">
           <div>
             <span>مدیریت محتوا</span>
-            <h2>{{ editingId ? 'ویرایش FAQ' : 'افزودن FAQ جدید' }}</h2>
+            <h2>افزودن FAQ جدید</h2>
           </div>
           <button type="button" class="import icon-button" [disabled]="saving" (click)="openFilePicker()">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -125,8 +125,7 @@
             ></textarea>
           </label>
           <div class="actions wide">
-            <button type="button" class="ghost" *ngIf="editingId" (click)="resetForm()">انصراف</button
-            ><button type="submit" [disabled]="saving">{{ saving ? 'در حال ذخیره...' : 'ذخیره FAQ' }}</button>
+            <button type="submit" [disabled]="saving">{{ saving ? 'در حال ذخیره...' : 'ذخیره FAQ' }}</button>
           </div>
         </form>
       </section>
@@ -238,6 +237,58 @@
       </div>
     </section>
   </main>
+
+  <div class="modal-backdrop" *ngIf="editingId" (click)="closeEditDialog()">
+    <section
+      class="confirm-modal edit-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="section-title">
+        <div>
+          <span>ویرایش پایگاه دانش</span>
+          <h2 id="edit-title">ویرایش FAQ</h2>
+        </div>
+      </div>
+      <form class="edit-form" (ngSubmit)="saveEditedFaq()">
+        <label class="wide">
+          سؤال
+          <input
+            [(ngModel)]="editForm.question"
+            name="editQuestion"
+            placeholder="پرسش متداول کاربر"
+            required
+          />
+        </label>
+        <label>
+          دسته‌بندی
+          <input [(ngModel)]="editForm.category" name="editCategory" placeholder="مثلاً ورود به سامانه" />
+        </label>
+        <label>
+          کلمات کلیدی
+          <input [(ngModel)]="editForm.keywords" name="editKeywords" placeholder="ورود، رمز، حساب" />
+        </label>
+        <label class="wide">
+          پاسخ
+          <textarea
+            [(ngModel)]="editForm.answer"
+            name="editAnswer"
+            rows="6"
+            placeholder="راهکار کامل و شفاف"
+            required
+          ></textarea>
+        </label>
+        <div class="modal-actions wide">
+          <button type="button" class="cancel" [disabled]="saving" (click)="closeEditDialog()">انصراف</button>
+          <button type="submit" class="confirm" [disabled]="saving">
+            {{ saving ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
 
   <div class="modal-backdrop" *ngIf="pendingConfirmation" (click)="cancelConfirmation()">
     <section
