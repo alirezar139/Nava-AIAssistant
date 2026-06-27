@@ -1613,7 +1613,7 @@ nav button {
 
 table {
   width: 100%;
-  min-width: 1020px;
+  min-width: 1280px;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -1623,12 +1623,20 @@ table {
   width: 70px;
 }
 
-.question-col-width {
-  width: auto;
+.error-col-width {
+  width: 27%;
+}
+
+.description-col-width {
+  width: 24%;
+}
+
+.solution-col-width {
+  width: 24%;
 }
 
 .category-col-width {
-  width: 230px;
+  width: 190px;
 }
 
 .date-col-width {

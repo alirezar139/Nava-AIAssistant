@@ -100,6 +100,14 @@ export class AdminDashboardComponent implements OnInit {
     return Math.min(this.currentPage * this.pageSize, this.filteredFaqs.length);
   }
 
+  getFaqDescription(faq: FaqRecord): string {
+    return this.extractAnswerSection(faq.answer, /توضیحات/) || faq.answer;
+  }
+
+  getFaqSolution(faq: FaqRecord): string {
+    return this.extractAnswerSection(faq.answer, /راه\s*حل/);
+  }
+
   get selectedCount(): number {
     return this.selectedFaqIds.size;
   }
@@ -379,6 +387,14 @@ export class AdminDashboardComponent implements OnInit {
 
   private normalizePaginationPage(): void {
     this.currentPage = Math.min(Math.max(this.currentPage, 1), this.totalPages);
+  }
+
+  private extractAnswerSection(answer: string, label: RegExp): string {
+    const pattern = new RegExp(
+      `(?:^|\\n)\\s*${label.source}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*(?:توضیحات|راه\\s*حل)\\s*:|$)`,
+      'i'
+    );
+    return pattern.exec(answer.replace(/\u200c/g, ' '))?.[1]?.trim() ?? '';
   }
 
   private async buildImportPayload(file: File): Promise<FaqPayload[]> {

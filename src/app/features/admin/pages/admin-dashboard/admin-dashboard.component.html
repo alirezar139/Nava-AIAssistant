@@ -195,7 +195,9 @@
           <table>
             <colgroup>
               <col class="select-col-width" />
-              <col class="question-col-width" />
+              <col class="error-col-width" />
+              <col class="description-col-width" />
+              <col class="solution-col-width" />
               <col class="category-col-width" />
               <col class="date-col-width" />
               <col class="actions-col-width" />
@@ -203,7 +205,9 @@
             <thead>
               <tr>
                 <th class="select-col"></th>
-                <th>سؤال</th>
+                <th>متن خطا</th>
+                <th>توضیحات</th>
+                <th>راه‌حل</th>
                 <th>دسته‌بندی</th>
                 <th>آخرین تغییر</th>
                 <th>عملیات</th>
@@ -219,8 +223,13 @@
                   />
                 </td>
                 <td>
-                  <b>{{ faq.question }}</b
-                  ><small>{{ faq.answer }}</small>
+                  <b>{{ faq.question }}</b>
+                </td>
+                <td>
+                  <small>{{ getFaqDescription(faq) }}</small>
+                </td>
+                <td>
+                  <small>{{ getFaqSolution(faq) || 'ثبت نشده' }}</small>
                 </td>
                 <td>
                   <span class="tag">{{ faq.category || 'عمومی' }}</span>
