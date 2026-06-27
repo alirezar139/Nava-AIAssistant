@@ -1549,8 +1549,7 @@ nav button {
 
 .table-wrap {
   margin: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
   border: 1px solid rgba(39, 88, 75, 0.1);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.54);
@@ -1613,38 +1612,38 @@ nav button {
 
 table {
   width: 100%;
-  min-width: 1280px;
+  min-width: 0;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
 }
 
 .select-col-width {
-  width: 70px;
+  width: 46px;
 }
 
 .error-col-width {
-  width: 27%;
+  width: 23%;
 }
 
 .description-col-width {
-  width: 24%;
+  width: 21%;
 }
 
 .solution-col-width {
-  width: 24%;
+  width: 21%;
 }
 
 .category-col-width {
-  width: 190px;
+  width: 14%;
 }
 
 .date-col-width {
-  width: 150px;
+  width: 118px;
 }
 
 .actions-col-width {
-  width: 126px;
+  width: 92px;
 }
 
 thead th {
@@ -1665,9 +1664,11 @@ thead th:last-child {
 }
 
 tbody td {
-  padding: 18px 16px;
+  padding: 16px 10px;
   border-bottom: 1px solid rgba(39, 88, 75, 0.09);
   vertical-align: middle;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 tbody tr {
@@ -1686,10 +1687,18 @@ tbody tr.selected td {
 }
 
 td b {
+  display: block;
   margin-bottom: 7px;
   color: #143b33;
   font-size: 13px;
   line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 :host-context([data-theme='dark']) td b {
@@ -1697,9 +1706,17 @@ td b {
 }
 
 td small {
-  max-width: 680px;
+  display: block;
+  max-width: 100%;
   color: #617a73;
   line-height: 1.8;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 :host-context([data-theme='dark']) td small {
@@ -1720,11 +1737,16 @@ td small {
   overflow-wrap: anywhere;
   text-align: center;
   white-space: normal;
+  overflow: hidden;
+  display: -webkit-inline-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .select-col {
-  width: 70px;
-  max-width: 70px;
+  width: 46px;
+  max-width: 46px;
   text-align: center;
 }
 
@@ -1751,7 +1773,7 @@ td small {
 }
 
 .actions-cell .link {
-  width: 82px;
+  width: 68px;
   margin: 3px auto;
 }
 
