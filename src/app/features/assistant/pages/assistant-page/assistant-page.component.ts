@@ -16,6 +16,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { FaqSearchService } from '../../../../core/services/faq-search.service';
+import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 
@@ -38,6 +39,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   typing = false;
   diagnosticStep: keyof DiagnosticPayload | null = null;
   diagnosticDraft: DiagnosticPayload = this.createEmptyDiagnostic();
+  documentReading = false;
+  documentError = '';
   private typingTimer?: ReturnType<typeof setTimeout>;
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
@@ -55,6 +58,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     private readonly api: ApiService,
     private readonly errorMessages: ErrorMessageService,
     private readonly searchService: FaqSearchService,
+    private readonly wordReader: WordReaderService,
     private readonly router: Router,
     private readonly changeDetector: ChangeDetectorRef
   ) {}
@@ -211,6 +215,38 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   rateMessage(message: ChatMessage, feedback: 'helpful' | 'unhelpful'): void {
     message.feedback = feedback;
+  }
+
+  onWordFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || this.typing || this.documentReading) return;
+
+    this.documentError = '';
+    this.documentReading = true;
+    this.wordReader
+      .read(file)
+      .then((text) => {
+        const evidence = `فایل Word: ${file.name}\n\n${text}`.slice(0, 12000);
+        if (this.diagnosticStep === 'evidence') {
+          this.messages.push({ role: 'user', text: `مستند Word بارگذاری شد: ${file.name}` });
+          this.captureDiagnosticAnswer(evidence);
+        } else {
+          this.question = evidence;
+        }
+      })
+      .catch((error: unknown) => {
+        this.documentError =
+          error instanceof Error && error.message === 'INVALID_WORD_FILE'
+            ? 'فقط فایل Word با فرمت .docx قابل خواندن است.'
+            : 'متن فایل Word قابل خواندن نبود.';
+      })
+      .finally(() => {
+        this.documentReading = false;
+        this.changeDetector.markForCheck();
+        this.scrollToLatest();
+      });
   }
 
   logout(): void {

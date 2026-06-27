@@ -115,6 +115,22 @@
             <div class="typing-bubble" aria-label="دستیار در حال تایپ است"><i></i><i></i><i></i></div>
           </div>
         </div>
+        <div class="document-tools" *ngIf="diagnosticStep === 'evidence'">
+          <div>
+            <strong>مستندات مشکل</strong>
+            <small>اگر فایل Word دارید، همین‌جا بارگذاری کنید تا متنش به پرونده بررسی اضافه شود.</small>
+          </div>
+          <label>
+            <input
+              type="file"
+              accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              [disabled]="typing || documentReading"
+              (change)="onWordFileSelected($event)"
+            />
+            {{ documentReading ? 'در حال خواندن Word...' : 'انتخاب فایل Word' }}
+          </label>
+          <p class="error" *ngIf="documentError">{{ documentError }}</p>
+        </div>
         <form class="composer" (ngSubmit)="ask()">
           <input
             [(ngModel)]="question"
