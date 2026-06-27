@@ -121,7 +121,7 @@
             name="question"
             autocomplete="off"
             [disabled]="loading || typing"
-            placeholder="مشکل یا سؤال خود را بنویسید..."
+            [placeholder]="inputPlaceholder"
           /><button type="submit" [disabled]="loading || typing" aria-label="ارسال پرسش">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m4 12 16-8-5 16-3-6-8-2Z"></path>

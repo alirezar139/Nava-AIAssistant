@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DiagnosticCaseRecord, DiagnosticPayload } from '../models/diagnostic.models';
 import { ConversationRecord, FaqRecord } from '../models/faq.models';
 import { environment } from '../../../environments/environment';
 
@@ -38,5 +39,17 @@ export class ApiService {
 
   logConversation(question: string, answer: string, matchedFaqId: number | null): Observable<unknown> {
     return this.http.post(`${this.apiUrl}/conversations`, { question, answer, matchedFaqId });
+  }
+
+  createDiagnosticCase(payload: DiagnosticPayload): Observable<DiagnosticCaseRecord> {
+    return this.http.post<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics`, payload);
+  }
+
+  analyzeDiagnosticCase(id: number): Observable<DiagnosticCaseRecord> {
+    return this.http.post<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/analyze`, {});
+  }
+
+  getDiagnosticCases(): Observable<DiagnosticCaseRecord[]> {
+    return this.http.get<DiagnosticCaseRecord[]>(`${this.apiUrl}/diagnostics`);
   }
 }

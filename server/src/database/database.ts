@@ -32,10 +32,29 @@ export interface ConversationRecord {
   createdAt: string;
 }
 
+export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated';
+
+export interface DiagnosticCaseRecord {
+  id: number;
+  userId: number;
+  problem: string;
+  systemName: string;
+  scenario: string;
+  serialNumber: string;
+  evidence: string;
+  status: DiagnosticStatus;
+  analysisSummary: string | null;
+  severity: 'low' | 'medium' | 'high' | null;
+  recommendation: string | null;
+  createdAt: string;
+  analyzedAt: string | null;
+}
+
 interface DatabaseSchema {
   users: UserRecord[];
   faqs: FaqRecord[];
   conversations: ConversationRecord[];
+  diagnosticCases: DiagnosticCaseRecord[];
 }
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
@@ -45,8 +64,11 @@ await mkdir(dataDirectory, { recursive: true });
 export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirectory, 'database.json'), {
   users: [],
   faqs: [],
-  conversations: []
+  conversations: [],
+  diagnosticCases: []
 });
+
+database.data.diagnosticCases ??= [];
 
 const now = new Date().toISOString();
 if (!database.data.users.some((user) => user.username === 'admin')) {

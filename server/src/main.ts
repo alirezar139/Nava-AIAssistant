@@ -3,6 +3,7 @@ import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { authRouter } from './auth/auth.routes.js';
 import { conversationRouter } from './conversations/conversation.routes.js';
+import { diagnosticRouter } from './diagnostics/diagnostic.routes.js';
 import { faqRouter } from './faqs/faq.routes.js';
 import './database/database.js';
 import { config } from './config/config.js';
@@ -22,6 +23,7 @@ app.get('/api/health', (_request, response) => response.json({ status: 'ok' }));
 app.use('/api/auth', authRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/conversations', conversationRouter);
+app.use('/api/diagnostics', diagnosticRouter);
 
 app.use((_request, response) => sendError(response, 404, 'ROUTE_NOT_FOUND', 'مسیر درخواست‌شده پیدا نشد.'));
 app.use(
