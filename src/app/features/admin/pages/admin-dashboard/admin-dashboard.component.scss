@@ -1518,9 +1518,31 @@ nav button {
 }
 
 table {
-  min-width: 860px;
+  width: 100%;
+  min-width: 1020px;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
+}
+
+.select-col-width {
+  width: 70px;
+}
+
+.question-col-width {
+  width: auto;
+}
+
+.category-col-width {
+  width: 230px;
+}
+
+.date-col-width {
+  width: 150px;
+}
+
+.actions-col-width {
+  width: 130px;
 }
 
 thead th {
@@ -1585,15 +1607,25 @@ td small {
 }
 
 .tag {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 7px 12px;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
   color: #d9f0e8;
   background: rgba(54, 132, 110, 0.34);
   font-weight: 800;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
 }
 
 .select-col {
-  width: 86px;
-  max-width: 86px;
+  width: 70px;
+  max-width: 70px;
+  text-align: center;
 }
 
 .select-col input,

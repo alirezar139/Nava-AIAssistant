@@ -179,8 +179,16 @@
         <div class="empty" *ngIf="faqs.length && !filteredFaqs.length">نتیجه‌ای مطابق فیلترها پیدا نشد.</div>
         <div class="table-wrap" *ngIf="filteredFaqs.length">
           <table>
+            <colgroup>
+              <col class="select-col-width" />
+              <col class="question-col-width" />
+              <col class="category-col-width" />
+              <col class="date-col-width" />
+              <col class="actions-col-width" />
+            </colgroup>
             <thead>
               <tr>
+                <th class="select-col"></th>
                 <th>سؤال</th>
                 <th>دسته‌بندی</th>
                 <th>آخرین تغییر</th>
