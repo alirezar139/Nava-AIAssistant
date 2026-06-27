@@ -89,7 +89,7 @@ export class AdminDashboardComponent implements OnInit {
 
   get confirmationText(): string {
     if (this.pendingConfirmation?.type === 'delete') {
-      return `FAQ ?${this.pendingConfirmation.faq.question}? برای همیشه حذف شود؟`;
+      return `FAQ «${this.pendingConfirmation.faq.question}» برای همیشه حذف شود؟`;
     }
     if (this.pendingConfirmation?.type === 'bulk-delete') {
       const count = this.pendingConfirmation.ids.length;

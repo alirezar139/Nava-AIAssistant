@@ -246,7 +246,7 @@
     </section>
   </main>
 
-  <div class="modal-backdrop" *ngIf="editingId" (click)="closeEditDialog()">
+  <div class="modal-backdrop" *ngIf="editingId !== null" (click)="closeEditDialog()">
     <section
       class="confirm-modal edit-modal"
       role="dialog"
