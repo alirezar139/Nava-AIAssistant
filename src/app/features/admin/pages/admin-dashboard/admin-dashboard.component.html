@@ -235,7 +235,7 @@
                   <span class="tag">{{ faq.category || 'عمومی' }}</span>
                 </td>
                 <td>{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
-                <td>
+                <td class="actions-cell">
                   <button type="button" class="link" (click)="editFaq(faq)">ویرایش</button
                   ><button type="button" class="link danger" (click)="deleteFaq(faq)">حذف</button>
                 </td>
