@@ -1640,9 +1640,7 @@ table {
 }
 
 thead th {
-  position: sticky;
-  top: 82px;
-  z-index: 2;
+  position: static;
   padding: 15px 16px;
   color: #dbeee8;
   background: linear-gradient(135deg, #113a32, #082a24);
