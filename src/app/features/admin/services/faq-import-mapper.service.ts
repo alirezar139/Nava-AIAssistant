@@ -183,17 +183,17 @@ export class FaqImportMapperService {
   private mapNumberedTroubleshootingDocument(text: string): FaqPayload[] | null {
     const lines = this.cleanLines(text);
     const numberIndexes = lines
-      .map((line, index) => (/^[\u06f0-\u06f90-9]+[.)-]?$/.test(line) ? index : -1))
+      .map((line, index) => (this.isNumberLine(line) ? index : -1))
       .filter((index) => index >= 0);
 
     if (numberIndexes.length < 2) return null;
 
-    const category = this.detectCategory(lines) || 'Word';
     const payload: FaqPayload[] = [];
 
     numberIndexes.forEach((start, position) => {
       const end = numberIndexes[position + 1] ?? lines.length;
       const blockLines = lines.slice(start + 1, end);
+      const category = this.detectCategoryBefore(lines, start) || 'Word';
       const faq = this.mapTroubleshootingBlock(blockLines, category);
       if (faq) payload.push(faq);
     });
@@ -308,6 +308,14 @@ export class FaqImportMapperService {
     return lines.find((line) => this.isTroubleshootingCategory(line) && line.length < 120) ?? '';
   }
 
+  private detectCategoryBefore(lines: string[], startIndex: number): string {
+    for (let index = startIndex - 1; index >= 0; index -= 1) {
+      const line = lines[index];
+      if (this.isTroubleshootingCategory(line)) return line;
+    }
+    return this.detectCategory(lines);
+  }
+
   private stripDecorations(line: string): string {
     return line
       .replace(/^[\s\uF0FC\u2713\u2022\-\u2013\u2014]+/, '')
@@ -319,13 +327,16 @@ export class FaqImportMapperService {
   private isTroubleshootingCategory(line: string): boolean {
     const normalized = this.normalize(line);
     return (
-      (normalized.includes('\u062e\u0637\u0627\u0647\u0627\u06cc') ||
-        normalized.includes('sql') ||
-        normalized.includes('oracle')) &&
+      normalized.length < 80 &&
+      normalized.includes('\u062e\u0637\u0627\u0647\u0627\u06cc') &&
       !ERROR_LABELS.some((label) => normalized.includes(this.normalize(label))) &&
       !DESCRIPTION_LABELS.some((label) => normalized.includes(this.normalize(label))) &&
       !SOLUTION_LABELS.some((label) => normalized.includes(this.normalize(label)))
     );
+  }
+
+  private isNumberLine(line: string): boolean {
+    return /^[\u06f0-\u06f90-9]+[.)-]?$/.test(line);
   }
 
   private isSectionLabel(line: string): boolean {
