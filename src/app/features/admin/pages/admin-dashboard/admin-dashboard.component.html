@@ -233,9 +233,8 @@
                     title="جزئیات بیشتر"
                     (click)="showFaqDetails(faq)"
                   >
-                    ...</button
-                  ><button type="button" class="link" (click)="editFaq(faq)">ویرایش</button
-                  ><button type="button" class="link danger" (click)="deleteFaq(faq)">حذف</button>
+                    ...
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -358,6 +357,7 @@
       </div>
       <div class="modal-actions">
         <button type="button" class="cancel" (click)="closeDetailDialog()">بستن</button>
+        <button type="button" class="danger" (click)="deleteFaqFromDetails(detailFaq)">حذف</button>
         <button type="button" class="confirm" (click)="editFaq(detailFaq); closeDetailDialog()">
           ویرایش
         </button>

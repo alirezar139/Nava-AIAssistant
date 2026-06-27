@@ -228,6 +228,11 @@ export class AdminDashboardComponent implements OnInit {
     this.pendingConfirmation = { type: 'delete', faq };
   }
 
+  deleteFaqFromDetails(faq: FaqRecord): void {
+    this.closeDetailDialog();
+    this.deleteFaq(faq);
+  }
+
   toggleFaqSelection(faqId: number, checked: boolean): void {
     if (checked) {
       this.selectedFaqIds.add(faqId);

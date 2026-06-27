@@ -1670,7 +1670,7 @@ table {
 }
 
 .actions-col-width {
-  width: 112px;
+  width: 76px;
 }
 
 thead th {
@@ -1997,13 +1997,12 @@ td b {
 
 .actions-cell {
   display: grid;
-  gap: 5px;
   place-items: center;
 }
 
 .actions-cell .link {
-  width: 76px;
-  min-height: 32px;
+  width: 42px;
+  min-height: 34px;
   margin: 0;
   color: #155347;
   border: 1px solid rgba(45, 105, 89, 0.12);
@@ -2018,6 +2017,7 @@ td b {
 
 .actions-cell .details-trigger {
   width: 44px;
+  min-height: 34px;
   color: #f7fff9;
   border-color: rgba(255, 255, 255, 0.12);
   background: linear-gradient(135deg, #155a4c, #08392f);
@@ -2029,8 +2029,18 @@ td b {
   background: rgba(255, 238, 235, 0.82);
 }
 
+.modal-actions .danger {
+  color: #fff;
+  background: linear-gradient(135deg, #c95650, #8d302c);
+  box-shadow: 0 10px 20px rgba(166, 68, 62, 0.2);
+}
+
 .faq-detail-modal {
   border-radius: 28px;
+}
+
+.faq-detail-modal .modal-actions {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .faq-detail-grid {
