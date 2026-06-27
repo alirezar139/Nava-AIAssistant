@@ -51,7 +51,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     evidence: 'متن خطا، لاگ، توضیح screenshot یا مستندات مرتبط را وارد کنید. اگر ندارید بنویسید: ندارم'
   };
 
-  private readonly diagnosticFlow: Array<keyof DiagnosticPayload> = ['problem', 'systemName', 'scenario', 'serialNumber', 'evidence'];
+  private readonly diagnosticFlow: Array<keyof DiagnosticPayload> = [
+    'problem',
+    'systemName',
+    'scenario',
+    'serialNumber',
+    'evidence'
+  ];
 
   constructor(
     readonly auth: AuthService,
@@ -84,7 +90,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   get inputPlaceholder(): string {
-    return this.diagnosticStep ? this.diagnosticPrompts[this.diagnosticStep] : 'مشکل یا سؤال خود را بنویسید...';
+    return this.diagnosticStep
+      ? this.diagnosticPrompts[this.diagnosticStep]
+      : 'مشکل یا سؤال خود را بنویسید...';
   }
 
   ask(): void {
@@ -169,7 +177,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
             this.changeDetector.markForCheck();
             this.scrollToLatest();
           },
-          error: (error: unknown) => this.handleDiagnosticError(error, 'پرونده ثبت شد، اما تحلیل اولیه انجام نشد.')
+          error: (error: unknown) =>
+            this.handleDiagnosticError(error, 'پرونده ثبت شد، اما تحلیل اولیه انجام نشد.')
         });
       },
       error: (error: unknown) => this.handleDiagnosticError(error, 'ثبت پرونده بررسی انجام نشد.')

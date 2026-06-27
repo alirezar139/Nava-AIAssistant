@@ -161,12 +161,19 @@
               [indeterminate]="someFilteredSelected && !allFilteredSelected"
               (change)="toggleAllFiltered($any($event.target).checked)"
             />
-            ?????? ??? ????? ????
+            انتخاب همه نتایج فعلی
           </label>
-          <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} ???? ?????? ???</span>
-          <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">???????? ??????</button>
-          <button type="button" class="danger bulk-delete" [disabled]="!selectedCount || saving" (click)="deleteSelectedFaqs()">
-            ??? ?????????????
+          <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} مورد انتخاب شده</span>
+          <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">
+            پاک‌کردن انتخاب
+          </button>
+          <button
+            type="button"
+            class="danger bulk-delete"
+            [disabled]="!selectedCount || saving"
+            (click)="deleteSelectedFaqs()"
+          >
+            حذف انتخاب‌شده‌ها
           </button>
         </div>
         <div class="empty" *ngIf="!loading && !faqs.length">هنوز FAQ ثبت نشده است.</div>

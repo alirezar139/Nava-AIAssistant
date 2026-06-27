@@ -67,8 +67,13 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
   }
 
   const joinedText = `${item.problem} ${item.scenario} ${item.evidence}`.toLowerCase();
-  const severity: DiagnosticCaseRecord['severity'] =
-    /خطای ۵۰۰|500|قطع|critical|ناموفق|failed/.test(joinedText) ? 'high' : /کند|تاخیر|warning|هشدار/.test(joinedText) ? 'medium' : 'low';
+  const severity: DiagnosticCaseRecord['severity'] = /خطای ۵۰۰|500|قطع|critical|ناموفق|failed/.test(
+    joinedText
+  )
+    ? 'high'
+    : /کند|تاخیر|warning|هشدار/.test(joinedText)
+      ? 'medium'
+      : 'low';
 
   item.status = severity === 'high' ? 'escalated' : 'analyzed';
   item.severity = severity;
