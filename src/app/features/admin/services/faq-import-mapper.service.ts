@@ -205,14 +205,13 @@ export class FaqImportMapperService {
     const errorText = this.collectSection(lines, ERROR_LABELS);
     const description = this.collectSection(lines, DESCRIPTION_LABELS);
     const solution = this.collectSection(lines, SOLUTION_LABELS);
-    const firstMeaningfulLine = lines.find((line) => !this.isSectionLabel(line) && !this.isIntroLine(line));
-    const question = this.pickQuestion(errorText, firstMeaningfulLine);
-    const answerParts = [description, solution].filter(Boolean);
-    const answer = answerParts.length
-      ? answerParts.join('\n\n')
-      : lines.filter((line) => !this.isSectionLabel(line)).join('\n');
+    const question = this.pickQuestion(errorText);
+    const answer = [
+      `\u062a\u0648\u0636\u06cc\u062d\u0627\u062a:\n${description}`,
+      `\u0631\u0627\u0647 \u062d\u0644:\n${solution}`
+    ].join('\n\n');
 
-    if (!question || !answer || question === answer) return null;
+    if (!question || !description || !solution) return null;
     return { question, answer, category, keywords: this.buildKeywords(question, category) };
   }
 
