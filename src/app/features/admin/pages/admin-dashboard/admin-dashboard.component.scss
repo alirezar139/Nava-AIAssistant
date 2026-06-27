@@ -1804,6 +1804,21 @@ td small {
   margin: 3px auto;
 }
 
+.actions-cell .details-trigger {
+  width: 42px;
+  min-height: 30px;
+  padding: 0;
+  color: #d7efe7;
+  background: rgba(22, 71, 60, 0.9);
+  font-size: 18px;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.actions-cell .details-trigger:hover {
+  background: rgba(14, 54, 46, 0.96);
+}
+
 .link:hover {
   transform: translateY(-1px);
 }
