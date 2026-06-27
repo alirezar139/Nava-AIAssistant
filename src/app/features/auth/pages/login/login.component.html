@@ -1,0 +1,108 @@
+<main class="login-page">
+  <app-theme-toggle class="theme-switch" />
+  <section class="intro">
+    <app-brand-logo class="logo" />
+    <span class="eyebrow">مرکز راهبری دیجیتال</span>
+    <h1>پشتیبانی دقیق،<br /><em>پاسخ‌گویی سریع</em></h1>
+    <p>دانش سامانه‌های سازمانی در یک محیط امن، ساده و همیشه در دسترس.</p>
+    <div class="features">
+      <span>✓ جست‌وجوی هوشمند FAQ</span>
+      <span>✓ ثبت و پیگیری درخواست‌ها</span>
+      <span>✓ مدیریت متمرکز دانش</span>
+    </div>
+  </section>
+
+  <section class="login-card">
+    <div class="card-heading">
+      <span>ورود امن</span>
+      <h2>به حساب خود وارد شوید</h2>
+      <p>برای ادامه اطلاعات حساب سازمانی را وارد کنید.</p>
+    </div>
+    <form (ngSubmit)="login()">
+      <label
+        >نام کاربری
+        <div class="field-shell">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21c.7-4.2 3.4-6 8-6s7.3 1.8 8 6"></path>
+          </svg>
+          <input
+            [(ngModel)]="username"
+            name="username"
+            autocomplete="username"
+            placeholder="نام کاربری"
+            required
+          />
+        </div>
+      </label>
+      <label
+        >رمز عبور
+        <div class="password-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="5" y="10" width="14" height="11" rx="3"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"></path>
+          </svg>
+          <input
+            [(ngModel)]="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="رمز عبور"
+            required
+            (keydown)="updateCapsLock($event)"
+            (keyup)="updateCapsLock($event)"
+          />
+          <button
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'مخفی‌کردن رمز' : 'نمایش رمز'"
+          >
+            {{ showPassword ? 'مخفی' : 'نمایش' }}
+          </button>
+        </div>
+        @if (capsLockOn) {
+          <small class="caps-warning">Caps Lock روشن است</small>
+        }
+      </label>
+      <label
+        >کد امنیتی
+        <div class="captcha-field">
+          <div class="field-shell">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3 20 6v5c0 5.2-3.2 8.6-8 10-4.8-1.4-8-4.8-8-10V6l8-3Z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            <input
+              [(ngModel)]="captchaAnswer"
+              name="captchaAnswer"
+              autocomplete="off"
+              inputmode="text"
+              maxlength="5"
+              placeholder="کد تصویر"
+              required
+            />
+          </div>
+          <button
+            type="button"
+            class="captcha-image"
+            (click)="refreshCaptcha()"
+            aria-label="دریافت کد امنیتی جدید"
+          >
+            @if (captchaImage) {
+              <img [src]="captchaImage" alt="کد امنیتی" />
+            } @else {
+              <span>دریافت کد</span>
+            }
+          </button>
+        </div>
+      </label>
+      <p class="error" role="alert" [class.visible]="error">{{ error || ' ' }}</p>
+      <button type="submit" [disabled]="loading">{{ loading ? 'در حال ورود...' : 'ورود به سامانه' }}</button>
+    </form>
+    <div class="demo">
+      <b>حساب‌های آزمایشی</b>
+      <span>مدیر: admin / Admin&#64;123</span>
+      <span>کاربر: user / User&#64;123</span>
+    </div>
+  </section>
+</main>

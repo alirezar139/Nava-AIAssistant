@@ -1,0 +1,17 @@
+<section class="notification-center" aria-label="اعلان‌های سامانه">
+  <article
+    *ngFor="let notification of notifications.notifications$ | async"
+    class="notification"
+    [class]="'notification ' + notification.type"
+    [attr.role]="notification.type === 'error' ? 'alert' : 'status'"
+  >
+    <span class="icon" aria-hidden="true">
+      {{ notification.type === 'success' ? '✓' : notification.type === 'error' ? '!' : 'i' }}
+    </span>
+    <div>
+      <strong>{{ notification.title }}</strong>
+      <p>{{ notification.message }}</p>
+    </div>
+    <button type="button" (click)="notifications.dismiss(notification.id)" aria-label="بستن اعلان">×</button>
+  </article>
+</section>

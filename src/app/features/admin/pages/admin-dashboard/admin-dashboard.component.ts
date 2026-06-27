@@ -1,0 +1,236 @@
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { ConversationRecord, FaqRecord } from '../../../../core/models/faq.models';
+import { ApiService, FaqPayload } from '../../../../core/services/api.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ExcelReaderService } from '../../../../core/services/excel-reader.service';
+import { ErrorMessageService } from '../../../../core/services/error-message.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
+import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
+
+type PendingConfirmation = { type: 'delete'; faq: FaqRecord } | { type: 'import'; payload: FaqPayload[] };
+
+@Component({
+  selector: 'app-admin-dashboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, BrandLogoComponent],
+  templateUrl: './admin-dashboard.component.html',
+  styleUrl: './admin-dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class AdminDashboardComponent implements OnInit {
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+
+  faqs: FaqRecord[] = [];
+  conversations: ConversationRecord[] = [];
+  activeTab: 'faqs' | 'reports' = 'faqs';
+  editingId: number | null = null;
+  form: FaqPayload = this.emptyForm();
+  loading = true;
+  saving = false;
+  searchTerm = '';
+  categoryFilter = '';
+  pendingConfirmation: PendingConfirmation | null = null;
+
+  get uniqueUserCount(): number {
+    return new Set(this.conversations.map((item) => item.username)).size;
+  }
+
+  get categories(): string[] {
+    return [...new Set(this.faqs.map((faq) => faq.category).filter(Boolean))].sort();
+  }
+
+  get filteredFaqs(): FaqRecord[] {
+    const query = this.searchTerm.trim().toLocaleLowerCase('fa');
+    return this.faqs.filter((faq) => {
+      const matchesCategory = !this.categoryFilter || faq.category === this.categoryFilter;
+      const searchable = `${faq.question} ${faq.answer} ${faq.keywords}`.toLocaleLowerCase('fa');
+      return matchesCategory && (!query || searchable.includes(query));
+    });
+  }
+
+  get confirmationTitle(): string {
+    return this.pendingConfirmation?.type === 'delete' ? 'حذف FAQ' : 'جایگزینی پایگاه دانش';
+  }
+
+  get confirmationText(): string {
+    if (this.pendingConfirmation?.type === 'delete') {
+      return `FAQ «${this.pendingConfirmation.faq.question}» برای همیشه حذف شود؟`;
+    }
+    const count = this.pendingConfirmation?.payload.length ?? 0;
+    return `${count.toLocaleString('fa-IR')} ردیف جایگزین FAQهای فعلی شوند؟`;
+  }
+
+  constructor(
+    readonly auth: AuthService,
+    private readonly api: ApiService,
+    private readonly excelReader: ExcelReaderService,
+    private readonly faqImportMapper: FaqImportMapperService,
+    private readonly errorMessages: ErrorMessageService,
+    private readonly notifications: NotificationService,
+    private readonly router: Router,
+    private readonly changeDetector: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.refresh();
+  }
+
+  refresh(showNotification = false): void {
+    this.loading = true;
+    forkJoin({ faqs: this.api.getFaqs(), conversations: this.api.getConversations() }).subscribe({
+      next: ({ faqs, conversations }) => {
+        this.faqs = faqs;
+        this.conversations = conversations;
+        this.loading = false;
+        if (showNotification) {
+          this.notifications.info('اطلاعات به‌روز شد', 'آخرین FAQها و گزارش‌های کاربران دریافت شدند.');
+        }
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => this.showError(error, 'دریافت اطلاعات از سرور ممکن نبود.')
+    });
+  }
+
+  saveFaq(): void {
+    if (!this.form.question.trim() || !this.form.answer.trim()) {
+      this.notifications.error('اطلاعات ناقص است', 'برای ذخیره FAQ، سؤال و پاسخ را کامل کنید.');
+      return;
+    }
+    this.saving = true;
+    const editingId = this.editingId;
+    const isEditing = editingId !== null;
+    const request = isEditing ? this.api.updateFaq(editingId, this.form) : this.api.createFaq(this.form);
+    request.subscribe({
+      next: () => {
+        this.resetForm();
+        this.notifications.success(
+          isEditing ? 'FAQ به‌روزرسانی شد' : 'FAQ اضافه شد',
+          isEditing
+            ? 'تغییرات پرسش و پاسخ با موفقیت در پایگاه دانش ذخیره شد.'
+            : 'پرسش و پاسخ جدید با موفقیت به پایگاه دانش اضافه شد.'
+        );
+        this.loadFaqs();
+      },
+      error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
+    });
+  }
+
+  editFaq(faq: FaqRecord): void {
+    this.editingId = faq.id;
+    this.form = {
+      question: faq.question,
+      answer: faq.answer,
+      category: faq.category,
+      keywords: faq.keywords
+    };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  deleteFaq(faq: FaqRecord): void {
+    this.pendingConfirmation = { type: 'delete', faq };
+  }
+
+  resetForm(): void {
+    this.form = this.emptyForm();
+    this.editingId = null;
+    this.saving = false;
+  }
+
+  openFilePicker(): void {
+    this.fileInput?.nativeElement.click();
+  }
+
+  async importFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    try {
+      const dataset = await this.excelReader.read(file);
+      const payload = this.faqImportMapper.mapRows(dataset.rows);
+      if (!payload.length) {
+        this.notifications.error('ساختار Excel معتبر نیست', 'ستون‌های «سؤال» و «پاسخ» در فایل پیدا نشدند.');
+        return;
+      }
+      this.pendingConfirmation = { type: 'import', payload };
+      this.changeDetector.markForCheck();
+    } catch {
+      this.notifications.error('خواندن فایل ممکن نیست', 'فایل Excel خراب است یا قالب پشتیبانی‌شده‌ای ندارد.');
+    }
+  }
+
+  logout(): void {
+    this.auth.logout();
+    void this.router.navigateByUrl('/login');
+  }
+
+  confirmPendingAction(): void {
+    const confirmation = this.pendingConfirmation;
+    this.pendingConfirmation = null;
+    if (!confirmation) return;
+
+    this.saving = true;
+    if (confirmation.type === 'delete') {
+      this.api.deleteFaq(confirmation.faq.id).subscribe({
+        next: () => {
+          this.notifications.success('FAQ حذف شد', 'مورد انتخاب‌شده از پایگاه دانش حذف شد.');
+          this.loadFaqs();
+        },
+        error: (error: unknown) => this.showError(error, 'حذف FAQ انجام نشد.')
+      });
+      return;
+    }
+
+    this.api.importFaqs(confirmation.payload).subscribe({
+      next: ({ count }) => {
+        this.notifications.success(
+          'ورود Excel تکمیل شد',
+          `${count.toLocaleString('fa-IR')} FAQ با موفقیت وارد پایگاه دانش شد.`
+        );
+        this.loadFaqs();
+      },
+      error: (error: unknown) => this.showError(error, 'ورود اطلاعات Excel انجام نشد.')
+    });
+  }
+
+  cancelConfirmation(): void {
+    this.pendingConfirmation = null;
+  }
+
+  private loadFaqs(): void {
+    this.api.getFaqs().subscribe({
+      next: (faqs) => {
+        this.faqs = faqs;
+        this.saving = false;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => this.showError(error, 'به‌روزرسانی فهرست انجام نشد.')
+    });
+  }
+
+  private emptyForm(): FaqPayload {
+    return { question: '', answer: '', category: '', keywords: '' };
+  }
+
+  private showError(error: unknown, fallback: string): void {
+    const resolved = this.errorMessages.resolve(error, fallback);
+    this.notifications.error(resolved.title, this.errorMessages.formatMessage(resolved));
+    this.loading = false;
+    this.saving = false;
+    this.changeDetector.markForCheck();
+  }
+}

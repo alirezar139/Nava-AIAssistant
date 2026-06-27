@@ -1,0 +1,115 @@
+:host {
+  position: fixed;
+  z-index: 1000;
+  top: 20px;
+  inset-inline-end: 20px;
+  pointer-events: none;
+}
+
+.notification-center {
+  display: grid;
+  width: min(380px, calc(100vw - 32px));
+  gap: 10px;
+}
+
+.notification {
+  position: relative;
+  display: grid;
+  grid-template-columns: 38px 1fr 28px;
+  align-items: center;
+  gap: 11px;
+  padding: 13px;
+  overflow: hidden;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 16px;
+  color: var(--color-body);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 42%), var(--crystal-surface);
+  box-shadow:
+    var(--crystal-shadow),
+    inset 1px 1px 0 var(--crystal-edge);
+  backdrop-filter: var(--crystal-blur);
+  pointer-events: auto;
+  animation: notification-in 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.notification::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  content: '';
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.notification.success {
+  color: var(--color-link);
+}
+
+.notification.error {
+  color: var(--danger);
+}
+
+.notification.info {
+  color: var(--color-metric);
+}
+
+.icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-size: 16px;
+  font-weight: 900;
+  place-items: center;
+}
+
+.notification div {
+  display: grid;
+  gap: 3px;
+  color: var(--color-body);
+}
+
+.notification strong {
+  color: var(--color-heading);
+  font-size: 12px;
+}
+
+.notification p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.notification button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  color: var(--color-secondary);
+  background: var(--crystal-soft);
+  font-size: 19px;
+  line-height: 1;
+}
+
+@keyframes notification-in {
+  from {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.96);
+  }
+}
+
+@media (max-width: 600px) {
+  :host {
+    top: 12px;
+    right: 16px;
+    left: 16px;
+  }
+  .notification-center {
+    width: 100%;
+  }
+}

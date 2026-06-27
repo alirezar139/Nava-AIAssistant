@@ -1,0 +1,136 @@
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand-home" routerLink="/assistant" aria-label="صفحه اصلی دستیار">
+      <app-brand-logo class="brand-mark" />
+      <div class="brand-copy"><span>مرکز راهبری دیجیتال</span><strong>دستیار پشتیبانی سامانه‌ها</strong></div>
+    </a>
+    <div class="topbar-actions">
+      <app-theme-toggle />
+      <div class="account-info">
+        <div>
+          <b>{{ auth.user?.fullName }}</b
+          ><small>کاربر سامانه</small>
+        </div>
+        <button type="button" (click)="logout()">خروج</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">پاسخ سریع از دانش تأییدشده سازمان</div>
+      <h1>چه کمکی از دستیار<br /><em>راهبری سامانه‌ها</em> می‌خواهید؟</h1>
+      <p>
+        سؤال خود را با جزئیات بنویسید. پاسخ بر اساس FAQهایی ارائه می‌شود که توسط مدیر سامانه تأیید شده‌اند.
+      </p>
+      <div class="privacy"><span>✓</span> گفت‌وگو برای بهبود پشتیبانی ثبت می‌شود</div>
+    </section>
+
+    <section class="workspace user-workspace">
+      <aside class="data-panel knowledge-panel">
+        <div class="section-heading">
+          <span class="step">۱</span>
+          <div><strong>پایگاه دانش</strong><small>وضعیت FAQ سازمان</small></div>
+        </div>
+        <div class="knowledge-state">
+          <div class="knowledge-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16v14H4zM8 9h8M8 13h5"></path>
+              <path d="m15 16 2 2 4-5"></path>
+            </svg>
+          </div>
+          <strong>{{ loading ? 'در حال دریافت...' : 'آماده پاسخ‌گویی' }}</strong>
+          <span>{{ faqs.length.toLocaleString('fa-IR') }} پرسش و پاسخ فعال</span>
+        </div>
+        <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+        <div class="hint">
+          <b>راهنمای پرسش بهتر</b>
+          <p>
+            نام سامانه، متن خطا و کاری که انجام می‌دادید را در سؤال ذکر کنید تا نتیجه دقیق‌تری دریافت کنید.
+          </p>
+        </div>
+        <div class="support-note">
+          <span>پاسخ پیدا نشد؟</span>
+          <p>مشکل شما در گزارش مدیریت ثبت می‌شود تا تیم پشتیبانی FAQ جدیدی برای آن آماده کند.</p>
+        </div>
+      </aside>
+
+      <section class="chat-panel">
+        <div class="section-heading chat-heading">
+          <span class="step">۲</span>
+          <div><strong>گفت‌وگو با دستیار</strong><small>پاسخ بر اساس FAQهای تأییدشده</small></div>
+        </div>
+        <div #conversation class="conversation" role="log" aria-live="polite" aria-label="گفت‌وگو با دستیار">
+          <div class="welcome" *ngIf="!messages.length">
+            <app-brand-logo class="assistant-logo" />
+            <h2>سؤال خود را مطرح کنید</h2>
+            <p>برای شروع یکی از نمونه‌ها را انتخاب کنید یا سؤال خودتان را بنویسید.</p>
+            <div class="examples">
+              <button type="button" (click)="useExample('چطور رمز عبور را بازیابی کنم؟')">
+                بازیابی رمز عبور</button
+              ><button type="button" (click)="useExample('برای خطای ورود چه کاری انجام دهم؟')">
+                خطای ورود به سامانه
+              </button>
+            </div>
+          </div>
+          <ng-container *ngFor="let message of messages">
+            <div class="message" [class.user]="message.role === 'user'">
+              <div class="avatar">
+                @if (message.role === 'user') {
+                  ش
+                } @else {
+                  <app-brand-logo class="mini-logo" />
+                }
+              </div>
+              <div class="bubble">
+                <p>{{ message.text }}</p>
+                <article *ngFor="let match of message.matches">
+                  <strong>{{ match.title }}</strong>
+                  <p>{{ match.text }}</p>
+                </article>
+                <div class="feedback" *ngIf="message.role === 'assistant'">
+                  <span>{{ message.feedback ? 'بازخورد شما ثبت شد' : 'این پاسخ مفید بود؟' }}</span>
+                  <button
+                    type="button"
+                    [class.active]="message.feedback === 'helpful'"
+                    (click)="rateMessage(message, 'helpful')"
+                    aria-label="پاسخ مفید بود"
+                  >
+                    مفید
+                  </button>
+                  <button
+                    type="button"
+                    [class.active]="message.feedback === 'unhelpful'"
+                    (click)="rateMessage(message, 'unhelpful')"
+                    aria-label="پاسخ مفید نبود"
+                  >
+                    نامفید
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <div class="message typing-message" *ngIf="typing">
+            <div class="avatar"><app-brand-logo class="mini-logo" /></div>
+            <div class="typing-bubble" aria-label="دستیار در حال تایپ است"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <form class="composer" (ngSubmit)="ask()">
+          <input
+            [(ngModel)]="question"
+            name="question"
+            autocomplete="off"
+            [disabled]="loading || typing"
+            placeholder="مشکل یا سؤال خود را بنویسید..."
+          /><button type="submit" [disabled]="loading || typing" aria-label="ارسال پرسش">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 12 16-8-5 16-3-6-8-2Z"></path>
+              <path d="m12 14 8-10"></path>
+            </svg>
+          </button>
+        </form>
+      </section>
+    </section>
+  </main>
+  <footer>سامانه راهبری و پشتیبانی <span>•</span> نسخه آزمایشی ۰.۲</footer>
+</div>

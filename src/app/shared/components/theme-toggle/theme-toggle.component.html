@@ -1,0 +1,115 @@
+<div class="theme-actions">
+  <button
+    type="button"
+    class="theme-control"
+    [class.dark-active]="theme.isDark"
+    (click)="theme.toggle()"
+    [attr.aria-label]="theme.isDark ? 'فعال‌کردن تم روشن' : 'فعال‌کردن تم تاریک'"
+  >
+    <span class="active-box" aria-hidden="true"></span>
+    <span class="mode" [class.active]="!theme.isDark">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"
+        ></path>
+      </svg>
+      <small>روشن</small>
+    </span>
+    <span class="mode" [class.active]="theme.isDark">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"></path>
+      </svg>
+      <small>تاریک</small>
+    </span>
+  </button>
+
+  <button
+    type="button"
+    class="customize-button"
+    [class.active]="settingsOpen"
+    (click)="settingsOpen = !settingsOpen"
+    aria-label="شخصی‌سازی ظاهر"
+    [attr.aria-expanded]="settingsOpen"
+    aria-controls="theme-settings-panel"
+    aria-haspopup="dialog"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3a9 9 0 1 0 0 18h1.3a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h4a5 5 0 0 0 5-5c0-3-4-5-9-5Z"></path>
+      <circle cx="7.5" cy="10" r="1"></circle>
+      <circle cx="10" cy="6.5" r="1"></circle>
+      <circle cx="15" cy="7" r="1"></circle>
+    </svg>
+  </button>
+</div>
+
+<section
+  id="theme-settings-panel"
+  class="theme-panel"
+  *ngIf="settingsOpen"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="theme-settings-title"
+>
+  <div class="panel-heading">
+    <div>
+      <strong id="theme-settings-title">ظاهر شخصی من</strong><small>تنظیمات برای حساب شما ذخیره می‌شود</small>
+    </div>
+    <button type="button" (click)="settingsOpen = false" aria-label="بستن">×</button>
+  </div>
+
+  <span class="field-title">پالت رنگی</span>
+  <div class="palette-grid">
+    <button
+      type="button"
+      [class.selected]="theme.palette === 'jade'"
+      [attr.aria-pressed]="theme.palette === 'jade'"
+      (click)="selectPalette('jade')"
+    >
+      <i class="jade"></i><span>یشمی</span>
+    </button>
+    <button
+      type="button"
+      [class.selected]="theme.palette === 'ocean'"
+      [attr.aria-pressed]="theme.palette === 'ocean'"
+      (click)="selectPalette('ocean')"
+    >
+      <i class="ocean"></i><span>اقیانوسی</span>
+    </button>
+    <button
+      type="button"
+      [class.selected]="theme.palette === 'violet'"
+      [attr.aria-pressed]="theme.palette === 'violet'"
+      (click)="selectPalette('violet')"
+    >
+      <i class="violet"></i><span>بنفش</span>
+    </button>
+    <button
+      type="button"
+      [class.selected]="theme.palette === 'graphite'"
+      [attr.aria-pressed]="theme.palette === 'graphite'"
+      (click)="selectPalette('graphite')"
+    >
+      <i class="graphite"></i><span>خنثی</span>
+    </button>
+  </div>
+
+  <label class="preference-row">
+    <span><b>کنتراست بیشتر</b><small>خوانایی بهتر متن و مرزها</small></span>
+    <input
+      type="checkbox"
+      [checked]="theme.highContrast"
+      (change)="theme.setHighContrast(!theme.highContrast)"
+      aria-label="کنتراست بیشتر"
+    />
+  </label>
+  <label class="preference-row">
+    <span><b>انیمیشن رابط</b><small>حرکت‌ها و جلوه‌های صفحه</small></span>
+    <input
+      type="checkbox"
+      [checked]="theme.motionEnabled"
+      (change)="theme.setMotion(!theme.motionEnabled)"
+      aria-label="انیمیشن رابط"
+    />
+  </label>
+</section>

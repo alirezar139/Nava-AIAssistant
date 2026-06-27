@@ -1,0 +1,224 @@
+<div class="admin-shell">
+  <header>
+    <a class="brand" routerLink="/admin" aria-label="صفحه اصلی پنل مدیریت">
+      <app-brand-logo class="brand-logo" />
+      <div><b>مرکز راهبری دیجیتال</b><small>پنل مدیریت دانش و پشتیبانی</small></div>
+    </a>
+    <div class="header-actions">
+      <app-theme-toggle />
+      <div class="account">
+        <div>
+          <b>{{ auth.user?.fullName }}</b
+          ><small>مدیر سامانه</small>
+        </div>
+        <button type="button" (click)="logout()">خروج</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <div>
+        <span>داشبورد مدیریتی</span>
+        <h1>مدیریت دانش پشتیبانی</h1>
+        <p>FAQها را به‌روز کنید و مسائل کاربران را در یک نگاه ببینید.</p>
+      </div>
+      <button type="button" class="refresh icon-button" [disabled]="loading" (click)="refresh(true)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 7v5h-5M4 17v-5h5"></path>
+          <path d="M6.1 8A7 7 0 0 1 18 6l2 6M17.9 16A7 7 0 0 1 6 18l-2-6"></path>
+        </svg>
+        به‌روزرسانی اطلاعات
+      </button>
+    </section>
+
+    <section class="stats">
+      <article>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
+          </svg>
+        </div>
+        <span>FAQ فعال</span><strong>{{ faqs.length.toLocaleString('fa-IR') }}</strong
+        ><small>پرسش و پاسخ ثبت‌شده</small>
+      </article>
+      <article>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16v12H8l-4 3V5Z"></path>
+            <path d="M8 9h8M8 13h5"></path>
+          </svg>
+        </div>
+        <span>درخواست کاربران</span><strong>{{ conversations.length.toLocaleString('fa-IR') }}</strong
+        ><small>گفت‌وگوی ثبت‌شده</small>
+      </article>
+      <article>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="8" r="3"></circle>
+            <circle cx="17" cy="10" r="2"></circle>
+            <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.5 6 4"></path>
+          </svg>
+        </div>
+        <span>کاربران درگیر</span><strong>{{ uniqueUserCount.toLocaleString('fa-IR') }}</strong
+        ><small>کاربر دارای درخواست</small>
+      </article>
+    </section>
+
+    <nav role="tablist" aria-label="بخش‌های پنل مدیریت">
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'faqs'"
+        [class.active]="activeTab === 'faqs'"
+        (click)="activeTab = 'faqs'"
+      >
+        مدیریت FAQ</button
+      ><button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'reports'"
+        [class.active]="activeTab === 'reports'"
+        (click)="activeTab = 'reports'"
+      >
+        گزارش مشکلات کاربران
+      </button>
+    </nav>
+
+    <ng-container *ngIf="activeTab === 'faqs'">
+      <section class="editor-card">
+        <div class="section-title">
+          <div>
+            <span>مدیریت محتوا</span>
+            <h2>{{ editingId ? 'ویرایش FAQ' : 'افزودن FAQ جدید' }}</h2>
+          </div>
+          <button type="button" class="import icon-button" [disabled]="saving" (click)="openFilePicker()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V3M7 8l5-5 5 5M5 13v7h14v-7"></path>
+            </svg>
+            ورود از Excel</button
+          ><input #fileInput hidden type="file" accept=".xlsx" (change)="importFile($event)" />
+        </div>
+        <form (ngSubmit)="saveFaq()">
+          <label class="wide"
+            >سؤال<input [(ngModel)]="form.question" name="question" placeholder="پرسش متداول کاربر" required
+          /></label>
+          <label
+            >دسته‌بندی<input [(ngModel)]="form.category" name="category" placeholder="مثلاً ورود به سامانه"
+          /></label>
+          <label
+            >کلمات کلیدی<input [(ngModel)]="form.keywords" name="keywords" placeholder="ورود، رمز، حساب"
+          /></label>
+          <label class="wide"
+            >پاسخ<textarea
+              [(ngModel)]="form.answer"
+              name="answer"
+              rows="4"
+              placeholder="راهکار کامل و شفاف"
+              required
+            ></textarea>
+          </label>
+          <div class="actions wide">
+            <button type="button" class="ghost" *ngIf="editingId" (click)="resetForm()">انصراف</button
+            ><button type="submit" [disabled]="saving">{{ saving ? 'در حال ذخیره...' : 'ذخیره FAQ' }}</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="table-card">
+        <div class="section-title">
+          <div>
+            <span>پایگاه دانش</span>
+            <h2>فهرست FAQها</h2>
+          </div>
+          <small>{{ faqs.length.toLocaleString('fa-IR') }} مورد</small>
+        </div>
+        <div class="table-tools">
+          <label>
+            <span>جست‌وجو در FAQ</span>
+            <input [(ngModel)]="searchTerm" placeholder="سؤال، پاسخ یا کلمه کلیدی..." />
+          </label>
+          <label>
+            <span>دسته‌بندی</span>
+            <select [(ngModel)]="categoryFilter">
+              <option value="">همه دسته‌ها</option>
+              <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+            </select>
+          </label>
+          <span class="result-count">{{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه</span>
+        </div>
+        <div class="empty" *ngIf="!loading && !faqs.length">هنوز FAQ ثبت نشده است.</div>
+        <div class="empty" *ngIf="faqs.length && !filteredFaqs.length">نتیجه‌ای مطابق فیلترها پیدا نشد.</div>
+        <div class="table-wrap" *ngIf="filteredFaqs.length">
+          <table>
+            <thead>
+              <tr>
+                <th>سؤال</th>
+                <th>دسته‌بندی</th>
+                <th>آخرین تغییر</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let faq of filteredFaqs">
+                <td>
+                  <b>{{ faq.question }}</b
+                  ><small>{{ faq.answer }}</small>
+                </td>
+                <td>
+                  <span class="tag">{{ faq.category || 'عمومی' }}</span>
+                </td>
+                <td>{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
+                <td>
+                  <button type="button" class="link" (click)="editFaq(faq)">ویرایش</button
+                  ><button type="button" class="link danger" (click)="deleteFaq(faq)">حذف</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </ng-container>
+
+    <section class="table-card" *ngIf="activeTab === 'reports'">
+      <div class="section-title">
+        <div>
+          <span>نظارت پشتیبانی</span>
+          <h2>مشکلات و پاسخ‌های کاربران</h2>
+        </div>
+        <small>{{ conversations.length.toLocaleString('fa-IR') }} گفتگو</small>
+      </div>
+      <div class="empty" *ngIf="!conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
+      <div class="reports" *ngFor="let item of conversations">
+        <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
+        <div class="report-content">
+          <div class="report-meta">
+            <b>{{ item.userFullName }}</b
+            ><span>{{ item.createdAt | date: 'yyyy/MM/dd - HH:mm' }}</span>
+          </div>
+          <p class="question">{{ item.question }}</p>
+          <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" *ngIf="pendingConfirmation" (click)="cancelConfirmation()">
+    <section
+      class="confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-icon">!</div>
+      <span>تأیید عملیات</span>
+      <h2 id="confirm-title">{{ confirmationTitle }}</h2>
+      <p>{{ confirmationText }}</p>
+      <div class="modal-actions">
+        <button type="button" class="cancel" (click)="cancelConfirmation()">انصراف</button>
+        <button type="button" class="confirm" (click)="confirmPendingAction()">تأیید و ادامه</button>
+      </div>
+    </section>
+  </div>
+</div>

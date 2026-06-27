@@ -1,0 +1,287 @@
+:root {
+  font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+  color: #18322e;
+  background: #f4f6f3;
+  font-synthesis: none;
+  --primary-950: #0b2924;
+  --primary-900: #123b34;
+  --primary-800: #185044;
+  --primary-700: #246b5b;
+  --primary-100: #dcebe5;
+  --accent-600: #a87536;
+  --accent-100: #f2e8d8;
+  --surface: #ffffff;
+  --surface-soft: #f6f8f6;
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-strong: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.92);
+  --border: #cddbd5;
+  --text: #102f29;
+  --muted: #526a63;
+  --danger: #a94747;
+  --color-heading: #0e342b;
+  --color-body: #294a42;
+  --color-secondary: #5a716a;
+  --color-subtle: #748781;
+  --color-metric: #925b1f;
+  --color-metric-soft: #f5e5ca;
+  --color-link: #176454;
+  --font-xs: 10px;
+  --font-sm: 11px;
+  --font-md: 13px;
+  --font-lg: 18px;
+  --crystal-surface: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(229, 245, 239, 0.74) 48%,
+    rgba(255, 242, 218, 0.78) 100%
+  );
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(230, 243, 238, 0.62));
+  --crystal-edge: rgba(255, 255, 255, 0.96);
+  --crystal-inner-edge: rgba(26, 99, 82, 0.12);
+  --crystal-shine: rgba(255, 255, 255, 0.58);
+  --crystal-shadow: 0 24px 65px rgba(15, 61, 51, 0.14);
+  --crystal-blur: blur(28px) saturate(165%);
+  --page-bg: #e4eee9;
+  --ambient-one: rgba(205, 145, 59, 0.2);
+  --ambient-two: rgba(27, 133, 105, 0.2);
+  --shadow-sm: 0 8px 24px rgba(14, 49, 42, 0.06);
+  --shadow-lg: 0 28px 80px rgba(14, 49, 42, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color: #f1f8f5;
+  background: #050f0c;
+  --surface: #102b24;
+  --surface-soft: #071b16;
+  --glass: rgba(14, 42, 34, 0.82);
+  --glass-strong: rgba(18, 51, 42, 0.94);
+  --glass-border: rgba(184, 224, 211, 0.24);
+  --border: rgba(184, 224, 211, 0.25);
+  --text: #f1f8f5;
+  --muted: #bfd0ca;
+  --color-heading: #f4faf8;
+  --color-body: #e2eeea;
+  --color-secondary: #bfd0ca;
+  --color-subtle: #9fb4ad;
+  --color-metric: #f3c77f;
+  --color-metric-soft: rgba(171, 112, 38, 0.2);
+  --color-link: #8ed5c0;
+  --crystal-surface: linear-gradient(
+    135deg,
+    rgba(29, 66, 56, 0.96) 0%,
+    rgba(13, 42, 34, 0.9) 50%,
+    rgba(48, 39, 25, 0.88) 100%
+  );
+  --crystal-soft: linear-gradient(135deg, rgba(24, 61, 51, 0.88), rgba(8, 31, 25, 0.78));
+  --crystal-edge: rgba(194, 232, 220, 0.28);
+  --crystal-inner-edge: rgba(211, 240, 230, 0.1);
+  --crystal-shine: rgba(190, 229, 216, 0.14);
+  --crystal-shadow: 0 28px 75px rgba(0, 0, 0, 0.38);
+  --page-bg: #050f0c;
+  --ambient-one: rgba(190, 132, 49, 0.17);
+  --ambient-two: rgba(31, 142, 112, 0.17);
+  --primary-100: #183f35;
+  --accent-100: #3b3021;
+  --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.34);
+}
+
+/* User-selectable palettes */
+:root[data-palette='ocean'] {
+  --primary-950: #072d42;
+  --primary-900: #0a405c;
+  --primary-800: #105a7c;
+  --primary-700: #16779d;
+  --primary-100: #dceff5;
+  --accent-600: #2d8e91;
+  --accent-100: #dff1ef;
+  --color-heading: #083c55;
+  --color-link: #126d91;
+  --color-metric: #176e86;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(215, 239, 245, 0.68));
+  --page-bg: #e4f0f4;
+  --ambient-one: rgba(42, 139, 180, 0.2);
+  --ambient-two: rgba(62, 183, 177, 0.18);
+}
+
+:root[data-theme='dark'][data-palette='ocean'] {
+  --surface: #0b2938;
+  --surface-soft: #061b27;
+  --color-heading: #eefaff;
+  --color-link: #75d3eb;
+  --color-metric: #86e0dc;
+  --crystal-surface: linear-gradient(135deg, rgba(17, 62, 82, 0.96), rgba(6, 34, 48, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(17, 58, 76, 0.9), rgba(4, 27, 39, 0.82));
+  --crystal-edge: rgba(170, 226, 241, 0.28);
+  --page-bg: #04131c;
+  --ambient-one: rgba(25, 120, 160, 0.2);
+  --ambient-two: rgba(49, 177, 173, 0.14);
+}
+
+:root[data-palette='violet'] {
+  --primary-950: #312451;
+  --primary-900: #49366f;
+  --primary-800: #634b91;
+  --primary-700: #7a5eaa;
+  --primary-100: #ebe5f4;
+  --accent-600: #a15782;
+  --accent-100: #f4e3ed;
+  --color-heading: #493268;
+  --color-link: #76539e;
+  --color-metric: #8b416f;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(237, 225, 247, 0.68));
+  --page-bg: #eee9f3;
+  --ambient-one: rgba(128, 84, 177, 0.2);
+  --ambient-two: rgba(197, 91, 151, 0.16);
+}
+
+:root[data-theme='dark'][data-palette='violet'] {
+  --surface: #271f3a;
+  --surface-soft: #171124;
+  --color-heading: #faf4ff;
+  --color-link: #d1aff2;
+  --color-metric: #f1a7ce;
+  --crystal-surface: linear-gradient(135deg, rgba(62, 46, 87, 0.96), rgba(27, 19, 43, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(56, 42, 80, 0.9), rgba(23, 16, 37, 0.82));
+  --crystal-edge: rgba(220, 196, 239, 0.27);
+  --page-bg: #120d1d;
+  --ambient-one: rgba(123, 82, 174, 0.2);
+  --ambient-two: rgba(192, 85, 148, 0.14);
+}
+
+:root[data-palette='graphite'] {
+  --primary-950: #202a2f;
+  --primary-900: #35444b;
+  --primary-800: #4c5f67;
+  --primary-700: #667a82;
+  --primary-100: #e4eaec;
+  --accent-600: #687980;
+  --accent-100: #e9edef;
+  --color-heading: #25363d;
+  --color-link: #4a6670;
+  --color-metric: #405b65;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(226, 233, 235, 0.72));
+  --page-bg: #e8edef;
+  --ambient-one: rgba(87, 108, 117, 0.16);
+  --ambient-two: rgba(137, 154, 160, 0.15);
+}
+
+:root[data-theme='dark'][data-palette='graphite'] {
+  --surface: #222b2f;
+  --surface-soft: #13191c;
+  --color-heading: #f5f8f9;
+  --color-link: #b7d1d9;
+  --color-metric: #d5e2e6;
+  --crystal-surface: linear-gradient(135deg, rgba(52, 64, 69, 0.96), rgba(22, 29, 32, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(46, 57, 62, 0.9), rgba(18, 24, 27, 0.84));
+  --crystal-edge: rgba(222, 234, 238, 0.24);
+  --page-bg: #101619;
+  --ambient-one: rgba(104, 126, 135, 0.16);
+  --ambient-two: rgba(70, 88, 95, 0.15);
+}
+
+:root[data-contrast='high'] {
+  --text: #071d18;
+  --muted: #334b44;
+  --color-body: #112f28;
+  --color-secondary: #344f47;
+  --color-subtle: #4a625b;
+  --border: rgba(10, 56, 46, 0.48);
+  --crystal-edge: rgba(17, 79, 65, 0.5);
+}
+
+:root[data-theme='dark'][data-contrast='high'] {
+  --text: #ffffff;
+  --muted: #e1eee9;
+  --color-body: #f3faf7;
+  --color-secondary: #dbe9e4;
+  --color-subtle: #bdcec8;
+  --border: rgba(226, 247, 240, 0.52);
+  --crystal-edge: rgba(226, 247, 240, 0.48);
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
+    radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
+}
+:root[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
+    radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
+}
+body,
+button,
+input,
+textarea,
+select {
+  transition:
+    color 0.28s ease,
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+button,
+input,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+button:not(:disabled):active {
+  transform: translateY(1px);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  box-shadow: none;
+}
+::selection {
+  color: #fff;
+  background: var(--primary-700);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b7c8c1 transparent;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(173, 124, 63, 0.45);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) *,
+  :root:not([data-motion='full']) *::before,
+  :root:not([data-motion='full']) *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after {
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+}
