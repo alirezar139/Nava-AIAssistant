@@ -41,6 +41,7 @@ export class AdminDashboardComponent implements OnInit {
   conversations: ConversationRecord[] = [];
   activeTab: 'faqs' | 'reports' = 'faqs';
   editingId: number | null = null;
+  detailFaq: FaqRecord | null = null;
   form: FaqPayload = this.emptyForm();
   editForm: FaqPayload = this.emptyForm();
   loading = true;
@@ -199,6 +200,10 @@ export class AdminDashboardComponent implements OnInit {
     };
   }
 
+  showFaqDetails(faq: FaqRecord): void {
+    this.detailFaq = faq;
+  }
+
   saveEditedFaq(): void {
     const editingId = this.editingId;
     if (editingId === null) return;
@@ -282,6 +287,10 @@ export class AdminDashboardComponent implements OnInit {
     if (this.saving) return;
     this.editingId = null;
     this.editForm = this.emptyForm();
+  }
+
+  closeDetailDialog(): void {
+    this.detailFaq = null;
   }
 
   openFilePicker(): void {

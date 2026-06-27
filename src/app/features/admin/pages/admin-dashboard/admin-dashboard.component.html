@@ -196,8 +196,6 @@
             <colgroup>
               <col class="select-col-width" />
               <col class="error-col-width" />
-              <col class="description-col-width" />
-              <col class="solution-col-width" />
               <col class="category-col-width" />
               <col class="date-col-width" />
               <col class="actions-col-width" />
@@ -206,8 +204,6 @@
               <tr>
                 <th class="select-col"></th>
                 <th>متن خطا</th>
-                <th>توضیحات</th>
-                <th>راه‌حل</th>
                 <th>دسته‌بندی</th>
                 <th>آخرین تغییر</th>
                 <th>عملیات</th>
@@ -226,17 +222,12 @@
                   <b>{{ faq.question }}</b>
                 </td>
                 <td>
-                  <small>{{ getFaqDescription(faq) }}</small>
-                </td>
-                <td>
-                  <small>{{ getFaqSolution(faq) || 'ثبت نشده' }}</small>
-                </td>
-                <td>
                   <span class="tag">{{ faq.category || 'عمومی' }}</span>
                 </td>
                 <td>{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
                 <td class="actions-cell">
-                  <button type="button" class="link" (click)="editFaq(faq)">ویرایش</button
+                  <button type="button" class="link" (click)="showFaqDetails(faq)">جزئیات</button
+                  ><button type="button" class="link" (click)="editFaq(faq)">ویرایش</button
                   ><button type="button" class="link danger" (click)="deleteFaq(faq)">حذف</button>
                 </td>
               </tr>
@@ -325,6 +316,47 @@
       </div>
     </section>
   </main>
+
+  <div class="modal-backdrop" *ngIf="detailFaq" (click)="closeDetailDialog()">
+    <section
+      class="confirm-modal faq-detail-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detail-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="section-title">
+        <div>
+          <span>جزئیات FAQ</span>
+          <h2 id="detail-title">قالب سه‌بخشی خطا</h2>
+        </div>
+      </div>
+      <div class="faq-detail-grid">
+        <article>
+          <span>متن خطا</span>
+          <p>{{ detailFaq.question }}</p>
+        </article>
+        <article>
+          <span>توضیحات</span>
+          <p>{{ getFaqDescription(detailFaq) }}</p>
+        </article>
+        <article>
+          <span>راه‌حل</span>
+          <p>{{ getFaqSolution(detailFaq) || 'ثبت نشده' }}</p>
+        </article>
+        <article>
+          <span>دسته‌بندی</span>
+          <p>{{ detailFaq.category || 'عمومی' }}</p>
+        </article>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="cancel" (click)="closeDetailDialog()">بستن</button>
+        <button type="button" class="confirm" (click)="editFaq(detailFaq); closeDetailDialog()">
+          ویرایش
+        </button>
+      </div>
+    </section>
+  </div>
 
   <div class="modal-backdrop" *ngIf="editingId !== null" (click)="closeEditDialog()">
     <section

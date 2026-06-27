@@ -1137,6 +1137,41 @@ tbody tr:hover td {
 .edit-form textarea {
   min-height: 170px;
 }
+
+.faq-detail-modal {
+  width: min(780px, 100%);
+  text-align: right;
+}
+
+.faq-detail-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.faq-detail-grid article {
+  padding: 14px 16px;
+  border: 1px solid rgba(39, 88, 75, 0.1);
+  border-radius: 16px;
+  background: rgba(247, 251, 249, 0.74);
+}
+
+.faq-detail-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--primary-800);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.faq-detail-grid p {
+  margin: 0;
+  color: #284b43;
+  font-size: 12px;
+  line-height: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .modal-icon {
   display: grid;
   place-items: center;
@@ -1623,27 +1658,19 @@ table {
 }
 
 .error-col-width {
-  width: 23%;
-}
-
-.description-col-width {
-  width: 21%;
-}
-
-.solution-col-width {
-  width: 24%;
+  width: auto;
 }
 
 .category-col-width {
-  width: 9%;
+  width: 180px;
 }
 
 .date-col-width {
-  width: 118px;
+  width: 150px;
 }
 
 .actions-col-width {
-  width: 92px;
+  width: 112px;
 }
 
 thead th {
@@ -1773,7 +1800,7 @@ td small {
 }
 
 .actions-cell .link {
-  width: 68px;
+  width: 78px;
   margin: 3px auto;
 }
 
