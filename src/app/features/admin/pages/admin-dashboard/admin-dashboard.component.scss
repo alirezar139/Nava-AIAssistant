@@ -1785,3 +1785,51 @@ td small {
     width: 100%;
   }
 }
+
+/* Final typography alignment for admin controls */
+.table-tools label,
+.selection-toolbar,
+.pagination-bar,
+.page-size,
+.result-count,
+.search-field input,
+.table-tools select,
+.table-tools input,
+.pagination-bar select,
+.pagination-bar button,
+.link {
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.8;
+  letter-spacing: 0;
+}
+
+.table-tools label > span {
+  margin-bottom: 7px;
+  color: #31564d;
+  font-size: 12px;
+  line-height: 1.7;
+  font-weight: 900;
+}
+
+.search-field input,
+.table-tools select {
+  min-height: 56px;
+  font-weight: 800;
+}
+
+.search-field input::placeholder {
+  color: #7c8f89;
+  font-weight: 800;
+}
+
+.table-tools select {
+  padding: 0 16px;
+  color: #1b433a;
+}
+
+.result-count {
+  min-height: 56px;
+  align-self: end;
+  font-weight: 900;
+}
