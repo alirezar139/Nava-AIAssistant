@@ -68,7 +68,7 @@ export class ThemeService {
 
   private loadPreferences(): ThemePreferences {
     const defaults: ThemePreferences = {
-      mode: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+      mode: 'light',
       palette: 'jade',
       highContrast: false,
       motion: true
