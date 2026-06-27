@@ -9,7 +9,7 @@
 همه فرمان‌ها باید در پوشه زیر اجرا شوند:
 
 ```text
-C:\project\nava-ai-assistant
+C:\project\rahbari-assistant
 ```
 
 ## نصب اولیه
@@ -17,7 +17,7 @@ C:\project\nava-ai-assistant
 این مرحله فقط بار اول یا پس از تغییر وابستگی‌ها لازم است:
 
 ```powershell
-cd C:\project\nava-ai-assistant
+cd C:\project\rahbari-assistant
 npm install
 npm --prefix server install
 ```
@@ -29,7 +29,7 @@ npm --prefix server install
 در ترمینال اول:
 
 ```powershell
-cd C:\project\nava-ai-assistant
+cd C:\project\rahbari-assistant
 npm run start:api
 ```
 
@@ -44,14 +44,14 @@ http://127.0.0.1:3000/api/health
 در ترمینال دوم:
 
 ```powershell
-cd C:\project\nava-ai-assistant
+cd C:\project\rahbari-assistant
 npm start
 ```
 
 صفحه ورود:
 
 ```text
-http://127.0.0.1:4200/login
+http://localhost:4200/
 ```
 
 هر دو ترمینال باید هنگام استفاده از سامانه باز بمانند. بستن هرکدام باعث توقف همان
@@ -72,7 +72,7 @@ http://127.0.0.1:4200/login
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:3000/api/health
-Invoke-WebRequest http://127.0.0.1:4200 -UseBasicParsing
+Invoke-WebRequest http://localhost:4200 -UseBasicParsing
 ```
 
 پاسخ API باید شامل `status: ok` و وضعیت فرانت‌اند باید `200` باشد.

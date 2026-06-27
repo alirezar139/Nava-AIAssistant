@@ -3,14 +3,14 @@
 مسیر اصلی پروژه:
 
 ```text
-C:\project\nava-ai-assistant
+C:\project\rahbari-assistant
 ```
 
 ## مسیرهای اصلی
 
 | بخش | مسیر |
 | --- | --- |
-| فرانت‌اند | `C:\project\nava-ai-assistant\src` |
+| فرانت‌اند | `C:\project\rahbari-assistant\src` |
 | کدهای Angular | `src\app` |
 | تنظیمات محیط | `src\environments` |
 | تصاویر و فایل‌های ثابت | `src\assets` |
