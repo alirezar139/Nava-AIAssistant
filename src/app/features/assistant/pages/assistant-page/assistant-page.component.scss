@@ -916,6 +916,61 @@ footer {
   background: transparent;
 }
 
+/* Compact hero fix */
+.assistant-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+  max-height: 260px;
+  overflow: hidden;
+}
+
+.assistant-hero .hero-copy {
+  min-width: 0;
+}
+
+.assistant-hero h1 {
+  max-width: 620px;
+  font-size: clamp(28px, 3.2vw, 46px);
+  line-height: 1.18;
+}
+
+.assistant-hero p {
+  max-width: 600px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.hero-summary {
+  align-content: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hero-summary article {
+  min-width: 0;
+  min-height: 128px;
+}
+
+.hero-summary strong {
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.hero-summary p {
+  display: -webkit-box;
+  margin-top: 6px;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.7;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 920px) {
+  .assistant-hero {
+    max-height: none;
+  }
+}
+
 /* No page scroll layout */
 :host {
   height: 100vh;
