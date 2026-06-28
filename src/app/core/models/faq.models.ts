@@ -17,6 +17,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   matches?: FaqAnswer[];
+  treeOptions?: Array<{ label: string; targetId: string }>;
   feedback?: 'helpful' | 'unhelpful';
 }
 

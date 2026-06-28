@@ -16,6 +16,10 @@ import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { FaqSearchService } from '../../../../core/services/faq-search.service';
+import {
+  TroubleshootingTreeIndex,
+  TroubleshootingTreeService
+} from '../../../../core/services/troubleshooting-tree.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
@@ -41,6 +45,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   diagnosticDraft: DiagnosticPayload = this.createEmptyDiagnostic();
   documentReading = false;
   documentError = '';
+  private treeIndex: TroubleshootingTreeIndex | null = null;
+  private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
@@ -64,12 +70,15 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     private readonly api: ApiService,
     private readonly errorMessages: ErrorMessageService,
     private readonly searchService: FaqSearchService,
+    private readonly treeService: TroubleshootingTreeService,
     private readonly wordReader: WordReaderService,
     private readonly router: Router,
     private readonly changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.loadTroubleshootingTree();
+
     this.api.getFaqs().subscribe({
       next: (faqs) => {
         this.faqs = faqs;
@@ -99,6 +108,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const question = this.question.trim();
     if (!question || this.typing) return;
     this.error = '';
+
+    const matchedTreeOption = this.findTreeOption(question);
+    if (matchedTreeOption) {
+      this.question = '';
+      this.selectTreeOption(matchedTreeOption);
+      return;
+    }
+
     this.messages.push({ role: 'user', text: question });
     this.question = '';
     this.scrollToLatest();
@@ -226,6 +243,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     message.feedback = feedback;
   }
 
+  selectTreeOption(option: { label: string; targetId: string }): void {
+    if (this.typing) return;
+    this.messages.push({ role: 'user', text: option.label });
+    this.showTreeNode(option.targetId);
+  }
+
   onWordFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -268,5 +291,61 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       const element = this.conversation?.nativeElement;
       if (element) element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
     });
+  }
+
+  private loadTroubleshootingTree(): void {
+    this.treeService.load().subscribe({
+      next: (tree) => {
+        this.treeIndex = this.treeService.createIndex(tree);
+        this.showTreeNode(tree.startNodeId, true);
+      },
+      error: () => {
+        this.changeDetector.markForCheck();
+      }
+    });
+  }
+
+  private showTreeNode(nodeId: string, initial = false): void {
+    if (!this.treeIndex) return;
+
+    const node = this.treeService.resolveDisplayNode(this.treeIndex, nodeId);
+    if (!node) return;
+
+    this.activeTreeOptions = this.treeService.getOptions(this.treeIndex, node.id);
+
+    const message: ChatMessage = {
+      role: 'assistant',
+      text: node.text,
+      treeOptions: this.activeTreeOptions.length ? this.activeTreeOptions : undefined
+    };
+
+    if (initial) {
+      this.messages = [message];
+      this.changeDetector.markForCheck();
+      this.scrollToLatest();
+      return;
+    }
+
+    this.typing = true;
+    this.typingTimer = setTimeout(() => {
+      this.messages.push(message);
+      this.typing = false;
+      this.changeDetector.markForCheck();
+      this.scrollToLatest();
+    }, 300);
+  }
+
+  private findTreeOption(value: string): { label: string; targetId: string } | null {
+    const normalizedValue = this.normalizeTreeText(value);
+    return (
+      this.activeTreeOptions.find((option) => {
+        const normalizedLabel = this.normalizeTreeText(option.label);
+        return normalizedLabel === normalizedValue || normalizedLabel.includes(normalizedValue);
+      }) ?? null
+    );
+  }
+
+  private normalizeTreeText(value: string): string {
+    return value.replace(/\s+/g, ' ').trim().toLocaleLowerCase('fa-IR');
   }
 }
