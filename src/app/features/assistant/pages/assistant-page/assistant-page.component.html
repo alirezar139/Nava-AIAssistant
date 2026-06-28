@@ -35,31 +35,36 @@
   </header>
 
   <main>
-    <section class="hero">
+    <section class="hero assistant-hero">
       <div class="hero-copy">
-        <div class="eyebrow">پاسخ سریع از دانش تأییدشده سازمان</div>
-        <h1>چه کمکی از دستیار<br /><em>راهبری سامانه‌ها</em> می‌خواهید؟</h1>
+        <div class="eyebrow">دستیار هوشمند پلتفرم تحلیل داده</div>
+        <h1>مشکل را بگویید؛ <em>Nava</em> مسیر حل را پیدا می‌کند.</h1>
         <p>
-          سؤال خود را با جزئیات بنویسید. پاسخ بر اساس FAQهایی ارائه می‌شود که توسط مدیر سامانه تأیید شده‌اند.
+          ابتدا شرح مشکل را می‌گیرم، سپس حوزه و جزئیات را مرحله‌به‌مرحله مشخص می‌کنم، در FAQ می‌گردم و اگر
+          راه‌حل نبود تیکت سهند را آماده می‌کنم.
         </p>
-        <div class="privacy"><span>✓</span> گفت‌وگو برای بهبود پشتیبانی ثبت می‌شود</div>
+        <div class="hero-actions">
+          <button type="button" (click)="focusAssistantInput()">شروع گفتگو</button>
+          <span><i></i> پاسخ‌گویی بر اساس دانش تأییدشده</span>
+        </div>
       </div>
 
-      <div class="hero-visual" aria-hidden="true">
-        <div class="analysis-screen">
-          <div class="screen-stat">
-            <span>Scenario</span>
-            <strong>82%</strong>
-          </div>
-          <div class="screen-ring"></div>
-        </div>
-        <div class="assistant-orb"><app-brand-logo /></div>
-        <div class="transcript-chip">Transcript</div>
-        <div class="transcript-card">
-          <div><b>کاربر</b><span>مشکل در اجرای جریان داده دارم</span><time>13:04</time></div>
-          <div><b>Nava</b><span>حوزه مشکل را مشخص می‌کنم...</span><time>13:04</time></div>
-          <div><b>FAQ</b><span>راه‌حل‌های مرتبط بررسی شد</span><time>13:05</time></div>
-        </div>
+      <div class="hero-summary" aria-label="قابلیت‌های دستیار">
+        <article>
+          <span>01</span>
+          <strong>شرح مشکل</strong>
+          <p>کاربر اول مشکل را آزاد توضیح می‌دهد؛ بدون انتخاب اجباری اولیه.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <strong>تشخیص مرحله‌ای</strong>
+          <p>درختواره حوزه، سناریو و جزئیات مشکل را دقیق‌تر می‌کند.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <strong>FAQ و سهند</strong>
+          <p>اگر پاسخ در FAQ نبود، فرم تیکت سهند آماده و ارسال می‌شود.</p>
+        </article>
       </div>
     </section>
 
