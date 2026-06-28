@@ -916,6 +916,95 @@ footer {
   background: transparent;
 }
 
+/* Final chat quality pass */
+.user-workspace {
+  min-height: 680px;
+}
+
+.chat-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  max-height: none;
+  padding: 20px 18px 28px;
+  scroll-padding-bottom: 120px;
+}
+
+.message {
+  width: 100%;
+  margin: 0;
+}
+
+.message.user {
+  justify-content: flex-start;
+}
+
+.message:not(.user) {
+  justify-content: flex-start;
+}
+
+.avatar {
+  margin-top: 4px;
+}
+
+.bubble {
+  width: fit-content;
+  max-width: min(720px, calc(100% - 72px));
+  text-align: right;
+}
+
+.user .bubble {
+  max-width: min(560px, calc(100% - 72px));
+}
+
+.tree-options {
+  justify-content: flex-start;
+}
+
+.tree-options button {
+  white-space: nowrap;
+}
+
+.feedback {
+  justify-content: flex-start;
+}
+
+.composer {
+  position: sticky;
+  z-index: 3;
+  bottom: 0;
+  margin-top: 16px;
+}
+
+.bot-launcher {
+  right: auto;
+  left: clamp(18px, 3vw, 34px);
+  bottom: clamp(18px, 3vw, 34px);
+}
+
+@media (min-width: 920px) {
+  .bot-launcher {
+    bottom: 28px;
+  }
+}
+
+@media (max-width: 820px) {
+  .bubble,
+  .user .bubble {
+    max-width: calc(100% - 58px);
+  }
+
+  .conversation {
+    padding-inline: 8px;
+  }
+}
+
 .bot-launcher {
   position: fixed;
   z-index: 25;
