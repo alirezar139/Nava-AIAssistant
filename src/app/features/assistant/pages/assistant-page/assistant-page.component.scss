@@ -1000,6 +1000,7 @@ footer {
 }
 
 .ticket-modal input,
+.ticket-modal select,
 .ticket-modal textarea {
   width: 100%;
   min-height: 46px;
@@ -1015,6 +1016,7 @@ footer {
 }
 
 .ticket-modal input:focus,
+.ticket-modal select:focus,
 .ticket-modal textarea:focus {
   border-color: rgba(13, 95, 78, 0.42);
   box-shadow: 0 0 0 4px rgba(13, 95, 78, 0.08);

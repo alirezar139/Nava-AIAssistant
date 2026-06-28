@@ -108,7 +108,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   get inputPlaceholder(): string {
     return this.diagnosticStep
-      ? this.diagnosticPrompts[this.diagnosticStep]
+      ? this.getDiagnosticPrompt(this.diagnosticStep)
       : 'مشکل یا سؤال خود را بنویسید...';
   }
 
@@ -145,7 +145,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
     if (nextStep) {
       this.diagnosticStep = nextStep;
-      this.pushAssistantMessage(this.diagnosticPrompts[nextStep]);
+      this.pushAssistantMessage(this.getDiagnosticPrompt(nextStep));
       return;
     }
 
@@ -316,6 +316,19 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     );
   }
 
+  isCitrixTicket(): boolean {
+    const source = `${this.treeTrail.join(' ')} ${this.diagnosticDraft.problem} ${this.diagnosticDraft.systemName}`;
+    return this.normalizeTreeText(source).includes('سیتریکس');
+  }
+
+  getProcessFieldLabel(): string {
+    return this.isCitrixTicket() ? 'محیط کاری سیتریکس *' : 'سناریو، فرآیند، جریان داده یا گزارش *';
+  }
+
+  getScenarioFieldLabel(): string {
+    return this.isCitrixTicket() ? 'شرح مسیر و عملیات انجام‌شده در محیط سیتریکس *' : 'سناریوی اجرا *';
+  }
+
   private scrollToLatest(): void {
     requestAnimationFrame(() => {
       const element = this.conversation?.nativeElement;
@@ -375,6 +388,18 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   private normalizeTreeText(value: string): string {
     return value.replace(/\s+/g, ' ').trim().toLocaleLowerCase('fa-IR');
+  }
+
+  private getDiagnosticPrompt(step: keyof DiagnosticPayload): string {
+    if (step === 'processName' && this.isCitrixTicket()) {
+      return 'محیط کاری سیتریکس را مشخص کنید: star-da1، star-da2، star-da3 یا star-da4';
+    }
+
+    if (step === 'scenario' && this.isCitrixTicket()) {
+      return 'مسیر کاری داخل سیتریکس را بنویسید؛ وارد کدام محیط شدید، چه کاری انجام دادید و مشکل کجا رخ داد؟';
+    }
+
+    return this.diagnosticPrompts[step];
   }
 
   private getTreeNodeState(nodeId: string): {

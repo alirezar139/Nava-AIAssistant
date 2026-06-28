@@ -182,8 +182,22 @@
           <input name="ticketSystem" [(ngModel)]="diagnosticDraft.systemName" required />
         </label>
         <label>
-          <span>سناریو، فرآیند، جریان داده یا گزارش *</span>
-          <input name="ticketProcess" [(ngModel)]="diagnosticDraft.processName" required />
+          <span>{{ getProcessFieldLabel() }}</span>
+          <select
+            *ngIf="isCitrixTicket(); else processInput"
+            name="ticketProcess"
+            [(ngModel)]="diagnosticDraft.processName"
+            required
+          >
+            <option value="">انتخاب محیط</option>
+            <option value="star-da1">star-da1</option>
+            <option value="star-da2">star-da2</option>
+            <option value="star-da3">star-da3</option>
+            <option value="star-da4">star-da4</option>
+          </select>
+          <ng-template #processInput>
+            <input name="ticketProcess" [(ngModel)]="diagnosticDraft.processName" required />
+          </ng-template>
         </label>
         <label>
           <span>سریال / شناسه</span>
@@ -196,7 +210,7 @@
         <textarea name="ticketProblem" rows="3" [(ngModel)]="diagnosticDraft.problem" required></textarea>
       </label>
       <label>
-        <span>سناریوی اجرا *</span>
+        <span>{{ getScenarioFieldLabel() }}</span>
         <textarea name="ticketScenario" rows="3" [(ngModel)]="diagnosticDraft.scenario" required></textarea>
       </label>
       <label>
