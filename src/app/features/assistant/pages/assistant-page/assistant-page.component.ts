@@ -273,6 +273,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.question = value;
   }
 
+  useQuickReply(value: string): void {
+    if (this.typing || this.ticketDialogOpen) return;
+    this.question = value;
+    this.ask();
+  }
+
   rateMessage(message: ChatMessage, feedback: 'helpful' | 'unhelpful'): void {
     message.feedback = feedback;
   }
@@ -433,7 +439,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.messages = [
       {
         role: 'assistant',
-        text: 'سلام، من دستیار هوشمند پلتفرم تحلیل داده هستم. ابتدا مشکل خود را با چند جمله توضیح دهید؛ بعد مرحله‌به‌مرحله حوزه و جزئیات را مشخص می‌کنم.'
+        text: 'سلام، من دستیار هوشمند پلتفرم تحلیل داده هستم. ابتدا مشکل خود را با چند جمله توضیح دهید؛ بعد مرحله‌به‌مرحله حوزه و جزئیات را مشخص می‌کنم.',
+        quickReplies: [
+          'مشکل در اجرای جریان داده دارم',
+          'در محیط سیتریکس مشکل دارم',
+          'با دیتابیس خطا دارم',
+          'زیرساخت یا سامانه کند است'
+        ]
       }
     ];
     this.changeDetector.markForCheck();

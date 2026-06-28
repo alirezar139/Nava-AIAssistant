@@ -116,7 +116,24 @@
                     {{ option.label }}
                   </button>
                 </div>
-                <div class="feedback" *ngIf="message.role === 'assistant' && !message.treeOptions?.length">
+                <div class="tree-options quick-replies" *ngIf="message.quickReplies?.length">
+                  <button
+                    type="button"
+                    *ngFor="let reply of message.quickReplies"
+                    [disabled]="typing"
+                    (click)="useQuickReply(reply)"
+                  >
+                    {{ reply }}
+                  </button>
+                </div>
+                <div
+                  class="feedback"
+                  *ngIf="
+                    message.role === 'assistant' &&
+                    !message.treeOptions?.length &&
+                    !message.quickReplies?.length
+                  "
+                >
                   <span>{{ message.feedback ? 'بازخورد شما ثبت شد' : 'این پاسخ مفید بود؟' }}</span>
                   <button
                     type="button"

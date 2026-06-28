@@ -18,6 +18,7 @@ export interface ChatMessage {
   text: string;
   matches?: FaqAnswer[];
   treeOptions?: Array<{ label: string; targetId: string }>;
+  quickReplies?: string[];
   feedback?: 'helpful' | 'unhelpful';
 }
 
