@@ -39,6 +39,7 @@ export class AuthService {
       .pipe(
         tap((session) => {
           this.sessionService.save(session);
+          sessionStorage.removeItem(`nava-welcome-seen:${session.user.username}`);
           this.themeService.activateUser(session.user.username);
         })
       );

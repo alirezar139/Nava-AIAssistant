@@ -47,7 +47,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   documentError = '';
   ticketDialogOpen = false;
   ticketSubmitting = false;
-  welcomeOverlayVisible = true;
+  welcomeOverlayVisible = false;
   private treeIndex: TroubleshootingTreeIndex | null = null;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
@@ -87,10 +87,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.welcomeTimer = setTimeout(() => {
-      this.welcomeOverlayVisible = false;
-      this.changeDetector.markForCheck();
-    }, 3200);
+    this.showLoginWelcomeOnce();
 
     this.loadTroubleshootingTree();
 
@@ -116,6 +113,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   closeWelcomeOverlay(): void {
     this.welcomeOverlayVisible = false;
+    this.markWelcomeSeen();
     if (this.welcomeTimer) clearTimeout(this.welcomeTimer);
   }
 
@@ -347,6 +345,28 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       const element = this.conversation?.nativeElement;
       if (element) element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
     });
+  }
+
+  private showLoginWelcomeOnce(): void {
+    const key = this.getWelcomeStorageKey();
+    if (!key || sessionStorage.getItem(key)) return;
+
+    this.welcomeOverlayVisible = true;
+    this.welcomeTimer = setTimeout(() => {
+      this.welcomeOverlayVisible = false;
+      this.markWelcomeSeen();
+      this.changeDetector.markForCheck();
+    }, 3000);
+  }
+
+  private markWelcomeSeen(): void {
+    const key = this.getWelcomeStorageKey();
+    if (key) sessionStorage.setItem(key, 'true');
+  }
+
+  private getWelcomeStorageKey(): string | null {
+    const username = this.auth.user?.username;
+    return username ? `nava-welcome-seen:${username}` : null;
   }
 
   private loadTroubleshootingTree(): void {
