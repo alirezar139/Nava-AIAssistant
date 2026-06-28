@@ -34,6 +34,7 @@ import { BrandLogoComponent } from '../../../../shared/components/brand-logo/bra
 })
 export class AssistantPageComponent implements OnInit, OnDestroy {
   @ViewChild('conversation') conversation?: ElementRef<HTMLDivElement>;
+  @ViewChild('questionInput') questionInput?: ElementRef<HTMLInputElement>;
 
   faqs: FaqRecord[] = [];
   messages: ChatMessage[] = [];
@@ -117,6 +118,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.welcomeOverlayVisible = false;
     this.markWelcomeSeen();
     if (this.welcomeTimer) clearTimeout(this.welcomeTimer);
+  }
+
+  focusAssistantInput(): void {
+    this.closeWelcomeOverlay();
+    requestAnimationFrame(() => {
+      this.questionInput?.nativeElement.focus();
+      this.scrollToLatest();
+    });
   }
 
   get inputPlaceholder(): string {

@@ -161,6 +161,7 @@
         </div>
         <form class="composer" (ngSubmit)="ask()">
           <input
+            #questionInput
             [(ngModel)]="question"
             name="question"
             autocomplete="off"
@@ -176,6 +177,15 @@
       </section>
     </section>
   </main>
+  <button
+    type="button"
+    class="bot-launcher"
+    (click)="focusAssistantInput()"
+    aria-label="شروع گفت‌وگو با دستیار"
+  >
+    <app-brand-logo />
+    <span>شروع گفتگو</span>
+  </button>
   <footer>سامانه راهبری و پشتیبانی <span>•</span> نسخه آزمایشی ۰.۲</footer>
 
   <section class="ticket-modal-backdrop" *ngIf="ticketDialogOpen" role="presentation">
