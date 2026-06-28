@@ -4,6 +4,7 @@ import { requireAuth } from '../auth/auth.middleware.js';
 import { AuthRequest } from '../common/types.js';
 import { database, DiagnosticCaseRecord, nextId } from '../database/database.js';
 import { sendError } from '../common/api-error.js';
+import { submitSahandTicket } from '../sahand/sahand-ticket.service.js';
 
 export const diagnosticRouter = Router();
 
@@ -49,9 +50,31 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     analysisSummary: null,
     severity: null,
     recommendation: null,
+    externalTicketId: null,
+    externalTicketStatus: null,
     createdAt: new Date().toISOString(),
     analyzedAt: null
   };
+
+  const ticketResult = await submitSahandTicket({
+    title: result.data.problem.slice(0, 120),
+    description: [
+      `سامانه: ${result.data.systemName}`,
+      `سناریو: ${result.data.scenario}`,
+      `شناسه/سریال: ${result.data.serialNumber || '-'}`,
+      `شواهد: ${result.data.evidence || '-'}`
+    ].join('\n'),
+    requester: {
+      username: request.user.username,
+      fullName: request.user.fullName
+    },
+    metadata: {
+      source: 'nava-ai-assistant',
+      localDiagnosticId: String(diagnosticCase.id)
+    }
+  });
+  diagnosticCase.externalTicketId = ticketResult.ticketId;
+  diagnosticCase.externalTicketStatus = ticketResult.status;
 
   database.data.diagnosticCases.push(diagnosticCase);
   await database.write();

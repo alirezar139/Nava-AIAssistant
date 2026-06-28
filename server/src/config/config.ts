@@ -8,5 +8,7 @@ export const config = {
     process.env['CORS_ORIGINS']
       ?.split(',')
       .map((origin) => origin.trim())
-      .filter(Boolean) ?? defaultOrigins
+      .filter(Boolean) ?? defaultOrigins,
+  sahandTicketUrl: process.env['SAHAND_TICKET_URL'] ?? '',
+  sahandApiKey: process.env['SAHAND_API_KEY'] ?? ''
 } as const;

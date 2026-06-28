@@ -47,6 +47,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   documentError = '';
   private treeIndex: TroubleshootingTreeIndex | null = null;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
+  private treeTrail: string[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
@@ -125,41 +126,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.typing = true;
-    const rows = this.faqs.map((faq) => ({
-      سؤال: faq.question,
-      پاسخ: faq.answer,
-      دسته‌بندی: faq.category,
-      'کلمات کلیدی': faq.keywords
-    }));
-    const matches = this.searchService.search(rows, question);
-    const answer =
-      matches[0]?.text ??
-      'پاسخ قطعی در پایگاه دانش پیدا نشد. برای بررسی دقیق‌تر، یک پرونده تحلیل مشکل می‌سازم و چند سؤال تکمیلی می‌پرسم.';
-    const matchedFaq = matches[0] ? this.faqs.find((faq) => faq.answer === matches[0]?.text) : null;
-
-    this.typingTimer = setTimeout(() => {
-      this.messages.push(
-        matches.length
-          ? { role: 'assistant', text: 'پاسخ پیشنهادی بر اساس پایگاه دانش:', matches }
-          : { role: 'assistant', text: `${answer}\n\n${this.diagnosticPrompts.problem}` }
-      );
-      if (!matches.length) {
-        this.diagnosticDraft = this.createEmptyDiagnostic();
-        this.diagnosticStep = 'problem';
-      }
-      this.typing = false;
-      this.changeDetector.markForCheck();
-      this.scrollToLatest();
-
-      this.api.logConversation(question, answer, matchedFaq?.id ?? null).subscribe({
-        error: (error: unknown) => {
-          const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
-          this.error = `پاسخ نمایش داده شد، اما ${this.errorMessages.formatMessage(resolved)}`;
-          this.changeDetector.markForCheck();
-        }
-      });
-    }, 650);
+    this.treeTrail = [];
+    this.answerFromFaqOrStartTicket(question);
   }
 
   private captureDiagnosticAnswer(value: string): void {
@@ -186,9 +154,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
         this.api.analyzeDiagnosticCase(createdCase.id).subscribe({
           next: (analyzedCase) => {
             const severityLabel = this.formatSeverity(analyzedCase.severity);
+            const ticketStatus = this.formatExternalTicketStatus(
+              analyzedCase.externalTicketStatus,
+              analyzedCase.externalTicketId
+            );
             this.messages.push({
               role: 'assistant',
-              text: `پرونده بررسی #${analyzedCase.id} ثبت و تحلیل اولیه انجام شد.\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
+              text: `پرونده بررسی #${analyzedCase.id} ثبت و تحلیل اولیه انجام شد.\n${ticketStatus}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
             this.typing = false;
             this.changeDetector.markForCheck();
@@ -227,6 +199,15 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return 'پایین';
   }
 
+  private formatExternalTicketStatus(
+    status: 'not_configured' | 'submitted' | 'failed' | null | undefined,
+    ticketId: string | null | undefined
+  ): string {
+    if (status === 'submitted') return `تیکت سهند ثبت شد${ticketId ? `؛ کد پیگیری: ${ticketId}` : '.'}`;
+    if (status === 'failed') return 'ارسال به سهند ناموفق بود؛ پرونده داخلی ثبت شد و قابل پیگیری است.';
+    return 'اتصال سهند هنوز تنظیم نشده؛ پرونده داخلی ثبت شد.';
+  }
+
   private handleDiagnosticError(error: unknown, fallback: string): void {
     const resolved = this.errorMessages.resolve(error, fallback);
     this.messages.push({ role: 'assistant', text: this.errorMessages.formatMessage(resolved) });
@@ -246,6 +227,15 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   selectTreeOption(option: { label: string; targetId: string }): void {
     if (this.typing) return;
     this.messages.push({ role: 'user', text: option.label });
+
+    const state = this.getTreeNodeState(option.targetId);
+    if (state && this.shouldResolveTreeNodeFromFaq(state.node.text, state.options)) {
+      this.treeTrail.push(option.label, state.node.text);
+      this.answerFromFaqOrStartTicket(this.treeTrail.join(' > '), true);
+      return;
+    }
+
+    this.treeTrail.push(option.label);
     this.showTreeNode(option.targetId);
   }
 
@@ -306,16 +296,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private showTreeNode(nodeId: string, initial = false): void {
-    if (!this.treeIndex) return;
+    const state = this.getTreeNodeState(nodeId);
+    if (!state) return;
 
-    const node = this.treeService.resolveDisplayNode(this.treeIndex, nodeId);
-    if (!node) return;
-
-    this.activeTreeOptions = this.treeService.getOptions(this.treeIndex, node.id);
+    this.activeTreeOptions = state.options;
 
     const message: ChatMessage = {
       role: 'assistant',
-      text: node.text,
+      text: state.node.text,
       treeOptions: this.activeTreeOptions.length ? this.activeTreeOptions : undefined
     };
 
@@ -347,5 +335,94 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   private normalizeTreeText(value: string): string {
     return value.replace(/\s+/g, ' ').trim().toLocaleLowerCase('fa-IR');
+  }
+
+  private getTreeNodeState(nodeId: string): {
+    node: NonNullable<ReturnType<TroubleshootingTreeService['resolveDisplayNode']>>;
+    options: Array<{ label: string; targetId: string }>;
+  } | null {
+    if (!this.treeIndex) return null;
+    const node = this.treeService.resolveDisplayNode(this.treeIndex, nodeId);
+    if (!node) return null;
+
+    return {
+      node,
+      options: this.treeService.getOptions(this.treeIndex, node.id)
+    };
+  }
+
+  private shouldResolveTreeNodeFromFaq(text: string, options: Array<{ label: string }>): boolean {
+    const normalizedText = this.normalizeTreeText(text);
+    const optionLabels = options.map((option) => this.normalizeTreeText(option.label));
+    const isTicketNode = normalizedText.includes('ثبت تیکت') || normalizedText.includes('پایان');
+    const isResolvedQuestion =
+      optionLabels.length > 0 && optionLabels.every((label) => ['بله', 'خیر'].includes(label));
+
+    return isTicketNode || isResolvedQuestion || options.length === 0;
+  }
+
+  private answerFromFaqOrStartTicket(question: string, fromTree = false): void {
+    this.typing = true;
+    const { matches, answer, matchedFaq } = this.searchFaq(question);
+    const reliableMatches = matches.filter((match) => match.score >= 0.55);
+
+    this.typingTimer = setTimeout(() => {
+      if (reliableMatches.length) {
+        this.messages.push({
+          role: 'assistant',
+          text: fromTree
+            ? 'این مورد را در FAQ بررسی کردم؛ پاسخ پیشنهادی:'
+            : 'پاسخ پیشنهادی بر اساس FAQ موجود:',
+          matches: reliableMatches
+        });
+      } else {
+        this.startTicketFlow(question);
+      }
+
+      this.typing = false;
+      this.changeDetector.markForCheck();
+      this.scrollToLatest();
+
+      this.api
+        .logConversation(question, answer, reliableMatches.length ? (matchedFaq?.id ?? null) : null)
+        .subscribe({
+          error: (error: unknown) => {
+            const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
+            this.error = `پاسخ نمایش داده شد، اما ${this.errorMessages.formatMessage(resolved)}`;
+            this.changeDetector.markForCheck();
+          }
+        });
+    }, 500);
+  }
+
+  private searchFaq(question: string): {
+    matches: NonNullable<ChatMessage['matches']>;
+    answer: string;
+    matchedFaq: FaqRecord | null;
+  } {
+    const rows = this.faqs.map((faq) => ({
+      سؤال: faq.question,
+      پاسخ: faq.answer,
+      دسته‌بندی: faq.category,
+      'کلمات کلیدی': faq.keywords
+    }));
+    const matches = this.searchService.search(rows, question);
+    const answer = matches[0]?.text ?? 'پاسخ قطعی در FAQ موجود پیدا نشد؛ مسیر ثبت تیکت شروع شد.';
+    const matchedFaq = matches[0] ? (this.faqs.find((faq) => faq.answer === matches[0]?.text) ?? null) : null;
+
+    return { matches, answer, matchedFaq };
+  }
+
+  private startTicketFlow(problem: string): void {
+    this.diagnosticDraft = {
+      ...this.createEmptyDiagnostic(),
+      problem,
+      scenario: this.treeTrail.length ? this.treeTrail.join(' > ') : ''
+    };
+    this.diagnosticStep = 'systemName';
+    this.messages.push({
+      role: 'assistant',
+      text: `در FAQ پاسخ قابل اتکا پیدا نشد. برای ثبت تیکت، اطلاعات لازم را مرحله‌ای می‌گیرم.\n\n${this.diagnosticPrompts.systemName}`
+    });
   }
 }
