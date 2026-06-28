@@ -45,6 +45,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   diagnosticDraft: DiagnosticPayload = this.createEmptyDiagnostic();
   documentReading = false;
   documentError = '';
+  ticketDialogOpen = false;
+  ticketSubmitting = false;
   private treeIndex: TroubleshootingTreeIndex | null = null;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
@@ -147,12 +149,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.diagnosticStep = null;
-    this.submitDiagnosticCase();
+    this.openTicketDialog();
   }
 
-  private submitDiagnosticCase(): void {
-    this.typing = true;
+  submitTicketFromDialog(): void {
+    if (this.ticketSubmitting || !this.isTicketDraftValid()) return;
+
+    this.ticketSubmitting = true;
     this.changeDetector.markForCheck();
     this.api.createDiagnosticCase(this.diagnosticDraft).subscribe({
       next: (createdCase) => {
@@ -167,7 +170,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
               role: 'assistant',
               text: `پرونده بررسی #${analyzedCase.id} ثبت و تحلیل اولیه انجام شد.\n${ticketStatus}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
-            this.typing = false;
+            this.ticketDialogOpen = false;
+            this.ticketSubmitting = false;
             this.changeDetector.markForCheck();
             this.scrollToLatest();
           },
@@ -177,6 +181,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       },
       error: (error: unknown) => this.handleDiagnosticError(error, 'ثبت پرونده بررسی انجام نشد.')
     });
+  }
+
+  closeTicketDialog(): void {
+    if (this.ticketSubmitting) return;
+    this.ticketDialogOpen = false;
   }
 
   private pushAssistantMessage(text: string): void {
@@ -226,6 +235,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const resolved = this.errorMessages.resolve(error, fallback);
     this.messages.push({ role: 'assistant', text: this.errorMessages.formatMessage(resolved) });
     this.typing = false;
+    this.ticketSubmitting = false;
     this.changeDetector.markForCheck();
     this.scrollToLatest();
   }
@@ -294,6 +304,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   logout(): void {
     this.auth.logout();
     void this.router.navigateByUrl('/login');
+  }
+
+  isTicketDraftValid(): boolean {
+    return Boolean(
+      this.diagnosticDraft.title.trim() &&
+      this.diagnosticDraft.problem.trim() &&
+      this.diagnosticDraft.systemName.trim() &&
+      this.diagnosticDraft.processName.trim() &&
+      this.diagnosticDraft.scenario.trim()
+    );
   }
 
   private scrollToLatest(): void {
@@ -447,5 +467,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       role: 'assistant',
       text: `در FAQ پاسخ قابل اتکا پیدا نشد. قبل از ثبت تیکت، مشخصات کامل مشکل را مرحله‌ای می‌گیرم.\n\n${this.diagnosticPrompts.title}`
     });
+  }
+
+  private openTicketDialog(): void {
+    this.diagnosticStep = null;
+    this.ticketDialogOpen = true;
+    this.messages.push({
+      role: 'assistant',
+      text: 'اطلاعات تیکت آماده شد. لطفا فرم نهایی را بررسی کنید؛ بعد از تأیید، تیکت از طریق API سهند برای پیمانکار ارسال می‌شود.'
+    });
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
   }
 }

@@ -146,9 +146,9 @@
             [(ngModel)]="question"
             name="question"
             autocomplete="off"
-            [disabled]="loading || typing"
+            [disabled]="loading || typing || ticketDialogOpen"
             [placeholder]="inputPlaceholder"
-          /><button type="submit" [disabled]="loading || typing" aria-label="ارسال پرسش">
+          /><button type="submit" [disabled]="loading || typing || ticketDialogOpen" aria-label="ارسال پرسش">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m4 12 16-8-5 16-3-6-8-2Z"></path>
               <path d="m12 14 8-10"></path>
@@ -159,4 +159,66 @@
     </section>
   </main>
   <footer>سامانه راهبری و پشتیبانی <span>•</span> نسخه آزمایشی ۰.۲</footer>
+
+  <section class="ticket-modal-backdrop" *ngIf="ticketDialogOpen" role="presentation">
+    <form class="ticket-modal" (ngSubmit)="submitTicketFromDialog()" aria-label="فرم نهایی ثبت تیکت سهند">
+      <header>
+        <div>
+          <span>ارسال خودکار به سهند</span>
+          <h2>ثبت تیکت برای پیمانکار</h2>
+        </div>
+        <button type="button" class="modal-close" [disabled]="ticketSubmitting" (click)="closeTicketDialog()">
+          ×
+        </button>
+      </header>
+
+      <div class="ticket-grid">
+        <label>
+          <span>عنوان مشکل *</span>
+          <input name="ticketTitle" [(ngModel)]="diagnosticDraft.title" required />
+        </label>
+        <label>
+          <span>سامانه / ابزار *</span>
+          <input name="ticketSystem" [(ngModel)]="diagnosticDraft.systemName" required />
+        </label>
+        <label>
+          <span>سناریو، فرآیند، جریان داده یا گزارش *</span>
+          <input name="ticketProcess" [(ngModel)]="diagnosticDraft.processName" required />
+        </label>
+        <label>
+          <span>سریال / شناسه</span>
+          <input name="ticketSerial" [(ngModel)]="diagnosticDraft.serialNumber" />
+        </label>
+      </div>
+
+      <label>
+        <span>شرح مشکل *</span>
+        <textarea name="ticketProblem" rows="3" [(ngModel)]="diagnosticDraft.problem" required></textarea>
+      </label>
+      <label>
+        <span>سناریوی اجرا *</span>
+        <textarea name="ticketScenario" rows="3" [(ngModel)]="diagnosticDraft.scenario" required></textarea>
+      </label>
+      <label>
+        <span>متن خطا</span>
+        <textarea name="ticketError" rows="3" [(ngModel)]="diagnosticDraft.errorText"></textarea>
+      </label>
+      <label>
+        <span>مستندات / لاگ / توضیح فایل پیوست</span>
+        <textarea name="ticketEvidence" rows="3" [(ngModel)]="diagnosticDraft.evidence"></textarea>
+      </label>
+
+      <footer>
+        <p>بعد از تأیید، درخواست از طریق API سهند ایجاد و برای پیمانکار ارسال می‌شود.</p>
+        <div>
+          <button type="button" class="secondary" [disabled]="ticketSubmitting" (click)="closeTicketDialog()">
+            انصراف
+          </button>
+          <button type="submit" [disabled]="ticketSubmitting || !isTicketDraftValid()">
+            {{ ticketSubmitting ? 'در حال ثبت...' : 'Create' }}
+          </button>
+        </div>
+      </footer>
+    </form>
+  </section>
 </div>
