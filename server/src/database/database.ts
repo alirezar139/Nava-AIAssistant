@@ -37,10 +37,13 @@ export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated';
 export interface DiagnosticCaseRecord {
   id: number;
   userId: number;
+  title: string;
   problem: string;
   systemName: string;
+  processName: string;
   scenario: string;
   serialNumber: string;
+  errorText: string;
   evidence: string;
   status: DiagnosticStatus;
   analysisSummary: string | null;

@@ -51,18 +51,23 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private typingTimer?: ReturnType<typeof setTimeout>;
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
+    title: 'عنوان کوتاه مشکل را بنویسید؛ مثلا «خطا در اجرای جریان داده فروش».',
     problem: 'مشکل را با جزئیات بنویسید؛ دقیقا چه اتفاقی افتاده است؟',
     systemName: 'نام سامانه یا ابزار تحلیل داده‌ای که مشکل در آن رخ داده چیست؟',
-    scenario: 'سناریو یا مسیر انجام کار را مرحله‌به‌مرحله بنویسید.',
+    processName: 'نام سناریو، فرآیند، جریان داده، گزارش یا پلاگین مرتبط چیست؟ اگر ندارید بنویسید: ندارم',
+    scenario: 'سناریوی اجرا را مرحله‌به‌مرحله بنویسید؛ از کجا شروع کردید، چه گزینه‌ای زدید و کجا خطا رخ داد؟',
     serialNumber: 'سریال، شناسه گزارش، کد رهگیری یا شماره درخواست را وارد کنید. اگر ندارید بنویسید: ندارم',
+    errorText: 'متن دقیق خطا یا پیام سیستم را وارد کنید. اگر خطایی نمایش داده نشده بنویسید: خطا ندارد',
     evidence: 'متن خطا، لاگ، توضیح screenshot یا مستندات مرتبط را وارد کنید. اگر ندارید بنویسید: ندارم'
   };
 
   private readonly diagnosticFlow: Array<keyof DiagnosticPayload> = [
-    'problem',
+    'title',
     'systemName',
+    'processName',
     'scenario',
     'serialNumber',
+    'errorText',
     'evidence'
   ];
 
@@ -190,7 +195,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private createEmptyDiagnostic(): DiagnosticPayload {
-    return { problem: '', systemName: '', scenario: '', serialNumber: '', evidence: '' };
+    return {
+      title: '',
+      problem: '',
+      systemName: '',
+      processName: '',
+      scenario: '',
+      serialNumber: '',
+      errorText: '',
+      evidence: ''
+    };
   }
 
   private formatSeverity(severity: 'low' | 'medium' | 'high' | null): string {
@@ -428,10 +442,10 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       problem,
       scenario: this.treeTrail.length ? this.treeTrail.join(' > ') : ''
     };
-    this.diagnosticStep = 'systemName';
+    this.diagnosticStep = 'title';
     this.messages.push({
       role: 'assistant',
-      text: `در FAQ پاسخ قابل اتکا پیدا نشد. برای ثبت تیکت، اطلاعات لازم را مرحله‌ای می‌گیرم.\n\n${this.diagnosticPrompts.systemName}`
+      text: `در FAQ پاسخ قابل اتکا پیدا نشد. قبل از ثبت تیکت، مشخصات کامل مشکل را مرحله‌ای می‌گیرم.\n\n${this.diagnosticPrompts.title}`
     });
   }
 }

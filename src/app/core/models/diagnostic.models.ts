@@ -2,10 +2,13 @@ export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated';
 export type DiagnosticSeverity = 'low' | 'medium' | 'high';
 
 export interface DiagnosticPayload {
+  title: string;
   problem: string;
   systemName: string;
+  processName: string;
   scenario: string;
   serialNumber: string;
+  errorText: string;
   evidence: string;
 }
 
