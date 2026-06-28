@@ -47,10 +47,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   documentError = '';
   ticketDialogOpen = false;
   ticketSubmitting = false;
+  welcomeOverlayVisible = true;
   private treeIndex: TroubleshootingTreeIndex | null = null;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
+  private welcomeTimer?: ReturnType<typeof setTimeout>;
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
     title: 'عنوان کوتاه مشکل را بنویسید؛ مثلا «خطا در اجرای جریان داده فروش».',
@@ -85,6 +87,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.welcomeTimer = setTimeout(() => {
+      this.welcomeOverlayVisible = false;
+      this.changeDetector.markForCheck();
+    }, 3200);
+
     this.loadTroubleshootingTree();
 
     this.api.getFaqs().subscribe({
@@ -104,6 +111,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.typingTimer) clearTimeout(this.typingTimer);
+    if (this.welcomeTimer) clearTimeout(this.welcomeTimer);
+  }
+
+  closeWelcomeOverlay(): void {
+    this.welcomeOverlayVisible = false;
+    if (this.welcomeTimer) clearTimeout(this.welcomeTimer);
   }
 
   get inputPlaceholder(): string {

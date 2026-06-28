@@ -1,4 +1,22 @@
 <div class="page-shell">
+  <section
+    class="welcome-overlay"
+    *ngIf="welcomeOverlayVisible"
+    role="dialog"
+    aria-label="خوش‌آمدگویی دستیار هوشمند"
+  >
+    <div class="welcome-card">
+      <app-brand-logo class="welcome-mark" />
+      <span>دستیار هوشمند Nava</span>
+      <h2>من دستیار هوشمند پلتفرم تحلیل داده هستم؛ خوش آمدید.</h2>
+      <p>
+        مشکل را مرحله‌به‌مرحله بررسی می‌کنم، در FAQ می‌گردم و اگر راه‌حل نبود مسیر ثبت تیکت سهند را آماده
+        می‌کنم.
+      </p>
+      <button type="button" (click)="closeWelcomeOverlay()">شروع کنیم</button>
+    </div>
+  </section>
+
   <header class="topbar">
     <a class="brand-home" routerLink="/assistant" aria-label="صفحه اصلی دستیار">
       <app-brand-logo class="brand-mark" />
