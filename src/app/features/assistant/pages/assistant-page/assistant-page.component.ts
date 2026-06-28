@@ -227,15 +227,21 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   selectTreeOption(option: { label: string; targetId: string }): void {
     if (this.typing) return;
     this.messages.push({ role: 'user', text: option.label });
+    this.treeTrail.push(option.label);
 
     const state = this.getTreeNodeState(option.targetId);
-    if (state && this.shouldResolveTreeNodeFromFaq(state.node.text, state.options)) {
-      this.treeTrail.push(option.label, state.node.text);
-      this.answerFromFaqOrStartTicket(this.treeTrail.join(' > '), true);
+    if (!state) return;
+
+    if (this.isTicketNode(state.node.text)) {
+      this.startTicketFlow(this.buildTreeProblemText(state.node.text));
       return;
     }
 
-    this.treeTrail.push(option.label);
+    if (!state.options.length && !this.isEndNode(state.node.text)) {
+      this.answerFromFaqOrStartTicket(this.buildTreeProblemText(state.node.text), true);
+      return;
+    }
+
     this.showTreeNode(option.targetId);
   }
 
@@ -351,14 +357,17 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     };
   }
 
-  private shouldResolveTreeNodeFromFaq(text: string, options: Array<{ label: string }>): boolean {
+  private isTicketNode(text: string): boolean {
     const normalizedText = this.normalizeTreeText(text);
-    const optionLabels = options.map((option) => this.normalizeTreeText(option.label));
-    const isTicketNode = normalizedText.includes('ثبت تیکت') || normalizedText.includes('پایان');
-    const isResolvedQuestion =
-      optionLabels.length > 0 && optionLabels.every((label) => ['بله', 'خیر'].includes(label));
+    return normalizedText.includes('ثبت تیکت');
+  }
 
-    return isTicketNode || isResolvedQuestion || options.length === 0;
+  private isEndNode(text: string): boolean {
+    return this.normalizeTreeText(text).includes('پایان');
+  }
+
+  private buildTreeProblemText(currentText: string): string {
+    return [...this.treeTrail, currentText].filter(Boolean).join(' > ');
   }
 
   private answerFromFaqOrStartTicket(question: string, fromTree = false): void {
