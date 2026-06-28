@@ -49,6 +49,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ticketSubmitting = false;
   welcomeOverlayVisible = false;
   private treeIndex: TroubleshootingTreeIndex | null = null;
+  private treeStartNodeId = '';
+  private awaitingInitialProblem = true;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
@@ -138,6 +140,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.messages.push({ role: 'user', text: question });
     this.question = '';
     this.scrollToLatest();
+
+    if (this.awaitingInitialProblem) {
+      this.awaitingInitialProblem = false;
+      this.treeTrail = [question];
+      this.showTreeNode(this.treeStartNodeId);
+      return;
+    }
 
     if (this.diagnosticStep) {
       this.captureDiagnosticAnswer(question);
@@ -373,7 +382,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.treeService.load().subscribe({
       next: (tree) => {
         this.treeIndex = this.treeService.createIndex(tree);
-        this.showTreeNode(tree.startNodeId, true);
+        this.treeStartNodeId = tree.startNodeId;
+        this.showInitialProblemPrompt();
       },
       error: () => {
         this.changeDetector.markForCheck();
@@ -407,6 +417,18 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       this.changeDetector.markForCheck();
       this.scrollToLatest();
     }, 300);
+  }
+
+  private showInitialProblemPrompt(): void {
+    this.activeTreeOptions = [];
+    this.messages = [
+      {
+        role: 'assistant',
+        text: 'سلام، من دستیار هوشمند پلتفرم تحلیل داده هستم. ابتدا مشکل خود را با چند جمله توضیح دهید؛ بعد مرحله‌به‌مرحله حوزه و جزئیات را مشخص می‌کنم.'
+      }
+    ];
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
   }
 
   private findTreeOption(value: string): { label: string; targetId: string } | null {
