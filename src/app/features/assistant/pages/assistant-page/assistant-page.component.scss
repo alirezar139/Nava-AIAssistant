@@ -236,7 +236,7 @@ main {
   height: 100%;
   padding: clamp(22px, 2.4vw, 34px);
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%), rgba(255, 255, 255, 0.1);
 }
@@ -245,9 +245,23 @@ main {
   grid-column: 2;
   height: 100%;
   padding: clamp(22px, 2vw, 30px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
   border-right: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(11, 111, 93, 0.22) transparent;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(245, 239, 214, 0.36)), rgba(255, 255, 255, 0.16);
+}
+
+.data-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.data-panel::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(11, 111, 93, 0.2);
 }
 
 .section-heading {
@@ -313,8 +327,8 @@ main {
 }
 
 .knowledge-state {
-  min-height: 180px;
-  margin: 26px 0 18px;
+  min-height: 154px;
+  margin: 22px 0 14px;
   padding: 24px;
   display: grid;
   place-items: center;
@@ -323,8 +337,8 @@ main {
 }
 
 .knowledge-icon {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -362,6 +376,7 @@ main {
 
 .hint,
 .support-note {
+  flex: 0 0 auto;
   margin-top: 16px;
   padding: 16px 17px;
   border-radius: 22px;
@@ -390,7 +405,7 @@ main {
   width: min(var(--chat-max), 100%);
   min-height: 0;
   margin-inline: auto;
-  padding: 6px 6px 18px;
+  padding: clamp(18px, 4vh, 42px) 6px 18px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -413,7 +428,8 @@ main {
 
 .welcome {
   width: min(720px, 100%);
-  margin: auto;
+  margin: 0 auto;
+  align-self: start;
   padding: clamp(26px, 4vw, 46px);
   border-radius: 34px;
   text-align: center;
@@ -696,6 +712,8 @@ main {
 }
 
 .composer {
+  position: relative;
+  z-index: 2;
   min-height: 72px;
   padding: 9px;
   display: grid;
