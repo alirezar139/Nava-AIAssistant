@@ -8,16 +8,17 @@ C:\project\rahbari-assistant
 
 ## مسیرهای اصلی
 
-| بخش | مسیر |
-| --- | --- |
-| فرانت‌اند | `C:\project\rahbari-assistant\src` |
-| کدهای Angular | `src\app` |
-| تنظیمات محیط | `src\environments` |
-| تصاویر و فایل‌های ثابت | `src\assets` |
-| بک‌اند و API | `server` |
-| دیتابیس محلی | `server\data\database.json` |
-| مستندات | `docs` |
-| خروجی Build | `dist` |
+| بخش                    | مسیر                                   |
+| ---------------------- | -------------------------------------- |
+| فرانت‌اند              | `C:\project\rahbari-assistant\src`     |
+| کدهای Angular          | `src\app`                              |
+| تنظیمات محیط           | `src\environments`                     |
+| تصاویر و فایل‌های ثابت | `src\assets`                           |
+| درختواره عیب‌یابی      | `src\assets\troubleshooting-tree.json` |
+| بک‌اند و API           | `server`                               |
+| دیتابیس محلی           | `server\data\database.json`            |
+| مستندات                | `docs`                                 |
+| خروجی Build            | `dist`                                 |
 
 ## ساختار فرانت‌اند
 
@@ -44,7 +45,9 @@ server/
 │   ├── config/           تنظیمات محیط اجرا
 │   ├── conversations/    ثبت و گزارش گفتگوها
 │   ├── database/         دسترسی به LowDB
+│   ├── diagnostics/      ثبت پرونده، تحلیل اولیه و رسید تیکت
 │   ├── faqs/             API مدیریت FAQ
+│   ├── sahand/           اتصال اختیاری به API سهند
 │   └── main.ts           نقطه شروع API
 ├── data/                 داده‌های محلی زمان اجرا
 └── dist/                 خروجی Build بک‌اند
@@ -62,4 +65,3 @@ server/
 فایل‌هایی با نام‌های طولانی مانند
 `ff771f7e5e9434d3a32eff829fb656daa40e3736d350f284ef0cb2d4e4e80454.json`
 در `.angular/cache` موقت هستند و با اجرای مجدد Build تغییر می‌کنند.
-

@@ -20,6 +20,7 @@ export interface DiagnosticCaseRecord extends DiagnosticPayload {
   severity: DiagnosticSeverity | null;
   recommendation: string | null;
   externalTicketId?: string | null;
+  externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
   createdAt: string;
   analyzedAt: string | null;

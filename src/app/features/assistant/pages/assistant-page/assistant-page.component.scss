@@ -236,7 +236,7 @@ main {
   height: 100%;
   padding: clamp(22px, 2.4vw, 34px);
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   gap: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%), rgba(255, 255, 255, 0.1);
 }
@@ -271,10 +271,7 @@ main {
 }
 
 .chat-heading {
-  width: min(var(--chat-max), 100%);
-  margin-inline: auto;
-  padding: 0 4px 10px;
-  border-bottom: 1px solid rgba(15, 74, 61, 0.1);
+  display: none;
 }
 
 .section-heading .step {
@@ -405,7 +402,7 @@ main {
   width: min(var(--chat-max), 100%);
   min-height: 0;
   margin-inline: auto;
-  padding: clamp(18px, 4vh, 42px) 6px 18px;
+  padding: 10px 6px 18px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -715,10 +712,11 @@ main {
   position: relative;
   z-index: 2;
   min-height: 72px;
-  padding: 9px;
+  padding: 10px 12px;
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
-  gap: 10px;
+  gap: 16px;
+  direction: ltr;
   border-radius: 26px;
   background: rgba(255, 255, 255, 0.88);
   box-shadow:
@@ -727,13 +725,17 @@ main {
 }
 
 .composer input {
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
   height: 56px;
-  padding-inline: 12px;
+  padding-inline: 18px;
   border: 0;
+  border-radius: 18px;
   outline: 0;
   color: var(--ink-strong);
-  background: transparent;
+  background: rgba(248, 252, 250, 0.74);
+  direction: rtl;
   font-size: 15px;
   font-weight: 700;
 }
@@ -743,6 +745,8 @@ main {
 }
 
 .composer button {
+  grid-column: 1;
+  grid-row: 1;
   width: 56px;
   height: 56px;
   border: 0;

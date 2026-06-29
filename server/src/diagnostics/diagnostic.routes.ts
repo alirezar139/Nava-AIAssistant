@@ -57,6 +57,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     severity: null,
     recommendation: null,
     externalTicketId: null,
+    externalTrackingId: null,
     externalTicketStatus: null,
     createdAt: new Date().toISOString(),
     analyzedAt: null
@@ -84,6 +85,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     }
   });
   diagnosticCase.externalTicketId = ticketResult.ticketId;
+  diagnosticCase.externalTrackingId = ticketResult.trackingId;
   diagnosticCase.externalTicketStatus = ticketResult.status;
 
   database.data.diagnosticCases.push(diagnosticCase);

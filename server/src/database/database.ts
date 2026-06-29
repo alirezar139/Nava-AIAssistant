@@ -50,6 +50,7 @@ export interface DiagnosticCaseRecord {
   severity: 'low' | 'medium' | 'high' | null;
   recommendation: string | null;
   externalTicketId?: string | null;
+  externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
   createdAt: string;
   analyzedAt: string | null;

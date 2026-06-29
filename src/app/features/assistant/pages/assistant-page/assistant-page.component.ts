@@ -182,13 +182,15 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
         this.api.analyzeDiagnosticCase(createdCase.id).subscribe({
           next: (analyzedCase) => {
             const severityLabel = this.formatSeverity(analyzedCase.severity);
-            const ticketStatus = this.formatExternalTicketStatus(
+            const ticketReceipt = this.formatTicketReceipt(
+              analyzedCase.id,
               analyzedCase.externalTicketStatus,
-              analyzedCase.externalTicketId
+              analyzedCase.externalTicketId,
+              analyzedCase.externalTrackingId
             );
             this.messages.push({
               role: 'assistant',
-              text: `پرونده بررسی #${analyzedCase.id} ثبت و تحلیل اولیه انجام شد.\n${ticketStatus}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
+              text: `تیکت ثبت شد و تحلیل اولیه انجام شد.\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
             this.ticketDialogOpen = false;
             this.ticketSubmitting = false;
@@ -242,13 +244,29 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return 'پایین';
   }
 
-  private formatExternalTicketStatus(
+  private formatTicketReceipt(
+    diagnosticId: number,
     status: 'not_configured' | 'submitted' | 'failed' | null | undefined,
-    ticketId: string | null | undefined
+    ticketId: string | null | undefined,
+    trackingId: string | null | undefined
   ): string {
-    if (status === 'submitted') return `تیکت سهند ثبت شد${ticketId ? `؛ کد پیگیری: ${ticketId}` : '.'}`;
-    if (status === 'failed') return 'ارسال به سهند ناموفق بود؛ پرونده داخلی ثبت شد و قابل پیگیری است.';
-    return 'اتصال سهند هنوز تنظیم نشده؛ پرونده داخلی ثبت شد.';
+    const internalTicketNumber = `NAVA-${diagnosticId.toString().padStart(5, '0')}`;
+    const internalTrackingNumber = `TRK-${diagnosticId.toString().padStart(5, '0')}`;
+    const lines = [
+      `شماره تیکت داخلی: ${internalTicketNumber}`,
+      `شماره پیگیری داخلی: ${internalTrackingNumber}`
+    ];
+
+    if (status === 'submitted') {
+      lines.push(`شماره تیکت سهند: ${ticketId || 'ثبت شد؛ شماره از سهند دریافت نشد'}`);
+      lines.push(`شماره پیگیری سهند: ${trackingId || ticketId || 'از سهند دریافت نشد'}`);
+    } else if (status === 'failed') {
+      lines.push('وضعیت سهند: ارسال ناموفق بود؛ پرونده داخلی قابل پیگیری است.');
+    } else {
+      lines.push('وضعیت سهند: اتصال هنوز تنظیم نشده؛ پرونده داخلی قابل پیگیری است.');
+    }
+
+    return lines.join('\n');
   }
 
   private handleDiagnosticError(error: unknown, fallback: string): void {
