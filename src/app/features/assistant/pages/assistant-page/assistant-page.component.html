@@ -8,10 +8,10 @@
     <div class="welcome-card">
       <app-brand-logo class="welcome-mark" />
       <span>دستیار هوشمند Nava</span>
-      <h2>من دستیار هوشمند پلتفرم تحلیل داده هستم؛ خوش آمدید.</h2>
+      <h2>من دستیار پشتیبانی سامانه‌های تحلیلی هستم.</h2>
       <p>
-        مشکل را مرحله‌به‌مرحله بررسی می‌کنم، در FAQ می‌گردم و اگر راه‌حل نبود مسیر ثبت تیکت سهند را آماده
-        می‌کنم.
+        مشکل را مرحله‌به‌مرحله بررسی می‌کنم، در FAQ می‌گردم و اگر پاسخ قطعی پیدا نشد مسیر ثبت تیکت سهند را
+        آماده می‌کنم.
       </p>
       <button type="button" (click)="closeWelcomeOverlay()">شروع کنیم</button>
     </div>
@@ -20,74 +20,159 @@
   <header class="topbar">
     <a class="brand-home" routerLink="/assistant" aria-label="صفحه اصلی دستیار">
       <app-brand-logo class="brand-mark" />
-      <div class="brand-copy"><span>مرکز راهبری دیجیتال</span><strong>دستیار پشتیبانی سامانه‌ها</strong></div>
+      <div class="brand-copy">
+        <span>مرکز راهبری دیجیتال</span>
+        <strong>میز پشتیبانی Nava</strong>
+      </div>
     </a>
+    <div class="topbar-status" aria-label="وضعیت پایگاه دانش">
+      <i aria-hidden="true"></i>
+      <span>{{ loading ? 'در حال دریافت داده' : 'آماده پاسخ‌گویی' }}</span>
+      <b>{{ faqs.length.toLocaleString('fa-IR') }}</b>
+    </div>
     <div class="topbar-actions">
       <app-theme-toggle />
       <div class="account-info">
+        <div class="account-avatar">
+          @if (theme.profileImage) {
+            <img [src]="theme.profileImage" alt="تصویر پروفایل" />
+          } @else {
+            <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
+          }
+        </div>
         <div>
-          <b>{{ auth.user?.fullName }}</b
-          ><small>کاربر سامانه</small>
+          <b>{{ auth.user?.fullName }}</b>
+          <small>کاربر سامانه</small>
         </div>
         <button type="button" (click)="logout()">خروج</button>
       </div>
     </div>
   </header>
 
-  <main>
-    <section class="assistant-hero" aria-label="معرفی دستیار">
-      <div class="hero-copy">
-        <strong>دستیار هوشمند پلتفرم تحلیل داده</strong>
-        <span
-          >Nava اول شرح مشکل را می‌گیرد، بعد در FAQ می‌گردد و در صورت نیاز تیکت سهند را آماده می‌کند.</span
-        >
-      </div>
-      <div class="hero-badge">آماده بررسی</div>
+  <main class="assistant-layout">
+    <section class="overview-strip" aria-label="مراحل رسیدگی">
+      <article>
+        <span>۰۱</span>
+        <div>
+          <strong>شرح مسئله</strong>
+          <small>علائم، سامانه و متن خطا</small>
+        </div>
+      </article>
+      <article>
+        <span>۰۲</span>
+        <div>
+          <strong>جست‌وجوی FAQ</strong>
+          <small>پاسخ‌های تاییدشده سازمان</small>
+        </div>
+      </article>
+      <article>
+        <span>۰۳</span>
+        <div>
+          <strong>تیکت سهند</strong>
+          <small>در صورت نبود پاسخ قطعی</small>
+        </div>
+      </article>
     </section>
 
     <section class="workspace user-workspace">
-      <aside class="data-panel knowledge-panel">
-        <div class="section-heading">
-          <span class="step">۱</span>
-          <div><strong>پایگاه دانش</strong><small>وضعیت FAQ سازمان</small></div>
-        </div>
-        <div class="knowledge-state">
+      <aside class="data-panel knowledge-panel" aria-label="اطلاعات پشتیبانی">
+        <section class="panel-section operator-card">
+          <span>نشست فعال</span>
+          <strong>{{ auth.user?.fullName || 'کاربر سامانه' }}</strong>
+          <small>پاسخ‌ها براساس داده‌های ثبت‌شده در پایگاه دانش تولید می‌شوند.</small>
+        </section>
+
+        <section class="panel-section knowledge-state">
           <div class="knowledge-icon">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 5h16v14H4zM8 9h8M8 13h5"></path>
+              <path d="M5 5h14v14H5zM8 9h8M8 13h5"></path>
               <path d="m15 16 2 2 4-5"></path>
             </svg>
           </div>
-          <strong>{{ loading ? 'در حال دریافت...' : 'آماده پاسخ‌گویی' }}</strong>
-          <span>{{ faqs.length.toLocaleString('fa-IR') }} پرسش و پاسخ فعال</span>
-        </div>
+          <div>
+            <strong>{{ loading ? 'در حال دریافت...' : 'پایگاه دانش فعال' }}</strong>
+            <small>{{ faqs.length.toLocaleString('fa-IR') }} پرسش و پاسخ قابل جست‌وجو</small>
+          </div>
+        </section>
+
         <p class="error" *ngIf="error" role="alert">{{ error }}</p>
-        <div class="hint">
-          <b>راهنمای پرسش بهتر</b>
+
+        <section class="panel-section case-flow">
+          <div class="section-heading">
+            <strong>پرونده پشتیبانی</strong>
+            <small>اطلاعاتی که برای نتیجه دقیق‌تر لازم است</small>
+          </div>
+          <ul>
+            <li><span></span>نام سامانه یا ابزار</li>
+            <li><span></span>متن خطا یا نشانه مشکل</li>
+            <li><span></span>مراحل انجام‌شده قبل از خطا</li>
+            <li><span></span>شناسه، سریال یا فایل مستند</li>
+          </ul>
+        </section>
+
+        <section class="panel-section hint">
+          <strong>پرسش دقیق‌تر</strong>
           <p>
-            نام سامانه، متن خطا و کاری که انجام می‌دادید را در سؤال ذکر کنید تا نتیجه دقیق‌تری دریافت کنید.
+            نام سامانه، کاری که انجام می‌دادید و متن خطا را در یک پیام بنویسید تا مسیر بررسی کوتاه‌تر شود.
           </p>
-        </div>
-        <div class="support-note">
-          <span>پاسخ پیدا نشد؟</span>
-          <p>مشکل شما در گزارش مدیریت ثبت می‌شود تا تیم پشتیبانی FAQ جدیدی برای آن آماده کند.</p>
-        </div>
+        </section>
+
+        <section class="panel-section support-note">
+          <strong>بدون پاسخ قطعی</strong>
+          <p>اگر مسیر انتخاب‌شده در FAQ پاسخ قطعی نداشته باشد، تیکت سهند به صورت خودکار ثبت می‌شود.</p>
+        </section>
+
+        <section class="panel-section support-progress" aria-label="روند پیگیری پشتیبان">
+          <div class="section-heading">
+            <strong>روند پیگیری</strong>
+            <small>وضعیت فعلی پرونده برای پشتیبان</small>
+          </div>
+          <ol>
+            <li
+              *ngFor="let step of supportProgressSteps; index as index"
+              [class.done]="isSupportStepDone(index)"
+              [class.active]="isSupportStepActive(index)"
+            >
+              <span>{{ (index + 1).toLocaleString('fa-IR') }}</span>
+              <div>
+                <strong>{{ step.label }}</strong>
+                <small>{{ step.description }}</small>
+              </div>
+            </li>
+          </ol>
+        </section>
       </aside>
 
-      <section class="chat-panel">
-        <div class="section-heading chat-heading">
-          <span class="step">۲</span>
-          <div><strong>گفت‌وگو با دستیار</strong><small>پاسخ بر اساس FAQهای تأییدشده</small></div>
-        </div>
+      <section class="chat-panel" aria-label="گفت‌وگو با دستیار">
+        <header class="chat-heading">
+          <div class="chat-title">
+            <strong>بررسی مرحله‌ای مشکل</strong>
+          </div>
+          <div class="conversation-actions" aria-label="کنترل مسیر گفتگو">
+            <button type="button" [disabled]="!canGoBack" (click)="goBackConversationStep()">
+              مرحله قبل
+            </button>
+            <button type="button" [disabled]="typing" (click)="restartConversation()">شروع دوباره</button>
+          </div>
+        </header>
         <div #conversation class="conversation" role="log" aria-live="polite" aria-label="گفت‌وگو با دستیار">
           <div class="welcome" *ngIf="!messages.length">
             <app-brand-logo class="assistant-logo" />
-            <h2>سؤال خود را مطرح کنید</h2>
-            <p>برای شروع یکی از نمونه‌ها را انتخاب کنید یا سؤال خودتان را بنویسید.</p>
+            <h2>مسیر پشتیبانی را انتخاب کنید</h2>
+            <p>برای شروع، یکی از گزینه‌های پیشنهادی را انتخاب کنید.</p>
             <div class="examples">
-              <button type="button" (click)="useExample('چطور رمز عبور را بازیابی کنم؟')">
-                بازیابی رمز عبور</button
-              ><button type="button" (click)="useExample('برای خطای ورود چه کاری انجام دهم؟')">
+              <button
+                type="button"
+                [disabled]="userWriteDisabled"
+                (click)="useExample('چطور رمز عبور را بازیابی کنم؟')"
+              >
+                بازیابی رمز عبور
+              </button>
+              <button
+                type="button"
+                [disabled]="userWriteDisabled"
+                (click)="useExample('برای خطای ورود چه کاری انجام دهم؟')"
+              >
                 خطای ورود به سامانه
               </button>
             </div>
@@ -96,7 +181,11 @@
             <div class="message" [class.user]="message.role === 'user'">
               <div class="avatar">
                 @if (message.role === 'user') {
-                  ش
+                  @if (theme.profileImage) {
+                    <img class="avatar-image" [src]="theme.profileImage" alt="تصویر پروفایل" />
+                  } @else {
+                    {{ auth.user?.fullName?.slice(0, 1) || 'ش' }}
+                  }
                 } @else {
                   <app-brand-logo class="mini-logo" />
                 }
@@ -164,28 +253,35 @@
         <div class="document-tools" *ngIf="diagnosticStep === 'evidence'">
           <div>
             <strong>مستندات مشکل</strong>
-            <small>اگر فایل Word دارید، همین‌جا بارگذاری کنید تا متنش به پرونده بررسی اضافه شود.</small>
+            <small>فایل Word را بارگذاری کنید تا متن آن به پرونده بررسی اضافه شود.</small>
           </div>
           <label>
             <input
               type="file"
               accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              [disabled]="typing || documentReading"
+              [disabled]="typing || documentReading || userWriteDisabled"
               (change)="onWordFileSelected($event)"
             />
             {{ documentReading ? 'در حال خواندن Word...' : 'انتخاب فایل Word' }}
           </label>
           <p class="error" *ngIf="documentError">{{ documentError }}</p>
         </div>
+        <p class="readonly-note" *ngIf="userWriteDisabled" role="status">
+          کاربر فقط گزینه‌ها را انتخاب می‌کند؛ اگر FAQ پاسخ قطعی نداشته باشد، تیکت خودکار ثبت می‌شود.
+        </p>
         <form class="composer" (ngSubmit)="ask()">
           <input
             #questionInput
             [(ngModel)]="question"
             name="question"
             autocomplete="off"
-            [disabled]="loading || typing || ticketDialogOpen"
+            [disabled]="loading || typing || ticketDialogOpen || userWriteDisabled"
             [placeholder]="inputPlaceholder"
-          /><button type="submit" [disabled]="loading || typing || ticketDialogOpen" aria-label="ارسال پرسش">
+          /><button
+            type="submit"
+            [disabled]="loading || typing || ticketDialogOpen || userWriteDisabled"
+            aria-label="ارسال پرسش"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m4 12 16-8-5 16-3-6-8-2Z"></path>
               <path d="m12 14 8-10"></path>
@@ -198,78 +294,140 @@
   <footer>سامانه راهبری و پشتیبانی <span>•</span> نسخه آزمایشی ۰.۲</footer>
 
   <section class="ticket-modal-backdrop" *ngIf="ticketDialogOpen" role="presentation">
-    <form class="ticket-modal" (ngSubmit)="submitTicketFromDialog()" aria-label="فرم نهایی ثبت تیکت سهند">
-      <header>
-        <div>
-          <span>ارسال خودکار به سهند</span>
-          <h2>ثبت تیکت برای پیمانکار</h2>
-        </div>
-        <button type="button" class="modal-close" [disabled]="ticketSubmitting" (click)="closeTicketDialog()">
+    <article class="ticket-modal sahand-modal" role="dialog" aria-label="پیش‌نمایش ثبت خودکار تیکت سهند">
+      <header class="sahand-header">
+        <h2>Create Issue</h2>
+        <button type="button" class="configure-fields" disabled>
+          <span aria-hidden="true">⚙</span>
+          Configure Fields
+        </button>
+        <button
+          type="button"
+          class="modal-close"
+          [disabled]="ticketSubmitting"
+          aria-label="بستن پنجره تیکت"
+          (click)="closeTicketDialog()"
+        >
           ×
         </button>
       </header>
 
-      <div class="ticket-grid">
-        <label>
-          <span>عنوان مشکل *</span>
-          <input name="ticketTitle" [(ngModel)]="diagnosticDraft.title" required />
-        </label>
-        <label>
-          <span>سامانه / ابزار *</span>
-          <input name="ticketSystem" [(ngModel)]="diagnosticDraft.systemName" required />
-        </label>
-        <label>
-          <span>{{ getProcessFieldLabel() }}</span>
-          <select
-            *ngIf="isCitrixTicket(); else processInput"
-            name="ticketProcess"
-            [(ngModel)]="diagnosticDraft.processName"
-            required
-          >
-            <option value="">انتخاب محیط</option>
-            <option value="star-da1">star-da1</option>
-            <option value="star-da2">star-da2</option>
-            <option value="star-da3">star-da3</option>
-            <option value="star-da4">star-da4</option>
-          </select>
-          <ng-template #processInput>
-            <input name="ticketProcess" [(ngModel)]="diagnosticDraft.processName" required />
-          </ng-template>
-        </label>
-        <label>
-          <span>سریال / شناسه</span>
-          <input name="ticketSerial" [(ngModel)]="diagnosticDraft.serialNumber" />
-        </label>
+      <div class="sahand-scroll">
+        <p class="sahand-required">All fields marked with an asterisk (*) are required</p>
+
+        <div class="sahand-row compact">
+          <label>Project<span>*</span></label>
+          <div class="sahand-select">
+            <i aria-hidden="true"></i>
+            <strong>(MHMN) مهین</strong>
+            <b aria-hidden="true">⌄</b>
+          </div>
+        </div>
+
+        <div class="sahand-row compact">
+          <label>Issue Type<span>*</span></label>
+          <div class="sahand-select">
+            <i class="issue-icon" aria-hidden="true"></i>
+            <strong>پلتفرم تحلیل روابط</strong>
+            <b aria-hidden="true">⌄</b>
+          </div>
+          <button type="button" class="sahand-help" disabled>?</button>
+        </div>
+
+        <div class="sahand-divider"></div>
+
+        <div class="sahand-row">
+          <label>Summary<span>*</span></label>
+          <input [value]="diagnosticDraft.title" readonly />
+        </div>
+
+        <div class="sahand-row editor-row">
+          <label>Description<span>*</span></label>
+          <div class="sahand-editor">
+            <div class="sahand-toolbar" aria-hidden="true">
+              <button type="button" disabled>Style⌄</button>
+              <button type="button" disabled>B</button>
+              <button type="button" disabled><i>I</i></button>
+              <button type="button" disabled><u>U</u></button>
+              <button type="button" disabled>A⌄</button>
+              <button type="button" disabled>🔗</button>
+              <button type="button" disabled>☰</button>
+              <button type="button" disabled>☺⌄</button>
+              <button type="button" disabled>＋⌄</button>
+            </div>
+            <textarea [value]="ticketDescriptionPreview" readonly></textarea>
+            <div class="sahand-editor-footer">
+              <button type="button" disabled>Visual</button>
+              <button type="button" class="active" disabled>Text</button>
+              <span>↶</span>
+              <span>↷</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sahand-row">
+          <label>Attachment</label>
+          <div class="sahand-dropzone">
+            <span aria-hidden="true">☁</span>
+            Drop files to attach, or <b>browse.</b>
+          </div>
+        </div>
+
+        <div class="sahand-row compact">
+          <label>Priority</label>
+          <div class="sahand-select priority">
+            <span aria-hidden="true">≋</span>
+            <strong>Medium</strong>
+            <b aria-hidden="true">⌄</b>
+          </div>
+          <button type="button" class="sahand-help" disabled>?</button>
+        </div>
+
+        <div class="sahand-row">
+          <label>Customer Request Type<span>*</span></label>
+          <div class="sahand-select wide disabled">
+            <strong>ثبت خودکار از دستیار Nava</strong>
+            <b aria-hidden="true">⌄</b>
+          </div>
+        </div>
+
+        <div class="sahand-row">
+          <label>Groups</label>
+          <input value="Nava Support / Data Platform" readonly />
+        </div>
+
+        <div class="sahand-row compact">
+          <label>لیسنس پلتفرم - تحلیل روابط</label>
+          <div class="sahand-select small">
+            <strong>None</strong>
+            <b aria-hidden="true">⌄</b>
+          </div>
+        </div>
+
+        <section class="ticket-status-card" [class.failed]="ticketAutomationState === 'failed'">
+          <div>
+            <span>وضعیت ثبت خودکار</span>
+            <strong>{{ ticketStatusText }}</strong>
+            <small>{{ ticketStatusHint }}</small>
+          </div>
+        </section>
       </div>
 
-      <label>
-        <span>شرح مشکل *</span>
-        <textarea name="ticketProblem" rows="3" [(ngModel)]="diagnosticDraft.problem" required></textarea>
-      </label>
-      <label>
-        <span>{{ getScenarioFieldLabel() }}</span>
-        <textarea name="ticketScenario" rows="3" [(ngModel)]="diagnosticDraft.scenario" required></textarea>
-      </label>
-      <label>
-        <span>متن خطا</span>
-        <textarea name="ticketError" rows="3" [(ngModel)]="diagnosticDraft.errorText"></textarea>
-      </label>
-      <label>
-        <span>مستندات / لاگ / توضیح فایل پیوست</span>
-        <textarea name="ticketEvidence" rows="3" [(ngModel)]="diagnosticDraft.evidence"></textarea>
-      </label>
-
-      <footer>
-        <p>بعد از تأیید، درخواست از طریق API سهند ایجاد و برای پیمانکار ارسال می‌شود.</p>
-        <div>
-          <button type="button" class="secondary" [disabled]="ticketSubmitting" (click)="closeTicketDialog()">
-            انصراف
-          </button>
-          <button type="submit" [disabled]="ticketSubmitting || !isTicketDraftValid()">
-            {{ ticketSubmitting ? 'در حال ثبت...' : 'Create' }}
-          </button>
-        </div>
+      <footer class="sahand-footer">
+        <label class="create-another">
+          <input type="checkbox" disabled />
+          Create another
+        </label>
+        <button type="button" class="create-button" disabled>{{ ticketPrimaryActionLabel }}</button>
+        <button
+          type="button"
+          class="cancel-button"
+          [disabled]="ticketSubmitting"
+          (click)="closeTicketDialog()"
+        >
+          Cancel
+        </button>
       </footer>
-    </form>
+    </article>
   </section>
 </div>

@@ -312,6 +312,171 @@ label {
   color: #9db2ab;
 }
 
+/* Final global theme enforcement */
+.login-page {
+  color: var(--color-body);
+  background:
+    radial-gradient(circle at 76% 16%, var(--ambient-one), transparent 24rem),
+    radial-gradient(circle at 65% 82%, var(--ambient-two), transparent 28rem), var(--page-bg);
+}
+
+.login-card,
+.field-shell input,
+.password-field input,
+.captcha-image,
+.demo {
+  color: var(--color-body);
+  border-color: var(--crystal-edge);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 30%), var(--crystal-surface);
+  box-shadow:
+    var(--crystal-shadow),
+    inset 1px 1px 0 var(--crystal-edge);
+}
+
+.card-heading h2,
+label {
+  color: var(--color-heading);
+}
+
+.card-heading p,
+.demo,
+.caps-warning {
+  color: var(--color-secondary);
+}
+
+.card-heading span,
+.demo b,
+h1 em,
+.eyebrow {
+  color: var(--color-metric);
+}
+
+.field-shell > svg,
+.password-field > svg,
+.captcha-image span {
+  stroke: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+input::placeholder {
+  color: var(--color-subtle);
+}
+
+input:focus {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+form button {
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-900) 22%, transparent);
+}
+
+.password-field button {
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
+}
+
+.password-field button:hover {
+  background: color-mix(in srgb, var(--color-link) 18%, var(--surface));
+}
+
+.intro {
+  background:
+    linear-gradient(140deg, color-mix(in srgb, var(--primary-950) 18%, transparent), transparent 50%),
+    radial-gradient(circle at 15% 12%, var(--primary-700) 0, transparent 32%),
+    linear-gradient(145deg, var(--primary-900) 0%, var(--primary-950) 100%);
+}
+
+.logo {
+  background: linear-gradient(145deg, var(--accent-600), var(--primary-800));
+}
+
+/* Global theme enforcement */
+.login-page {
+  color: var(--color-body);
+  background:
+    radial-gradient(circle at 76% 16%, var(--ambient-one), transparent 24rem),
+    radial-gradient(circle at 65% 82%, var(--ambient-two), transparent 28rem), var(--page-bg);
+}
+
+.login-card,
+.field-shell input,
+.password-field input,
+.captcha-image,
+.demo {
+  color: var(--color-body);
+  border-color: var(--crystal-edge);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 30%), var(--crystal-surface);
+  box-shadow:
+    var(--crystal-shadow),
+    inset 1px 1px 0 var(--crystal-edge);
+}
+
+.login-card {
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.card-heading h2,
+label {
+  color: var(--color-heading);
+}
+
+.card-heading p,
+.demo,
+.caps-warning {
+  color: var(--color-secondary);
+}
+
+.card-heading span,
+.demo b,
+h1 em,
+.eyebrow {
+  color: var(--color-metric);
+}
+
+.field-shell > svg,
+.password-field > svg,
+.captcha-image span {
+  stroke: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+input::placeholder {
+  color: var(--color-subtle);
+}
+
+input:focus {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+form button {
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-900) 22%, transparent);
+}
+
+.password-field button {
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
+}
+
+.password-field button:hover {
+  background: color-mix(in srgb, var(--color-link) 18%, var(--surface));
+}
+
+.intro {
+  background:
+    linear-gradient(140deg, color-mix(in srgb, var(--primary-950) 18%, transparent), transparent 50%),
+    radial-gradient(circle at 15% 12%, var(--primary-700) 0, transparent 32%),
+    linear-gradient(145deg, var(--primary-900) 0%, var(--primary-950) 100%);
+}
+
+.logo {
+  background: linear-gradient(145deg, var(--accent-600), var(--primary-800));
+}
+
 /* Unified typography and semantic colors */
 .card-heading h2,
 label {
@@ -831,4 +996,84 @@ input {
 }
 :host-context([data-theme='dark']) input::placeholder {
   color: #9db2ab;
+}
+
+/* Final global theme enforcement */
+.login-page {
+  color: var(--color-body);
+  background:
+    radial-gradient(circle at 76% 16%, var(--ambient-one), transparent 24rem),
+    radial-gradient(circle at 65% 82%, var(--ambient-two), transparent 28rem), var(--page-bg);
+}
+
+.login-card,
+.field-shell input,
+.password-field input,
+.captcha-image,
+.demo {
+  color: var(--color-body);
+  border-color: var(--crystal-edge);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 30%), var(--crystal-surface);
+  box-shadow:
+    var(--crystal-shadow),
+    inset 1px 1px 0 var(--crystal-edge);
+}
+
+.card-heading h2,
+label {
+  color: var(--color-heading);
+}
+
+.card-heading p,
+.demo,
+.caps-warning {
+  color: var(--color-secondary);
+}
+
+.card-heading span,
+.demo b,
+h1 em,
+.eyebrow {
+  color: var(--color-metric);
+}
+
+.field-shell > svg,
+.password-field > svg,
+.captcha-image span {
+  stroke: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+input::placeholder {
+  color: var(--color-subtle);
+}
+
+input:focus {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+form button {
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-900) 22%, transparent);
+}
+
+.password-field button {
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
+}
+
+.password-field button:hover {
+  background: color-mix(in srgb, var(--color-link) 18%, var(--surface));
+}
+
+.intro {
+  background:
+    linear-gradient(140deg, color-mix(in srgb, var(--primary-950) 18%, transparent), transparent 50%),
+    radial-gradient(circle at 15% 12%, var(--primary-700) 0, transparent 32%),
+    linear-gradient(145deg, var(--primary-900) 0%, var(--primary-950) 100%);
+}
+
+.logo {
+  background: linear-gradient(145deg, var(--accent-600), var(--primary-800));
 }

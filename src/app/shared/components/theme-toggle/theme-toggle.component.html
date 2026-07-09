@@ -53,7 +53,8 @@
 >
   <div class="panel-heading">
     <div>
-      <strong id="theme-settings-title">ظاهر شخصی من</strong><small>تنظیمات برای حساب شما ذخیره می‌شود</small>
+      <strong id="theme-settings-title">ظاهر شخصی من</strong>
+      <small>تنظیمات برای حساب شما ذخیره می‌شود</small>
     </div>
     <button type="button" (click)="settingsOpen = false" aria-label="بستن">×</button>
   </div>
@@ -62,40 +63,55 @@
   <div class="palette-grid">
     <button
       type="button"
-      [class.selected]="theme.palette === 'jade'"
-      [attr.aria-pressed]="theme.palette === 'jade'"
-      (click)="selectPalette('jade')"
+      *ngFor="let option of paletteOptions"
+      [class.selected]="theme.palette === option.id"
+      [attr.aria-pressed]="theme.palette === option.id"
+      (click)="selectPalette(option.id)"
     >
-      <i class="jade"></i><span>یشمی</span>
-    </button>
-    <button
-      type="button"
-      [class.selected]="theme.palette === 'ocean'"
-      [attr.aria-pressed]="theme.palette === 'ocean'"
-      (click)="selectPalette('ocean')"
-    >
-      <i class="ocean"></i><span>اقیانوسی</span>
-    </button>
-    <button
-      type="button"
-      [class.selected]="theme.palette === 'violet'"
-      [attr.aria-pressed]="theme.palette === 'violet'"
-      (click)="selectPalette('violet')"
-    >
-      <i class="violet"></i><span>بنفش</span>
-    </button>
-    <button
-      type="button"
-      [class.selected]="theme.palette === 'graphite'"
-      [attr.aria-pressed]="theme.palette === 'graphite'"
-      (click)="selectPalette('graphite')"
-    >
-      <i class="graphite"></i><span>خنثی</span>
+      <i [class]="option.id" [style.background]="option.id === 'paint' ? theme.paintColor : null"></i>
+      <span>{{ option.label }}</span>
     </button>
   </div>
 
+  <label class="paint-row">
+    <span>
+      <b>رنگ Paint</b>
+      <small>با انتخاب رنگ، پالت اختصاصی فعال می‌شود</small>
+    </span>
+    <input
+      type="color"
+      [value]="theme.paintColor"
+      (input)="setPaintColor($any($event.target).value)"
+      aria-label="رنگ Paint"
+    />
+  </label>
+
+  <section class="profile-block" aria-label="تصویر پروفایل">
+    <div class="profile-preview">
+      <img *ngIf="theme.profileImage; else profileInitial" [src]="theme.profileImage" alt="تصویر پروفایل" />
+      <ng-template #profileInitial>
+        <span>ن</span>
+      </ng-template>
+    </div>
+    <div class="profile-copy">
+      <b>عکس پروفایل</b>
+      <small>این تصویر فقط برای همین حساب ذخیره می‌شود</small>
+      <p *ngIf="profileImageError" role="alert">{{ profileImageError }}</p>
+    </div>
+    <div class="profile-actions">
+      <label>
+        <input type="file" accept="image/*" (change)="onProfileImageSelected($event)" />
+        انتخاب عکس
+      </label>
+      <button type="button" *ngIf="theme.profileImage" (click)="clearProfileImage()">حذف</button>
+    </div>
+  </section>
+
   <label class="preference-row">
-    <span><b>کنتراست بیشتر</b><small>خوانایی بهتر متن و مرزها</small></span>
+    <span>
+      <b>کنتراست بیشتر</b>
+      <small>خوانایی بهتر متن و مرزها</small>
+    </span>
     <input
       type="checkbox"
       [checked]="theme.highContrast"
@@ -104,7 +120,10 @@
     />
   </label>
   <label class="preference-row">
-    <span><b>انیمیشن رابط</b><small>حرکت‌ها و جلوه‌های صفحه</small></span>
+    <span>
+      <b>انیمیشن رابط</b>
+      <small>حرکت‌ها و جلوه‌های صفحه</small>
+    </span>
     <input
       type="checkbox"
       [checked]="theme.motionEnabled"

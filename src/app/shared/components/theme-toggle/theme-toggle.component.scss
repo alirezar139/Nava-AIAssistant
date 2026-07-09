@@ -108,7 +108,7 @@
   position: absolute;
   top: calc(100% + 12px);
   inset-inline-end: 0;
-  width: min(330px, calc(100vw - 28px));
+  width: min(370px, calc(100vw - 28px));
   padding: 18px;
   border-radius: 20px;
   color: var(--color-body);
@@ -123,7 +123,9 @@
 }
 
 .panel-heading div,
-.preference-row span {
+.paint-row span,
+.preference-row span,
+.profile-copy {
   display: grid;
   gap: 3px;
 }
@@ -134,7 +136,9 @@
 }
 
 .panel-heading small,
-.preference-row small {
+.paint-row small,
+.preference-row small,
+.profile-copy small {
   color: var(--color-subtle);
   font-size: 9px;
 }
@@ -203,6 +207,120 @@
 }
 .graphite {
   background: linear-gradient(135deg, #35404a, #9da8ad);
+}
+.amber {
+  background: linear-gradient(135deg, #7c4a17, #d7a84e);
+}
+.rose {
+  background: linear-gradient(135deg, #91465d, #e18aa0);
+}
+.cobalt {
+  background: linear-gradient(135deg, #284f9e, #6aa8ff);
+}
+.paint {
+  background: var(--paint-primary-700);
+}
+
+.paint-row,
+.profile-block {
+  border-top: 1px solid var(--crystal-inner-edge);
+}
+
+.paint-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 58px;
+  padding: 10px 2px;
+}
+
+.paint-row b,
+.profile-copy b {
+  color: var(--color-heading);
+  font-size: 11px;
+}
+
+.paint-row input {
+  width: 46px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.profile-block {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px 2px;
+}
+
+.profile-preview {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--color-link) 20%, transparent);
+  font-size: 16px;
+  font-weight: 950;
+  place-items: center;
+}
+
+.profile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-copy {
+  min-width: 0;
+}
+
+.profile-copy p {
+  margin: 3px 0 0;
+  color: var(--danger);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.profile-actions label,
+.profile-actions button {
+  min-height: 32px;
+  padding: 7px 10px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 10px;
+  color: var(--color-heading);
+  background: var(--crystal-soft);
+  font-size: 10px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.profile-actions label:hover,
+.profile-actions button:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--color-link) 16%, transparent);
+}
+
+.profile-actions input {
+  display: none;
 }
 
 .preference-row {
