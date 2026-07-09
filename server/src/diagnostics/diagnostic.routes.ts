@@ -40,7 +40,6 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     sendError(response, 400, 'DIAGNOSTIC_INVALID', 'اطلاعات پرونده بررسی معتبر نیست.');
     return;
   }
-
   const diagnosticCase: DiagnosticCaseRecord = {
     id: nextId(database.data.diagnosticCases),
     userId: request.user.id,

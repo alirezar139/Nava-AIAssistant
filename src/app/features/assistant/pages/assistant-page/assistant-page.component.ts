@@ -10,12 +10,13 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { DiagnosticPayload } from '../../../../core/models/diagnostic.models';
+import { DiagnosticCaseRecord, DiagnosticPayload } from '../../../../core/models/diagnostic.models';
 import { ChatMessage, FaqRecord } from '../../../../core/models/faq.models';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { FaqSearchService } from '../../../../core/services/faq-search.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import {
   TroubleshootingTreeIndex,
   TroubleshootingTreeService
@@ -23,6 +24,33 @@ import {
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
+
+interface ConversationSnapshot {
+  messages: ChatMessage[];
+  question: string;
+  error: string;
+  diagnosticStep: keyof DiagnosticPayload | null;
+  diagnosticDraft: DiagnosticPayload;
+  diagnosticCase: DiagnosticCaseRecord | null;
+  documentError: string;
+  ticketDialogOpen: boolean;
+  ticketSubmitting: boolean;
+  ticketAutomationState: TicketAutomationState;
+  ticketErrorMessage: string;
+  supportStage: SupportStage;
+  awaitingInitialProblem: boolean;
+  activeTreeOptions: Array<{ label: string; targetId: string }>;
+  treeTrail: string[];
+}
+
+type SupportStage = 'selecting' | 'triage' | 'faq' | 'ticket' | 'handoff' | 'done';
+type TicketAutomationState = 'idle' | 'preparing' | 'submitting' | 'analyzing' | 'submitted' | 'failed';
+
+interface SupportProgressItem {
+  id: SupportStage;
+  label: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-assistant-page',
@@ -43,18 +71,52 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   typing = false;
   diagnosticStep: keyof DiagnosticPayload | null = null;
   diagnosticDraft: DiagnosticPayload = this.createEmptyDiagnostic();
+  diagnosticCase: DiagnosticCaseRecord | null = null;
   documentReading = false;
   documentError = '';
   ticketDialogOpen = false;
   ticketSubmitting = false;
+  ticketAutomationState: TicketAutomationState = 'idle';
+  ticketErrorMessage = '';
+  supportStage: SupportStage = 'selecting';
   welcomeOverlayVisible = false;
+  readonly userWriteDisabled = false;
   private treeIndex: TroubleshootingTreeIndex | null = null;
   private treeStartNodeId = '';
   private awaitingInitialProblem = true;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
+  private conversationHistory: ConversationSnapshot[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
   private welcomeTimer?: ReturnType<typeof setTimeout>;
+
+  readonly supportProgressSteps: SupportProgressItem[] = [
+    {
+      id: 'selecting',
+      label: 'انتخاب حوزه',
+      description: 'کاربر مسیر مشکل را از درختواره انتخاب می‌کند.'
+    },
+    {
+      id: 'triage',
+      label: 'تشخیص مسیر',
+      description: 'جزئیات مسیر انتخاب‌شده برای پشتیبان آماده می‌شود.'
+    },
+    {
+      id: 'faq',
+      label: 'بررسی FAQ',
+      description: 'پاسخ‌های تاییدشده قبل از ثبت تیکت بررسی می‌شوند.'
+    },
+    {
+      id: 'ticket',
+      label: 'ثبت سهند',
+      description: 'در نبود پاسخ قطعی، تیکت به صورت خودکار ساخته می‌شود.'
+    },
+    {
+      id: 'handoff',
+      label: 'ارجاع پشتیبان',
+      description: 'شماره پیگیری برای ادامه رسیدگی در اختیار پشتیبان است.'
+    }
+  ];
 
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
     title: 'عنوان کوتاه مشکل را بنویسید؛ مثلا «خطا در اجرای جریان داده فروش».',
@@ -79,6 +141,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   constructor(
     readonly auth: AuthService,
+    readonly theme: ThemeService,
     private readonly api: ApiService,
     private readonly errorMessages: ErrorMessageService,
     private readonly searchService: FaqSearchService,
@@ -120,12 +183,67 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   get inputPlaceholder(): string {
+    if (this.userWriteDisabled) return 'امکان نوشتن پیام دستی فعلاً بسته است.';
     return this.diagnosticStep
       ? this.getDiagnosticPrompt(this.diagnosticStep)
       : 'مشکل یا سؤال خود را بنویسید...';
   }
 
-  ask(): void {
+  get canGoBack(): boolean {
+    return this.conversationHistory.length > 0 && !this.typing;
+  }
+
+  get activeSupportStepIndex(): number {
+    const index = this.supportProgressSteps.findIndex((step) => step.id === this.supportStage);
+    return index === -1 ? 0 : index;
+  }
+
+  get ticketDescriptionPreview(): string {
+    return [
+      `شرح مشکل: ${this.diagnosticDraft.problem || '-'}`,
+      `مسیر انتخاب‌شده: ${this.diagnosticDraft.scenario || '-'}`,
+      `سامانه/ابزار: ${this.diagnosticDraft.systemName || '-'}`,
+      `فرآیند/سناریو: ${this.diagnosticDraft.processName || '-'}`,
+      `شناسه/سریال: ${this.diagnosticDraft.serialNumber || '-'}`,
+      `متن خطا: ${this.diagnosticDraft.errorText || '-'}`,
+      `مستندات: ${this.diagnosticDraft.evidence || '-'}`
+    ].join('\n');
+  }
+
+  get ticketStatusText(): string {
+    if (this.ticketAutomationState === 'preparing') return 'در حال آماده‌سازی اطلاعات';
+    if (this.ticketAutomationState === 'submitting') return 'در حال ارسال به سهند';
+    if (this.ticketAutomationState === 'analyzing') return 'ثبت شد؛ تحلیل اولیه در حال انجام است';
+    if (this.ticketAutomationState === 'submitted') return 'تیکت ثبت و آماده پیگیری است';
+    if (this.ticketAutomationState === 'failed') return 'ثبت تیکت انجام نشد';
+    return 'در انتظار مسیر پشتیبانی';
+  }
+
+  get ticketStatusHint(): string {
+    if (this.ticketAutomationState === 'submitted') return this.formatTicketReceiptText();
+    if (this.ticketAutomationState === 'failed')
+      return this.ticketErrorMessage || 'خطای ثبت تیکت را بررسی کنید.';
+    if (this.ticketAutomationState === 'idle') return 'هنوز مسیر به مرحله ثبت تیکت نرسیده است.';
+    return 'کاربر نیازی به تکمیل یا تایید فرم ندارد؛ ثبت به صورت خودکار انجام می‌شود.';
+  }
+
+  get ticketPrimaryActionLabel(): string {
+    if (this.ticketAutomationState === 'submitted') return 'ثبت شد';
+    if (this.ticketAutomationState === 'failed') return 'ناموفق';
+    if (this.ticketSubmitting) return 'در حال ثبت خودکار';
+    return 'Create';
+  }
+
+  isSupportStepDone(index: number): boolean {
+    return index < this.activeSupportStepIndex;
+  }
+
+  isSupportStepActive(index: number): boolean {
+    return index === this.activeSupportStepIndex;
+  }
+
+  ask(fromPreset = false, saveHistory = true): void {
+    if (this.userWriteDisabled && !fromPreset) return;
     const question = this.question.trim();
     if (!question || this.typing) return;
     this.error = '';
@@ -133,9 +251,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const matchedTreeOption = this.findTreeOption(question);
     if (matchedTreeOption) {
       this.question = '';
-      this.selectTreeOption(matchedTreeOption);
+      this.selectTreeOption(matchedTreeOption, saveHistory);
       return;
     }
+
+    if (saveHistory) this.saveConversationSnapshot();
 
     this.messages.push({ role: 'user', text: question });
     this.question = '';
@@ -173,14 +293,29 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   submitTicketFromDialog(): void {
+    this.submitAutomaticTicket();
+  }
+
+  private submitAutomaticTicket(): void {
     if (this.ticketSubmitting || !this.isTicketDraftValid()) return;
 
     this.ticketSubmitting = true;
+    this.ticketAutomationState = 'submitting';
+    this.ticketErrorMessage = '';
+    this.supportStage = 'ticket';
     this.changeDetector.markForCheck();
+
     this.api.createDiagnosticCase(this.diagnosticDraft).subscribe({
       next: (createdCase) => {
+        this.diagnosticCase = createdCase;
+        this.ticketAutomationState = 'analyzing';
+        this.changeDetector.markForCheck();
+
         this.api.analyzeDiagnosticCase(createdCase.id).subscribe({
           next: (analyzedCase) => {
+            this.diagnosticCase = analyzedCase;
+            this.ticketAutomationState = 'submitted';
+            this.supportStage = 'handoff';
             const severityLabel = this.formatSeverity(analyzedCase.severity);
             const ticketReceipt = this.formatTicketReceipt(
               analyzedCase.id,
@@ -192,7 +327,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
               role: 'assistant',
               text: `تیکت ثبت شد و تحلیل اولیه انجام شد.\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
-            this.ticketDialogOpen = false;
             this.ticketSubmitting = false;
             this.changeDetector.markForCheck();
             this.scrollToLatest();
@@ -269,8 +403,21 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return lines.join('\n');
   }
 
+  private formatTicketReceiptText(): string {
+    if (!this.diagnosticCase) return 'شماره پیگیری هنوز ایجاد نشده است.';
+    return this.formatTicketReceipt(
+      this.diagnosticCase.id,
+      this.diagnosticCase.externalTicketStatus,
+      this.diagnosticCase.externalTicketId,
+      this.diagnosticCase.externalTrackingId
+    );
+  }
+
   private handleDiagnosticError(error: unknown, fallback: string): void {
     const resolved = this.errorMessages.resolve(error, fallback);
+    this.ticketAutomationState = 'failed';
+    this.supportStage = 'ticket';
+    this.ticketErrorMessage = this.errorMessages.formatMessage(resolved);
     this.messages.push({ role: 'assistant', text: this.errorMessages.formatMessage(resolved) });
     this.typing = false;
     this.ticketSubmitting = false;
@@ -279,23 +426,74 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   useExample(value: string): void {
+    if (this.userWriteDisabled) return;
     this.question = value;
   }
 
   useQuickReply(value: string): void {
     if (this.typing || this.ticketDialogOpen) return;
     this.question = value;
-    this.ask();
+    this.ask(true);
+  }
+
+  goBackConversationStep(): void {
+    if (!this.canGoBack) return;
+    const snapshot = this.conversationHistory.pop();
+    if (!snapshot) return;
+
+    if (this.typingTimer) clearTimeout(this.typingTimer);
+    this.typing = false;
+    this.messages = this.cloneMessages(snapshot.messages);
+    this.question = snapshot.question;
+    this.error = snapshot.error;
+    this.diagnosticStep = snapshot.diagnosticStep;
+    this.diagnosticDraft = { ...snapshot.diagnosticDraft };
+    this.diagnosticCase = snapshot.diagnosticCase ? { ...snapshot.diagnosticCase } : null;
+    this.documentError = snapshot.documentError;
+    this.ticketDialogOpen = snapshot.ticketDialogOpen;
+    this.ticketSubmitting = snapshot.ticketSubmitting;
+    this.ticketAutomationState = snapshot.ticketAutomationState;
+    this.ticketErrorMessage = snapshot.ticketErrorMessage;
+    this.supportStage = snapshot.supportStage;
+    this.awaitingInitialProblem = snapshot.awaitingInitialProblem;
+    this.activeTreeOptions = snapshot.activeTreeOptions.map((option) => ({ ...option }));
+    this.treeTrail = [...snapshot.treeTrail];
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
+  }
+
+  restartConversation(): void {
+    if (this.typingTimer) clearTimeout(this.typingTimer);
+    this.typing = false;
+    this.question = '';
+    this.error = '';
+    this.diagnosticStep = null;
+    this.diagnosticDraft = this.createEmptyDiagnostic();
+    this.diagnosticCase = null;
+    this.documentError = '';
+    this.ticketDialogOpen = false;
+    this.ticketSubmitting = false;
+    this.ticketAutomationState = 'idle';
+    this.ticketErrorMessage = '';
+    this.supportStage = 'selecting';
+    this.awaitingInitialProblem = true;
+    this.activeTreeOptions = [];
+    this.treeTrail = [];
+    this.conversationHistory = [];
+    this.showInitialProblemPrompt();
   }
 
   rateMessage(message: ChatMessage, feedback: 'helpful' | 'unhelpful'): void {
     message.feedback = feedback;
   }
 
-  selectTreeOption(option: { label: string; targetId: string }): void {
+  selectTreeOption(option: { label: string; targetId: string }, saveHistory = true): void {
     if (this.typing) return;
+    if (saveHistory) this.saveConversationSnapshot();
     this.messages.push({ role: 'user', text: option.label });
     this.treeTrail.push(option.label);
+    this.supportStage =
+      this.treeTrail.length <= 1 ? 'selecting' : this.treeTrail.length <= 2 ? 'triage' : 'faq';
 
     const state = this.getTreeNodeState(option.targetId);
     if (!state) return;
@@ -314,6 +512,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   onWordFileSelected(event: Event): void {
+    if (this.userWriteDisabled) return;
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = '';
@@ -371,6 +570,35 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   getScenarioFieldLabel(): string {
     return this.isCitrixTicket() ? 'شرح مسیر و عملیات انجام‌شده در محیط سیتریکس *' : 'سناریوی اجرا *';
+  }
+
+  private saveConversationSnapshot(): void {
+    this.conversationHistory.push({
+      messages: this.cloneMessages(this.messages),
+      question: this.question,
+      error: this.error,
+      diagnosticStep: this.diagnosticStep,
+      diagnosticDraft: { ...this.diagnosticDraft },
+      diagnosticCase: this.diagnosticCase ? { ...this.diagnosticCase } : null,
+      documentError: this.documentError,
+      ticketDialogOpen: this.ticketDialogOpen,
+      ticketSubmitting: this.ticketSubmitting,
+      ticketAutomationState: this.ticketAutomationState,
+      ticketErrorMessage: this.ticketErrorMessage,
+      supportStage: this.supportStage,
+      awaitingInitialProblem: this.awaitingInitialProblem,
+      activeTreeOptions: this.activeTreeOptions.map((option) => ({ ...option })),
+      treeTrail: [...this.treeTrail]
+    });
+  }
+
+  private cloneMessages(messages: ChatMessage[]): ChatMessage[] {
+    return messages.map((message) => ({
+      ...message,
+      matches: message.matches?.map((match) => ({ ...match })),
+      treeOptions: message.treeOptions?.map((option) => ({ ...option })),
+      quickReplies: message.quickReplies ? [...message.quickReplies] : undefined
+    }));
   }
 
   private scrollToLatest(): void {
@@ -444,17 +672,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private showInitialProblemPrompt(): void {
-    this.activeTreeOptions = [];
+    const state = this.treeStartNodeId ? this.getTreeNodeState(this.treeStartNodeId) : null;
+    this.activeTreeOptions = state?.options ?? [];
     this.messages = [
       {
         role: 'assistant',
-        text: 'سلام، من دستیار هوشمند پلتفرم تحلیل داده هستم. ابتدا مشکل خود را با چند جمله توضیح دهید؛ بعد مرحله‌به‌مرحله حوزه و جزئیات را مشخص می‌کنم.',
-        quickReplies: [
-          'مشکل در اجرای جریان داده دارم',
-          'در محیط سیتریکس مشکل دارم',
-          'با دیتابیس خطا دارم',
-          'زیرساخت یا سامانه کند است'
-        ]
+        text: 'سلام، حوزه مشکل را انتخاب کنید تا مرحله بعدی نمایش داده شود.',
+        treeOptions: this.activeTreeOptions.length ? this.activeTreeOptions : undefined,
+        quickReplies: this.activeTreeOptions.length
+          ? undefined
+          : ['اجرای جریان داده', 'محیط سیتریکس', 'دیتابیس یا خطای داده', 'کندی سامانه یا زیرساخت']
       }
     ];
     this.changeDetector.markForCheck();
@@ -516,6 +743,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   private answerFromFaqOrStartTicket(question: string, fromTree = false): void {
     this.typing = true;
+    this.supportStage = 'faq';
     const { matches, answer, matchedFaq } = this.searchFaq(question);
     const reliableMatches = matches.filter((match) => match.score >= 0.55);
 
@@ -535,6 +763,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       this.typing = false;
       this.changeDetector.markForCheck();
       this.scrollToLatest();
+
+      if (this.userWriteDisabled) return;
 
       this.api
         .logConversation(question, answer, reliableMatches.length ? (matchedFaq?.id ?? null) : null)
@@ -567,16 +797,69 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private startTicketFlow(problem: string): void {
-    this.diagnosticDraft = {
-      ...this.createEmptyDiagnostic(),
-      problem,
-      scenario: this.treeTrail.length ? this.treeTrail.join(' > ') : ''
-    };
-    this.diagnosticStep = 'title';
+    this.diagnosticDraft = this.createAutomaticDiagnostic(problem);
+    this.diagnosticCase = null;
+    this.diagnosticStep = null;
+    this.ticketDialogOpen = true;
+    this.ticketAutomationState = 'preparing';
+    this.ticketErrorMessage = '';
+    this.supportStage = 'ticket';
     this.messages.push({
       role: 'assistant',
-      text: `در FAQ پاسخ قابل اتکا پیدا نشد. قبل از ثبت تیکت، مشخصات کامل مشکل را مرحله‌ای می‌گیرم.\n\n${this.diagnosticPrompts.title}`
+      text: 'در FAQ پاسخ قطعی پیدا نشد. تیکت سهند به صورت خودکار با مسیر انتخاب‌شده در حال ثبت است.'
     });
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
+    this.submitAutomaticTicket();
+  }
+
+  private createAutomaticDiagnostic(problem: string): DiagnosticPayload {
+    const cleanPath = this.treeTrail
+      .map((item) => item.trim())
+      .filter((item) => item && !this.isDecisionLabel(item));
+    const meaningfulPath = cleanPath.filter((item) => !this.isTicketNode(item));
+    const leaf = meaningfulPath[meaningfulPath.length - 1] || problem || 'نیازمند بررسی پشتیبانی';
+    const domain = meaningfulPath[0] || 'پلتفرم تحلیل روابط';
+    const middlePath = meaningfulPath.slice(1);
+    const fullPath = [...meaningfulPath, problem].filter(Boolean).join(' > ');
+
+    return {
+      title: this.limitText(`درخواست پشتیبانی - ${leaf}`, 120),
+      problem: this.limitText(problem || fullPath || leaf, 3000),
+      systemName: this.resolveSystemName(domain),
+      processName: this.limitText(middlePath.join(' / ') || leaf || 'مسیر درختواره پشتیبانی', 260),
+      scenario: this.limitText(fullPath || leaf, 4000),
+      serialNumber: 'در دسترس نیست',
+      errorText: leaf.includes('خطا') ? leaf : 'خطای مشخصی در مسیر انتخاب‌شده ثبت نشده است.',
+      evidence: this.limitText(
+        [
+          `ثبت خودکار از صفحه کاربر Nava`,
+          `تعداد انتخاب‌های کاربر: ${this.treeTrail.length.toLocaleString('fa-IR')}`,
+          `مسیر: ${fullPath || leaf}`
+        ].join('\n'),
+        4000
+      )
+    };
+  }
+
+  private resolveSystemName(domain: string): string {
+    const normalizedDomain = this.normalizeTreeText(domain);
+    if (normalizedDomain.includes('سیتریکس')) return 'محیط سیتریکس';
+    if (normalizedDomain.includes('دیتابیس')) return 'دیتابیس';
+    if (normalizedDomain.includes('زیرساخت')) return 'زیرساخت';
+    return 'پلتفرم تحلیل روابط';
+  }
+
+  private isDecisionLabel(value: string): boolean {
+    const normalizedValue = this.normalizeTreeText(value);
+    return normalizedValue === 'بله' || normalizedValue === 'خیر';
+  }
+
+  private limitText(value: string, maxLength: number): string {
+    const normalizedValue = value.replace(/\s+/g, ' ').trim();
+    return normalizedValue.length > maxLength
+      ? `${normalizedValue.slice(0, maxLength - 1)}…`
+      : normalizedValue;
   }
 
   private openTicketDialog(): void {

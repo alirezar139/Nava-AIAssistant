@@ -16,6 +16,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ExcelReaderService } from '../../../../core/services/excel-reader.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
@@ -143,6 +144,7 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     readonly auth: AuthService,
+    readonly theme: ThemeService,
     private readonly api: ApiService,
     private readonly excelReader: ExcelReaderService,
     private readonly wordReader: WordReaderService,

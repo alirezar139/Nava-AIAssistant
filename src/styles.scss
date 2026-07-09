@@ -181,6 +181,142 @@
   --ambient-two: rgba(70, 88, 95, 0.15);
 }
 
+:root[data-palette='amber'] {
+  --primary-950: #332513;
+  --primary-900: #593a19;
+  --primary-800: #805222;
+  --primary-700: #a86e2b;
+  --primary-100: #f2e5d0;
+  --accent-600: #1f7b70;
+  --accent-100: #dcefeb;
+  --color-heading: #4b3218;
+  --color-link: #8d5c25;
+  --color-metric: #197064;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(240, 228, 207, 0.68));
+  --page-bg: #eee9df;
+  --ambient-one: rgba(172, 111, 39, 0.18);
+  --ambient-two: rgba(30, 129, 116, 0.16);
+}
+
+:root[data-theme='dark'][data-palette='amber'] {
+  --surface: #302518;
+  --surface-soft: #1b150e;
+  --color-heading: #fff7ea;
+  --color-link: #f0bd76;
+  --color-metric: #82dfd0;
+  --crystal-surface: linear-gradient(135deg, rgba(72, 50, 25, 0.96), rgba(28, 20, 12, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(64, 46, 25, 0.9), rgba(25, 17, 10, 0.84));
+  --crystal-edge: rgba(241, 205, 151, 0.25);
+  --page-bg: #151008;
+  --ambient-one: rgba(174, 111, 36, 0.18);
+  --ambient-two: rgba(33, 133, 119, 0.14);
+}
+
+:root[data-palette='rose'] {
+  --primary-950: #4a2230;
+  --primary-900: #6a3043;
+  --primary-800: #8b4358;
+  --primary-700: #ae5b70;
+  --primary-100: #f4e1e7;
+  --accent-600: #2b7d8d;
+  --accent-100: #dff0f3;
+  --color-heading: #5f293c;
+  --color-link: #9d4d64;
+  --color-metric: #236f7f;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(246, 224, 232, 0.68));
+  --page-bg: #f1e7eb;
+  --ambient-one: rgba(178, 86, 111, 0.19);
+  --ambient-two: rgba(40, 128, 145, 0.15);
+}
+
+:root[data-theme='dark'][data-palette='rose'] {
+  --surface: #3a1f2a;
+  --surface-soft: #211019;
+  --color-heading: #fff4f8;
+  --color-link: #f0acc0;
+  --color-metric: #8bdce8;
+  --crystal-surface: linear-gradient(135deg, rgba(78, 38, 53, 0.96), rgba(33, 15, 25, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(66, 34, 47, 0.9), rgba(29, 13, 22, 0.84));
+  --crystal-edge: rgba(244, 193, 211, 0.27);
+  --page-bg: #190c13;
+  --ambient-one: rgba(178, 82, 110, 0.2);
+  --ambient-two: rgba(48, 139, 154, 0.13);
+}
+
+:root[data-palette='cobalt'] {
+  --primary-950: #162653;
+  --primary-900: #223d77;
+  --primary-800: #31579f;
+  --primary-700: #4472c4;
+  --primary-100: #e1e9f8;
+  --accent-600: #2b927e;
+  --accent-100: #ddf1ec;
+  --color-heading: #1c356c;
+  --color-link: #355fa9;
+  --color-metric: #227f6e;
+  --crystal-soft: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(222, 231, 248, 0.68));
+  --page-bg: #e8edf6;
+  --ambient-one: rgba(60, 105, 191, 0.18);
+  --ambient-two: rgba(36, 144, 124, 0.14);
+}
+
+:root[data-theme='dark'][data-palette='cobalt'] {
+  --surface: #18284b;
+  --surface-soft: #0d172d;
+  --color-heading: #f3f7ff;
+  --color-link: #a9c6ff;
+  --color-metric: #89e1d1;
+  --crystal-surface: linear-gradient(135deg, rgba(39, 60, 105, 0.96), rgba(13, 25, 48, 0.92));
+  --crystal-soft: linear-gradient(135deg, rgba(34, 54, 98, 0.9), rgba(11, 22, 43, 0.84));
+  --crystal-edge: rgba(191, 211, 250, 0.26);
+  --page-bg: #091224;
+  --ambient-one: rgba(66, 113, 202, 0.2);
+  --ambient-two: rgba(42, 151, 131, 0.13);
+}
+
+:root[data-palette='paint'] {
+  --primary-950: var(--paint-primary-950);
+  --primary-900: var(--paint-primary-900);
+  --primary-800: var(--paint-primary-800);
+  --primary-700: var(--paint-primary-700);
+  --primary-100: var(--paint-primary-100);
+  --accent-600: var(--paint-accent-600);
+  --accent-100: var(--paint-accent-100);
+  --color-heading: var(--paint-primary-900);
+  --color-link: var(--paint-primary-700);
+  --color-metric: var(--paint-primary-800);
+  --crystal-soft: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.84),
+    color-mix(in srgb, var(--paint-primary-100) 74%, transparent)
+  );
+  --page-bg: var(--paint-page-bg);
+  --ambient-one: color-mix(in srgb, var(--paint-accent-600) 20%, transparent);
+  --ambient-two: color-mix(in srgb, var(--paint-primary-700) 18%, transparent);
+}
+
+:root[data-theme='dark'][data-palette='paint'] {
+  --surface: color-mix(in srgb, var(--paint-primary-950) 72%, #09100d);
+  --surface-soft: color-mix(in srgb, var(--paint-primary-950) 48%, #050908);
+  --color-heading: #f7fffc;
+  --color-link: color-mix(in srgb, var(--paint-primary-100) 70%, #ffffff);
+  --color-metric: color-mix(in srgb, var(--paint-accent-100) 74%, #ffffff);
+  --crystal-surface: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--paint-primary-900) 78%, #0b1210),
+    color-mix(in srgb, var(--paint-primary-950) 78%, #050908)
+  );
+  --crystal-soft: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--paint-primary-900) 72%, transparent),
+    color-mix(in srgb, var(--paint-primary-950) 82%, transparent)
+  );
+  --crystal-edge: color-mix(in srgb, var(--paint-primary-100) 24%, transparent);
+  --page-bg: color-mix(in srgb, var(--paint-primary-950) 76%, #050908);
+  --ambient-one: color-mix(in srgb, var(--paint-accent-600) 18%, transparent);
+  --ambient-two: color-mix(in srgb, var(--paint-primary-700) 18%, transparent);
+}
+
 :root[data-contrast='high'] {
   --text: #071d18;
   --muted: #334b44;
@@ -211,6 +347,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  color: var(--color-body);
   background:
     radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
     radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
@@ -259,7 +396,7 @@ button:disabled {
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: #b7c8c1 transparent;
+  scrollbar-color: color-mix(in srgb, var(--color-link) 36%, var(--border)) transparent;
 }
 
 :focus-visible {

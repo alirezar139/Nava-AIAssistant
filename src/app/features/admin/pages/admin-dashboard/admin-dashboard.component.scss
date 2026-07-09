@@ -2068,3 +2068,230 @@ td b {
     grid-template-columns: 1fr;
   }
 }
+
+/* Global theme enforcement */
+:host {
+  color: var(--color-body);
+  background: var(--page-bg);
+}
+
+.admin-shell {
+  color: var(--color-body);
+  background:
+    radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
+    radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
+}
+
+header,
+.stats article,
+.editor-card,
+.table-card,
+.confirm-modal,
+.table-tools,
+.selection-toolbar,
+.pagination-bar,
+.reports,
+.faq-detail-grid article {
+  color: var(--color-body);
+  border-color: var(--crystal-edge);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 34%), var(--crystal-surface);
+  box-shadow:
+    var(--crystal-shadow),
+    inset 1px 1px 0 var(--crystal-edge);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.brand b,
+.account b,
+.welcome h1,
+.section-title h2,
+td b,
+.question,
+.confirm-modal h2,
+.modal-icon {
+  color: var(--color-heading);
+}
+
+.brand small,
+.account small,
+.welcome p,
+.stats span,
+.stats small,
+.section-title small,
+.report-meta span,
+td,
+nav button,
+.answer,
+.empty,
+.selection-toolbar,
+.pagination-bar {
+  color: var(--color-secondary);
+}
+
+.welcome span,
+.section-title span,
+.stats strong,
+.result-count,
+.report-meta b {
+  color: var(--color-metric);
+}
+
+.theme-toggle,
+.refresh,
+.import,
+.account button,
+.table-tools input,
+.table-tools select,
+.search-field input,
+.search-field button,
+.pagination-bar select,
+.pagination-bar button,
+.ghost,
+.cancel,
+.modal-actions button,
+input,
+textarea,
+select {
+  color: var(--color-body);
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.table-tools label > span,
+label,
+.page-size {
+  color: var(--color-heading);
+}
+
+input::placeholder,
+textarea::placeholder,
+.search-field input::placeholder {
+  color: var(--color-subtle);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-link);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-link) 12%, transparent);
+}
+
+.stat-icon,
+.tag,
+.result-count,
+.user-avatar {
+  color: var(--color-link);
+  border-color: color-mix(in srgb, var(--color-link) 24%, transparent);
+  background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
+}
+
+nav {
+  border-color: var(--border);
+}
+
+nav button.active {
+  color: var(--color-heading);
+  border-color: var(--accent-600);
+}
+
+.table-wrap,
+tbody td,
+th {
+  border-color: var(--border);
+  color: var(--color-body);
+}
+
+.table-wrap {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+}
+
+thead th {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+}
+
+tbody tr:hover::after,
+tbody tr.selected::after {
+  border-color: color-mix(in srgb, var(--color-link) 18%, transparent);
+  background: color-mix(in srgb, var(--color-link) 9%, transparent);
+}
+
+.actions-cell .link,
+.link,
+.details-trigger {
+  color: var(--color-link);
+  border-color: color-mix(in srgb, var(--color-link) 22%, transparent);
+  background: color-mix(in srgb, var(--color-link) 9%, var(--surface));
+}
+
+.actions-cell .details-trigger,
+.confirm,
+.actions button[type='submit'],
+.modal-actions .confirm {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+}
+
+.danger,
+.bulk-delete,
+.modal-actions .danger,
+.link.danger {
+  color: var(--danger);
+}
+
+.modal-actions .danger,
+.bulk-delete {
+  color: #fff;
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 70%, #000));
+}
+
+.success {
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
+}
+
+.error {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+
+.modal-backdrop {
+  background: color-mix(in srgb, var(--page-bg) 44%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.account .account-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  flex: 0 0 38px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-link) 24%, transparent);
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+  font-size: 0.88rem;
+  font-weight: 950;
+  place-items: center;
+}
+
+.account .account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.welcome h1 {
+  color: #f7fffc;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+}
+
+.welcome p {
+  color: color-mix(in srgb, #ffffff 76%, var(--primary-100));
+}
+
+.welcome span {
+  color: color-mix(in srgb, #ffffff 70%, var(--accent-100));
+}

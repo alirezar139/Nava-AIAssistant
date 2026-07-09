@@ -7,6 +7,13 @@
     <div class="header-actions">
       <app-theme-toggle />
       <div class="account">
+        <div class="account-avatar">
+          @if (theme.profileImage) {
+            <img [src]="theme.profileImage" alt="تصویر پروفایل" />
+          } @else {
+            <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
+          }
+        </div>
         <div>
           <b>{{ auth.user?.fullName }}</b
           ><small>مدیر سامانه</small>
