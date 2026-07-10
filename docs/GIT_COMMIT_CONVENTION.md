@@ -1,6 +1,9 @@
-# Git Commit Message Convention
+# استاندارد پیام Commit
 
-پیام‌های Commit این پروژه از قالب زیر پیروی می‌کنند:
+این پروژه از قالبی نزدیک به Conventional Commits استفاده می‌کند. قالب با فایل
+راهنمای commit پروژه هماهنگ است و body می‌تواند bullet داشته باشد.
+
+## قالب
 
 ```text
 [emoji(optional)][type](optional scope): [subject]
@@ -10,68 +13,97 @@
 [footer(optional)]
 ```
 
-## Header
+## قواعد Header
 
-نوع Commit یکی از مقادیر زیر است:
+- emoji اختیاری است.
+- `type` اجباری است.
+- `scope` اختیاری است و داخل پرانتز نوشته می‌شود.
+- `subject` باید در فرم دستوری و کوتاه باشد.
+- حرف اول `subject` انگلیسی باید lowercase باشد.
+- `subject` بهتر است حداکثر ۵۰ کاراکتر باشد.
+- انتهای `subject` نقطه گذاشته نمی‌شود.
+- شماره issue در صورت وجود انتهای subject و داخل پرانتز می‌آید.
 
-| Type | کاربرد |
-| --- | --- |
-| `build` | تغییرات سیستم Build یا وابستگی‌های خارجی |
-| `ci` | تغییرات تنظیمات و اسکریپت‌های CI |
-| `docs` | تغییرات مستندات |
-| `feat` | افزودن قابلیت جدید |
-| `fix` | رفع اشکال |
-| `perf` | بهبود عملکرد |
-| `refactor` | بازنویسی بدون افزودن قابلیت یا رفع اشکال |
-| `style` | تغییرات ظاهری کد بدون تغییر رفتار |
-| `test` | افزودن یا اصلاح آزمون‌ها |
-
-- ایموجی ابتدای Header اختیاری است.
-- `scope` بعد از نوع و داخل پرانتز نوشته می‌شود؛ مانند `auth`، `faq` یا `assistant`.
-- عنوان حداکثر ۵۰ کاراکتر دارد.
-- اولین حرف عنوان انگلیسی کوچک است.
-- عنوان با فعل امری نوشته می‌شود.
-- شماره Issue در انتهای عنوان و داخل پرانتز قرار می‌گیرد.
-- عنوان با نقطه تمام نمی‌شود.
+مثال:
 
 ```text
 feat(faq): add Excel import validation (#42)
 ```
 
-## Body
+## نوع‌های مجاز
 
-- هر خط حداکثر ۷۲ کاراکتر دارد.
-- دلیل و نتیجه تغییر را توضیح می‌دهد؛ جزئیات پیاده‌سازی ضروری نیست.
-- Header و Body با یک خط خالی جدا می‌شوند.
-- پاراگراف‌ها با خط خالی از یکدیگر جدا می‌شوند.
-- استفاده از فهرست با `-` یا `*` مجاز است.
+| Type       | کاربرد                                  |
+| ---------- | --------------------------------------- |
+| `build`    | تغییر سیستم build یا وابستگی‌های خارجی. |
+| `ci`       | تغییر تنظیمات و scriptهای CI.           |
+| `docs`     | تغییر فقط در مستندات.                   |
+| `feat`     | قابلیت جدید.                            |
+| `fix`      | رفع باگ.                                |
+| `perf`     | بهبود performance.                      |
+| `refactor` | بازنویسی بدون تغییر رفتار یا قابلیت.    |
+| `style`    | تغییرات ظاهری کد بدون تغییر رفتار.      |
+| `test`     | افزودن یا اصلاح تست.                    |
 
-## Footer
+scopeهای پیشنهادی:
 
-تغییرات ناسازگار با نسخه‌های قبلی با عبارت زیر شروع می‌شوند:
+- `assistant`
+- `admin`
+- `auth`
+- `faq`
+- `tickets`
+- `theme`
+- `api`
+- `docs`
+- `build`
+
+## قواعد Body
+
+- Body اختیاری است، اما برای تغییرات مهم توصیه می‌شود.
+- طول هر خط حدود ۷۲ کاراکتر باشد.
+- توضیح دهد چه چیزی تغییر کرده و چرا.
+- جزئیات سطح پایین که از کد مشخص است تکرار نشود.
+- بین header و body یک خط خالی باشد.
+- بین پاراگراف‌ها و bulletهای بلند خط خالی باشد.
+- bullet با `-` یا `*` مجاز است.
+
+## قواعد Footer
+
+برای تغییر ناسازگار:
 
 ```text
 BREAKING CHANGE: describe the incompatible change
 ```
 
-ارجاع به سامانه مدیریت کار یا Pull Request نیز در Footer نوشته می‌شود:
+برای ارجاع به issue، PR یا Jira:
 
 ```text
 PR Close: #45114, Resolves: #36173
 See also: DOC-123, DOC-124
 ```
 
-## Full Example
+## مثال کامل
 
 ```text
-feat(faq): add Excel column validation (#42)
+feat(assistant): redesign support triage flow (#42)
 
-Reject files that do not contain the required question and answer
-columns. This prevents incomplete records from entering the database.
+- redesign the user assistant workspace with a clearer support layout
 
-- show a clear validation message
-- keep previously imported FAQs unchanged
+- add conversation step navigation so users can go back when they choose the
+  wrong path
+
+- auto-create Sahand tickets when FAQ triage has no reliable answer
 
 Resolves: #42
 ```
 
+## مثال برای مستندات
+
+```text
+docs(readme): update setup and release documentation (#43)
+
+- add a global documentation index
+
+- document API contracts, release checks, and environment variables
+
+- align commit guidance with the project convention
+```

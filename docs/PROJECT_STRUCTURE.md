@@ -1,67 +1,101 @@
-# ساختار پوشه‌های پروژه
+# ساختار پروژه
 
-مسیر اصلی پروژه:
+## مسیر اصلی
+
+مسیر workspace فعلی:
 
 ```text
-C:\project\rahbari-assistant
+C:\angular\Nava-AIAssistant
 ```
 
-## مسیرهای اصلی
+## چیدمان سطح بالا
 
-| بخش                    | مسیر                                   |
-| ---------------------- | -------------------------------------- |
-| فرانت‌اند              | `C:\project\rahbari-assistant\src`     |
-| کدهای Angular          | `src\app`                              |
-| تنظیمات محیط           | `src\environments`                     |
-| تصاویر و فایل‌های ثابت | `src\assets`                           |
-| درختواره عیب‌یابی      | `src\assets\troubleshooting-tree.json` |
-| بک‌اند و API           | `server`                               |
-| دیتابیس محلی           | `server\data\database.json`            |
-| مستندات                | `docs`                                 |
-| خروجی Build            | `dist`                                 |
+| مسیر                        | کاربرد                                   |
+| --------------------------- | ---------------------------------------- |
+| `src`                       | سورس فرانت‌اند Angular.                  |
+| `src/app`                   | کد اصلی برنامه Angular.                  |
+| `src/assets`                | فایل‌های static، شامل درختواره عیب‌یابی. |
+| `server`                    | سورس API با Express.                     |
+| `server/data/database.json` | داده محلی LowDB.                         |
+| `scripts`                   | اسکریپت‌های کمکی اجرا و عملیات.          |
+| `docs`                      | مستندات محصول، فنی، API و عملیات.        |
+| `dist`                      | خروجی build فرانت‌اند.                   |
+| `proxy.conf.json`           | proxy مسیرهای `/api` در اجرای توسعه.     |
+| `.angular`                  | cache مربوط به Angular.                  |
+| `node_modules`              | وابستگی‌های نصب‌شده.                     |
 
 ## ساختار فرانت‌اند
 
 ```text
 src/app/
-├── core/                 سرویس‌ها، مدل‌ها، Guardها و Interceptorها
-├── features/
-│   ├── auth/             ورود و احراز هویت
-│   ├── admin/            پنل مدیریت FAQ و گزارش‌ها
-│   └── assistant/        پنل کاربر و دستیار
-├── shared/               کامپوننت‌های مشترک مانند لوگو و تنظیم تم
-├── app.component.ts
-├── app.config.ts
-└── app.routes.ts
+|-- core/
+|   |-- models/       مدل‌های TypeScript مشترک
+|   `-- services/     سرویس‌های برنامه
+|-- features/
+|   |-- auth/         ورود و احراز هویت
+|   |-- admin/        مدیریت FAQ، گزارش‌ها و پرونده‌ها
+|   `-- assistant/    دستیار پشتیبانی کاربر
+|-- shared/           کامپوننت‌های مشترک
+|-- app.component.ts
+|-- app.config.ts
+`-- app.routes.ts
 ```
+
+قواعد مالکیت:
+
+- `core` مالک سرویس‌ها و مدل‌های مشترک است.
+- `features` مالک workflowهای route-level است.
+- `shared` فقط اجزای نمایشی مشترک مثل لوگو و تنظیم تم را نگه می‌دارد.
+- featureها می‌توانند از `core` و `shared` استفاده کنند.
+- `core` نباید از featureها import کند.
 
 ## ساختار بک‌اند
 
 ```text
 server/
-├── src/
-│   ├── auth/             احراز هویت و CAPTCHA
-│   ├── common/           نوع‌های مشترک
-│   ├── config/           تنظیمات محیط اجرا
-│   ├── conversations/    ثبت و گزارش گفتگوها
-│   ├── database/         دسترسی به LowDB
-│   ├── diagnostics/      ثبت پرونده، تحلیل اولیه و رسید تیکت
-│   ├── faqs/             API مدیریت FAQ
-│   ├── sahand/           اتصال اختیاری به API سهند
-│   └── main.ts           نقطه شروع API
-├── data/                 داده‌های محلی زمان اجرا
-└── dist/                 خروجی Build بک‌اند
+|-- src/
+|   |-- auth/             احراز هویت، CAPTCHA و JWT middleware
+|   |-- common/           ابزارهای مشترک API
+|   |-- config/           تنظیمات زمان اجرا
+|   |-- conversations/    ثبت و گزارش گفتگو
+|   |-- database/         LowDB و seed data
+|   |-- diagnostics/      پرونده تشخیصی و تحلیل تیکت
+|   |-- faqs/             API مربوط به FAQ
+|   |-- sahand/           اتصال اختیاری به سامانه تیکت
+|   `-- main.ts           راه‌انداز Express
+|-- data/                 داده محلی زمان اجرا
+`-- dist/                 خروجی build بک‌اند
 ```
 
-## پوشه‌های تولیدشده خودکار
+## مسیرهای تولیدشده
 
-پوشه‌های زیر بخشی از کد منبع نیستند و نباید دستی ویرایش شوند:
+این مسیرها خروجی ابزارها هستند و نباید دستی ویرایش شوند:
 
-- `.angular/cache`: کش موقت Angular و Babel
-- `node_modules`: وابستگی‌های نصب‌شده
-- `dist`: خروجی Build
-- `server/dist`: خروجی کامپایل API
+- `.angular/cache`
+- `node_modules`
+- `dist`
+- `server/dist`
 
-فایل‌هایی با نام‌های طولانی مانند
-`ff771f7e5e9434d3a32eff829fb656daa40e3736d350f284ef0cb2d4e4e80454.json`
-در `.angular/cache` موقت هستند و با اجرای مجدد Build تغییر می‌کنند.
+## فایل‌های مهم
+
+| فایل                                                    | کاربرد                                       |
+| ------------------------------------------------------- | -------------------------------------------- |
+| `src/assets/troubleshooting-tree.json`                  | درخت تصمیم عیب‌یابی.                         |
+| `src/app/core/services/theme.service.ts`                | تنظیمات تم و avatar هر کاربر.                |
+| `src/app/core/services/troubleshooting-tree.service.ts` | پیمایش درخت و تشخیص گره قابل نمایش.          |
+| `src/app/features/assistant/pages/assistant-page/`      | workflow اصلی پشتیبانی کاربر.                |
+| `src/app/features/admin/pages/admin-dashboard/`         | UI مدیریت FAQ، گزارش‌ها و پرونده‌ها.         |
+| `scripts/start-webapp-windows.ps1`                      | build در صورت نیاز و اجرای وب‌اپ روی ویندوز. |
+| `server/src/diagnostics/diagnostic.routes.ts`           | endpointهای پرونده و تیکت.                   |
+| `server/src/sahand/sahand-ticket.service.ts`            | ارسال اختیاری تیکت خارجی.                    |
+
+## مسیر مستندات
+
+نقطه شروع مستندات:
+
+```text
+docs/README.md
+```
+
+`README.md` ریشه، نقطه ورود سریع پروژه است و پوشه `docs` جزئیات محصول، معماری،
+API و عملیات را نگهداری می‌کند.

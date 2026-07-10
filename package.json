@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "start:api": "npm --prefix server run dev",
+    "start:webapp": "npm --prefix server start",
     "build": "ng build",
     "build:all": "npm run build && npm --prefix server run build",
+    "build:webapp": "npm run build:all",
+    "webapp:windows": "powershell -ExecutionPolicy Bypass -File scripts/start-webapp-windows.ps1",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"server/src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"server/src/**/*.ts\"",
     "test": "ng test"

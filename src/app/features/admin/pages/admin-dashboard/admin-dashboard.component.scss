@@ -2295,3 +2295,88 @@ tbody tr.selected::after {
 .welcome span {
   color: color-mix(in srgb, #ffffff 70%, var(--accent-100));
 }
+
+/* Final stats layout fix */
+.stats {
+  align-items: stretch;
+  margin: -34px clamp(18px, 4vw, 42px) 30px;
+  direction: rtl;
+}
+
+.stats article {
+  min-height: 124px;
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 16px;
+  row-gap: 2px;
+  align-items: center;
+  text-align: right;
+}
+
+.stats article > * {
+  min-width: 0;
+}
+
+.stats .stat-icon {
+  position: static;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+
+.stats article > span,
+.stats article > small {
+  grid-column: 2;
+  padding-right: 0;
+}
+
+.stats article > span {
+  grid-row: 1;
+  align-self: end;
+  color: var(--color-heading);
+  font-size: 0.9rem;
+  font-weight: 950;
+  line-height: 1.6;
+}
+
+.stats article > small {
+  grid-row: 2;
+  align-self: start;
+  color: var(--color-secondary);
+  font-size: 0.76rem;
+  font-weight: 750;
+  line-height: 1.8;
+}
+
+.stats article > strong {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  justify-self: end;
+  color: var(--color-link);
+  font-size: clamp(2rem, 3vw, 2.55rem);
+  font-weight: 950;
+  line-height: 1;
+  text-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 750px) {
+  .stats {
+    margin: -42px 12px 24px;
+  }
+
+  .stats article {
+    grid-template-columns: 50px minmax(0, 1fr) auto;
+    min-height: 104px;
+    padding: 17px 18px;
+  }
+
+  .stats .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+}
