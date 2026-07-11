@@ -5,8 +5,7 @@ const SHELL_URLS = [
   '/manifest.webmanifest',
   '/assets/brand-logo.jpg',
   '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png',
-  '/assets/icons/maskable-512.png'
+  '/assets/icons/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
