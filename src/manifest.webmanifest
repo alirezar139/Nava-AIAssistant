@@ -1,0 +1,34 @@
+{
+  "name": "Nava AI Assistant",
+  "short_name": "Nava",
+  "description": "دستیار پشتیبانی Nava برای مدیریت FAQ، عیب‌یابی مرحله‌ای و ثبت پرونده پشتیبانی.",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f8f6",
+  "theme_color": "#163c35",
+  "categories": ["productivity", "business"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

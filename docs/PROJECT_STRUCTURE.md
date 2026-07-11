@@ -15,6 +15,7 @@ C:\angular\Nava-AIAssistant
 | `src`                       | سورس فرانت‌اند Angular.                  |
 | `src/app`                   | کد اصلی برنامه Angular.                  |
 | `src/assets`                | فایل‌های static، شامل درختواره عیب‌یابی. |
+| `src/assets/icons`          | آیکن‌های نصب PWA.                        |
 | `server`                    | سورس API با Express.                     |
 | `server/data/database.json` | داده محلی LowDB.                         |
 | `scripts`                   | اسکریپت‌های کمکی اجرا و عملیات.          |
@@ -81,6 +82,8 @@ server/
 | فایل                                                    | کاربرد                                       |
 | ------------------------------------------------------- | -------------------------------------------- |
 | `src/assets/troubleshooting-tree.json`                  | درخت تصمیم عیب‌یابی.                         |
+| `src/manifest.webmanifest`                              | اطلاعات نصب PWA و آیکن‌ها.                   |
+| `src/nava-service-worker.js`                            | cache سبک فایل‌های رابط و fallback.          |
 | `src/app/core/services/theme.service.ts`                | تنظیمات تم و avatar هر کاربر.                |
 | `src/app/core/services/troubleshooting-tree.service.ts` | پیمایش درخت و تشخیص گره قابل نمایش.          |
 | `src/app/features/assistant/pages/assistant-page/`      | workflow اصلی پشتیبانی کاربر.                |

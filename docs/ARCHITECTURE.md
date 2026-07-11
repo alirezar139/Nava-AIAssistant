@@ -30,6 +30,10 @@ Express API
 می‌کند. در اجرای build شده، Express خروجی `dist/nava-ai-assistant` را هم سرو
 می‌کند تا کل وب‌اپ با یک پردازش Node روی ویندوز اجرا شود.
 
+فایل‌های PWA شامل `manifest.webmanifest`، `nava-service-worker.js` و آیکن‌های
+`src/assets/icons` در build تولیدی به خروجی اضافه می‌شوند تا مرورگر بتواند
+برنامه را به‌صورت installable app شناسایی کند.
+
 ## معماری فرانت‌اند
 
 ```text
@@ -72,6 +76,10 @@ server/src/
 باشد. اگر `dist/nava-ai-assistant/index.html` وجود داشته باشد، فایل‌های static
 را سرو می‌کند و routeهای غیر API را به `index.html` برمی‌گرداند تا refresh صفحه
 یا باز کردن مستقیم routeهای Angular کار کند.
+
+service worker فقط خارج از Angular dev server ثبت می‌شود تا cache مرورگر در
+توسعه روزمره مزاحم تغییرات UI نشود. مسیرهای `/api` توسط service worker cache
+نمی‌شوند و همیشه از شبکه خوانده می‌شوند.
 
 ## احراز هویت و دسترسی
 

@@ -2,17 +2,18 @@
 
 ## نیازمندی‌های کارکردی
 
-| شناسه | نیازمندی          | وضعیت                          | محل پیاده‌سازی                               | کار باقی‌مانده                          |
-| ----- | ----------------- | ------------------------------ | -------------------------------------------- | --------------------------------------- |
-| FR-01 | احراز هویت        | برای کاربر محلی پیاده‌سازی شده | `server/src/auth`, `src/app/features/auth`   | جایگزینی با SSO سازمانی در صورت ارائه.  |
-| FR-02 | کنترل نقش         | پیاده‌سازی شده                 | `server/src/auth/auth.middleware.ts`         | سخت‌سازی سیاست session در محیط واقعی.   |
-| FR-03 | مدیریت FAQ        | پیاده‌سازی شده                 | `server/src/faqs`, `src/app/features/admin`  | audit trail و validation قوی‌تر import. |
-| FR-04 | عیب‌یابی مرحله‌ای | پیاده‌سازی شده                 | `TroubleshootingTreeService`, صفحه assistant | تست خودکار مسیرهای اصلی.                |
-| FR-05 | بررسی FAQ         | پیاده‌سازی شده                 | `FaqSearchService`, صفحه assistant           | تنظیم scoring با داده واقعی.            |
-| FR-06 | ثبت خودکار تیکت   | پیاده‌سازی شده                 | `server/src/diagnostics`, صفحه assistant     | تطبیق با قرارداد نهایی سهند/Jira.       |
-| FR-07 | اتصال سهند/Jira   | به شکل اختیاری پیاده‌سازی شده  | `server/src/sahand`                          | تنظیم endpoint واقعی و فیلدهای اجباری.  |
-| FR-08 | گزارش‌ها          | پیاده‌سازی شده                 | conversations، diagnostics، admin reports    | export در صورت نیاز.                    |
-| FR-09 | شخصی‌سازی         | پیاده‌سازی شده                 | `ThemeService`, `ThemeToggleComponent`       | سیاست نهایی حجم avatar در محیط واقعی.   |
+| شناسه | نیازمندی          | وضعیت                          | محل پیاده‌سازی                                   | کار باقی‌مانده                          |
+| ----- | ----------------- | ------------------------------ | ------------------------------------------------ | --------------------------------------- |
+| FR-01 | احراز هویت        | برای کاربر محلی پیاده‌سازی شده | `server/src/auth`, `src/app/features/auth`       | جایگزینی با SSO سازمانی در صورت ارائه.  |
+| FR-02 | کنترل نقش         | پیاده‌سازی شده                 | `server/src/auth/auth.middleware.ts`             | سخت‌سازی سیاست session در محیط واقعی.   |
+| FR-03 | مدیریت FAQ        | پیاده‌سازی شده                 | `server/src/faqs`, `src/app/features/admin`      | audit trail و validation قوی‌تر import. |
+| FR-04 | عیب‌یابی مرحله‌ای | پیاده‌سازی شده                 | `TroubleshootingTreeService`, صفحه assistant     | تست خودکار مسیرهای اصلی.                |
+| FR-05 | بررسی FAQ         | پیاده‌سازی شده                 | `FaqSearchService`, صفحه assistant               | تنظیم scoring با داده واقعی.            |
+| FR-06 | ثبت خودکار تیکت   | پیاده‌سازی شده                 | `server/src/diagnostics`, صفحه assistant         | تطبیق با قرارداد نهایی سهند/Jira.       |
+| FR-07 | اتصال سهند/Jira   | به شکل اختیاری پیاده‌سازی شده  | `server/src/sahand`                              | تنظیم endpoint واقعی و فیلدهای اجباری.  |
+| FR-08 | گزارش‌ها          | پیاده‌سازی شده                 | conversations، diagnostics، admin reports        | export در صورت نیاز.                    |
+| FR-09 | شخصی‌سازی         | پیاده‌سازی شده                 | `ThemeService`, `ThemeToggleComponent`           | سیاست نهایی حجم avatar در محیط واقعی.   |
+| FR-10 | نصب PWA           | پیاده‌سازی شده                 | `manifest.webmanifest`, `nava-service-worker.js` | تست نصب روی مرورگر هدف.                 |
 
 ## نیازمندی‌های غیرکارکردی
 

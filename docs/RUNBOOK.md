@@ -124,6 +124,39 @@ npm run webapp:windows
 چون فرانت‌اند از مسیر نسبی `/api` استفاده می‌کند، در اجرای build شده نیازی به
 تغییر آدرس API در کد نیست.
 
+## نصب PWA در ویندوز
+
+PWA رابط کاربری Nava را مثل یک اپ مستقل در Chrome یا Microsoft Edge نصب می‌کند.
+بک‌اند همچنان باید با `npm run webapp:windows` یا یک سرویس ویندوزی روشن باشد.
+
+مراحل:
+
+1. وب‌اپ build شده را اجرا کنید:
+
+```powershell
+npm run webapp:windows
+```
+
+2. آدرس برنامه را در Chrome یا Microsoft Edge باز کنید:
+
+```text
+http://127.0.0.1:3000/
+```
+
+3. از منوی مرورگر گزینه نصب app را انتخاب کنید. در Edge معمولا مسیر
+   `Apps > Install this site as an app` است.
+
+4. بعد از نصب، Nava از Start Menu و Taskbar مثل یک پنجره مستقل باز می‌شود.
+
+اگر گزینه نصب نمایش داده نشد:
+
+- صفحه را یک بار با `Ctrl+F5` تازه‌سازی کنید.
+- بررسی کنید `manifest.webmanifest` از آدرس
+  `http://127.0.0.1:3000/manifest.webmanifest` باز شود.
+- بررسی کنید `nava-service-worker.js` از آدرس
+  `http://127.0.0.1:3000/nava-service-worker.js` باز شود.
+- اگر قبلا نسخه قدیمی را نصب کرده‌اید، آن را uninstall و دوباره نصب کنید.
+
 ## حساب‌های توسعه
 
 | نقش   | نام کاربری | رمز عبور    |
@@ -175,6 +208,7 @@ npm run build:all
 6. با مدیر `admin` وارد شوید.
 7. صفحه FAQ، گزارش‌ها و پرونده‌ها را باز کنید.
 8. تغییر تم، پالت، Paint color، dark mode و عکس پروفایل را تست کنید.
+9. گزینه نصب PWA را در Chrome یا Edge بررسی کنید.
 
 ## خطاهای رایج
 
