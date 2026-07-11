@@ -41,6 +41,8 @@ interface ConversationSnapshot {
   awaitingInitialProblem: boolean;
   activeTreeOptions: Array<{ label: string; targetId: string }>;
   treeTrail: string[];
+  currentTreeNodeId: string;
+  currentTreeNodeText: string;
 }
 
 type SupportStage = 'selecting' | 'triage' | 'faq' | 'ticket' | 'handoff' | 'done';
@@ -86,6 +88,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private awaitingInitialProblem = true;
   private activeTreeOptions: Array<{ label: string; targetId: string }> = [];
   private treeTrail: string[] = [];
+  private currentTreeNodeId = '';
+  private currentTreeNodeText = '';
   private conversationHistory: ConversationSnapshot[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
   private welcomeTimer?: ReturnType<typeof setTimeout>;
@@ -126,7 +130,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     scenario: 'سناریوی اجرا را مرحله‌به‌مرحله بنویسید؛ از کجا شروع کردید، چه گزینه‌ای زدید و کجا خطا رخ داد؟',
     serialNumber: 'سریال، شناسه گزارش، کد رهگیری یا شماره درخواست را وارد کنید. اگر ندارید بنویسید: ندارم',
     errorText: 'متن دقیق خطا یا پیام سیستم را وارد کنید. اگر خطایی نمایش داده نشده بنویسید: خطا ندارد',
-    evidence: 'متن خطا، لاگ، توضیح screenshot یا مستندات مرتبط را وارد کنید. اگر ندارید بنویسید: ندارم'
+    evidence: 'متن خطا، لاگ، توضیح screenshot یا مستندات مرتبط را وارد کنید. اگر ندارید بنویسید: ندارم',
+    treeNodeId: '',
+    treeNodeText: ''
   };
 
   private readonly diagnosticFlow: Array<keyof DiagnosticPayload> = [
@@ -368,7 +374,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       scenario: '',
       serialNumber: '',
       errorText: '',
-      evidence: ''
+      evidence: '',
+      treeNodeId: '',
+      treeNodeText: ''
     };
   }
 
@@ -458,6 +466,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.awaitingInitialProblem = snapshot.awaitingInitialProblem;
     this.activeTreeOptions = snapshot.activeTreeOptions.map((option) => ({ ...option }));
     this.treeTrail = [...snapshot.treeTrail];
+    this.currentTreeNodeId = snapshot.currentTreeNodeId;
+    this.currentTreeNodeText = snapshot.currentTreeNodeText;
     this.changeDetector.markForCheck();
     this.scrollToLatest();
   }
@@ -479,6 +489,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.awaitingInitialProblem = true;
     this.activeTreeOptions = [];
     this.treeTrail = [];
+    this.currentTreeNodeId = '';
+    this.currentTreeNodeText = '';
     this.conversationHistory = [];
     this.showInitialProblemPrompt();
   }
@@ -498,13 +510,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const state = this.getTreeNodeState(option.targetId);
     if (!state) return;
 
+    this.currentTreeNodeId = state.node.id;
+    this.currentTreeNodeText = state.node.text;
+
     if (this.isTicketNode(state.node.text)) {
-      this.startTicketFlow(this.buildTreeProblemText(state.node.text));
+      this.startTicketFlow(this.buildTreeProblemText(state.node.text), state.node);
       return;
     }
 
     if (!state.options.length && !this.isEndNode(state.node.text)) {
-      this.answerFromFaqOrStartTicket(this.buildTreeProblemText(state.node.text), true);
+      this.answerFromFaqOrStartTicket(this.buildTreeProblemText(state.node.text), true, state.node);
       return;
     }
 
@@ -588,7 +603,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       supportStage: this.supportStage,
       awaitingInitialProblem: this.awaitingInitialProblem,
       activeTreeOptions: this.activeTreeOptions.map((option) => ({ ...option })),
-      treeTrail: [...this.treeTrail]
+      treeTrail: [...this.treeTrail],
+      currentTreeNodeId: this.currentTreeNodeId,
+      currentTreeNodeText: this.currentTreeNodeText
     });
   }
 
@@ -647,6 +664,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const state = this.getTreeNodeState(nodeId);
     if (!state) return;
 
+    this.currentTreeNodeId = state.node.id;
+    this.currentTreeNodeText = state.node.text;
     this.activeTreeOptions = state.options;
 
     const message: ChatMessage = {
@@ -673,6 +692,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   private showInitialProblemPrompt(): void {
     const state = this.treeStartNodeId ? this.getTreeNodeState(this.treeStartNodeId) : null;
+    this.currentTreeNodeId = state?.node.id ?? '';
+    this.currentTreeNodeText = state?.node.text ?? '';
     this.activeTreeOptions = state?.options ?? [];
     this.messages = [
       {
@@ -741,7 +762,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return [...this.treeTrail, currentText].filter(Boolean).join(' > ');
   }
 
-  private answerFromFaqOrStartTicket(question: string, fromTree = false): void {
+  private answerFromFaqOrStartTicket(
+    question: string,
+    fromTree = false,
+    sourceNode?: { id: string; text: string }
+  ): void {
     this.typing = true;
     this.supportStage = 'faq';
     const { matches, answer, matchedFaq } = this.searchFaq(question);
@@ -757,7 +782,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
           matches: reliableMatches
         });
       } else {
-        this.startTicketFlow(question);
+        this.startTicketFlow(question, sourceNode);
       }
 
       this.typing = false;
@@ -796,8 +821,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return { matches, answer, matchedFaq };
   }
 
-  private startTicketFlow(problem: string): void {
-    this.diagnosticDraft = this.createAutomaticDiagnostic(problem);
+  private startTicketFlow(problem: string, sourceNode?: { id: string; text: string }): void {
+    this.diagnosticDraft = this.createAutomaticDiagnostic(problem, sourceNode);
     this.diagnosticCase = null;
     this.diagnosticStep = null;
     this.ticketDialogOpen = true;
@@ -813,7 +838,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.submitAutomaticTicket();
   }
 
-  private createAutomaticDiagnostic(problem: string): DiagnosticPayload {
+  private createAutomaticDiagnostic(
+    problem: string,
+    sourceNode?: { id: string; text: string }
+  ): DiagnosticPayload {
+    const mappedNodeId = sourceNode?.id || this.currentTreeNodeId;
+    const mappedNodeText = sourceNode?.text || this.currentTreeNodeText;
     const cleanPath = this.treeTrail
       .map((item) => item.trim())
       .filter((item) => item && !this.isDecisionLabel(item));
@@ -831,11 +861,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       scenario: this.limitText(fullPath || leaf, 4000),
       serialNumber: 'در دسترس نیست',
       errorText: leaf.includes('خطا') ? leaf : 'خطای مشخصی در مسیر انتخاب‌شده ثبت نشده است.',
+      treeNodeId: mappedNodeId,
+      treeNodeText: mappedNodeText,
       evidence: this.limitText(
         [
           `ثبت خودکار از صفحه کاربر Nava`,
           `تعداد انتخاب‌های کاربر: ${this.treeTrail.length.toLocaleString('fa-IR')}`,
-          `مسیر: ${fullPath || leaf}`
+          `مسیر: ${fullPath || leaf}`,
+          `Node: ${mappedNodeId || '-'}${mappedNodeText ? ` - ${mappedNodeText}` : ''}`
         ].join('\n'),
         4000
       )

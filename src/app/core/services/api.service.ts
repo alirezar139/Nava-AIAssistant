@@ -7,6 +7,28 @@ import { environment } from '../../../environments/environment';
 
 export type FaqPayload = Pick<FaqRecord, 'question' | 'answer' | 'category' | 'keywords'>;
 
+export interface TicketServiceSettings {
+  url: string;
+  authorizationHeader: string;
+  authHeader: string;
+  serviceDeskId: string;
+  requestTypeId: string;
+  requestTypeMappings: TicketRequestTypeMapping[];
+  updatedAt: string | null;
+}
+
+export interface TicketRequestTypeMapping {
+  nodeId: string;
+  nodeLabel: string;
+  serviceDeskId: string;
+  requestTypeId: string;
+}
+
+export type TicketServiceSettingsPayload = Pick<
+  TicketServiceSettings,
+  'url' | 'authorizationHeader' | 'authHeader' | 'serviceDeskId' | 'requestTypeId' | 'requestTypeMappings'
+>;
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
@@ -55,5 +77,13 @@ export class ApiService {
 
   getDiagnosticCases(): Observable<DiagnosticCaseRecord[]> {
     return this.http.get<DiagnosticCaseRecord[]>(`${this.apiUrl}/diagnostics`);
+  }
+
+  getTicketServiceSettings(): Observable<TicketServiceSettings> {
+    return this.http.get<TicketServiceSettings>(`${this.apiUrl}/settings/ticket-service`);
+  }
+
+  updateTicketServiceSettings(payload: TicketServiceSettingsPayload): Observable<TicketServiceSettings> {
+    return this.http.put<TicketServiceSettings>(`${this.apiUrl}/settings/ticket-service`, payload);
   }
 }

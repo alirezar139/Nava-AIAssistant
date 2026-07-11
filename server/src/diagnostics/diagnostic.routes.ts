@@ -16,7 +16,9 @@ const diagnosticPayloadSchema = z.object({
   scenario: z.string().trim().min(3),
   serialNumber: z.string().trim().optional().default(''),
   errorText: z.string().trim().optional().default(''),
-  evidence: z.string().trim().optional().default('')
+  evidence: z.string().trim().optional().default(''),
+  treeNodeId: z.string().trim().optional().default(''),
+  treeNodeText: z.string().trim().optional().default('')
 });
 
 diagnosticRouter.get('/', requireAuth(['admin']), (_request, response) => {
@@ -51,6 +53,8 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     serialNumber: result.data.serialNumber,
     errorText: result.data.errorText,
     evidence: result.data.evidence,
+    treeNodeId: result.data.treeNodeId,
+    treeNodeText: result.data.treeNodeText,
     status: 'draft',
     analysisSummary: null,
     severity: null,
@@ -72,7 +76,9 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
       `مسیر اجرا: ${result.data.scenario}`,
       `شناسه/سریال: ${result.data.serialNumber || '-'}`,
       `متن خطا: ${result.data.errorText || '-'}`,
-      `مستندات: ${result.data.evidence || '-'}`
+      `مستندات: ${result.data.evidence || '-'}`,
+      `شناسه Node درختواره: ${result.data.treeNodeId || '-'}`,
+      `عنوان Node درختواره: ${result.data.treeNodeText || '-'}`
     ].join('\n'),
     requester: {
       username: request.user.username,
@@ -80,7 +86,9 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     },
     metadata: {
       source: 'nava-ai-assistant',
-      localDiagnosticId: String(diagnosticCase.id)
+      localDiagnosticId: String(diagnosticCase.id),
+      treeNodeId: result.data.treeNodeId,
+      treeNodeText: result.data.treeNodeText
     }
   });
   diagnosticCase.externalTicketId = ticketResult.ticketId;

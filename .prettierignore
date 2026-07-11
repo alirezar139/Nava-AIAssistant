@@ -1,6 +1,8 @@
 node_modules
 dist
 .angular
+release
+.idea
 server/node_modules
 server/dist
 server/data

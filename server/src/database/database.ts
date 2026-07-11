@@ -45,6 +45,8 @@ export interface DiagnosticCaseRecord {
   serialNumber: string;
   errorText: string;
   evidence: string;
+  treeNodeId: string;
+  treeNodeText: string;
   status: DiagnosticStatus;
   analysisSummary: string | null;
   severity: 'low' | 'medium' | 'high' | null;
@@ -56,11 +58,33 @@ export interface DiagnosticCaseRecord {
   analyzedAt: string | null;
 }
 
+export interface TicketServiceSettingsRecord {
+  url: string;
+  authorizationHeader: string;
+  authHeader: string;
+  serviceDeskId: string;
+  requestTypeId: string;
+  requestTypeMappings: TicketRequestTypeMappingRecord[];
+  updatedAt: string | null;
+}
+
+export interface TicketRequestTypeMappingRecord {
+  nodeId: string;
+  nodeLabel: string;
+  serviceDeskId: string;
+  requestTypeId: string;
+}
+
+export interface AppSettingsRecord {
+  ticketService: TicketServiceSettingsRecord;
+}
+
 interface DatabaseSchema {
   users: UserRecord[];
   faqs: FaqRecord[];
   conversations: ConversationRecord[];
   diagnosticCases: DiagnosticCaseRecord[];
+  settings: AppSettingsRecord;
 }
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
@@ -71,10 +95,48 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
   users: [],
   faqs: [],
   conversations: [],
-  diagnosticCases: []
+  diagnosticCases: [],
+  settings: {
+    ticketService: {
+      url: '',
+      authorizationHeader: '',
+      authHeader: '',
+      serviceDeskId: '',
+      requestTypeId: '',
+      requestTypeMappings: [],
+      updatedAt: null
+    }
+  }
 });
 
 database.data.diagnosticCases ??= [];
+database.data.settings ??= {
+  ticketService: {
+    url: '',
+    authorizationHeader: '',
+    authHeader: '',
+    serviceDeskId: '',
+    requestTypeId: '',
+    requestTypeMappings: [],
+    updatedAt: null
+  }
+};
+database.data.settings.ticketService ??= {
+  url: '',
+  authorizationHeader: '',
+  authHeader: '',
+  serviceDeskId: '',
+  requestTypeId: '',
+  requestTypeMappings: [],
+  updatedAt: null
+};
+database.data.settings.ticketService.url ??= '';
+database.data.settings.ticketService.authorizationHeader ??= '';
+database.data.settings.ticketService.authHeader ??= '';
+database.data.settings.ticketService.serviceDeskId ??= '';
+database.data.settings.ticketService.requestTypeId ??= '';
+database.data.settings.ticketService.requestTypeMappings ??= [];
+database.data.settings.ticketService.updatedAt ??= null;
 
 const now = new Date().toISOString();
 if (!database.data.users.some((user) => user.username === 'admin')) {

@@ -19,7 +19,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/assets",
+              { "glob": "**/*", "input": "src/assets", "output": "/assets", "ignore": ["icons/**"] },
               { "glob": "manifest.webmanifest", "input": "src", "output": "/" },
               { "glob": "nava-service-worker.js", "input": "src", "output": "/" }
             ],

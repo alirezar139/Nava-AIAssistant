@@ -15,11 +15,12 @@ C:\angular\Nava-AIAssistant
 | `src`                       | سورس فرانت‌اند Angular.                  |
 | `src/app`                   | کد اصلی برنامه Angular.                  |
 | `src/assets`                | فایل‌های static، شامل درختواره عیب‌یابی. |
-| `src/assets/icons`          | آیکن‌های نصب PWA.                        |
 | `server`                    | سورس API با Express.                     |
 | `server/data/database.json` | داده محلی LowDB.                         |
 | `scripts`                   | اسکریپت‌های کمکی اجرا و عملیات.          |
+| `deploy`                    | الگوی فایل‌های بسته استقرار.             |
 | `docs`                      | مستندات محصول، فنی، API و عملیات.        |
+| `release`                   | بسته‌های zip و پوشه‌های آماده استقرار.   |
 | `dist`                      | خروجی build فرانت‌اند.                   |
 | `proxy.conf.json`           | proxy مسیرهای `/api` در اجرای توسعه.     |
 | `.angular`                  | cache مربوط به Angular.                  |
@@ -63,6 +64,7 @@ server/
 |   |-- diagnostics/      پرونده تشخیصی و تحلیل تیکت
 |   |-- faqs/             API مربوط به FAQ
 |   |-- sahand/           اتصال اختیاری به سامانه تیکت
+|   |-- settings/         تنظیمات قابل تغییر سامانه
 |   `-- main.ts           راه‌انداز Express
 |-- data/                 داده محلی زمان اجرا
 `-- dist/                 خروجی build بک‌اند
@@ -76,21 +78,37 @@ server/
 - `node_modules`
 - `dist`
 - `server/dist`
+- `release`
 
 ## فایل‌های مهم
 
 | فایل                                                    | کاربرد                                       |
 | ------------------------------------------------------- | -------------------------------------------- |
 | `src/assets/troubleshooting-tree.json`                  | درخت تصمیم عیب‌یابی.                         |
-| `src/manifest.webmanifest`                              | اطلاعات نصب PWA و آیکن‌ها.                   |
+| `src/manifest.webmanifest`                              | اطلاعات نصب PWA.                             |
 | `src/nava-service-worker.js`                            | cache سبک فایل‌های رابط و fallback.          |
 | `src/app/core/services/theme.service.ts`                | تنظیمات تم و avatar هر کاربر.                |
 | `src/app/core/services/troubleshooting-tree.service.ts` | پیمایش درخت و تشخیص گره قابل نمایش.          |
 | `src/app/features/assistant/pages/assistant-page/`      | workflow اصلی پشتیبانی کاربر.                |
 | `src/app/features/admin/pages/admin-dashboard/`         | UI مدیریت FAQ، گزارش‌ها و پرونده‌ها.         |
+| `scripts/package-webapp-release.ps1`                    | ساخت بسته zip قابل انتقال به سرور.           |
 | `scripts/start-webapp-windows.ps1`                      | build در صورت نیاز و اجرای وب‌اپ روی ویندوز. |
 | `server/src/diagnostics/diagnostic.routes.ts`           | endpointهای پرونده و تیکت.                   |
 | `server/src/sahand/sahand-ticket.service.ts`            | ارسال اختیاری تیکت خارجی.                    |
+| `server/src/settings/settings.routes.ts`                | API تنظیمات سرویس ثبت تیکت.                  |
+
+## بسته استقرار
+
+برای گرفتن خروجی قابل انتقال به سرور، دستور زیر اجرا می‌شود:
+
+```powershell
+npm run release:webapp
+```
+
+این دستور build فرانت‌اند و بک‌اند را می‌سازد، سپس فقط فایل‌های لازم برای اجرا
+را داخل `release/nava-ai-assistant-webapp-YYYYMMDD-HHMMSS` و یک فایل zip هم‌نام
+قرار می‌دهد. این بسته شامل سورس خام، `node_modules`، cache ابزارها و داده
+runtime نیست.
 
 ## مسیر مستندات
 

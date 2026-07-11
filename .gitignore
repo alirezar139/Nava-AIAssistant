@@ -1,8 +1,15 @@
 node_modules/
 dist/
 .angular/
+release/
+.idea/
 *.log
+.env
+.env.local
+.env.*.local
 server/node_modules/
 server/dist/
 server/data/
 server/.env
+server/.env.local
+server/.env.*.local

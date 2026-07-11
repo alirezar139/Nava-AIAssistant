@@ -10,5 +10,12 @@ export const config = {
       .map((origin) => origin.trim())
       .filter(Boolean) ?? defaultOrigins,
   sahandTicketUrl: process.env['SAHAND_TICKET_URL'] ?? '',
-  sahandApiKey: process.env['SAHAND_API_KEY'] ?? ''
+  sahandApiKey: process.env['SAHAND_API_KEY'] ?? '',
+  sahandAuthorization: process.env['SAHAND_AUTHORIZATION'] ?? '',
+  sahandAuthHeader: process.env['SAHAND_AUTH_HEADER'] ?? '',
+  sahandUsername: process.env['SAHAND_USERNAME'] ?? '',
+  sahandPassword: process.env['SAHAND_PASSWORD'] ?? '',
+  sahandServiceDeskId: process.env['SAHAND_SERVICE_DESK_ID'] ?? '',
+  sahandRequestTypeId: process.env['SAHAND_REQUEST_TYPE_ID'] ?? '',
+  sahandRaiseOnBehalfOf: process.env['SAHAND_RAISE_ON_BEHALF_OF'] ?? ''
 } as const;

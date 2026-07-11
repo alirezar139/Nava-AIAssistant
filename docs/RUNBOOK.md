@@ -31,20 +31,56 @@ npm --prefix server install
 
 ## متغیرهای محیطی
 
-| متغیر               | پیش‌فرض    | توضیح                                         |
-| ------------------- | ---------- | --------------------------------------------- |
-| `PORT`              | `3000`     | پورت API.                                     |
-| `JWT_SECRET`        | مقدار محلی | کلید امضای JWT. خارج از توسعه باید تغییر کند. |
-| `SAHAND_TICKET_URL` | خالی       | endpoint ثبت تیکت خارجی.                      |
-| `SAHAND_API_KEY`    | خالی       | توکن Bearer برای endpoint خارجی.              |
+| متغیر                       | پیش‌فرض    | توضیح                                         |
+| --------------------------- | ---------- | --------------------------------------------- |
+| `PORT`                      | `3000`     | پورت API.                                     |
+| `JWT_SECRET`                | مقدار محلی | کلید امضای JWT. خارج از توسعه باید تغییر کند. |
+| `SAHAND_TICKET_URL`         | خالی       | endpoint ثبت request در سهند.                 |
+| `SAHAND_AUTHORIZATION`      | خالی       | مقدار کامل هدر Authorization سهند.            |
+| `SAHAND_AUTH_HEADER`        | خالی       | مقدار هدر اضافی `Auth` برای سامانه مقصد.      |
+| `SAHAND_USERNAME`           | خالی       | نام کاربری سهند، اگر header آماده ندارید.     |
+| `SAHAND_PASSWORD`           | خالی       | رمز سهند، اگر header آماده ندارید.            |
+| `SAHAND_SERVICE_DESK_ID`    | خالی       | شناسه پروژه/Service Desk سهند.                |
+| `SAHAND_REQUEST_TYPE_ID`    | خالی       | شناسه RequestType سهند.                       |
+| `SAHAND_RAISE_ON_BEHALF_OF` | خالی       | کاربری که request از طرف او ثبت می‌شود.       |
 
 مثال:
 
 ```powershell
 $env:JWT_SECRET = "replace-with-local-secret"
-$env:SAHAND_TICKET_URL = "https://example.local/tickets"
-$env:SAHAND_API_KEY = "replace-with-token"
+$env:SAHAND_TICKET_URL = "https://sahand.dbaco.ir/rest/servicedeskapi/request"
+$env:SAHAND_AUTHORIZATION = "Basic replace-with-base64-credentials"
+$env:SAHAND_AUTH_HEADER = ""
+$env:SAHAND_SERVICE_DESK_ID = "107"
+$env:SAHAND_REQUEST_TYPE_ID = "1185"
+$env:SAHAND_RAISE_ON_BEHALF_OF = "z.malmir"
 ```
+
+## پیکربندی سرویس ثبت تیکت
+
+مدیر می‌تواند از پنل مدیریت، تب «پیکربندی سرویس»، این مقدارها را بدون تغییر کد
+یا rebuild کردن برنامه تغییر دهد:
+
+- آدرس سرویس ثبت تیکت
+- هدر `Authorization`
+- هدر اضافی `Auth`
+- شناسه پروژه/Service Desk
+- شناسه RequestType
+- نگاشت Node درختواره به RequestType
+
+مقدارهای ذخیره‌شده در پنل، روی مقدارهای env اولویت دارند.
+
+برای نگاشت Node به نوع درخواست سهند، در فیلد «نگاشت Node به RequestType» هر خط
+را با این قالب وارد کنید:
+
+```text
+nodeId | serviceDeskId | requestTypeId | عنوان اختیاری
+```
+
+اگر `serviceDeskId` برای یک Node همان مقدار عمومی پنل است، به جای آن `-` قرار
+دهید یا قالب کوتاه `nodeId | requestTypeId` را وارد کنید. هنگام ثبت تیکت، ابتدا
+نگاشت Node انتخاب‌شده بررسی می‌شود؛ اگر ردیفی پیدا نشد، مقدارهای عمومی پنل و سپس
+env استفاده می‌شوند.
 
 ## اجرای روزمره
 
@@ -259,7 +295,11 @@ Get-NetTCPConnection -LocalPort 4200,3000 -State Listen
 بررسی کنید:
 
 - `SAHAND_TICKET_URL` تنظیم شده باشد.
-- اگر endpoint auth می‌خواهد، `SAHAND_API_KEY` معتبر باشد.
+- `SAHAND_AUTHORIZATION` یا `SAHAND_USERNAME` و `SAHAND_PASSWORD` معتبر باشند.
+- اگر سامانه مقصد هدر `Auth` می‌خواهد، مقدار آن در پنل ادمین یا
+  `SAHAND_AUTH_HEADER` تنظیم شده باشد.
+- شناسه پروژه/Service Desk و شناسه RequestType با سهند هماهنگ باشند.
+- برای مسیرهایی که RequestType جدا دارند، نگاشت Node در پنل ادمین ثبت شده باشد.
 - لاگ API خطای network یا schema نشان ندهد.
 
 بدون تنظیم اتصال خارجی، سامانه همچنان رسید داخلی پرونده را می‌سازد.

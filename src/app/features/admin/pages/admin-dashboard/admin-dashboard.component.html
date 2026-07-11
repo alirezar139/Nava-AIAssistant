@@ -90,6 +90,15 @@
       >
         گزارش مشکلات کاربران
       </button>
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="activeTab === 'settings'"
+        [class.active]="activeTab === 'settings'"
+        (click)="activeTab = 'settings'"
+      >
+        پیکربندی سرویس
+      </button>
     </nav>
 
     <ng-container *ngIf="activeTab === 'faqs'">
@@ -327,6 +336,92 @@
           <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
         </div>
       </div>
+    </section>
+
+    <section class="editor-card service-config-card" *ngIf="activeTab === 'settings'">
+      <div class="section-title">
+        <div>
+          <span>اتصال خارجی</span>
+          <h2>سرویس ثبت تیکت</h2>
+        </div>
+        <small *ngIf="ticketServiceSettings?.updatedAt">
+          آخرین تغییر: {{ ticketServiceSettings?.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}
+        </small>
+      </div>
+
+      <form class="service-config-form" (ngSubmit)="saveTicketServiceSettings()">
+        <label class="wide">
+          آدرس سرویس
+          <input
+            dir="ltr"
+            [(ngModel)]="ticketServiceForm.url"
+            name="ticketServiceUrl"
+            placeholder="https://sahand.dbaco.ir/rest/servicedeskapi/request"
+          />
+        </label>
+
+        <label class="wide">
+          هدر Authorization
+          <textarea
+            dir="ltr"
+            [(ngModel)]="ticketServiceForm.authorizationHeader"
+            name="ticketServiceAuthorization"
+            rows="3"
+            placeholder="Basic ..."
+          ></textarea>
+        </label>
+
+        <label class="wide">
+          هدر Auth
+          <textarea
+            dir="ltr"
+            [(ngModel)]="ticketServiceForm.authHeader"
+            name="ticketServiceAuth"
+            rows="3"
+          ></textarea>
+        </label>
+
+        <label>
+          شناسه پروژه / Service Desk
+          <input
+            dir="ltr"
+            [(ngModel)]="ticketServiceForm.serviceDeskId"
+            name="ticketServiceDeskId"
+            placeholder="107"
+          />
+        </label>
+
+        <label>
+          شناسه RequestType
+          <input
+            dir="ltr"
+            [(ngModel)]="ticketServiceForm.requestTypeId"
+            name="ticketRequestTypeId"
+            placeholder="1185"
+          />
+        </label>
+
+        <label class="wide">
+          نگاشت Node به RequestType
+          <textarea
+            dir="ltr"
+            [(ngModel)]="requestTypeMappingsText"
+            name="ticketRequestTypeMappings"
+            rows="6"
+            placeholder="nodeId | serviceDeskId | requestTypeId | عنوان اختیاری"
+          ></textarea>
+          <small>
+            هر خط یک نگاشت است. اگر Service Desk همان مقدار پیش‌فرض است، خط تیره بگذارید یا فقط nodeId و
+            requestTypeId را بنویسید.
+          </small>
+        </label>
+
+        <div class="actions wide">
+          <button type="submit" [disabled]="settingsSaving">
+            {{ settingsSaving ? 'در حال ذخیره...' : 'ذخیره پیکربندی' }}
+          </button>
+        </div>
+      </form>
     </section>
   </main>
 

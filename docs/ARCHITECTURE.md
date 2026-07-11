@@ -30,9 +30,9 @@ Express API
 می‌کند. در اجرای build شده، Express خروجی `dist/nava-ai-assistant` را هم سرو
 می‌کند تا کل وب‌اپ با یک پردازش Node روی ویندوز اجرا شود.
 
-فایل‌های PWA شامل `manifest.webmanifest`، `nava-service-worker.js` و آیکن‌های
-`src/assets/icons` در build تولیدی به خروجی اضافه می‌شوند تا مرورگر بتواند
-برنامه را به‌صورت installable app شناسایی کند.
+فایل‌های PWA شامل `manifest.webmanifest` و `nava-service-worker.js` در build
+تولیدی به خروجی اضافه می‌شوند. آیکن نصب بعد از دریافت فایل نهایی برند دوباره به
+manifest اضافه می‌شود.
 
 ## معماری فرانت‌اند
 
@@ -66,6 +66,7 @@ server/src/
 |-- diagnostics/      پرونده تشخیصی و تحلیل اولیه
 |-- faqs/             CRUD و import برای FAQ
 |-- sahand/           اتصال اختیاری به سامانه تیکت
+|-- settings/         تنظیمات قابل تغییر سامانه
 `-- main.ts           راه‌انداز Express
 ```
 
@@ -134,8 +135,16 @@ service worker فقط خارج از Angular dev server ثبت می‌شود تا
 ## اتصال تیکت
 
 ماژول diagnostics برای هر ارجاع یک پرونده داخلی می‌سازد. اگر
-`SAHAND_TICKET_URL` تنظیم شده باشد، بک‌اند پرونده را به endpoint خارجی ارسال
-می‌کند. credentialهای سامانه مقصد هیچ‌وقت به مرورگر ارسال نمی‌شوند.
+`SAHAND_TICKET_URL`، شناسه service desk، شناسه request type و اطلاعات احراز هویت
+سهند تنظیم شده باشند، بک‌اند پرونده را با payload رسمی سهند به endpoint خارجی
+ارسال می‌کند. credentialهای سامانه مقصد هیچ‌وقت به مرورگر ارسال نمی‌شوند.
+
+مدیر می‌تواند آدرس سرویس، هدر `Authorization`، هدر اضافی `Auth`، شناسه
+پروژه/Service Desk، شناسه RequestType و نگاشت Nodeهای درختواره به RequestType را
+از پنل پیکربندی تغییر دهد. این تنظیمات در LowDB ذخیره می‌شوند و نسبت به مقدارهای
+env اولویت دارند. هنگام ارسال به سهند، ابتدا `treeNodeId` پرونده با نگاشت‌های
+ثبت‌شده مقایسه می‌شود؛ اگر نگاشت وجود نداشته باشد، مقدار عمومی پنل و سپس env
+استفاده می‌شود.
 
 ## معماری تم
 

@@ -296,6 +296,34 @@ textarea:focus {
 .actions button:disabled {
   opacity: 0.55;
 }
+
+.service-config-card {
+  max-width: 920px;
+}
+
+.service-config-form textarea[dir='ltr'],
+.service-config-form input[dir='ltr'] {
+  direction: ltr;
+  text-align: left;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.service-config-form textarea {
+  min-height: 92px;
+}
+
+.service-config-form label small {
+  color: #6a7b77;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.9;
+}
+
+.service-config-form .actions {
+  justify-content: flex-start;
+}
 .table-wrap {
   overflow: auto;
 }

@@ -8,6 +8,7 @@ import { authRouter } from './auth/auth.routes.js';
 import { conversationRouter } from './conversations/conversation.routes.js';
 import { diagnosticRouter } from './diagnostics/diagnostic.routes.js';
 import { faqRouter } from './faqs/faq.routes.js';
+import { settingsRouter } from './settings/settings.routes.js';
 import './database/database.js';
 import { config } from './config/config.js';
 import { sendError } from './common/api-error.js';
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/conversations', conversationRouter);
 app.use('/api/diagnostics', diagnosticRouter);
+app.use('/api/settings', settingsRouter);
 
 const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../../dist/nava-ai-assistant');
 const frontendIndexPath = join(frontendDistPath, 'index.html');

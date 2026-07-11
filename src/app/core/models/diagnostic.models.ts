@@ -10,6 +10,8 @@ export interface DiagnosticPayload {
   serialNumber: string;
   errorText: string;
   evidence: string;
+  treeNodeId: string;
+  treeNodeText: string;
 }
 
 export interface DiagnosticCaseRecord extends DiagnosticPayload {

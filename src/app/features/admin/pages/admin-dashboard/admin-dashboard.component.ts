@@ -11,7 +11,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ConversationRecord, FaqRecord } from '../../../../core/models/faq.models';
-import { ApiService, FaqPayload } from '../../../../core/services/api.service';
+import {
+  ApiService,
+  FaqPayload,
+  TicketRequestTypeMapping,
+  TicketServiceSettings,
+  TicketServiceSettingsPayload
+} from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ExcelReaderService } from '../../../../core/services/excel-reader.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
@@ -40,13 +46,17 @@ export class AdminDashboardComponent implements OnInit {
 
   faqs: FaqRecord[] = [];
   conversations: ConversationRecord[] = [];
-  activeTab: 'faqs' | 'reports' = 'faqs';
+  activeTab: 'faqs' | 'reports' | 'settings' = 'faqs';
   editingId: number | null = null;
   detailFaq: FaqRecord | null = null;
   form: FaqPayload = this.emptyForm();
   editForm: FaqPayload = this.emptyForm();
+  ticketServiceSettings: TicketServiceSettings | null = null;
+  ticketServiceForm: TicketServiceSettingsPayload = this.emptyTicketServiceForm();
+  requestTypeMappingsText = '';
   loading = true;
   saving = false;
+  settingsSaving = false;
   searchTerm = '';
   reportSearchTerm = '';
   categoryFilter = '';
@@ -161,10 +171,26 @@ export class AdminDashboardComponent implements OnInit {
 
   refresh(showNotification = false): void {
     this.loading = true;
-    forkJoin({ faqs: this.api.getFaqs(), conversations: this.api.getConversations() }).subscribe({
-      next: ({ faqs, conversations }) => {
+    forkJoin({
+      faqs: this.api.getFaqs(),
+      conversations: this.api.getConversations(),
+      ticketServiceSettings: this.api.getTicketServiceSettings()
+    }).subscribe({
+      next: ({ faqs, conversations, ticketServiceSettings }) => {
         this.faqs = faqs;
         this.conversations = conversations;
+        this.ticketServiceSettings = ticketServiceSettings;
+        this.ticketServiceForm = {
+          url: ticketServiceSettings.url,
+          authorizationHeader: ticketServiceSettings.authorizationHeader,
+          authHeader: ticketServiceSettings.authHeader,
+          serviceDeskId: ticketServiceSettings.serviceDeskId,
+          requestTypeId: ticketServiceSettings.requestTypeId,
+          requestTypeMappings: ticketServiceSettings.requestTypeMappings
+        };
+        this.requestTypeMappingsText = this.formatRequestTypeMappings(
+          ticketServiceSettings.requestTypeMappings
+        );
         this.normalizePaginationPage();
         this.loading = false;
         if (showNotification) {
@@ -274,6 +300,42 @@ export class AdminDashboardComponent implements OnInit {
 
   clearReportSearch(): void {
     this.reportSearchTerm = '';
+  }
+
+  saveTicketServiceSettings(): void {
+    const requestTypeMappings = this.parseRequestTypeMappings(this.requestTypeMappingsText);
+    if (!requestTypeMappings) {
+      this.notifications.error(
+        'نگاشت RequestType معتبر نیست',
+        'هر خط باید با قالب nodeId | serviceDeskId | requestTypeId | عنوان اختیاری ثبت شود.'
+      );
+      return;
+    }
+
+    this.settingsSaving = true;
+    const payload: TicketServiceSettingsPayload = {
+      ...this.ticketServiceForm,
+      requestTypeMappings
+    };
+
+    this.api.updateTicketServiceSettings(payload).subscribe({
+      next: (settings) => {
+        this.ticketServiceSettings = settings;
+        this.ticketServiceForm = {
+          url: settings.url,
+          authorizationHeader: settings.authorizationHeader,
+          authHeader: settings.authHeader,
+          serviceDeskId: settings.serviceDeskId,
+          requestTypeId: settings.requestTypeId,
+          requestTypeMappings: settings.requestTypeMappings
+        };
+        this.requestTypeMappingsText = this.formatRequestTypeMappings(settings.requestTypeMappings);
+        this.settingsSaving = false;
+        this.notifications.success('پیکربندی ذخیره شد', 'تنظیمات سرویس ثبت تیکت به‌روزرسانی شد.');
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => this.showError(error, 'ذخیره پیکربندی سرویس انجام نشد.')
+    });
   }
 
   setPageSize(size: number): void {
@@ -401,6 +463,55 @@ export class AdminDashboardComponent implements OnInit {
     return { question: '', answer: '', category: '', keywords: '' };
   }
 
+  private emptyTicketServiceForm(): TicketServiceSettingsPayload {
+    return {
+      url: '',
+      authorizationHeader: '',
+      authHeader: '',
+      serviceDeskId: '',
+      requestTypeId: '',
+      requestTypeMappings: []
+    };
+  }
+
+  private formatRequestTypeMappings(mappings: TicketRequestTypeMapping[]): string {
+    return mappings
+      .map((item) =>
+        [item.nodeId, item.serviceDeskId || '-', item.requestTypeId, item.nodeLabel]
+          .map((part) => part.trim())
+          .join(' | ')
+          .trim()
+      )
+      .join('\n');
+  }
+
+  private parseRequestTypeMappings(value: string): TicketRequestTypeMapping[] | null {
+    const rows = value
+      .split(/\r?\n/)
+      .map((row) => row.trim())
+      .filter((row) => row && !row.startsWith('#'));
+    const mappings: TicketRequestTypeMapping[] = [];
+
+    for (const row of rows) {
+      const parts = (row.includes('|') ? row.split('|') : row.split(',')).map((part) => part.trim());
+      const [nodeId = '', second = '', third = '', fourth = ''] = parts;
+      const serviceDeskId = parts.length === 2 ? '' : second;
+      const requestTypeId = parts.length === 2 ? second : third;
+      const nodeLabel = parts.length === 2 ? '' : fourth;
+
+      if (!nodeId || !requestTypeId) return null;
+
+      mappings.push({
+        nodeId,
+        nodeLabel,
+        serviceDeskId: serviceDeskId === '-' ? '' : serviceDeskId,
+        requestTypeId
+      });
+    }
+
+    return mappings;
+  }
+
   private normalizePaginationPage(): void {
     this.currentPage = Math.min(Math.max(this.currentPage, 1), this.totalPages);
   }
@@ -430,6 +541,7 @@ export class AdminDashboardComponent implements OnInit {
     this.notifications.error(resolved.title, this.errorMessages.formatMessage(resolved));
     this.loading = false;
     this.saving = false;
+    this.settingsSaving = false;
     this.changeDetector.markForCheck();
   }
 }
