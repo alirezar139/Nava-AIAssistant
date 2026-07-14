@@ -25,10 +25,11 @@
   </button>
 
   <button
+    *ngIf="customizable"
     type="button"
     class="customize-button"
     [class.active]="settingsOpen"
-    (click)="settingsOpen = !settingsOpen"
+    (click)="toggleSettings()"
     aria-label="شخصی‌سازی ظاهر"
     [attr.aria-expanded]="settingsOpen"
     aria-controls="theme-settings-panel"
@@ -46,7 +47,7 @@
 <section
   id="theme-settings-panel"
   class="theme-panel"
-  *ngIf="settingsOpen"
+  *ngIf="customizable && settingsOpen"
   role="dialog"
   aria-modal="false"
   aria-labelledby="theme-settings-title"

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input } from '@angular/core';
 import { ThemePalette, ThemeService } from '../../../core/services/theme.service';
 
 @Component({
@@ -11,6 +11,8 @@ import { ThemePalette, ThemeService } from '../../../core/services/theme.service
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ThemeToggleComponent {
+  @Input() customizable = true;
+
   readonly maxProfileImageSize = 1_500_000;
   readonly paletteOptions: Array<{ id: ThemePalette; label: string }> = [
     { id: 'jade', label: 'یشمی' },
@@ -39,6 +41,11 @@ export class ThemeToggleComponent {
   @HostListener('document:keydown.escape')
   closeOnEscape(): void {
     this.settingsOpen = false;
+  }
+
+  toggleSettings(): void {
+    if (!this.customizable) return;
+    this.settingsOpen = !this.settingsOpen;
   }
 
   selectPalette(palette: ThemePalette): void {

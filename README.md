@@ -56,6 +56,14 @@ npm --prefix server install
 npm run start:api
 ```
 
+اگر روی ویندوز اجرای watch با خطای `spawn EPERM` متوقف شد، API را از خروجی build
+شده اجرا کنید:
+
+```powershell
+npm --prefix server run build
+node server/dist/main.js
+```
+
 اجرای رابط Angular در ترمینال دوم:
 
 ```powershell
@@ -151,6 +159,7 @@ nodeId | serviceDeskId | requestTypeId | عنوان اختیاری
 | ------------------------------- | ------------------------------------------------------ |
 | `npm start`                     | اجرای Angular روی `localhost:4200` همراه با proxy API. |
 | `npm run start:api`             | اجرای API در حالت watch.                               |
+| `node server/dist/main.js`      | اجرای API build شده روی `127.0.0.1:3000`.              |
 | `npm run start:webapp`          | اجرای نسخه build شده وب‌اپ روی پورت API.               |
 | `npm run build`                 | ساخت خروجی فرانت‌اند.                                  |
 | `npm run build:all`             | ساخت فرانت‌اند و بک‌اند.                               |
@@ -191,3 +200,5 @@ npm run build:all
 
 اگر build در ویندوز هنگام حذف فایل‌های `dist` با خطای `EPERM` متوقف شد، dev
 server یا برنامه‌ای که فایل را نگه داشته ببندید و build را دوباره اجرا کنید.
+اگر اجرای API در حالت watch با `spawn EPERM` متوقف شد، از دستور جایگزین
+`node server/dist/main.js` بعد از `npm --prefix server run build` استفاده کنید.

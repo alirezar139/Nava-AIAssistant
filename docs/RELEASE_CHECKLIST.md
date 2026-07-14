@@ -88,7 +88,8 @@ npm run start:webapp
 
 - حساب‌های پیش‌فرض خارج از توسعه استفاده نشوند.
 - `JWT_SECRET` برای محیط مشترک تنظیم شده باشد.
-- اطلاعات سهند/Jira فقط از environment variable خوانده شوند.
+- اطلاعات سهند/Jira فقط از env runtime یا پنل پیکربندی ذخیره‌شده در دیتابیس داخلی
+  خوانده شوند و در کد یا repository قرار نگیرند.
 - secret در repository commit نشده باشد.
 - سیاست backup داده‌های LowDB قبل از استفاده داخلی واقعی مشخص باشد.
 
@@ -101,4 +102,5 @@ npm run start:webapp
 - نام محیط
 - محدودیت‌های شناخته‌شده
 - وضعیت endpoint سهند/Jira
+- وضعیت DNS/VPN برای دسترسی به endpoint سهند/Jira
 - نیازمندی‌های migration دستی، در صورت وجود

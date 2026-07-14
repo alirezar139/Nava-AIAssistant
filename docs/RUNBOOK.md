@@ -93,10 +93,32 @@ cd C:\angular\Nava-AIAssistant
 npm run start:api
 ```
 
+این فرمان API را در حالت watch اجرا می‌کند و برای توسعه معمولی مناسب است.
+
 سلامت API:
 
 ```text
 http://127.0.0.1:3000/api/health
+```
+
+### اجرای API از خروجی build شده
+
+اگر روی ویندوز اجرای watch با خطای `spawn EPERM` از سمت `tsx` یا `esbuild`
+متوقف شد، API را از خروجی TypeScript اجرا کنید. این روش برای تست دستی و دمو
+پایدارتر است، اما بعد از هر تغییر در کد بک‌اند باید دوباره build گرفته شود.
+
+ترمینال اول:
+
+```powershell
+cd C:\angular\Nava-AIAssistant
+npm --prefix server run build
+node server/dist/main.js
+```
+
+انتظار:
+
+```text
+API listening on http://127.0.0.1:3000
 ```
 
 ### اجرای فرانت‌اند
@@ -120,6 +142,38 @@ http://localhost:4200/
 
 تا زمان استفاده از برنامه، هر دو ترمینال باید باز بمانند. توقف سرویس با `Ctrl+C`
 در همان ترمینال انجام می‌شود.
+
+### اجرای تاییدشده در همین ماشین
+
+در این محیط ویندوزی، مسیر تاییدشده برای بالا آوردن کامل پروژه این است:
+
+1. بک‌اند را build و از `dist` اجرا کنید:
+
+```powershell
+cd C:\angular\Nava-AIAssistant
+npm --prefix server run build
+node server/dist/main.js
+```
+
+2. در ترمینال دوم Angular را اجرا کنید:
+
+```powershell
+cd C:\angular\Nava-AIAssistant
+npm start
+```
+
+3. سلامت سرویس‌ها را بررسی کنید:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:3000/api/health
+Invoke-WebRequest http://localhost:4200 -UseBasicParsing
+```
+
+خروجی قابل قبول:
+
+- API مقدار `{"status":"ok"}` برگرداند.
+- فرانت‌اند status code `200` بدهد.
+- پورت `3000` برای API و پورت `4200` برای Angular در وضعیت `LISTENING` باشند.
 
 ## اجرای وب‌اپ روی ویندوز
 
@@ -264,6 +318,23 @@ Get-NetTCPConnection -LocalPort 4200 -State Listen
 Get-NetTCPConnection -LocalPort 3000 -State Listen
 ```
 
+اگر لاگ API خطای زیر را نشان داد:
+
+```text
+Error [TransformError]: spawn EPERM
+```
+
+راهکار سریع برای ادامه کار:
+
+```powershell
+cd C:\angular\Nava-AIAssistant
+npm --prefix server run build
+node server/dist/main.js
+```
+
+این خطا معمولا از اجرای watcher/transformer در ویندوز یا محدودیت دسترسی پردازش
+می‌آید. اجرای `dist` از `tsx` عبور می‌کند و برای تست پروژه کافی است.
+
 ### پورت اشغال است
 
 پردازش مالک پورت را پیدا کنید:
@@ -301,5 +372,15 @@ Get-NetTCPConnection -LocalPort 4200,3000 -State Listen
 - شناسه پروژه/Service Desk و شناسه RequestType با سهند هماهنگ باشند.
 - برای مسیرهایی که RequestType جدا دارند، نگاشت Node در پنل ادمین ثبت شده باشد.
 - لاگ API خطای network یا schema نشان ندهد.
+- شبکه دستگاه بتواند دامنه سهند را resolve کند:
+
+```powershell
+Resolve-DnsName sahand.dbaco.ir
+Test-NetConnection sahand.dbaco.ir -Port 443
+```
+
+اگر DNS خطا داد یا `TcpTestSucceeded` برابر `False` بود، باید VPN، DNS داخلی یا
+آی‌پی سرویس سهند از سمت زیرساخت فراهم شود. تا قبل از حل شدن شبکه، کد ثبت تیکت
+اجرا می‌شود اما درخواست واقعی به سهند نمی‌رسد.
 
 بدون تنظیم اتصال خارجی، سامانه همچنان رسید داخلی پرونده را می‌سازد.
