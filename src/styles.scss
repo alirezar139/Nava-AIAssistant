@@ -51,13 +51,20 @@
 
 :root[data-theme='dark'] {
   color: #f1f8f5;
-  background: #050f0c;
-  --surface: #102b24;
-  --surface-soft: #071b16;
-  --glass: rgba(14, 42, 34, 0.82);
-  --glass-strong: rgba(18, 51, 42, 0.94);
-  --glass-border: rgba(184, 224, 211, 0.24);
-  --border: rgba(184, 224, 211, 0.25);
+  background: #061a15;
+  --primary-950: #03110e;
+  --primary-900: #06231c;
+  --primary-800: #0a405c;
+  --primary-700: #0f6f9d;
+  --primary-100: #143f35;
+  --accent-600: #a87536;
+  --accent-100: #3b3021;
+  --surface: #0b241e;
+  --surface-soft: #061711;
+  --glass: rgba(9, 35, 29, 0.84);
+  --glass-strong: rgba(12, 47, 39, 0.94);
+  --glass-border: rgba(126, 198, 221, 0.24);
+  --border: rgba(132, 194, 177, 0.27);
   --text: #f1f8f5;
   --muted: #bfd0ca;
   --color-heading: #f4faf8;
@@ -66,23 +73,21 @@
   --color-subtle: #9fb4ad;
   --color-metric: #f3c77f;
   --color-metric-soft: rgba(171, 112, 38, 0.2);
-  --color-link: #8ed5c0;
+  --color-link: #65c7d6;
   --crystal-surface: linear-gradient(
     135deg,
-    rgba(29, 66, 56, 0.96) 0%,
-    rgba(13, 42, 34, 0.9) 50%,
-    rgba(48, 39, 25, 0.88) 100%
+    rgba(25, 66, 55, 0.94) 0%,
+    rgba(7, 31, 25, 0.9) 56%,
+    rgba(39, 32, 21, 0.86) 100%
   );
-  --crystal-soft: linear-gradient(135deg, rgba(24, 61, 51, 0.88), rgba(8, 31, 25, 0.78));
-  --crystal-edge: rgba(194, 232, 220, 0.28);
-  --crystal-inner-edge: rgba(211, 240, 230, 0.1);
-  --crystal-shine: rgba(190, 229, 216, 0.14);
-  --crystal-shadow: 0 28px 75px rgba(0, 0, 0, 0.38);
-  --page-bg: #050f0c;
-  --ambient-one: rgba(190, 132, 49, 0.17);
-  --ambient-two: rgba(31, 142, 112, 0.17);
-  --primary-100: #183f35;
-  --accent-100: #3b3021;
+  --crystal-soft: linear-gradient(135deg, rgba(13, 54, 45, 0.86), rgba(5, 22, 18, 0.78));
+  --crystal-edge: rgba(159, 213, 197, 0.28);
+  --crystal-inner-edge: rgba(222, 249, 241, 0.1);
+  --crystal-shine: rgba(190, 229, 216, 0.11);
+  --crystal-shadow: 0 30px 92px rgba(0, 0, 0, 0.4);
+  --page-bg: #061a15;
+  --ambient-one: rgba(28, 117, 171, 0.18);
+  --ambient-two: rgba(28, 103, 77, 0.34);
   --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.2);
   --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.34);
 }
@@ -349,13 +354,21 @@ body {
   min-height: 100vh;
   color: var(--color-body);
   background:
-    radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
-    radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
+    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 13%, transparent), transparent 25rem),
+    radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--color-link) 14%, transparent), transparent 28rem),
+    radial-gradient(circle at 16% 88%, color-mix(in srgb, var(--primary-700) 11%, transparent), transparent 30rem),
+    radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--accent-100) 34%, transparent), transparent 24rem),
+    radial-gradient(circle at 50% 45%, var(--ambient-two), transparent 36rem),
+    var(--page-bg);
 }
 :root[data-theme='dark'] body {
   background:
-    radial-gradient(circle at 8% 5%, var(--ambient-one), transparent 28rem),
-    radial-gradient(circle at 92% 24%, var(--ambient-two), transparent 30rem), var(--page-bg);
+    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 14%, transparent), transparent 26rem),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-link) 15%, transparent), transparent 30rem),
+    radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--primary-700) 14%, transparent), transparent 28rem),
+    radial-gradient(circle at 93% 82%, color-mix(in srgb, var(--accent-100) 18%, transparent), transparent 24rem),
+    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 38rem),
+    var(--page-bg);
 }
 body,
 button,

@@ -175,7 +175,9 @@ export const settingsRepository = {
     return settings;
   },
 
-  async updateTicketServiceSettings(input: TicketServiceSettingsRecord): Promise<TicketServiceSettingsRecord> {
+  async updateTicketServiceSettings(
+    input: TicketServiceSettingsRecord
+  ): Promise<TicketServiceSettingsRecord> {
     this.getTicketServiceSettings();
     database.data.settings.ticketService = input;
     await database.write();
