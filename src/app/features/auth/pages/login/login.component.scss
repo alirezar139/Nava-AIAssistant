@@ -853,30 +853,104 @@ form .captcha-image:hover {
     radial-gradient(circle at 65% 82%, rgba(51, 132, 111, 0.2), transparent 28rem),
     linear-gradient(135deg, #e7efeb, #f5f1e8);
 }
-.login-page::before,
-.login-page::after {
-  content: '';
+.qa-animation-layer {
   position: absolute;
-  z-index: -1;
-  border-radius: 50%;
-  filter: blur(4px);
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
 }
-.login-page::before {
-  width: 320px;
-  height: 320px;
-  top: -90px;
-  right: 39%;
-  background: linear-gradient(145deg, rgba(214, 171, 103, 0.42), rgba(255, 255, 255, 0.08));
-  animation: ambient-float 6s ease-in-out infinite alternate;
+.qa-question,
+.qa-reply {
+  position: absolute;
+  opacity: 0;
+  border: 1px solid color-mix(in srgb, var(--color-link) 22%, transparent);
+  color: color-mix(in srgb, var(--color-heading) 82%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #ffffff 72%, transparent), transparent 56%),
+    color-mix(in srgb, var(--surface) 62%, transparent);
+  box-shadow:
+    0 22px 54px color-mix(in srgb, var(--primary-900) 12%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #ffffff 72%, transparent);
+  backdrop-filter: blur(18px) saturate(145%);
+  pointer-events: none;
 }
-.login-page::after {
-  width: 240px;
-  height: 240px;
-  left: 4%;
-  bottom: -80px;
-  background: linear-gradient(145deg, rgba(43, 119, 99, 0.35), rgba(255, 255, 255, 0.04));
-  animation: ambient-float 8s 1s ease-in-out infinite alternate-reverse;
+.qa-question {
+  width: clamp(38px, 4vw, 56px);
+  height: clamp(38px, 4vw, 56px);
+  display: grid;
+  border-radius: 50%;
+  color: color-mix(in srgb, var(--color-link) 86%, var(--color-heading));
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 950;
+  line-height: 1;
+  place-items: center;
+  animation: question-mark-drift 10s ease-in-out infinite;
+}
+.qa-reply {
+  width: clamp(148px, 14vw, 214px);
+  min-height: 52px;
+  padding: 12px 16px;
+  border-radius: 22px 22px 22px 6px;
+  color: color-mix(in srgb, var(--primary-950) 84%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-100) 54%, #ffffff),
+      color-mix(in srgb, var(--surface) 58%, transparent)
+    ),
+    color-mix(in srgb, var(--surface) 70%, transparent);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.9;
+  text-align: right;
+  animation: answer-chat-drift 11s ease-in-out infinite;
+}
+.q1 {
+  top: 13%;
+  right: 43%;
+  animation-delay: 0.2s;
+}
+.q2 {
+  top: 32%;
+  left: 8%;
+  animation-delay: 1.8s;
+}
+.q3 {
+  right: 36%;
+  bottom: 17%;
+  animation-delay: 3.2s;
+}
+.q4 {
+  top: 58%;
+  left: 24%;
+  animation-delay: 4.7s;
+}
+.q5 {
+  top: 75%;
+  right: 58%;
+  animation-delay: 6s;
+}
+.r1 {
+  top: 21%;
+  left: 13%;
+  animation-delay: 1s;
+}
+.r2 {
+  right: 54%;
+  bottom: 18%;
+  animation-delay: 3.7s;
+}
+.r3 {
+  top: 58%;
+  left: 5%;
+  animation-delay: 5.6s;
+}
+.theme-switch,
+.intro,
+.login-card {
+  position: relative;
+  z-index: 1;
 }
 .intro {
   margin: 20px 0 20px 20px;
@@ -922,12 +996,36 @@ input {
   backdrop-filter: blur(10px);
 }
 
-@keyframes ambient-float {
-  from {
-    transform: translate3d(-10px, -12px, 0) scale(0.96);
+@keyframes question-mark-drift {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(42px, 24px, 0) scale(0.82);
   }
-  to {
-    transform: translate3d(22px, 18px, 0) scale(1.06);
+  16%,
+  52% {
+    opacity: 0.78;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  72% {
+    opacity: 0;
+    transform: translate3d(-62px, -28px, 0) scale(0.9);
+  }
+}
+@keyframes answer-chat-drift {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(-46px, -18px, 0) scale(0.94);
+  }
+  18%,
+  54% {
+    opacity: 0.86;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  76% {
+    opacity: 0;
+    transform: translate3d(74px, 26px, 0) scale(0.96);
   }
 }
 @keyframes logo-shine {
@@ -958,6 +1056,18 @@ input {
   .intro {
     margin: 0;
     border-radius: 0 0 34px 34px;
+  }
+  .q4,
+  .q5,
+  .r3 {
+    display: none;
+  }
+  .q1 {
+    right: 12%;
+  }
+  .r1 {
+    top: 12%;
+    left: 8%;
   }
 }
 
