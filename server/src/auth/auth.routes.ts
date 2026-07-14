@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { database } from '../database/database.js';
+import { userRepository } from '../database/repositories.js';
 import { AuthUser } from '../common/types.js';
 import { signToken } from './auth.middleware.js';
 import { captchaService } from './captcha.service.js';
@@ -32,7 +32,7 @@ authRouter.post('/login', (request, response) => {
     return;
   }
 
-  const row = database.data.users.find((user) => user.username === result.data.username);
+  const row = userRepository.findByUsername(result.data.username);
 
   if (!row || !bcrypt.compareSync(result.data.password, row.passwordHash)) {
     sendError(response, 401, 'CREDENTIALS_INVALID', 'نام کاربری یا رمز عبور صحیح نیست.');

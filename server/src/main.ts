@@ -9,9 +9,14 @@ import { conversationRouter } from './conversations/conversation.routes.js';
 import { diagnosticRouter } from './diagnostics/diagnostic.routes.js';
 import { faqRouter } from './faqs/faq.routes.js';
 import { settingsRouter } from './settings/settings.routes.js';
+import { serviceCatalogRouter } from './services/service-catalog.routes.js';
+import { troubleshootingTreeRouter } from './troubleshooting-tree/troubleshooting-tree.routes.js';
 import './database/database.js';
+import { ensureArangoSchema, getArangoHealth, isArangoEnabled } from './database/arango.js';
 import { config } from './config/config.js';
 import { sendError } from './common/api-error.js';
+
+await ensureArangoSchema();
 
 const app = express();
 
@@ -23,12 +28,21 @@ app.use((_request, response, next) => {
 });
 app.use(cors({ origin: config.corsOrigins }));
 app.use(express.json({ limit: '10mb' }));
-app.get('/api/health', (_request, response) => response.json({ status: 'ok' }));
+app.get('/api/health', async (_request, response) => {
+  const arango = await getArangoHealth();
+  response.status(arango.ok ? 200 : 503).json({
+    status: arango.ok ? 'ok' : 'degraded',
+    storage: config.databaseProvider,
+    ...(isArangoEnabled() ? { arango } : {})
+  });
+});
 app.use('/api/auth', authRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/conversations', conversationRouter);
 app.use('/api/diagnostics', diagnosticRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/services', serviceCatalogRouter);
+app.use('/api/troubleshooting-tree', troubleshootingTreeRouter);
 
 const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../../dist/nava-ai-assistant');
 const frontendIndexPath = join(frontendDistPath, 'index.html');

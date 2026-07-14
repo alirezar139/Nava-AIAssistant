@@ -4,6 +4,7 @@ import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { UserRole } from '../common/types.js';
+import { config } from '../config/config.js';
 
 export interface UserRecord {
   id: number;
@@ -75,6 +76,26 @@ export interface TicketRequestTypeMappingRecord {
   requestTypeId: string;
 }
 
+export type ExternalServiceMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export interface ExternalServiceRecord {
+  id: number;
+  key: string;
+  title: string;
+  purpose: string;
+  sectionTitle: string;
+  method: ExternalServiceMethod;
+  url: string;
+  authorizationHeader: string;
+  authHeader: string;
+  headersText: string;
+  bodyTemplate: string;
+  isActive: boolean;
+  showInAssistant: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppSettingsRecord {
   ticketService: TicketServiceSettingsRecord;
 }
@@ -84,18 +105,22 @@ interface DatabaseSchema {
   faqs: FaqRecord[];
   conversations: ConversationRecord[];
   diagnosticCases: DiagnosticCaseRecord[];
+  externalServices: ExternalServiceRecord[];
   settings: AppSettingsRecord;
 }
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
-const dataDirectory = resolve(currentDirectory, '../../data');
+const dataDirectory = config.dataDirectory
+  ? resolve(config.dataDirectory)
+  : resolve(currentDirectory, '../../data');
 await mkdir(dataDirectory, { recursive: true });
 
-export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirectory, 'database.json'), {
+export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirectory, config.dataFileName), {
   users: [],
   faqs: [],
   conversations: [],
   diagnosticCases: [],
+  externalServices: [],
   settings: {
     ticketService: {
       url: '',
@@ -110,6 +135,7 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
 });
 
 database.data.diagnosticCases ??= [];
+database.data.externalServices ??= [];
 database.data.settings ??= {
   ticketService: {
     url: '',

@@ -2,7 +2,7 @@
 
 ## هدف
 
-این سند نصب، اجرا، بررسی سلامت، build و رفع خطاهای رایج Nava AI Assistant را در
+این سند نصب، اجرا، بررسی سلامت، build و رفع خطاهای رایج راهیار را در
 محیط توسعه ویندوز توضیح می‌دهد.
 
 ## پیش‌نیازها
@@ -10,6 +10,7 @@
 - Node.js نسخه ۲۰ یا جدیدتر.
 - npm.
 - PowerShell یا ترمینال VS Code.
+- ArangoDB در صورت اجرای پروژه با `DB_PROVIDER=arango`.
 - دو ترمینال برای اجرای روزمره فرانت‌اند و بک‌اند، یا یک ترمینال برای اجرای
   نسخه build شده وب‌اپ.
 
@@ -31,18 +32,25 @@ npm --prefix server install
 
 ## متغیرهای محیطی
 
-| متغیر                       | پیش‌فرض    | توضیح                                         |
-| --------------------------- | ---------- | --------------------------------------------- |
-| `PORT`                      | `3000`     | پورت API.                                     |
-| `JWT_SECRET`                | مقدار محلی | کلید امضای JWT. خارج از توسعه باید تغییر کند. |
-| `SAHAND_TICKET_URL`         | خالی       | endpoint ثبت request در سهند.                 |
-| `SAHAND_AUTHORIZATION`      | خالی       | مقدار کامل هدر Authorization سهند.            |
-| `SAHAND_AUTH_HEADER`        | خالی       | مقدار هدر اضافی `Auth` برای سامانه مقصد.      |
-| `SAHAND_USERNAME`           | خالی       | نام کاربری سهند، اگر header آماده ندارید.     |
-| `SAHAND_PASSWORD`           | خالی       | رمز سهند، اگر header آماده ندارید.            |
-| `SAHAND_SERVICE_DESK_ID`    | خالی       | شناسه پروژه/Service Desk سهند.                |
-| `SAHAND_REQUEST_TYPE_ID`    | خالی       | شناسه RequestType سهند.                       |
-| `SAHAND_RAISE_ON_BEHALF_OF` | خالی       | کاربری که request از طرف او ثبت می‌شود.       |
+| متغیر                       | پیش‌فرض                 | توضیح                                         |
+| --------------------------- | ----------------------- | --------------------------------------------- |
+| `PORT`                      | `3000`                  | پورت API.                                     |
+| `JWT_SECRET`                | مقدار محلی              | کلید امضای JWT. خارج از توسعه باید تغییر کند. |
+| `DB_PROVIDER`               | `lowdb`                 | نوع ذخیره‌سازی. برای Arango مقدار `arango`.   |
+| `RAHYAR_DATA_DIR`           | خالی                    | مسیر فایل LowDB در صورت نیاز به تغییر.        |
+| `RAHYAR_DB_FILE`            | `database.json`         | نام فایل LowDB.                               |
+| `ARANGO_URL`                | `http://127.0.0.1:8529` | آدرس ArangoDB.                                |
+| `ARANGO_DATABASE`           | `rahyar`                | نام دیتابیس ArangoDB.                         |
+| `ARANGO_USERNAME`           | `root`                  | نام کاربری ArangoDB.                          |
+| `ARANGO_PASSWORD`           | خالی                    | رمز عبور ArangoDB.                            |
+| `SAHAND_TICKET_URL`         | خالی                    | endpoint ثبت request در سهند.                 |
+| `SAHAND_AUTHORIZATION`      | خالی                    | مقدار کامل هدر Authorization سهند.            |
+| `SAHAND_AUTH_HEADER`        | خالی                    | مقدار هدر اضافی `Auth` برای سامانه مقصد.      |
+| `SAHAND_USERNAME`           | خالی                    | نام کاربری سهند، اگر header آماده ندارید.     |
+| `SAHAND_PASSWORD`           | خالی                    | رمز سهند، اگر header آماده ندارید.            |
+| `SAHAND_SERVICE_DESK_ID`    | خالی                    | شناسه پروژه/Service Desk سهند.                |
+| `SAHAND_REQUEST_TYPE_ID`    | خالی                    | شناسه RequestType سهند.                       |
+| `SAHAND_RAISE_ON_BEHALF_OF` | خالی                    | کاربری که request از طرف او ثبت می‌شود.       |
 
 مثال:
 
@@ -55,6 +63,32 @@ $env:SAHAND_SERVICE_DESK_ID = "107"
 $env:SAHAND_REQUEST_TYPE_ID = "1185"
 $env:SAHAND_RAISE_ON_BEHALF_OF = "z.malmir"
 ```
+
+## اجرای پروژه با ArangoDB
+
+اجرای پیش‌فرض پروژه به ArangoDB نیاز ندارد. برای فعال‌سازی ArangoDB:
+
+```powershell
+cd C:\angular\Nava-AIAssistant
+$env:DB_PROVIDER = "arango"
+$env:ARANGO_URL = "http://127.0.0.1:8529"
+$env:ARANGO_DATABASE = "rahyar"
+$env:ARANGO_USERNAME = "root"
+$env:ARANGO_PASSWORD = "your-arango-password"
+npm --prefix server run build
+node server/dist/main.js
+```
+
+قبل از اجرای API، اتصال ArangoDB را بررسی کنید:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8529/_api/version
+```
+
+اگر این دستور پاسخ ندهد، ArangoDB نصب شده اما سرویس آن بالا نیست یا روی پورت
+دیگری اجرا شده است. در حالت Arango، API هنگام startup دیتابیس و collectionهای
+لازم را می‌سازد. درختواره از `GET /api/troubleshooting-tree` خوانده می‌شود و اگر
+graph خالی باشد، فایل JSON فعلی به عنوان seed اولیه ذخیره می‌شود.
 
 ## پیکربندی سرویس ثبت تیکت
 
@@ -81,6 +115,47 @@ nodeId | serviceDeskId | requestTypeId | عنوان اختیاری
 دهید یا قالب کوتاه `nodeId | requestTypeId` را وارد کنید. هنگام ثبت تیکت، ابتدا
 نگاشت Node انتخاب‌شده بررسی می‌شود؛ اگر ردیفی پیدا نشد، مقدارهای عمومی پنل و سپس
 env استفاده می‌شوند.
+
+## کاتالوگ سرویس‌های سامانه
+
+تب «سرویس‌ها» در پنل مدیریت برای تعریف سرویس‌های مستقل استفاده می‌شود؛ برای
+نمونه سرویس ثبت درخواست، سرویس استعلام وضعیت یا هر endpoint داخلی دیگر که باید
+از داخل راهیار اجرا شود.
+
+برای هر سرویس این مقدارها ثبت می‌شود:
+
+- کلید یکتا برای استفاده فنی و نگهداری.
+- عنوان و هدف سرویس برای توضیح کاربرد.
+- عنوان بخش نمایشی که در صفحه کاربر ساخته می‌شود.
+- متد HTTP و آدرس سرویس مقصد.
+- هدر `Authorization` و هدر اضافی `Auth` در صورت نیاز.
+- هدرهای اضافه با قالب `Key: Value` در هر خط یا JSON object ساده.
+- قالب بدنه درخواست.
+- وضعیت فعال بودن سرویس.
+- وضعیت نمایش سرویس در صفحه دستیار.
+
+وقتی هر دو گزینه «فعال» و «نمایش در صفحه کاربر» روشن باشند، کاربر بعد از ورود
+کارت همان سرویس را در پنل اطلاعات پشتیبانی می‌بیند و می‌تواند آن را اجرا کند.
+اجرای سرویس از بک‌اند انجام می‌شود؛ بنابراین مقدارهای محرمانه سرویس در مرورگر
+کاربر دیده نمی‌شوند.
+
+در قالب بدنه می‌توان از این متغیرها استفاده کرد:
+
+```text
+{{username}}
+{{fullName}}
+{{userId}}
+{{role}}
+{{now}}
+```
+
+بعد از تغییر کد بک‌اند یا routeهای سرویس‌ها، اگر API از `server/dist` اجرا شده
+باشد، باید دوباره build گرفته و سرور restart شود:
+
+```powershell
+npm --prefix server run build
+node server/dist/main.js
+```
 
 ## اجرای روزمره
 
@@ -216,7 +291,7 @@ npm run webapp:windows
 
 ## نصب PWA در ویندوز
 
-PWA رابط کاربری Nava را مثل یک اپ مستقل در Chrome یا Microsoft Edge نصب می‌کند.
+PWA رابط کاربری راهیار را مثل یک اپ مستقل در Chrome یا Microsoft Edge نصب می‌کند.
 بک‌اند همچنان باید با `npm run webapp:windows` یا یک سرویس ویندوزی روشن باشد.
 
 مراحل:
@@ -236,7 +311,7 @@ http://127.0.0.1:3000/
 3. از منوی مرورگر گزینه نصب app را انتخاب کنید. در Edge معمولا مسیر
    `Apps > Install this site as an app` است.
 
-4. بعد از نصب، Nava از Start Menu و Taskbar مثل یک پنجره مستقل باز می‌شود.
+4. بعد از نصب، راهیار از Start Menu و Taskbar مثل یک پنجره مستقل باز می‌شود.
 
 اگر گزینه نصب نمایش داده نشد:
 
@@ -297,8 +372,9 @@ npm run build:all
 5. یک مسیر حل‌نشده را طی کنید و ایجاد رسید تیکت را ببینید.
 6. با مدیر `admin` وارد شوید.
 7. صفحه FAQ، گزارش‌ها و پرونده‌ها را باز کنید.
-8. تغییر تم، پالت، Paint color، dark mode و عکس پروفایل را تست کنید.
-9. گزینه نصب PWA را در Chrome یا Edge بررسی کنید.
+8. تب ارزیابی عملکرد را باز کنید و KPI، قیف پشتیبانی و روند ۷ روزه را بررسی کنید.
+9. تغییر تم، پالت، Paint color، dark mode و عکس پروفایل را تست کنید.
+10. گزینه نصب PWA را در Chrome یا Edge بررسی کنید.
 
 ## خطاهای رایج
 

@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { config } from '../config/config.js';
-import { database, TicketServiceSettingsRecord } from '../database/database.js';
+import { TicketServiceSettingsRecord } from '../database/database.js';
+import { settingsRepository } from '../database/repositories.js';
 
 export const settingsRouter = Router();
 
@@ -26,35 +27,7 @@ const ticketServiceSettingsSchema = z.object({
 });
 
 function getStoredTicketServiceSettings(): TicketServiceSettingsRecord {
-  database.data.settings ??= {
-    ticketService: {
-      url: '',
-      authorizationHeader: '',
-      authHeader: '',
-      serviceDeskId: '',
-      requestTypeId: '',
-      requestTypeMappings: [],
-      updatedAt: null
-    }
-  };
-  database.data.settings.ticketService ??= {
-    url: '',
-    authorizationHeader: '',
-    authHeader: '',
-    serviceDeskId: '',
-    requestTypeId: '',
-    requestTypeMappings: [],
-    updatedAt: null
-  };
-  database.data.settings.ticketService.url ??= '';
-  database.data.settings.ticketService.authorizationHeader ??= '';
-  database.data.settings.ticketService.authHeader ??= '';
-  database.data.settings.ticketService.serviceDeskId ??= '';
-  database.data.settings.ticketService.requestTypeId ??= '';
-  database.data.settings.ticketService.requestTypeMappings ??= [];
-  database.data.settings.ticketService.updatedAt ??= null;
-
-  return database.data.settings.ticketService;
+  return settingsRepository.getTicketServiceSettings();
 }
 
 settingsRouter.get('/ticket-service', requireAuth(['admin']), (_request, response) => {
@@ -89,8 +62,5 @@ settingsRouter.put('/ticket-service', requireAuth(['admin']), async (request, re
     updatedAt: new Date().toISOString()
   };
 
-  getStoredTicketServiceSettings();
-  database.data.settings.ticketService = updated;
-  await database.write();
-  response.json(updated);
+  response.json(await settingsRepository.updateTicketServiceSettings(updated));
 });

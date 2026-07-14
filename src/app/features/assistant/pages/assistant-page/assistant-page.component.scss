@@ -574,6 +574,77 @@ main.assistant-layout {
   margin: 8px 0 0;
 }
 
+.external-services {
+  display: grid;
+  gap: 10px;
+  border-right: 4px solid var(--assistant-blue);
+}
+
+.external-services article {
+  min-width: 0;
+  padding: 11px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--assistant-blue) 18%, var(--assistant-border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--assistant-blue) 7%, var(--assistant-panel));
+}
+
+.external-services article div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.external-services article strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--assistant-heading);
+  font-size: 0.82rem;
+  font-weight: 950;
+  line-height: 1.75;
+}
+
+.external-services article small {
+  min-width: 0;
+  color: var(--assistant-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.75;
+}
+
+.external-services button {
+  min-width: 58px;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--assistant-primary-strong);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.service-run-status {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, #24a46f 34%, transparent);
+  border-radius: 8px;
+  color: #12724d;
+  background: color-mix(in srgb, #24a46f 10%, var(--assistant-panel));
+  font-size: 0.76rem;
+  font-weight: 850;
+  line-height: 1.8;
+}
+
+.service-run-status.failed {
+  border-color: color-mix(in srgb, var(--assistant-danger) 34%, transparent);
+  color: var(--assistant-danger);
+  background: color-mix(in srgb, var(--assistant-danger) 9%, var(--assistant-panel));
+}
+
 .error {
   margin: 0;
   padding: 11px 13px;
@@ -1753,6 +1824,14 @@ main.assistant-layout {
 
   .document-tools label {
     text-align: center;
+  }
+
+  .external-services article {
+    grid-template-columns: 1fr;
+  }
+
+  .external-services button {
+    width: 100%;
   }
 
   .composer {

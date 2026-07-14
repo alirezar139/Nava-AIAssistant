@@ -8,12 +8,13 @@
 
 ## محل پیاده‌سازی
 
-| بخش                     | مسیر                                                                          |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| داده درخت               | `src/assets/troubleshooting-tree.json`                                        |
-| مدل TypeScript          | `src/app/core/models/troubleshooting-tree.models.ts`                          |
-| سرویس بارگذاری و پیمایش | `src/app/core/services/troubleshooting-tree.service.ts`                       |
-| مصرف در جریان کاربر     | `src/app/features/assistant/pages/assistant-page/assistant-page.component.ts` |
+| بخش                     | مسیر                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| داده درخت               | `GET /api/troubleshooting-tree`؛ fallback در `src/assets/troubleshooting-tree.json` |
+| مدل TypeScript          | `src/app/core/models/troubleshooting-tree.models.ts`                                |
+| سرویس بارگذاری و پیمایش | `src/app/core/services/troubleshooting-tree.service.ts`                             |
+| repository بک‌اند       | `server/src/troubleshooting-tree/troubleshooting-tree.repository.ts`                |
+| مصرف در جریان کاربر     | `src/app/features/assistant/pages/assistant-page/assistant-page.component.ts`       |
 
 ## ساختار داده
 
@@ -40,6 +41,20 @@ interface TroubleshootingTree {
 
 فایل JSON فعلی با VSDX مرجع بررسی شده و در آن بررسی، گره یا ارتباط جاافتاده
 مشاهده نشده است.
+
+## منبع داده
+
+فرانت‌اند درختواره را از API می‌خواند:
+
+```text
+GET /api/troubleshooting-tree
+```
+
+در اجرای پیش‌فرض، بک‌اند همین خروجی را از فایل
+`src/assets/troubleshooting-tree.json` می‌سازد. اگر `DB_PROVIDER=arango` فعال
+باشد، بک‌اند graph را از collectionهای `troubleshooting_nodes` و
+`troubleshooting_edges` می‌خواند. اگر graph در اولین اجرا خالی باشد، فایل JSON
+فعلی یک‌بار در ArangoDB seed می‌شود.
 
 ## جریان کاربر
 
@@ -131,7 +146,7 @@ Citrix ممکن است به یکی از این محیط‌ها نگاشت شون
 
 ## کارهای آینده
 
-- انتقال JSON ثابت به مدل قابل مدیریت API.
+- افزودن endpoint مدیریتی برای ویرایش گره‌ها و ارتباط‌ها.
 - افزودن ویرایشگر گرافیکی مدیریتی برای گره‌ها و ارتباط‌ها.
 - اعتبارسنجی چرخه، گره orphan، label تکراری و بن‌بست.
 - افزودن تست خودکار برای مسیرهای مهم پشتیبانی.

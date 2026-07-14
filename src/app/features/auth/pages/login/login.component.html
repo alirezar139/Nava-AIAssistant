@@ -8,7 +8,7 @@
     <span class="qa-question q5">؟</span>
     <span class="qa-reply r1">پاسخ پیدا شد</span>
     <span class="qa-reply r2">FAQ بررسی شد</span>
-    <span class="qa-reply r3">نوا راهنمایی می‌کند</span>
+    <span class="qa-reply r3">راهیار راهنمایی می‌کند</span>
   </div>
   <section class="intro">
     <app-brand-logo class="logo" />
@@ -42,6 +42,7 @@
             autocomplete="username"
             placeholder="نام کاربری"
             required
+            (ngModelChange)="clearError()"
           />
         </div>
       </label>
@@ -59,6 +60,7 @@
             autocomplete="current-password"
             placeholder="رمز عبور"
             required
+            (ngModelChange)="clearError()"
             (keydown)="updateCapsLock($event)"
             (keyup)="updateCapsLock($event)"
           />
@@ -90,6 +92,7 @@
               maxlength="5"
               placeholder="کد تصویر"
               required
+              (ngModelChange)="clearError()"
             />
           </div>
           <button
@@ -111,8 +114,8 @@
     </form>
     <div class="demo">
       <b>حساب‌های آزمایشی</b>
-      <span>مدیر: admin / Admin&#64;123</span>
-      <span>کاربر: user / User&#64;123</span>
+      <button type="button" (click)="useDemoAccount('admin')">مدیر: admin / Admin&#64;123</button>
+      <button type="button" (click)="useDemoAccount('user')">کاربر: user / User&#64;123</button>
     </div>
   </section>
 </main>

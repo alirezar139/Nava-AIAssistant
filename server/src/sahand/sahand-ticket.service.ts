@@ -1,5 +1,5 @@
 import { config } from '../config/config.js';
-import { database } from '../database/database.js';
+import { settingsRepository } from '../database/repositories.js';
 
 export interface SahandTicketPayload {
   title: string;
@@ -18,7 +18,7 @@ export interface SahandTicketResult {
 }
 
 function resolveTicketRoute(treeNodeId: string): { serviceDeskId: string; requestTypeId: string } {
-  const ticketServiceSettings = database.data.settings?.ticketService;
+  const ticketServiceSettings = settingsRepository.getTicketServiceSettings();
   const nodeMapping = ticketServiceSettings?.requestTypeMappings?.find(
     (item) => item.nodeId.trim() === treeNodeId.trim()
   );
@@ -65,7 +65,7 @@ function buildAuthorizationHeader(configuredAuthorization: string): string | nul
 }
 
 export async function submitSahandTicket(payload: SahandTicketPayload): Promise<SahandTicketResult> {
-  const ticketServiceSettings = database.data.settings?.ticketService;
+  const ticketServiceSettings = settingsRepository.getTicketServiceSettings();
   const ticketUrl = ticketServiceSettings?.url.trim() || config.sahandTicketUrl.trim();
   const { serviceDeskId, requestTypeId } = resolveTicketRoute(payload.metadata['treeNodeId'] ?? '');
   const authorization = buildAuthorizationHeader(ticketServiceSettings?.authorizationHeader ?? '');

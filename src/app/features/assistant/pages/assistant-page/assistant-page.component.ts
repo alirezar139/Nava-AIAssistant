@@ -12,7 +12,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DiagnosticCaseRecord, DiagnosticPayload } from '../../../../core/models/diagnostic.models';
 import { ChatMessage, FaqRecord } from '../../../../core/models/faq.models';
-import { ApiService } from '../../../../core/services/api.service';
+import {
+  ApiService,
+  ExternalServiceExecutionResult,
+  PublicExternalServiceRecord
+} from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { FaqSearchService } from '../../../../core/services/faq-search.service';
@@ -37,6 +41,7 @@ interface ConversationSnapshot {
   ticketSubmitting: boolean;
   ticketAutomationState: TicketAutomationState;
   ticketErrorMessage: string;
+  serviceRunResult: ExternalServiceExecutionResult | null;
   supportStage: SupportStage;
   awaitingInitialProblem: boolean;
   activeTreeOptions: Array<{ label: string; targetId: string }>;
@@ -80,6 +85,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ticketSubmitting = false;
   ticketAutomationState: TicketAutomationState = 'idle';
   ticketErrorMessage = '';
+  externalServices: PublicExternalServiceRecord[] = [];
+  serviceRunResult: ExternalServiceExecutionResult | null = null;
+  runningServiceId: number | null = null;
   supportStage: SupportStage = 'selecting';
   welcomeOverlayVisible = false;
   readonly userWriteDisabled = false;
@@ -161,6 +169,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.showLoginWelcomeOnce();
 
     this.loadTroubleshootingTree();
+    this.loadActiveExternalServices();
 
     this.api.getFaqs().subscribe({
       next: (faqs) => {
@@ -444,6 +453,54 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ask(true);
   }
 
+  runExternalService(service: PublicExternalServiceRecord): void {
+    if (this.runningServiceId !== null || this.typing || this.ticketDialogOpen) return;
+
+    this.runningServiceId = service.id;
+    this.serviceRunResult = null;
+    this.messages.push({
+      role: 'assistant',
+      text: `درخواست اجرای سرویس «${service.title}» ثبت شد. نتیجه اجرا همین‌جا نمایش داده می‌شود.`
+    });
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
+
+    this.api.runExternalService(service.id).subscribe({
+      next: (result) => {
+        this.runningServiceId = null;
+        this.serviceRunResult = result;
+        const status = result.ok ? 'موفق' : 'ناموفق';
+        const detail =
+          result.errorMessage ||
+          (result.status
+            ? `کد پاسخ سرویس: ${result.status} ${result.statusText}`
+            : 'پاسخ قابل نمایش دریافت نشد.');
+        this.messages.push({
+          role: 'assistant',
+          text: `اجرای سرویس «${service.title}» ${status} بود.\n${detail}`
+        });
+        this.changeDetector.markForCheck();
+        this.scrollToLatest();
+      },
+      error: (error: unknown) => {
+        const resolved = this.errorMessages.resolve(error, 'اجرای سرویس انجام نشد.');
+        this.runningServiceId = null;
+        this.serviceRunResult = {
+          ok: false,
+          status: 0,
+          statusText: 'Request failed',
+          durationMs: 0,
+          bodyPreview: '',
+          executedAt: new Date().toISOString(),
+          errorMessage: this.errorMessages.formatMessage(resolved)
+        };
+        this.messages.push({ role: 'assistant', text: this.errorMessages.formatMessage(resolved) });
+        this.changeDetector.markForCheck();
+        this.scrollToLatest();
+      }
+    });
+  }
+
   goBackConversationStep(): void {
     if (!this.canGoBack) return;
     const snapshot = this.conversationHistory.pop();
@@ -462,6 +519,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketSubmitting = snapshot.ticketSubmitting;
     this.ticketAutomationState = snapshot.ticketAutomationState;
     this.ticketErrorMessage = snapshot.ticketErrorMessage;
+    this.serviceRunResult = snapshot.serviceRunResult ? { ...snapshot.serviceRunResult } : null;
+    this.runningServiceId = null;
     this.supportStage = snapshot.supportStage;
     this.awaitingInitialProblem = snapshot.awaitingInitialProblem;
     this.activeTreeOptions = snapshot.activeTreeOptions.map((option) => ({ ...option }));
@@ -485,6 +544,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketSubmitting = false;
     this.ticketAutomationState = 'idle';
     this.ticketErrorMessage = '';
+    this.serviceRunResult = null;
+    this.runningServiceId = null;
     this.supportStage = 'selecting';
     this.awaitingInitialProblem = true;
     this.activeTreeOptions = [];
@@ -600,6 +661,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       ticketSubmitting: this.ticketSubmitting,
       ticketAutomationState: this.ticketAutomationState,
       ticketErrorMessage: this.ticketErrorMessage,
+      serviceRunResult: this.serviceRunResult ? { ...this.serviceRunResult } : null,
       supportStage: this.supportStage,
       awaitingInitialProblem: this.awaitingInitialProblem,
       activeTreeOptions: this.activeTreeOptions.map((option) => ({ ...option })),
@@ -645,6 +707,20 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private getWelcomeStorageKey(): string | null {
     const username = this.auth.user?.username;
     return username ? `nava-welcome-seen:${username}` : null;
+  }
+
+  private loadActiveExternalServices(): void {
+    this.api.getActiveExternalServices().subscribe({
+      next: (services) => {
+        this.externalServices = services;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => {
+        const resolved = this.errorMessages.resolve(error, 'دریافت سرویس‌های فعال انجام نشد.');
+        this.error = this.errorMessages.formatMessage(resolved);
+        this.changeDetector.markForCheck();
+      }
+    });
   }
 
   private loadTroubleshootingTree(): void {
@@ -865,7 +941,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       treeNodeText: mappedNodeText,
       evidence: this.limitText(
         [
-          `ثبت خودکار از صفحه کاربر Nava`,
+          `ثبت خودکار از صفحه کاربر راهیار`,
           `تعداد انتخاب‌های کاربر: ${this.treeTrail.length.toLocaleString('fa-IR')}`,
           `مسیر: ${fullPath || leaf}`,
           `Node: ${mappedNodeId || '-'}${mappedNodeText ? ` - ${mappedNodeText}` : ''}`

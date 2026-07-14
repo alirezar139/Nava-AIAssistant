@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { AuthRequest } from '../common/types.js';
-import { database, DiagnosticCaseRecord, nextId } from '../database/database.js';
+import { DiagnosticCaseRecord } from '../database/database.js';
+import { diagnosticRepository } from '../database/repositories.js';
 import { sendError } from '../common/api-error.js';
 import { submitSahandTicket } from '../sahand/sahand-ticket.service.js';
 
@@ -22,18 +23,7 @@ const diagnosticPayloadSchema = z.object({
 });
 
 diagnosticRouter.get('/', requireAuth(['admin']), (_request, response) => {
-  const rows = database.data.diagnosticCases
-    .map((item) => {
-      const user = database.data.users.find((candidate) => candidate.id === item.userId);
-      return {
-        ...item,
-        userFullName: user?.fullName ?? 'کاربر حذف‌شده',
-        username: user?.username ?? '-'
-      };
-    })
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-
-  response.json(rows);
+  response.json(diagnosticRepository.listWithUsers());
 });
 
 diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response) => {
@@ -43,7 +33,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     return;
   }
   const diagnosticCase: DiagnosticCaseRecord = {
-    id: nextId(database.data.diagnosticCases),
+    id: diagnosticRepository.nextId(),
     userId: request.user.id,
     title: result.data.title,
     problem: result.data.problem,
@@ -95,14 +85,13 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
   diagnosticCase.externalTrackingId = ticketResult.trackingId;
   diagnosticCase.externalTicketStatus = ticketResult.status;
 
-  database.data.diagnosticCases.push(diagnosticCase);
-  await database.write();
+  await diagnosticRepository.create(diagnosticCase);
   response.status(201).json(diagnosticCase);
 });
 
 diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const item = database.data.diagnosticCases.find((candidate) => candidate.id === id);
+  const item = diagnosticRepository.findById(id);
   if (!item || (request.user?.role !== 'admin' && item.userId !== request.user?.id)) {
     sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
     return;
@@ -128,6 +117,6 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
       : 'ابتدا اعتبار دسترسی، مسیر انجام عملیات و داده ورودی کنترل شود. در صورت تکرار، پرونده به تحلیل داده ارجاع شود.';
   item.analyzedAt = new Date().toISOString();
 
-  await database.write();
+  await diagnosticRepository.save();
   response.json(item);
 });

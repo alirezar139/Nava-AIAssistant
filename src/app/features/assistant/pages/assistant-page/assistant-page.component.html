@@ -7,7 +7,7 @@
   >
     <div class="welcome-card">
       <app-brand-logo class="welcome-mark" />
-      <span>دستیار هوشمند Nava</span>
+      <span>دستیار هوشمند راهیار</span>
       <h2>من دستیار پشتیبانی سامانه‌های تحلیلی هستم.</h2>
       <p>
         مشکل را مرحله‌به‌مرحله بررسی می‌کنم، در FAQ می‌گردم و اگر پاسخ قطعی پیدا نشد مسیر ثبت تیکت سهند را
@@ -22,7 +22,7 @@
       <app-brand-logo class="brand-mark" />
       <div class="brand-copy">
         <span>مرکز راهبری دیجیتال</span>
-        <strong>میز پشتیبانی Nava</strong>
+        <strong>میز پشتیبانی راهیار</strong>
       </div>
     </a>
     <div class="topbar-status" aria-label="وضعیت پایگاه دانش">
@@ -120,6 +120,34 @@
         <section class="panel-section support-note">
           <strong>بدون پاسخ قطعی</strong>
           <p>اگر مسیر انتخاب‌شده در FAQ پاسخ قطعی نداشته باشد، تیکت سهند به صورت خودکار ثبت می‌شود.</p>
+        </section>
+
+        <section
+          class="panel-section external-services"
+          *ngIf="externalServices.length"
+          aria-label="سرویس‌های فعال سامانه"
+        >
+          <div class="section-heading">
+            <strong>سرویس‌های فعال</strong>
+            <small>بخش‌هایی که مدیر برای این سامانه فعال کرده است</small>
+          </div>
+          <article *ngFor="let service of externalServices">
+            <div>
+              <strong>{{ service.sectionTitle || service.title }}</strong>
+              <small>{{ service.purpose }}</small>
+            </div>
+            <button
+              type="button"
+              [disabled]="runningServiceId !== null || typing || ticketDialogOpen"
+              (click)="runExternalService(service)"
+            >
+              {{ runningServiceId === service.id ? 'در حال اجرا' : 'اجرا' }}
+            </button>
+          </article>
+          <p class="service-run-status" *ngIf="serviceRunResult" [class.failed]="!serviceRunResult.ok">
+            {{ serviceRunResult.ok ? 'آخرین اجرا موفق بود' : 'آخرین اجرا ناموفق بود' }}
+            <span *ngIf="serviceRunResult.status">({{ serviceRunResult.status }})</span>
+          </p>
         </section>
 
         <section class="panel-section support-progress" aria-label="روند پیگیری پشتیبان">
@@ -386,14 +414,14 @@
         <div class="sahand-row">
           <label>Customer Request Type<span>*</span></label>
           <div class="sahand-select wide disabled">
-            <strong>ثبت خودکار از دستیار Nava</strong>
+            <strong>ثبت خودکار از دستیار راهیار</strong>
             <b aria-hidden="true">⌄</b>
           </div>
         </div>
 
         <div class="sahand-row">
           <label>Groups</label>
-          <input value="Nava Support / Data Platform" readonly />
+          <input value="Rahyar Support / Data Platform" readonly />
         </div>
 
         <div class="sahand-row compact">

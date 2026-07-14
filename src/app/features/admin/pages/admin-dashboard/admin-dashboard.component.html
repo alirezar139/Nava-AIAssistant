@@ -72,357 +72,757 @@
       </article>
     </section>
 
-    <nav role="tablist" aria-label="بخش‌های پنل مدیریت">
-      <button
-        type="button"
-        role="tab"
-        [attr.aria-selected]="activeTab === 'faqs'"
-        [class.active]="activeTab === 'faqs'"
-        (click)="activeTab = 'faqs'"
-      >
-        مدیریت FAQ</button
-      ><button
-        type="button"
-        role="tab"
-        [attr.aria-selected]="activeTab === 'reports'"
-        [class.active]="activeTab === 'reports'"
-        (click)="activeTab = 'reports'"
-      >
-        گزارش مشکلات کاربران
-      </button>
-      <button
-        type="button"
-        role="tab"
-        [attr.aria-selected]="activeTab === 'settings'"
-        [class.active]="activeTab === 'settings'"
-        (click)="activeTab = 'settings'"
-      >
-        پیکربندی سرویس
-      </button>
-    </nav>
-
-    <ng-container *ngIf="activeTab === 'faqs'">
-      <section class="editor-card">
-        <div class="section-title">
-          <div>
-            <span>مدیریت محتوا</span>
-            <h2>افزودن FAQ جدید</h2>
-          </div>
-          <button type="button" class="import icon-button" [disabled]="saving" (click)="openFilePicker()">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 16V3M7 8l5-5 5 5M5 13v7h14v-7"></path>
-            </svg>
-            ورود از Excel / Word</button
-          ><input
-            #fileInput
-            hidden
-            type="file"
-            accept=".xlsx,.docx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            (change)="importFile($event)"
-          />
+    <div class="admin-workspace">
+      <aside class="admin-menu" aria-label="منوی پنل مدیریت">
+        <div class="admin-menu-heading">
+          <span>منوی مدیریت</span>
+          <strong>بخش‌های سامانه</strong>
         </div>
-        <form (ngSubmit)="saveFaq()">
-          <label class="wide"
-            >سؤال<input [(ngModel)]="form.question" name="question" placeholder="پرسش متداول کاربر" required
-          /></label>
-          <label
-            >دسته‌بندی<input [(ngModel)]="form.category" name="category" placeholder="مثلاً ورود به سامانه"
-          /></label>
-          <label
-            >کلمات کلیدی<input [(ngModel)]="form.keywords" name="keywords" placeholder="ورود، رمز، حساب"
-          /></label>
-          <label class="wide"
-            >پاسخ<textarea
-              [(ngModel)]="form.answer"
-              name="answer"
-              rows="4"
-              placeholder="راهکار کامل و شفاف"
-              required
-            ></textarea>
-          </label>
-          <div class="actions wide">
-            <button type="submit" [disabled]="saving">{{ saving ? 'در حال ذخیره...' : 'ذخیره FAQ' }}</button>
-          </div>
-        </form>
-      </section>
-
-      <section class="table-card">
-        <div class="section-title">
-          <div>
-            <span>پایگاه دانش</span>
-            <h2>فهرست FAQها</h2>
-          </div>
-          <small>{{ faqs.length.toLocaleString('fa-IR') }} مورد</small>
-        </div>
-        <div class="table-tools">
-          <label>
-            <span>جست‌وجو در FAQ</span>
-            <div class="search-field">
-              <input
-                [(ngModel)]="searchTerm"
-                (ngModelChange)="onFaqFiltersChanged()"
-                placeholder="سؤال، پاسخ، دسته‌بندی یا کلمه کلیدی..."
-              />
-              <button
-                type="button"
-                *ngIf="searchTerm"
-                (click)="clearFaqSearch()"
-                aria-label="پاک‌کردن جست‌وجو"
-              >
-                ×
-              </button>
-            </div>
-          </label>
-          <label>
-            <span>دسته‌بندی</span>
-            <select [(ngModel)]="categoryFilter" (ngModelChange)="onFaqFiltersChanged()">
-              <option value="">همه دسته‌ها</option>
-              <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
-            </select>
-          </label>
-          <span class="result-count">{{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه</span>
-        </div>
-        <div class="selection-toolbar" *ngIf="faqs.length">
-          <label class="select-all">
-            <input
-              type="checkbox"
-              [checked]="allFilteredSelected"
-              [indeterminate]="someFilteredSelected && !allFilteredSelected"
-              (change)="toggleAllFiltered($any($event.target).checked)"
-            />
-            انتخاب همه نتایج فعلی
-          </label>
-          <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} مورد انتخاب شده</span>
-          <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">
-            پاک‌کردن انتخاب
+        <nav class="admin-menu-list" role="tablist" aria-label="بخش‌های پنل مدیریت">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'faqs'"
+            [class.active]="activeTab === 'faqs'"
+            (click)="activeTab = 'faqs'"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>مدیریت FAQ</b>
+              <small>افزودن، ورود فایل و ویرایش پایگاه دانش</small>
+            </span>
+            <em>{{ faqs.length.toLocaleString('fa-IR') }}</em>
           </button>
           <button
             type="button"
-            class="danger bulk-delete"
-            [disabled]="!selectedCount || saving"
-            (click)="deleteSelectedFaqs()"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'reports'"
+            [class.active]="activeTab === 'reports'"
+            (click)="activeTab = 'reports'"
           >
-            حذف انتخاب‌شده‌ها
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16v12H8l-4 3V5Z"></path>
+                <path d="M8 9h8M8 13h5"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>گزارش کاربران</b>
+              <small>گفت‌وگوها و مسئله‌های ثبت‌شده</small>
+            </span>
+            <em>{{ conversations.length.toLocaleString('fa-IR') }}</em>
           </button>
-        </div>
-        <div class="empty" *ngIf="!loading && !faqs.length">هنوز FAQ ثبت نشده است.</div>
-        <div class="empty" *ngIf="faqs.length && !filteredFaqs.length">نتیجه‌ای مطابق فیلترها پیدا نشد.</div>
-        <div class="table-wrap" *ngIf="filteredFaqs.length">
-          <table>
-            <colgroup>
-              <col class="select-col-width" />
-              <col class="error-col-width" />
-              <col class="category-col-width" />
-              <col class="date-col-width" />
-              <col class="actions-col-width" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th class="select-col"></th>
-                <th>متن خطا</th>
-                <th>دسته‌بندی</th>
-                <th>آخرین تغییر</th>
-                <th>عملیات</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let faq of paginatedFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
-                <td class="select-col">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'performance'"
+            [class.active]="activeTab === 'performance'"
+            (click)="activeTab = 'performance'"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19V5"></path>
+                <path d="M4 19h16"></path>
+                <path d="m7 15 3-4 3 2 5-7"></path>
+                <path d="M18 6h-4"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>ارزیابی عملکرد</b>
+              <small>شاخص‌های پاسخ‌گویی، تیکت و کیفیت دانش</small>
+            </span>
+            <em>{{ formatPercent(faqCoverageRate) }}</em>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'settings'"
+            [class.active]="activeTab === 'settings'"
+            (click)="activeTab = 'settings'"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path>
+                <path
+                  d="M19.4 15a8 8 0 0 0 .1-2l2-1.6-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 5.3h-4l-.4 2.6a8 8 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.6a8 8 0 0 0 .1 2l-2 1.6 2 3.5 2.4-1a8 8 0 0 0 1.7 1l.4 2.6h4l.4-2.6a8 8 0 0 0 1.7-1l2.4 1 2-3.5-2.2-1.6Z"
+                ></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>پیکربندی سرویس</b>
+              <small>اتصال سهند و نگاشت RequestType</small>
+            </span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'services'"
+            [class.active]="activeTab === 'services'"
+            (click)="activeTab = 'services'"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16"></path>
+                <path d="M8 5v4M16 10v4M11 15v4"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>سرویس‌ها</b>
+              <small>تعریف سرویس‌های قابل استفاده در سامانه</small>
+            </span>
+            <em>{{ activeServiceCount.toLocaleString('fa-IR') }}</em>
+          </button>
+        </nav>
+      </aside>
+
+      <section class="admin-content">
+        <ng-container *ngIf="activeTab === 'faqs'">
+          <section class="editor-card">
+            <div class="section-title">
+              <div>
+                <span>مدیریت محتوا</span>
+                <h2>افزودن FAQ جدید</h2>
+              </div>
+              <button type="button" class="import icon-button" [disabled]="saving" (click)="openFilePicker()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 16V3M7 8l5-5 5 5M5 13v7h14v-7"></path>
+                </svg>
+                ورود از Excel / Word</button
+              ><input
+                #fileInput
+                hidden
+                type="file"
+                accept=".xlsx,.docx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                (change)="importFile($event)"
+              />
+            </div>
+            <form (ngSubmit)="saveFaq()">
+              <label class="wide"
+                >سؤال<input
+                  [(ngModel)]="form.question"
+                  name="question"
+                  placeholder="پرسش متداول کاربر"
+                  required
+              /></label>
+              <label
+                >دسته‌بندی<input
+                  [(ngModel)]="form.category"
+                  name="category"
+                  placeholder="مثلاً ورود به سامانه"
+              /></label>
+              <label
+                >کلمات کلیدی<input [(ngModel)]="form.keywords" name="keywords" placeholder="ورود، رمز، حساب"
+              /></label>
+              <label class="wide"
+                >پاسخ<textarea
+                  [(ngModel)]="form.answer"
+                  name="answer"
+                  rows="4"
+                  placeholder="راهکار کامل و شفاف"
+                  required
+                ></textarea>
+              </label>
+              <div class="actions wide">
+                <button type="submit" [disabled]="saving">
+                  {{ saving ? 'در حال ذخیره...' : 'ذخیره FAQ' }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="table-card">
+            <div class="section-title">
+              <div>
+                <span>پایگاه دانش</span>
+                <h2>فهرست FAQها</h2>
+              </div>
+              <small>{{ faqs.length.toLocaleString('fa-IR') }} مورد</small>
+            </div>
+            <div class="table-tools">
+              <label>
+                <span>جست‌وجو در FAQ</span>
+                <div class="search-field">
                   <input
-                    type="checkbox"
-                    [checked]="selectedFaqIds.has(faq.id)"
-                    (change)="toggleFaqSelection(faq.id, $any($event.target).checked)"
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onFaqFiltersChanged()"
+                    placeholder="سؤال، پاسخ، دسته‌بندی یا کلمه کلیدی..."
                   />
-                </td>
-                <td>
-                  <b>{{ faq.question }}</b>
-                </td>
-                <td>
-                  <span class="tag">{{ faq.category || 'عمومی' }}</span>
-                </td>
-                <td>{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
-                <td class="actions-cell">
                   <button
                     type="button"
-                    class="link details-trigger"
-                    aria-label="نمایش جزئیات بیشتر"
-                    title="جزئیات بیشتر"
-                    (click)="showFaqDetails(faq)"
+                    *ngIf="searchTerm"
+                    (click)="clearFaqSearch()"
+                    aria-label="پاک‌کردن جست‌وجو"
                   >
-                    ...
+                    ×
                   </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="pagination-bar" *ngIf="filteredFaqs.length">
-          <div class="pagination-summary">
-            نمایش {{ paginationStart.toLocaleString('fa-IR') }} تا
-            {{ paginationEnd.toLocaleString('fa-IR') }} از
-            {{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه
+                </div>
+              </label>
+              <label>
+                <span>دسته‌بندی</span>
+                <select [(ngModel)]="categoryFilter" (ngModelChange)="onFaqFiltersChanged()">
+                  <option value="">همه دسته‌ها</option>
+                  <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+                </select>
+              </label>
+              <span class="result-count">{{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه</span>
+            </div>
+            <div class="selection-toolbar" *ngIf="faqs.length">
+              <label class="select-all">
+                <input
+                  type="checkbox"
+                  [checked]="allFilteredSelected"
+                  [indeterminate]="someFilteredSelected && !allFilteredSelected"
+                  (change)="toggleAllFiltered($any($event.target).checked)"
+                />
+                انتخاب همه نتایج فعلی
+              </label>
+              <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} مورد انتخاب شده</span>
+              <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">
+                پاک‌کردن انتخاب
+              </button>
+              <button
+                type="button"
+                class="danger bulk-delete"
+                [disabled]="!selectedCount || saving"
+                (click)="deleteSelectedFaqs()"
+              >
+                حذف انتخاب‌شده‌ها
+              </button>
+            </div>
+            <div class="empty" *ngIf="!loading && !faqs.length">هنوز FAQ ثبت نشده است.</div>
+            <div class="empty" *ngIf="faqs.length && !filteredFaqs.length">
+              نتیجه‌ای مطابق فیلترها پیدا نشد.
+            </div>
+            <div class="table-wrap" *ngIf="filteredFaqs.length">
+              <table>
+                <colgroup>
+                  <col class="select-col-width" />
+                  <col class="error-col-width" />
+                  <col class="category-col-width" />
+                  <col class="date-col-width" />
+                  <col class="actions-col-width" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="select-col"></th>
+                    <th>متن خطا</th>
+                    <th>دسته‌بندی</th>
+                    <th>آخرین تغییر</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let faq of paginatedFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
+                    <td class="select-col">
+                      <input
+                        type="checkbox"
+                        [checked]="selectedFaqIds.has(faq.id)"
+                        (change)="toggleFaqSelection(faq.id, $any($event.target).checked)"
+                      />
+                    </td>
+                    <td>
+                      <b>{{ faq.question }}</b>
+                    </td>
+                    <td>
+                      <span class="tag">{{ faq.category || 'عمومی' }}</span>
+                    </td>
+                    <td>{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
+                    <td class="actions-cell">
+                      <button
+                        type="button"
+                        class="link details-trigger"
+                        aria-label="نمایش جزئیات بیشتر"
+                        title="جزئیات بیشتر"
+                        (click)="showFaqDetails(faq)"
+                      >
+                        ...
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination-bar" *ngIf="filteredFaqs.length">
+              <div class="pagination-summary">
+                نمایش {{ paginationStart.toLocaleString('fa-IR') }} تا
+                {{ paginationEnd.toLocaleString('fa-IR') }} از
+                {{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه
+              </div>
+              <label class="page-size">
+                تعداد در صفحه
+                <select [ngModel]="pageSize" (ngModelChange)="setPageSize($event)">
+                  <option *ngFor="let option of pageSizeOptions" [ngValue]="option">
+                    {{ option.toLocaleString('fa-IR') }}
+                  </option>
+                </select>
+              </label>
+              <div class="pagination-actions">
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="currentPage === 1"
+                  (click)="goToPage(currentPage - 1)"
+                >
+                  قبلی
+                </button>
+                <span
+                  >صفحه {{ currentPage.toLocaleString('fa-IR') }} از
+                  {{ totalPages.toLocaleString('fa-IR') }}</span
+                >
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="currentPage === totalPages"
+                  (click)="goToPage(currentPage + 1)"
+                >
+                  بعدی
+                </button>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+
+        <section class="table-card" *ngIf="activeTab === 'reports'">
+          <div class="section-title">
+            <div>
+              <span>نظارت پشتیبانی</span>
+              <h2>مشکلات و پاسخ‌های کاربران</h2>
+            </div>
+            <small>{{ conversations.length.toLocaleString('fa-IR') }} گفتگو</small>
           </div>
-          <label class="page-size">
-            تعداد در صفحه
-            <select [ngModel]="pageSize" (ngModelChange)="setPageSize($event)">
-              <option *ngFor="let option of pageSizeOptions" [ngValue]="option">
-                {{ option.toLocaleString('fa-IR') }}
-              </option>
-            </select>
-          </label>
-          <div class="pagination-actions">
-            <button
-              type="button"
-              class="ghost"
-              [disabled]="currentPage === 1"
-              (click)="goToPage(currentPage - 1)"
-            >
-              قبلی
-            </button>
-            <span
-              >صفحه {{ currentPage.toLocaleString('fa-IR') }} از
-              {{ totalPages.toLocaleString('fa-IR') }}</span
-            >
-            <button
-              type="button"
-              class="ghost"
-              [disabled]="currentPage === totalPages"
-              (click)="goToPage(currentPage + 1)"
-            >
-              بعدی
-            </button>
+          <div class="table-tools reports-search" *ngIf="conversations.length">
+            <label>
+              <span>جست‌وجو در گزارش‌ها</span>
+              <div class="search-field">
+                <input [(ngModel)]="reportSearchTerm" placeholder="نام کاربر، سؤال یا پاسخ دستیار..." />
+                <button
+                  type="button"
+                  *ngIf="reportSearchTerm"
+                  (click)="clearReportSearch()"
+                  aria-label="پاک‌کردن جست‌وجوی گزارش‌ها"
+                >
+                  ×
+                </button>
+              </div>
+            </label>
+            <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
           </div>
-        </div>
+          <div class="empty" *ngIf="!conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
+          <div class="empty" *ngIf="conversations.length && !filteredConversations.length">
+            نتیجه‌ای مطابق جست‌وجو پیدا نشد.
+          </div>
+          <div class="reports" *ngFor="let item of filteredConversations">
+            <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
+            <div class="report-content">
+              <div class="report-meta">
+                <b>{{ item.userFullName }}</b
+                ><span>{{ item.createdAt | date: 'yyyy/MM/dd - HH:mm' }}</span>
+              </div>
+              <p class="question">{{ item.question }}</p>
+              <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
+            </div>
+          </div>
+        </section>
+
+        <ng-container *ngIf="activeTab === 'performance'">
+          <section class="performance-dashboard">
+            <div class="section-title">
+              <div>
+                <span>تحلیل عملکرد</span>
+                <h2>داشبورد ارزیابی پشتیبانی</h2>
+              </div>
+              <small>بر اساس داده‌های ثبت‌شده در گفتگو، پرونده، FAQ و سرویس‌ها</small>
+            </div>
+
+            <div class="performance-kpis">
+              <article
+                class="performance-kpi"
+                *ngFor="let metric of performanceMetrics"
+                [class.success]="metric.tone === 'success'"
+                [class.warning]="metric.tone === 'warning'"
+                [class.danger]="metric.tone === 'danger'"
+                [class.neutral]="metric.tone === 'neutral'"
+              >
+                <span>{{ metric.label }}</span>
+                <strong>{{ metric.value }}</strong>
+                <small>{{ metric.hint }}</small>
+              </article>
+            </div>
+
+            <div class="performance-grid">
+              <section class="performance-panel">
+                <div class="section-title compact">
+                  <div>
+                    <span>قیف پشتیبانی</span>
+                    <h3>از درخواست تا ارسال موفق</h3>
+                  </div>
+                </div>
+                <div class="funnel-list">
+                  <article *ngFor="let step of supportFunnel">
+                    <div>
+                      <strong>{{ step.label }}</strong>
+                      <span>{{ step.count.toLocaleString('fa-IR') }}</span>
+                    </div>
+                    <b><i [style.width.%]="step.percent"></i></b>
+                    <small>{{ formatPercent(step.percent) }} از مبنای ارزیابی</small>
+                  </article>
+                </div>
+              </section>
+
+              <section class="performance-panel">
+                <div class="section-title compact">
+                  <div>
+                    <span>روند ۷ روزه</span>
+                    <h3>گفتگو و پرونده</h3>
+                  </div>
+                </div>
+                <div class="trend-grid">
+                  <article *ngFor="let point of performanceTrend">
+                    <span>{{ point.label }}</span>
+                    <div class="trend-bars">
+                      <i [style.height.%]="point.conversationPercent"></i>
+                      <b [style.height.%]="point.diagnosticPercent"></b>
+                    </div>
+                    <small>
+                      {{ point.conversations.toLocaleString('fa-IR') }} /
+                      {{ point.diagnostics.toLocaleString('fa-IR') }}
+                    </small>
+                  </article>
+                </div>
+                <div class="trend-legend">
+                  <span><i></i> گفتگو</span>
+                  <span><b></b> پرونده</span>
+                </div>
+              </section>
+
+              <section class="performance-panel">
+                <div class="section-title compact">
+                  <div>
+                    <span>کیفیت پایگاه دانش</span>
+                    <h3>سهم دسته‌های FAQ</h3>
+                  </div>
+                </div>
+                <div class="empty" *ngIf="!faqCategoryShares.length">هنوز دسته‌بندی FAQ ثبت نشده است.</div>
+                <div class="share-list" *ngIf="faqCategoryShares.length">
+                  <article *ngFor="let item of faqCategoryShares">
+                    <div>
+                      <strong>{{ item.label }}</strong>
+                      <span>{{ item.count.toLocaleString('fa-IR') }}</span>
+                    </div>
+                    <b><i [style.width.%]="item.percent"></i></b>
+                  </article>
+                </div>
+              </section>
+
+              <section class="performance-panel">
+                <div class="section-title compact">
+                  <div>
+                    <span>اقدام‌های پیشنهادی</span>
+                    <h3>هشدارهای مدیریتی</h3>
+                  </div>
+                </div>
+                <div class="empty" *ngIf="!performanceAlerts.length">
+                  شاخص بحرانی دیده نمی‌شود؛ داده‌های بیشتری برای تحلیل دقیق‌تر جمع‌آوری کنید.
+                </div>
+                <ul class="performance-alerts" *ngIf="performanceAlerts.length">
+                  <li *ngFor="let alert of performanceAlerts">
+                    <span></span>
+                    {{ alert }}
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </section>
+        </ng-container>
+
+        <ng-container *ngIf="activeTab === 'services'">
+          <section class="editor-card service-catalog-card">
+            <div class="section-title">
+              <div>
+                <span>کاتالوگ سرویس</span>
+                <h2>{{ editingServiceId === null ? 'تعریف سرویس جدید' : 'ویرایش سرویس' }}</h2>
+              </div>
+              <small>سرویس‌های فعال در صفحه کاربر قابل اجرا می‌شوند.</small>
+            </div>
+
+            <form class="service-config-form service-catalog-form" (ngSubmit)="saveExternalService()">
+              <label>
+                کلید سرویس
+                <input
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.key"
+                  name="externalServiceKey"
+                  placeholder="sahand-ticket-status"
+                  required
+                />
+              </label>
+              <label>
+                عنوان سرویس
+                <input
+                  [(ngModel)]="serviceForm.title"
+                  name="externalServiceTitle"
+                  placeholder="استعلام وضعیت تیکت"
+                  required
+                />
+              </label>
+              <label class="wide">
+                این سرویس برای چه کاری است؟
+                <textarea
+                  [(ngModel)]="serviceForm.purpose"
+                  name="externalServicePurpose"
+                  rows="3"
+                  placeholder="مثلاً استعلام وضعیت تیکت ثبت‌شده در سهند برای کاربر"
+                  required
+                ></textarea>
+              </label>
+              <label>
+                عنوان بخش ساخته‌شده
+                <input
+                  [(ngModel)]="serviceForm.sectionTitle"
+                  name="externalServiceSectionTitle"
+                  placeholder="پیگیری تیکت سهند"
+                />
+              </label>
+              <label>
+                متد
+                <select [(ngModel)]="serviceForm.method" name="externalServiceMethod">
+                  <option *ngFor="let method of serviceMethods" [ngValue]="method">{{ method }}</option>
+                </select>
+              </label>
+              <label class="wide">
+                آدرس سرویس
+                <input
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.url"
+                  name="externalServiceUrl"
+                  placeholder="https://example.com/api"
+                  required
+                />
+              </label>
+              <label class="wide">
+                هدر Authorization
+                <textarea
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.authorizationHeader"
+                  name="externalServiceAuthorization"
+                  rows="2"
+                  placeholder="Basic ... یا Bearer ..."
+                ></textarea>
+              </label>
+              <label class="wide">
+                هدر Auth
+                <textarea
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.authHeader"
+                  name="externalServiceAuth"
+                  rows="2"
+                ></textarea>
+              </label>
+              <label class="wide">
+                هدرهای اضافه
+                <textarea
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.headersText"
+                  name="externalServiceHeaders"
+                  rows="4"
+                  placeholder="Content-Type: application/json&#10;X-System: rahyar"
+                ></textarea>
+              </label>
+              <label class="wide">
+                بدنه درخواست
+                <textarea
+                  dir="ltr"
+                  [(ngModel)]="serviceForm.bodyTemplate"
+                  name="externalServiceBody"
+                  rows="6"
+                  placeholder='{ "username": "USER_NAME", "fullName": "FULL_NAME" }'
+                ></textarea>
+                <small
+                  >متغیرهای قابل استفاده: {{ '{{username}}' }}، {{ '{{fullName}}' }}، {{ '{{userId}}' }}،
+                  {{ '{{now}}' }}</small
+                >
+              </label>
+              <div class="service-switches wide">
+                <label>
+                  <input type="checkbox" [(ngModel)]="serviceForm.isActive" name="externalServiceActive" />
+                  سرویس فعال باشد
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="serviceForm.showInAssistant"
+                    name="externalServiceShowInAssistant"
+                  />
+                  در صفحه کاربر بخش ساخته شود
+                </label>
+              </div>
+              <div class="actions wide">
+                <button
+                  type="button"
+                  class="ghost"
+                  *ngIf="editingServiceId !== null"
+                  (click)="cancelServiceEditing()"
+                >
+                  انصراف از ویرایش
+                </button>
+                <button type="submit" [disabled]="settingsSaving">
+                  {{
+                    settingsSaving
+                      ? 'در حال ذخیره...'
+                      : editingServiceId === null
+                        ? 'ذخیره سرویس'
+                        : 'ذخیره تغییرات'
+                  }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="table-card service-list-card">
+            <div class="section-title">
+              <div>
+                <span>سرویس‌های تعریف‌شده</span>
+                <h2>بخش‌های قابل استفاده سامانه</h2>
+              </div>
+              <small>{{ externalServices.length.toLocaleString('fa-IR') }} سرویس</small>
+            </div>
+            <div class="empty" *ngIf="!externalServices.length">هنوز سرویسی تعریف نشده است.</div>
+            <div class="service-grid" *ngIf="externalServices.length">
+              <article
+                class="service-card"
+                *ngFor="let service of externalServices"
+                [class.inactive]="!service.isActive"
+              >
+                <header>
+                  <span>{{ service.method }}</span>
+                  <strong>{{ service.title }}</strong>
+                </header>
+                <p>{{ service.purpose }}</p>
+                <small dir="ltr">{{ service.url }}</small>
+                <div class="service-badges">
+                  <b>{{ service.isActive ? 'فعال' : 'غیرفعال' }}</b>
+                  <b>{{ service.showInAssistant ? 'نمایش در صفحه کاربر' : 'فقط مدیریتی' }}</b>
+                </div>
+                <div class="service-actions">
+                  <button type="button" class="ghost" (click)="editExternalService(service)">ویرایش</button>
+                  <button
+                    type="button"
+                    class="ghost"
+                    [disabled]="serviceTestingId === service.id"
+                    (click)="testExternalService(service)"
+                  >
+                    {{ serviceTestingId === service.id ? 'در حال تست...' : 'تست' }}
+                  </button>
+                  <button type="button" class="danger" (click)="deleteExternalService(service)">حذف</button>
+                </div>
+              </article>
+            </div>
+            <section
+              class="service-test-result"
+              *ngIf="serviceTestResult"
+              [class.failed]="!serviceTestResult.ok"
+            >
+              <strong>{{ serviceTestResult.ok ? 'آخرین تست موفق بود' : 'آخرین تست ناموفق بود' }}</strong>
+              <span>کد پاسخ: {{ serviceTestResult.status || '-' }}</span>
+              <span>زمان اجرا: {{ serviceTestResult.durationMs.toLocaleString('fa-IR') }} میلی‌ثانیه</span>
+              <pre *ngIf="serviceTestResult.bodyPreview || serviceTestResult.errorMessage">{{
+                serviceTestResult.bodyPreview || serviceTestResult.errorMessage
+              }}</pre>
+            </section>
+          </section>
+        </ng-container>
+
+        <section class="editor-card service-config-card" *ngIf="activeTab === 'settings'">
+          <div class="section-title">
+            <div>
+              <span>اتصال خارجی</span>
+              <h2>سرویس ثبت تیکت</h2>
+            </div>
+            <small *ngIf="ticketServiceSettings?.updatedAt">
+              آخرین تغییر: {{ ticketServiceSettings?.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}
+            </small>
+          </div>
+
+          <form class="service-config-form" (ngSubmit)="saveTicketServiceSettings()">
+            <label class="wide">
+              آدرس سرویس
+              <input
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.url"
+                name="ticketServiceUrl"
+                placeholder="https://sahand.dbaco.ir/rest/servicedeskapi/request"
+              />
+            </label>
+
+            <label class="wide">
+              هدر Authorization
+              <textarea
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.authorizationHeader"
+                name="ticketServiceAuthorization"
+                rows="3"
+                placeholder="Basic ..."
+              ></textarea>
+            </label>
+
+            <label class="wide">
+              هدر Auth
+              <textarea
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.authHeader"
+                name="ticketServiceAuth"
+                rows="3"
+              ></textarea>
+            </label>
+
+            <label>
+              شناسه پروژه / Service Desk
+              <input
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.serviceDeskId"
+                name="ticketServiceDeskId"
+                placeholder="107"
+              />
+            </label>
+
+            <label>
+              شناسه RequestType
+              <input
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.requestTypeId"
+                name="ticketRequestTypeId"
+                placeholder="1185"
+              />
+            </label>
+
+            <label class="wide">
+              نگاشت Node به RequestType
+              <textarea
+                dir="ltr"
+                [(ngModel)]="requestTypeMappingsText"
+                name="ticketRequestTypeMappings"
+                rows="6"
+                placeholder="nodeId | serviceDeskId | requestTypeId | عنوان اختیاری"
+              ></textarea>
+              <small>
+                هر خط یک نگاشت است. اگر Service Desk همان مقدار پیش‌فرض است، خط تیره بگذارید یا فقط nodeId و
+                requestTypeId را بنویسید.
+              </small>
+            </label>
+
+            <div class="actions wide">
+              <button type="submit" [disabled]="settingsSaving">
+                {{ settingsSaving ? 'در حال ذخیره...' : 'ذخیره پیکربندی' }}
+              </button>
+            </div>
+          </form>
+        </section>
       </section>
-    </ng-container>
-
-    <section class="table-card" *ngIf="activeTab === 'reports'">
-      <div class="section-title">
-        <div>
-          <span>نظارت پشتیبانی</span>
-          <h2>مشکلات و پاسخ‌های کاربران</h2>
-        </div>
-        <small>{{ conversations.length.toLocaleString('fa-IR') }} گفتگو</small>
-      </div>
-      <div class="table-tools reports-search" *ngIf="conversations.length">
-        <label>
-          <span>جست‌وجو در گزارش‌ها</span>
-          <div class="search-field">
-            <input [(ngModel)]="reportSearchTerm" placeholder="نام کاربر، سؤال یا پاسخ دستیار..." />
-            <button
-              type="button"
-              *ngIf="reportSearchTerm"
-              (click)="clearReportSearch()"
-              aria-label="پاک‌کردن جست‌وجوی گزارش‌ها"
-            >
-              ×
-            </button>
-          </div>
-        </label>
-        <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
-      </div>
-      <div class="empty" *ngIf="!conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
-      <div class="empty" *ngIf="conversations.length && !filteredConversations.length">
-        نتیجه‌ای مطابق جست‌وجو پیدا نشد.
-      </div>
-      <div class="reports" *ngFor="let item of filteredConversations">
-        <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
-        <div class="report-content">
-          <div class="report-meta">
-            <b>{{ item.userFullName }}</b
-            ><span>{{ item.createdAt | date: 'yyyy/MM/dd - HH:mm' }}</span>
-          </div>
-          <p class="question">{{ item.question }}</p>
-          <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="editor-card service-config-card" *ngIf="activeTab === 'settings'">
-      <div class="section-title">
-        <div>
-          <span>اتصال خارجی</span>
-          <h2>سرویس ثبت تیکت</h2>
-        </div>
-        <small *ngIf="ticketServiceSettings?.updatedAt">
-          آخرین تغییر: {{ ticketServiceSettings?.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}
-        </small>
-      </div>
-
-      <form class="service-config-form" (ngSubmit)="saveTicketServiceSettings()">
-        <label class="wide">
-          آدرس سرویس
-          <input
-            dir="ltr"
-            [(ngModel)]="ticketServiceForm.url"
-            name="ticketServiceUrl"
-            placeholder="https://sahand.dbaco.ir/rest/servicedeskapi/request"
-          />
-        </label>
-
-        <label class="wide">
-          هدر Authorization
-          <textarea
-            dir="ltr"
-            [(ngModel)]="ticketServiceForm.authorizationHeader"
-            name="ticketServiceAuthorization"
-            rows="3"
-            placeholder="Basic ..."
-          ></textarea>
-        </label>
-
-        <label class="wide">
-          هدر Auth
-          <textarea
-            dir="ltr"
-            [(ngModel)]="ticketServiceForm.authHeader"
-            name="ticketServiceAuth"
-            rows="3"
-          ></textarea>
-        </label>
-
-        <label>
-          شناسه پروژه / Service Desk
-          <input
-            dir="ltr"
-            [(ngModel)]="ticketServiceForm.serviceDeskId"
-            name="ticketServiceDeskId"
-            placeholder="107"
-          />
-        </label>
-
-        <label>
-          شناسه RequestType
-          <input
-            dir="ltr"
-            [(ngModel)]="ticketServiceForm.requestTypeId"
-            name="ticketRequestTypeId"
-            placeholder="1185"
-          />
-        </label>
-
-        <label class="wide">
-          نگاشت Node به RequestType
-          <textarea
-            dir="ltr"
-            [(ngModel)]="requestTypeMappingsText"
-            name="ticketRequestTypeMappings"
-            rows="6"
-            placeholder="nodeId | serviceDeskId | requestTypeId | عنوان اختیاری"
-          ></textarea>
-          <small>
-            هر خط یک نگاشت است. اگر Service Desk همان مقدار پیش‌فرض است، خط تیره بگذارید یا فقط nodeId و
-            requestTypeId را بنویسید.
-          </small>
-        </label>
-
-        <div class="actions wide">
-          <button type="submit" [disabled]="settingsSaving">
-            {{ settingsSaving ? 'در حال ذخیره...' : 'ذخیره پیکربندی' }}
-          </button>
-        </div>
-      </form>
-    </section>
+    </div>
   </main>
 
   <div class="modal-backdrop" *ngIf="detailFaq" (click)="closeDetailDialog()">

@@ -19,7 +19,9 @@ span {
   height: 100%;
   place-items: center;
   border-radius: inherit;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03));
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04)),
+    radial-gradient(circle at 70% 78%, rgba(255, 236, 196, 0.22), transparent 42%);
 }
 
 svg {
@@ -28,33 +30,41 @@ svg {
   overflow: visible;
 }
 
-.head {
-  fill: rgba(255, 247, 228, 0.96);
-  stroke: rgba(255, 255, 255, 0.78);
-  stroke-width: 1.4;
+.mark-panel {
+  fill: rgba(255, 247, 228, 0.94);
+  stroke: rgba(255, 255, 255, 0.72);
+  stroke-linejoin: round;
+  stroke-width: 1.35;
 }
 
-.antenna,
-.face,
-.ear {
+.guide-route,
+.answer-mark {
   fill: none;
-  stroke: #fff7e4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3;
 }
 
-.face {
+.guide-route {
   stroke: #0e3f36;
-  stroke-width: 2.7;
+  stroke-width: 3.15;
 }
 
-.node {
+.answer-mark {
+  opacity: 0.72;
+  stroke: #0e3f36;
+  stroke-width: 2.1;
+}
+
+.guide-node {
   fill: var(--accent-600);
-  stroke: rgba(255, 247, 228, 0.9);
-  stroke-width: 1.2;
+  stroke: rgba(255, 247, 228, 0.96);
+  stroke-width: 1.3;
 }
 
-.eye {
-  fill: #0e3f36;
+.guide-node.start {
+  fill: var(--primary-700);
+}
+
+.guide-node.end {
+  fill: #2f8fbd;
 }

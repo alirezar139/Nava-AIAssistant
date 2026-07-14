@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   TroubleshootingOption,
   TroubleshootingTree,
@@ -10,10 +11,12 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class TroubleshootingTreeService {
+  private readonly apiUrl = environment.apiUrl;
+
   constructor(private readonly http: HttpClient) {}
 
   load(): Observable<TroubleshootingTree> {
-    return this.http.get<TroubleshootingTree>('assets/troubleshooting-tree.json');
+    return this.http.get<TroubleshootingTree>(`${this.apiUrl}/troubleshooting-tree`);
   }
 
   createIndex(tree: TroubleshootingTree): TroubleshootingTreeIndex {

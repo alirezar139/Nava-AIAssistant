@@ -4,13 +4,13 @@ import { authGuard } from './core/guards/auth.guard';
 export const appRoutes: Routes = [
   {
     path: 'login',
-    title: 'Nava | Login',
+    title: 'راهیار | ورود',
     loadComponent: () =>
       import('./features/auth/pages/login/login.component').then((component) => component.LoginComponent)
   },
   {
     path: 'assistant',
-    title: 'Nava Assistant',
+    title: 'دستیار راهیار',
     canActivate: [authGuard],
     data: { role: 'user' },
     loadComponent: () =>
@@ -20,7 +20,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'admin',
-    title: 'Nava Admin',
+    title: 'مدیریت راهیار',
     canActivate: [authGuard],
     data: { role: 'admin' },
     loadComponent: () =>

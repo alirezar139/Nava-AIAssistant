@@ -64,6 +64,24 @@ export class LoginComponent {
       });
   }
 
+  useDemoAccount(role: 'admin' | 'user'): void {
+    const account =
+      role === 'admin'
+        ? { username: 'admin', password: 'Admin@123' }
+        : { username: 'user', password: 'User@123' };
+    this.username = account.username;
+    this.password = account.password;
+    this.captchaAnswer = '';
+    this.clearError();
+    this.refreshCaptcha();
+  }
+
+  clearError(): void {
+    if (!this.error) return;
+    this.error = '';
+    this.changeDetector.markForCheck();
+  }
+
   refreshCaptcha(): void {
     this.auth.getCaptcha().subscribe({
       next: (captcha) => {

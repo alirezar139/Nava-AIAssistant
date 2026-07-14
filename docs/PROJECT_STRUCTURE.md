@@ -10,21 +10,21 @@ C:\angular\Nava-AIAssistant
 
 ## چیدمان سطح بالا
 
-| مسیر                        | کاربرد                                   |
-| --------------------------- | ---------------------------------------- |
-| `src`                       | سورس فرانت‌اند Angular.                  |
-| `src/app`                   | کد اصلی برنامه Angular.                  |
-| `src/assets`                | فایل‌های static، شامل درختواره عیب‌یابی. |
-| `server`                    | سورس API با Express.                     |
-| `server/data/database.json` | داده محلی LowDB.                         |
-| `scripts`                   | اسکریپت‌های کمکی اجرا و عملیات.          |
-| `deploy`                    | الگوی فایل‌های بسته استقرار.             |
-| `docs`                      | مستندات محصول، فنی، API و عملیات.        |
-| `release`                   | بسته‌های zip و پوشه‌های آماده استقرار.   |
-| `dist`                      | خروجی build فرانت‌اند.                   |
-| `proxy.conf.json`           | proxy مسیرهای `/api` در اجرای توسعه.     |
-| `.angular`                  | cache مربوط به Angular.                  |
-| `node_modules`              | وابستگی‌های نصب‌شده.                     |
+| مسیر                        | کاربرد                                        |
+| --------------------------- | --------------------------------------------- |
+| `src`                       | سورس فرانت‌اند Angular.                       |
+| `src/app`                   | کد اصلی برنامه Angular.                       |
+| `src/assets`                | فایل‌های static و fallback درختواره عیب‌یابی. |
+| `server`                    | سورس API با Express.                          |
+| `server/data/database.json` | داده محلی LowDB.                              |
+| `scripts`                   | اسکریپت‌های کمکی اجرا و عملیات.               |
+| `deploy`                    | الگوی فایل‌های بسته استقرار.                  |
+| `docs`                      | مستندات محصول، فنی، API و عملیات.             |
+| `release`                   | بسته‌های zip و پوشه‌های آماده استقرار.        |
+| `dist`                      | خروجی build فرانت‌اند.                        |
+| `proxy.conf.json`           | proxy مسیرهای `/api` در اجرای توسعه.          |
+| `.angular`                  | cache مربوط به Angular.                       |
+| `node_modules`              | وابستگی‌های نصب‌شده.                          |
 
 ## ساختار فرانت‌اند
 
@@ -60,11 +60,13 @@ server/
 |   |-- common/           ابزارهای مشترک API
 |   |-- config/           تنظیمات زمان اجرا
 |   |-- conversations/    ثبت و گزارش گفتگو
-|   |-- database/         LowDB و seed data
+|   |-- database/         LowDB، repositoryها، اتصال ArangoDB و seed data
 |   |-- diagnostics/      پرونده تشخیصی و تحلیل تیکت
 |   |-- faqs/             API مربوط به FAQ
 |   |-- sahand/           اتصال اختیاری به سامانه تیکت
+|   |-- services/         کاتالوگ سرویس‌های قابل تعریف
 |   |-- settings/         تنظیمات قابل تغییر سامانه
+|   |-- troubleshooting-tree/ API و repository درختواره عیب‌یابی
 |   `-- main.ts           راه‌انداز Express
 |-- data/                 داده محلی زمان اجرا
 `-- dist/                 خروجی build بک‌اند
@@ -95,7 +97,10 @@ server/
 | `scripts/start-webapp-windows.ps1`                      | build در صورت نیاز و اجرای وب‌اپ روی ویندوز. |
 | `server/src/diagnostics/diagnostic.routes.ts`           | endpointهای پرونده و تیکت.                   |
 | `server/src/sahand/sahand-ticket.service.ts`            | ارسال اختیاری تیکت خارجی.                    |
+| `server/src/services/service-catalog.routes.ts`         | API تعریف، تست و اجرای سرویس‌های سامانه.     |
 | `server/src/settings/settings.routes.ts`                | API تنظیمات سرویس ثبت تیکت.                  |
+| `server/src/database/arango.ts`                         | اتصال و schema دیتابیس ArangoDB.             |
+| `server/src/troubleshooting-tree/`                      | API، seed و خواندن graph درختواره.           |
 
 ## بسته استقرار
 

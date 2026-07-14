@@ -7,6 +7,43 @@ import { environment } from '../../../environments/environment';
 
 export type FaqPayload = Pick<FaqRecord, 'question' | 'answer' | 'category' | 'keywords'>;
 
+export type ExternalServiceMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export interface ExternalServiceRecord {
+  id: number;
+  key: string;
+  title: string;
+  purpose: string;
+  sectionTitle: string;
+  method: ExternalServiceMethod;
+  url: string;
+  authorizationHeader: string;
+  authHeader: string;
+  headersText: string;
+  bodyTemplate: string;
+  isActive: boolean;
+  showInAssistant: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PublicExternalServiceRecord = Omit<
+  ExternalServiceRecord,
+  'authorizationHeader' | 'authHeader' | 'headersText' | 'bodyTemplate'
+>;
+
+export type ExternalServicePayload = Omit<ExternalServiceRecord, 'id' | 'createdAt' | 'updatedAt'>;
+
+export interface ExternalServiceExecutionResult {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  durationMs: number;
+  bodyPreview: string;
+  executedAt: string;
+  errorMessage?: string;
+}
+
 export interface TicketServiceSettings {
   url: string;
   authorizationHeader: string;
@@ -85,5 +122,33 @@ export class ApiService {
 
   updateTicketServiceSettings(payload: TicketServiceSettingsPayload): Observable<TicketServiceSettings> {
     return this.http.put<TicketServiceSettings>(`${this.apiUrl}/settings/ticket-service`, payload);
+  }
+
+  getExternalServices(): Observable<ExternalServiceRecord[]> {
+    return this.http.get<ExternalServiceRecord[]>(`${this.apiUrl}/services`);
+  }
+
+  getActiveExternalServices(): Observable<PublicExternalServiceRecord[]> {
+    return this.http.get<PublicExternalServiceRecord[]>(`${this.apiUrl}/services/active`);
+  }
+
+  createExternalService(payload: ExternalServicePayload): Observable<ExternalServiceRecord> {
+    return this.http.post<ExternalServiceRecord>(`${this.apiUrl}/services`, payload);
+  }
+
+  updateExternalService(id: number, payload: ExternalServicePayload): Observable<ExternalServiceRecord> {
+    return this.http.put<ExternalServiceRecord>(`${this.apiUrl}/services/${id}`, payload);
+  }
+
+  deleteExternalService(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/services/${id}`);
+  }
+
+  testExternalService(id: number): Observable<ExternalServiceExecutionResult> {
+    return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/${id}/test`, {});
+  }
+
+  runExternalService(id: number): Observable<ExternalServiceExecutionResult> {
+    return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/${id}/run`, {});
   }
 }
