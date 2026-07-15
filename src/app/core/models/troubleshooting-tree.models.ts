@@ -12,6 +12,7 @@ export interface TroubleshootingTreeEdge {
 }
 
 export interface TroubleshootingTree {
+  projectKey?: string;
   startNodeId: string;
   introNodeIds: string[];
   nodes: TroubleshootingTreeNode[];

@@ -41,6 +41,8 @@ interface ConversationSnapshot {
   ticketSubmitting: boolean;
   ticketAutomationState: TicketAutomationState;
   ticketErrorMessage: string;
+  ratingSubmitting: boolean;
+  ratingMessage: string;
   serviceRunResult: ExternalServiceExecutionResult | null;
   supportStage: SupportStage;
   awaitingInitialProblem: boolean;
@@ -85,6 +87,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ticketSubmitting = false;
   ticketAutomationState: TicketAutomationState = 'idle';
   ticketErrorMessage = '';
+  ratingSubmitting = false;
+  ratingMessage = '';
   externalServices: PublicExternalServiceRecord[] = [];
   serviceRunResult: ExternalServiceExecutionResult | null = null;
   runningServiceId: number | null = null;
@@ -101,6 +105,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private conversationHistory: ConversationSnapshot[] = [];
   private typingTimer?: ReturnType<typeof setTimeout>;
   private welcomeTimer?: ReturnType<typeof setTimeout>;
+  readonly ratingScores = [1, 2, 3, 4, 5];
 
   readonly supportProgressSteps: SupportProgressItem[] = [
     {
@@ -133,7 +138,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private readonly diagnosticPrompts: Record<keyof DiagnosticPayload, string> = {
     title: 'عنوان کوتاه مشکل را بنویسید؛ مثلا «خطا در اجرای جریان داده فروش».',
     problem: 'مشکل را با جزئیات بنویسید؛ دقیقا چه اتفاقی افتاده است؟',
-    systemName: 'نام سامانه یا ابزار تحلیل داده‌ای که مشکل در آن رخ داده چیست؟',
+    systemName: '',
     processName: 'نام سناریو، فرآیند، جریان داده، گزارش یا پلاگین مرتبط چیست؟ اگر ندارید بنویسید: ندارم',
     scenario: 'سناریوی اجرا را مرحله‌به‌مرحله بنویسید؛ از کجا شروع کردید، چه گزینه‌ای زدید و کجا خطا رخ داد؟',
     serialNumber: 'سریال، شناسه گزارش، کد رهگیری یا شماره درخواست را وارد کنید. اگر ندارید بنویسید: ندارم',
@@ -145,7 +150,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
   private readonly diagnosticFlow: Array<keyof DiagnosticPayload> = [
     'title',
-    'systemName',
     'processName',
     'scenario',
     'serialNumber',
@@ -217,7 +221,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return [
       `شرح مشکل: ${this.diagnosticDraft.problem || '-'}`,
       `مسیر انتخاب‌شده: ${this.diagnosticDraft.scenario || '-'}`,
-      `سامانه/ابزار: ${this.diagnosticDraft.systemName || '-'}`,
       `فرآیند/سناریو: ${this.diagnosticDraft.processName || '-'}`,
       `شناسه/سریال: ${this.diagnosticDraft.serialNumber || '-'}`,
       `متن خطا: ${this.diagnosticDraft.errorText || '-'}`,
@@ -247,6 +250,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     if (this.ticketAutomationState === 'failed') return 'ناموفق';
     if (this.ticketSubmitting) return 'در حال ثبت خودکار';
     return 'Create';
+  }
+
+  get showCaseRating(): boolean {
+    return Boolean(this.diagnosticCase) && this.ticketAutomationState === 'submitted';
+  }
+
+  get selectedCaseRating(): number {
+    return this.diagnosticCase?.rating ?? 0;
   }
 
   isSupportStepDone(index: number): boolean {
@@ -317,6 +328,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketSubmitting = true;
     this.ticketAutomationState = 'submitting';
     this.ticketErrorMessage = '';
+    this.ratingMessage = '';
     this.supportStage = 'ticket';
     this.changeDetector.markForCheck();
 
@@ -343,6 +355,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
               text: `تیکت ثبت شد و تحلیل اولیه انجام شد.\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
             this.ticketSubmitting = false;
+            this.ratingMessage = '';
             this.changeDetector.markForCheck();
             this.scrollToLatest();
           },
@@ -519,6 +532,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketSubmitting = snapshot.ticketSubmitting;
     this.ticketAutomationState = snapshot.ticketAutomationState;
     this.ticketErrorMessage = snapshot.ticketErrorMessage;
+    this.ratingSubmitting = snapshot.ratingSubmitting;
+    this.ratingMessage = snapshot.ratingMessage;
     this.serviceRunResult = snapshot.serviceRunResult ? { ...snapshot.serviceRunResult } : null;
     this.runningServiceId = null;
     this.supportStage = snapshot.supportStage;
@@ -544,6 +559,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketSubmitting = false;
     this.ticketAutomationState = 'idle';
     this.ticketErrorMessage = '';
+    this.ratingSubmitting = false;
+    this.ratingMessage = '';
     this.serviceRunResult = null;
     this.runningServiceId = null;
     this.supportStage = 'selecting';
@@ -556,8 +573,77 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.showInitialProblemPrompt();
   }
 
-  rateMessage(message: ChatMessage, feedback: 'helpful' | 'unhelpful'): void {
-    message.feedback = feedback;
+  isMessageRatingActive(message: ChatMessage, score: number): boolean {
+    return score <= (message.rating ?? 0);
+  }
+
+  rateMessage(message: ChatMessage, score: number): void {
+    if (message.ratingSubmitting) return;
+
+    message.rating = score;
+    message.ratingSubmitted = false;
+    message.ratingMessage = message.conversationId
+      ? ''
+      : 'امتیاز انتخاب شد؛ بعد از ثبت گزارش گفت‌وگو ذخیره می‌شود.';
+
+    if (message.conversationId) {
+      this.persistMessageRating(message);
+      return;
+    }
+
+    this.changeDetector.markForCheck();
+  }
+
+  private persistMessageRating(message: ChatMessage): void {
+    if (!message.conversationId || !message.rating) return;
+
+    message.ratingSubmitting = true;
+    message.ratingMessage = 'در حال ثبت امتیاز...';
+    this.changeDetector.markForCheck();
+
+    this.api.rateConversation(message.conversationId, { rating: message.rating }).subscribe({
+      next: (conversation) => {
+        message.rating = conversation.rating ?? message.rating;
+        message.ratingSubmitted = true;
+        message.ratingSubmitting = false;
+        message.ratingMessage = 'امتیاز شما ثبت شد.';
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => {
+        const resolved = this.errorMessages.resolve(error, 'ثبت امتیاز پاسخ انجام نشد.');
+        message.ratingSubmitted = false;
+        message.ratingSubmitting = false;
+        message.ratingMessage = this.errorMessages.formatMessage(resolved);
+        this.changeDetector.markForCheck();
+      }
+    });
+  }
+
+  isCaseRatingActive(score: number): boolean {
+    return score <= this.selectedCaseRating;
+  }
+
+  submitCaseRating(score: number): void {
+    if (!this.diagnosticCase || this.ratingSubmitting) return;
+
+    this.ratingSubmitting = true;
+    this.ratingMessage = '';
+    this.changeDetector.markForCheck();
+
+    this.api.rateDiagnosticCase(this.diagnosticCase.id, { rating: score }).subscribe({
+      next: (updatedCase) => {
+        this.diagnosticCase = updatedCase;
+        this.ratingSubmitting = false;
+        this.ratingMessage = 'امتیاز شما ثبت شد و در داشبورد ادمین قابل مشاهده است.';
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => {
+        const resolved = this.errorMessages.resolve(error, 'ثبت امتیاز انجام نشد.');
+        this.ratingSubmitting = false;
+        this.ratingMessage = this.errorMessages.formatMessage(resolved);
+        this.changeDetector.markForCheck();
+      }
+    });
   }
 
   selectTreeOption(option: { label: string; targetId: string }, saveHistory = true): void {
@@ -629,14 +715,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return Boolean(
       this.diagnosticDraft.title.trim() &&
       this.diagnosticDraft.problem.trim() &&
-      this.diagnosticDraft.systemName.trim() &&
       this.diagnosticDraft.processName.trim() &&
       this.diagnosticDraft.scenario.trim()
     );
   }
 
   isCitrixTicket(): boolean {
-    const source = `${this.treeTrail.join(' ')} ${this.diagnosticDraft.problem} ${this.diagnosticDraft.systemName}`;
+    const source = `${this.treeTrail.join(' ')} ${this.diagnosticDraft.problem}`;
     return this.normalizeTreeText(source).includes('سیتریکس');
   }
 
@@ -661,6 +746,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       ticketSubmitting: this.ticketSubmitting,
       ticketAutomationState: this.ticketAutomationState,
       ticketErrorMessage: this.ticketErrorMessage,
+      ratingSubmitting: this.ratingSubmitting,
+      ratingMessage: this.ratingMessage,
       serviceRunResult: this.serviceRunResult ? { ...this.serviceRunResult } : null,
       supportStage: this.supportStage,
       awaitingInitialProblem: this.awaitingInitialProblem,
@@ -683,7 +770,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private scrollToLatest(): void {
     requestAnimationFrame(() => {
       const element = this.conversation?.nativeElement;
-      if (element) element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+      if (element) {
+        element.scrollTo({
+          top: element.scrollHeight,
+          behavior: this.theme.motionEnabled ? 'smooth' : 'auto'
+        });
+      }
     });
   }
 
@@ -849,14 +941,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const reliableMatches = matches.filter((match) => match.score >= 0.55);
 
     this.typingTimer = setTimeout(() => {
+      let faqMessage: ChatMessage | null = null;
       if (reliableMatches.length) {
-        this.messages.push({
+        faqMessage = {
           role: 'assistant',
           text: fromTree
             ? 'این مورد را در FAQ بررسی کردم؛ پاسخ پیشنهادی:'
             : 'پاسخ پیشنهادی بر اساس FAQ موجود:',
           matches: reliableMatches
-        });
+        };
+        this.messages.push(faqMessage);
       } else {
         this.startTicketFlow(question, sourceNode);
       }
@@ -870,8 +964,20 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       this.api
         .logConversation(question, answer, reliableMatches.length ? (matchedFaq?.id ?? null) : null)
         .subscribe({
+          next: (conversation) => {
+            if (!faqMessage) return;
+            faqMessage.conversationId = conversation.id;
+            if (faqMessage.rating && !faqMessage.ratingSubmitted) {
+              this.persistMessageRating(faqMessage);
+              return;
+            }
+            this.changeDetector.markForCheck();
+          },
           error: (error: unknown) => {
             const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
+            if (faqMessage) {
+              faqMessage.ratingMessage = 'گزارش گفت‌وگو ثبت نشد؛ امتیاز قابل ذخیره نیست.';
+            }
             this.error = `پاسخ نمایش داده شد، اما ${this.errorMessages.formatMessage(resolved)}`;
             this.changeDetector.markForCheck();
           }
@@ -904,6 +1010,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.ticketDialogOpen = true;
     this.ticketAutomationState = 'preparing';
     this.ticketErrorMessage = '';
+    this.ratingSubmitting = false;
+    this.ratingMessage = '';
     this.supportStage = 'ticket';
     this.messages.push({
       role: 'assistant',

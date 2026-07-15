@@ -97,6 +97,10 @@ export const conversationRepository = {
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },
 
+  findById(id: number): ConversationRecord | undefined {
+    return database.data.conversations.find((candidate) => candidate.id === id);
+  },
+
   async create(input: {
     userId: number;
     question: string;
@@ -109,11 +113,17 @@ export const conversationRepository = {
       question: input.question,
       answer: input.answer,
       matchedFaqId: input.matchedFaqId,
+      rating: null,
+      ratingSubmittedAt: null,
       createdAt: new Date().toISOString()
     };
     database.data.conversations.push(conversation);
     await database.write();
     return conversation;
+  },
+
+  async save(): Promise<void> {
+    await database.write();
   }
 };
 

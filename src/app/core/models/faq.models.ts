@@ -20,6 +20,11 @@ export interface ChatMessage {
   treeOptions?: Array<{ label: string; targetId: string }>;
   quickReplies?: string[];
   feedback?: 'helpful' | 'unhelpful';
+  conversationId?: number;
+  rating?: number;
+  ratingSubmitted?: boolean;
+  ratingSubmitting?: boolean;
+  ratingMessage?: string;
 }
 
 export interface FaqRecord {
@@ -36,6 +41,8 @@ export interface ConversationRecord {
   question: string;
   answer: string;
   matchedFaqId: number | null;
+  rating?: number | null;
+  ratingSubmittedAt?: string | null;
   createdAt: string;
   userFullName: string;
   username: string;

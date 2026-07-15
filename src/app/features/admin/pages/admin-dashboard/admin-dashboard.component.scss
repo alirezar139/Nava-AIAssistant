@@ -528,6 +528,33 @@ td small {
 .answer b {
   color: #9a713e;
 }
+
+.report-rating {
+  width: fit-content;
+  margin-top: 8px;
+  padding: 7px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent-600) 24%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-600) 10%, var(--surface));
+}
+
+.report-rating span,
+.report-rating small {
+  color: var(--color-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.report-rating b {
+  direction: ltr;
+  color: #c58a18;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 750px) {
   .welcome {
     align-items: start;
@@ -715,7 +742,8 @@ td {
   z-index: -1;
   border-radius: 50%;
   pointer-events: none;
-  animation: admin-orb 7s ease-in-out infinite alternate;
+  animation: admin-orb 28s ease-in-out infinite alternate;
+  will-change: transform;
 }
 .admin-shell::before {
   width: 300px;
@@ -730,13 +758,13 @@ td {
   left: -70px;
   bottom: 4%;
   background: rgba(190, 143, 73, 0.14);
-  animation-delay: -5s;
+  animation-delay: -12s;
 }
 header {
   border-bottom-color: rgba(255, 255, 255, 0.62);
   background: rgba(255, 255, 255, 0.62);
-  box-shadow: 0 12px 35px rgba(18, 55, 47, 0.06);
-  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 8px 22px rgba(18, 55, 47, 0.045);
+  backdrop-filter: blur(8px) saturate(118%);
 }
 .account,
 .stats article,
@@ -745,22 +773,22 @@ header {
   border: 1px solid var(--glass-border);
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(248, 251, 249, 0.56));
   box-shadow:
-    0 20px 50px rgba(18, 55, 47, 0.08),
+    0 12px 30px rgba(18, 55, 47, 0.06),
     inset 0 1px rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(8px) saturate(112%);
 }
 .welcome {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background:
     radial-gradient(circle at 8% 0, rgba(91, 159, 140, 0.78), transparent 27rem),
     linear-gradient(135deg, rgba(18, 59, 52, 0.94), rgba(7, 38, 32, 0.96));
-  backdrop-filter: blur(20px);
+  backdrop-filter: none;
 }
 nav {
   border-color: rgba(255, 255, 255, 0.66);
   background: rgba(225, 235, 230, 0.58);
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(6px);
 }
 nav button.active {
   background: rgba(255, 255, 255, 0.82);
@@ -770,7 +798,7 @@ textarea,
 th,
 .answer {
   background: rgba(248, 251, 249, 0.62);
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
 }
 
 @keyframes admin-orb {
@@ -871,8 +899,8 @@ header {
   height: 82px;
   border-color: rgba(24, 72, 62, 0.1);
   background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 8px 28px rgba(18, 55, 47, 0.045);
-  backdrop-filter: blur(18px);
+  box-shadow: 0 7px 18px rgba(18, 55, 47, 0.04);
+  backdrop-filter: blur(7px);
 }
 .brand > span {
   width: 48px;
@@ -961,7 +989,7 @@ main {
   border-color: rgba(255, 255, 255, 0.17);
   color: #fff;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(4px);
 }
 .refresh:hover {
   transform: translateY(-2px);
@@ -1142,8 +1170,8 @@ tbody tr:hover td {
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 24px;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 247, 243, 0.74));
-  box-shadow: 0 34px 90px rgba(5, 30, 25, 0.28);
-  backdrop-filter: blur(28px) saturate(145%);
+  box-shadow: 0 22px 58px rgba(5, 30, 25, 0.22);
+  backdrop-filter: blur(9px) saturate(116%);
   animation: modal-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .edit-modal {
@@ -2286,8 +2314,8 @@ tbody tr.selected::after {
 
 .modal-backdrop {
   background: color-mix(in srgb, var(--page-bg) 44%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .account .account-avatar {
@@ -2896,6 +2924,109 @@ tbody tr.selected::after {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-600) 14%, transparent);
 }
 
+.rating-performance-panel {
+  grid-column: 1 / -1;
+}
+
+.rating-overview {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.rating-overview strong {
+  color: var(--color-heading);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 950;
+  line-height: 1.25;
+}
+
+.rating-overview span {
+  color: var(--color-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.rating-distribution {
+  display: grid;
+  gap: 10px;
+}
+
+.rating-distribution article {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-distribution span,
+.rating-distribution em {
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.rating-distribution b {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-600) 12%, var(--surface-soft));
+}
+
+.rating-distribution i {
+  height: 100%;
+  min-width: 4px;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-700), var(--accent-600), var(--color-link));
+}
+
+.latest-ratings {
+  display: grid;
+  gap: 10px;
+}
+
+.latest-ratings article {
+  min-width: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-soft) 82%, transparent);
+}
+
+.latest-ratings article > div,
+.latest-ratings small {
+  min-width: 0;
+}
+
+.latest-ratings strong,
+.latest-ratings b {
+  color: var(--color-heading);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.latest-ratings span,
+.latest-ratings small {
+  color: var(--color-secondary);
+  font-size: 0.74rem;
+  font-weight: 750;
+  line-height: 1.8;
+}
+
+.latest-ratings small {
+  grid-column: 1 / -1;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 1040px) {
   .performance-kpis,
   .performance-grid {
@@ -3077,6 +3208,1003 @@ tbody tr.selected::after {
   border-radius: 16px;
   color: var(--color-body);
   background: color-mix(in srgb, var(--color-link) 9%, var(--surface));
+}
+
+.tree-manager-card {
+  display: grid;
+  gap: 18px;
+}
+
+.tree-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tree-download-control {
+  min-height: 40px;
+  padding: 5px 8px;
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 12px;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.tree-download-control select {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--color-link) 10%, var(--surface));
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.tree-toolbar button,
+.tree-preview-actions button,
+.tree-modal-actions button,
+.tree-close-confirm button,
+.tree-modeling-toolbar button,
+.tree-map-controls button,
+.tree-pagination button,
+.tree-edit-box button,
+.tree-editor-actions button,
+.tree-edge-editor button {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.tree-toolbar .ghost,
+.tree-preview-actions .ghost,
+.tree-modal-actions .ghost,
+.tree-close-confirm .ghost,
+.tree-modeling-toolbar .ghost,
+.tree-map-controls .ghost,
+.tree-pagination .ghost,
+.tree-editor-actions .ghost,
+.tree-edge-editor .ghost {
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--color-link) 10%, var(--surface));
+}
+
+.tree-toolbar button:disabled,
+.tree-preview-actions button:disabled,
+.tree-modal-actions button:disabled,
+.tree-close-confirm button:disabled,
+.tree-modeling-toolbar button:disabled,
+.tree-map-controls button:disabled,
+.tree-pagination button:disabled,
+.tree-edit-box button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tree-import-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tree-import-strip article {
+  min-width: 0;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 8%, transparent), transparent),
+    color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.tree-import-strip span,
+.tree-format-note strong,
+.tree-edge-editor strong,
+.tree-edit-box strong {
+  color: var(--color-secondary);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.tree-import-strip b {
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: 1.1rem;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-import-strip small {
+  overflow: hidden;
+  color: var(--color-subtle);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-format-note {
+  padding: 12px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  border: 1px dashed color-mix(in srgb, var(--color-link) 28%, var(--border));
+  border-radius: 16px;
+  color: var(--color-body);
+  background: color-mix(in srgb, var(--color-link) 7%, transparent);
+}
+
+.tree-format-note span {
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.9;
+}
+
+.tree-warnings {
+  margin: 0;
+  padding: 12px 18px;
+  display: grid;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, #b67a22 42%, transparent);
+  border-radius: 16px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, #b67a22 12%, var(--surface));
+}
+
+.tree-preview-note {
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 28%, var(--border));
+  border-radius: 16px;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--color-link) 9%, var(--surface));
+  font-size: 0.8rem;
+  font-weight: 850;
+  line-height: 1.9;
+}
+
+.tree-preview-launch {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 12% 0, color-mix(in srgb, var(--color-link) 15%, transparent), transparent 20rem),
+    linear-gradient(135deg, color-mix(in srgb, #fff 38%, transparent), transparent 62%),
+    color-mix(in srgb, var(--surface) 84%, transparent);
+  box-shadow:
+    inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent),
+    0 20px 44px color-mix(in srgb, var(--primary-950) 8%, transparent);
+}
+
+.tree-preview-hero {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.tree-preview-hero span,
+.tree-modal-header span,
+.tree-close-confirm span {
+  color: var(--color-link);
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.tree-preview-hero h3,
+.tree-close-confirm h3 {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: clamp(1.25rem, 2.1vw, 2rem);
+  font-weight: 950;
+  line-height: 1.65;
+}
+
+.tree-preview-hero p,
+.tree-close-confirm p {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 0.82rem;
+  font-weight: 760;
+  line-height: 1.9;
+}
+
+.tree-preview-hero div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tree-preview-hero b {
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, transparent);
+  border-radius: 999px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--color-link) 8%, var(--surface));
+  font-size: 0.73rem;
+  font-weight: 900;
+}
+
+.tree-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tree-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  padding: 16px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--color-link) 14%, transparent), transparent 28rem),
+    radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent-600) 12%, transparent), transparent 24rem),
+    color-mix(in srgb, var(--primary-950) 38%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.tree-modal-shell {
+  width: min(1740px, calc(100vw - 32px));
+  height: calc(100vh - 32px);
+  min-height: 620px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border: 1px solid color-mix(in srgb, var(--color-link) 24%, var(--border));
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 8% 0, color-mix(in srgb, var(--color-link) 12%, transparent), transparent 28rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 90%, transparent), color-mix(in srgb, var(--surface-warm) 72%, transparent)),
+    color-mix(in srgb, var(--surface) 90%, transparent);
+  box-shadow:
+    0 36px 90px color-mix(in srgb, var(--primary-950) 35%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent);
+}
+
+.tree-modal-header {
+  height: auto;
+  min-height: 92px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(0, auto);
+  gap: 16px;
+  align-items: center;
+  justify-content: stretch;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 11%, transparent), transparent),
+    color-mix(in srgb, var(--surface) 74%, transparent);
+}
+
+.tree-modal-header h2 {
+  margin: 2px 0;
+  color: var(--color-heading);
+  font-size: clamp(1.15rem, 1.7vw, 2rem);
+  font-weight: 950;
+  line-height: 1.6;
+}
+
+.tree-modal-header small {
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.tree-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.tree-project-control {
+  min-height: 40px;
+  padding: 5px 8px;
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 12px;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.tree-project-control input {
+  width: 110px;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 9px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--color-link) 10%, var(--surface));
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.tree-mode-switch {
+  min-height: 40px;
+  padding: 4px;
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.tree-mode-switch button {
+  min-height: 30px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  color: var(--color-secondary);
+  background: transparent;
+  box-shadow: none;
+}
+
+.tree-mode-switch button.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-950));
+}
+
+.tree-modal-actions .final {
+  background: linear-gradient(135deg, var(--color-link), var(--primary-950));
+}
+
+.tree-modal-actions .close {
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.tree-modal-body {
+  min-height: 0;
+  overflow: auto;
+  padding: 18px;
+}
+
+.tree-modal-body .tree-workbench {
+  margin-top: 0;
+  grid-template-columns: minmax(250px, 310px) minmax(760px, 1fr) minmax(280px, 330px);
+  grid-template-areas: 'browser canvas editor';
+  align-items: stretch;
+}
+
+.tree-modal-body .tree-node-browser,
+.tree-modal-body .tree-editor-panel {
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+}
+
+.tree-modal-body .tree-canvas-card {
+  min-height: calc(100vh - 170px);
+}
+
+.tree-modal-body .tree-canvas {
+  height: calc(100vh - 270px);
+  min-height: 640px;
+}
+
+.tree-close-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 1210;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: color-mix(in srgb, var(--primary-950) 46%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.tree-close-confirm > div {
+  width: min(520px, calc(100vw - 40px));
+  padding: 22px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 22%, var(--border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--surface-warm) 80%, transparent)),
+    var(--surface);
+}
+
+.tree-close-confirm > div:first-child {
+  border-radius: 22px 22px 0 0;
+  border-bottom: 0;
+}
+
+.tree-close-confirm > div:last-child {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-radius: 0 0 22px 22px;
+}
+
+.tree-close-confirm .danger {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 70%, #000));
+}
+
+.tree-workbench {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
+  grid-template-areas:
+    'browser canvas'
+    'editor canvas';
+  gap: 18px;
+  align-items: start;
+}
+
+.tree-side-panel,
+.tree-canvas-card {
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 7%, transparent), transparent 42%),
+    color-mix(in srgb, var(--surface) 86%, transparent);
+  box-shadow:
+    0 18px 42px color-mix(in srgb, var(--primary-950) 9%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.tree-side-panel {
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.tree-node-browser {
+  grid-area: browser;
+}
+
+.tree-editor-panel {
+  grid-area: editor;
+  max-height: 820px;
+  overflow: auto;
+}
+
+.tree-node-list {
+  max-height: 390px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  padding-inline-end: 4px;
+}
+
+.tree-node-list button {
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 10px;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border));
+  border-radius: 16px;
+  color: var(--color-body);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #fff 44%, transparent), transparent),
+    color-mix(in srgb, var(--surface) 88%, transparent);
+  text-align: right;
+}
+
+.tree-node-list button:hover {
+  border-color: color-mix(in srgb, var(--color-link) 32%, var(--border));
+  transform: translateY(-1px);
+}
+
+.tree-node-list button.active {
+  border-color: color-mix(in srgb, var(--color-link) 44%, var(--border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 18%, transparent), transparent),
+    var(--surface);
+  box-shadow: inset -4px 0 0 color-mix(in srgb, var(--color-link) 82%, var(--primary-950));
+}
+
+.tree-node-list b {
+  color: var(--color-heading);
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.8;
+}
+
+.tree-node-list span {
+  color: var(--color-subtle);
+  direction: ltr;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.72rem;
+}
+
+.tree-pagination-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.tree-pagination-summary span,
+.tree-pagination span {
+  color: var(--color-secondary);
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1.7;
+}
+
+.tree-pagination-summary select {
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 12px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.tree-pagination {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.tree-pagination span {
+  text-align: center;
+}
+
+.tree-list-note {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.8;
+}
+
+.tree-canvas-card {
+  grid-area: canvas;
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 0;
+  min-height: 820px;
+}
+
+.tree-canvas-card > .section-title {
+  margin: 0;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border));
+  background:
+    radial-gradient(circle at 10% 0, color-mix(in srgb, var(--color-link) 15%, transparent), transparent 22rem),
+    color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.tree-map-controls {
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 10%, var(--border));
+  background: color-mix(in srgb, var(--surface) 68%, transparent);
+}
+
+.tree-modeling-toolbar {
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) auto auto auto;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 10%, var(--border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 9%, transparent), transparent 58%),
+    color-mix(in srgb, var(--surface) 72%, transparent);
+}
+
+.tree-tool-group {
+  padding: 4px;
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.tree-tool-group button {
+  min-height: 32px;
+  padding: 6px 11px;
+  border-radius: 10px;
+  color: var(--color-secondary);
+  background: transparent;
+  box-shadow: none;
+}
+
+.tree-tool-group button.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-950));
+}
+
+.tree-modeling-toolbar input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 12px;
+  color: var(--color-body);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 850;
+}
+
+.tree-modeling-toolbar span {
+  min-height: 34px;
+  padding: 7px 10px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 10%, var(--surface));
+  font-size: 0.74rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.tree-map-controls span {
+  min-width: 58px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 12px;
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-align: center;
+}
+
+.tree-canvas {
+  height: min(74vh, 820px);
+  min-height: 650px;
+  overflow: auto;
+  border: 0;
+  border-radius: 0 0 24px 24px;
+  background:
+    radial-gradient(circle at 18% 15%, color-mix(in srgb, var(--color-link) 10%, transparent), transparent 26rem),
+    linear-gradient(color-mix(in srgb, var(--primary-700) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--primary-700) 6%, transparent) 1px, transparent 1px),
+    color-mix(in srgb, var(--surface) 82%, transparent);
+  background-size: auto, 32px 32px, 32px 32px, auto;
+}
+
+.tree-canvas svg {
+  min-width: 100%;
+  width: auto;
+  max-width: none;
+  min-height: 620px;
+  height: auto;
+  display: block;
+}
+
+.tree-canvas.model-add svg {
+  cursor: crosshair;
+}
+
+.tree-canvas.model-connect svg {
+  cursor: cell;
+}
+
+.tree-canvas.model-dragging,
+.tree-canvas.model-dragging svg {
+  cursor: grabbing;
+}
+
+.tree-edge-layer line {
+  stroke: color-mix(in srgb, var(--color-link) 52%, var(--border));
+  stroke-width: 2;
+  fill: none;
+}
+
+.tree-edge-layer path,
+.tree-canvas marker path {
+  fill: color-mix(in srgb, var(--color-link) 78%, var(--primary-950));
+}
+
+.tree-edge-layer text {
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--surface) 90%, transparent);
+  stroke-width: 5px;
+  fill: var(--color-heading);
+  font-size: 12px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.tree-svg-node {
+  cursor: pointer;
+  touch-action: none;
+}
+
+.tree-svg-node rect {
+  fill: color-mix(in srgb, var(--surface) 88%, transparent);
+  stroke: color-mix(in srgb, var(--color-link) 26%, var(--border));
+  stroke-width: 1.4;
+  filter: drop-shadow(0 10px 16px color-mix(in srgb, var(--primary-950) 10%, transparent));
+}
+
+.tree-svg-node.active rect {
+  fill: color-mix(in srgb, var(--color-link) 16%, var(--surface));
+  stroke: var(--color-link);
+  stroke-width: 2.2;
+}
+
+.tree-svg-node.start rect {
+  fill: color-mix(in srgb, #168b6e 12%, var(--surface));
+  stroke: color-mix(in srgb, #168b6e 58%, var(--border));
+}
+
+.tree-svg-node.connecting-source rect {
+  fill: color-mix(in srgb, #b67a22 18%, var(--surface));
+  stroke: color-mix(in srgb, #b67a22 78%, var(--border));
+  stroke-dasharray: 8 5;
+  stroke-width: 2.4;
+}
+
+.tree-svg-node text {
+  fill: var(--color-heading);
+  font-size: 11px;
+  font-weight: 950;
+  text-anchor: middle;
+}
+
+.tree-svg-node .node-meta {
+  fill: var(--color-subtle);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.tree-editor-panel label,
+.tree-edit-box {
+  display: grid;
+  gap: 8px;
+}
+
+.tree-editor-panel label {
+  color: var(--color-heading);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.tree-editor-panel input,
+.tree-editor-panel textarea,
+.tree-editor-panel select,
+.tree-edit-box input,
+.tree-edit-box select,
+.tree-edge-editor input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--color-body);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font: inherit;
+}
+
+.tree-editor-panel textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.tree-node-reader {
+  padding: 14px;
+  display: grid;
+  gap: 9px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 12%, transparent), transparent),
+    color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.tree-node-reader strong {
+  color: var(--color-secondary);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.tree-node-reader p {
+  max-height: 180px;
+  margin: 0;
+  overflow: auto;
+  color: var(--color-heading);
+  font-size: 0.84rem;
+  font-weight: 850;
+  line-height: 2;
+}
+
+.tree-node-reader div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tree-node-reader span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--color-link) 10%, transparent);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.tree-editor-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tree-position-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tree-editor-actions .danger,
+.tree-edge-editor .danger {
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 70%, #000));
+}
+
+.tree-edit-box {
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-link) 6%, transparent);
+}
+
+.tree-edge-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.tree-edge-editor article {
+  padding: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+
+.tree-edge-editor article div {
+  display: grid;
+  gap: 3px;
+}
+
+.tree-edge-editor b {
+  color: var(--color-heading);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.tree-edge-editor span {
+  color: var(--color-subtle);
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.7rem;
+}
+
+.tree-edge-editor p {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.9;
+}
+
+.tree-empty-state {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.tree-loading-state {
+  margin-top: 18px;
+}
+
+.tree-empty-state button {
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-950));
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+@media (max-width: 1280px) {
+  .tree-workbench {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'browser'
+      'canvas'
+      'editor';
+  }
+
+  .tree-node-list {
+    max-height: 280px;
+  }
+
+  .tree-editor-panel {
+    max-height: none;
+  }
+
+  .tree-canvas-card {
+    min-height: auto;
+  }
+
+  .tree-canvas {
+    height: 640px;
+  }
+
+  .tree-import-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .tree-import-strip,
+  .tree-editor-actions,
+  .tree-position-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tree-toolbar {
+    justify-content: stretch;
+  }
+
+  .tree-toolbar button {
+    flex: 1 1 100%;
+  }
+
+  .tree-download-control {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
 }
 
 .service-test-result.failed {

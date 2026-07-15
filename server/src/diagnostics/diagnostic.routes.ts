@@ -22,6 +22,11 @@ const diagnosticPayloadSchema = z.object({
   treeNodeText: z.string().trim().optional().default('')
 });
 
+const diagnosticRatingSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  ratingComment: z.string().trim().max(1000).optional().default('')
+});
+
 diagnosticRouter.get('/', requireAuth(['admin']), (_request, response) => {
   response.json(diagnosticRepository.listWithUsers());
 });
@@ -52,6 +57,9 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     externalTicketId: null,
     externalTrackingId: null,
     externalTicketStatus: null,
+    rating: null,
+    ratingComment: '',
+    ratingSubmittedAt: null,
     createdAt: new Date().toISOString(),
     analyzedAt: null
   };
@@ -61,7 +69,6 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     description: [
       `عنوان مشکل: ${result.data.title}`,
       `شرح مشکل: ${result.data.problem}`,
-      `سامانه: ${result.data.systemName}`,
       `سناریو/فرآیند: ${result.data.processName}`,
       `مسیر اجرا: ${result.data.scenario}`,
       `شناسه/سریال: ${result.data.serialNumber || '-'}`,
@@ -89,6 +96,33 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
   response.status(201).json(diagnosticCase);
 });
 
+diagnosticRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest, response) => {
+  const id = Number(request.params['id']);
+  const item = diagnosticRepository.findById(id);
+  if (!item || (request.user?.role !== 'admin' && item.userId !== request.user?.id)) {
+    sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
+    return;
+  }
+
+  const result = diagnosticRatingSchema.safeParse(request.body);
+  if (!result.success) {
+    sendError(
+      response,
+      400,
+      'DIAGNOSTIC_RATING_INVALID',
+      'امتیاز ثبت‌شده معتبر نیست.'
+    );
+    return;
+  }
+
+  item.rating = result.data.rating;
+  item.ratingComment = result.data.ratingComment;
+  item.ratingSubmittedAt = new Date().toISOString();
+
+  await diagnosticRepository.save();
+  response.json(item);
+});
+
 diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
   const item = diagnosticRepository.findById(id);
@@ -110,7 +144,7 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
 
   item.status = severity === 'high' ? 'escalated' : 'analyzed';
   item.severity = severity;
-  item.analysisSummary = `تحلیل اولیه برای ${item.systemName}: مشکل با سناریوی اعلام‌شده و شواهد کاربر بررسی شد.`;
+  item.analysisSummary = 'تحلیل اولیه پرونده با سناریوی اعلام‌شده و شواهد کاربر انجام شد.';
   item.recommendation =
     severity === 'high'
       ? 'پرونده باید همراه با سریال/شناسه و شواهد برای تیم تحلیل داده یا پشتیبانی سطح دو ارسال شود.'

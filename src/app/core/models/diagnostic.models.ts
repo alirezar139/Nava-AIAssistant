@@ -24,6 +24,9 @@ export interface DiagnosticCaseRecord extends DiagnosticPayload {
   externalTicketId?: string | null;
   externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
+  rating?: number | null;
+  ratingComment?: string;
+  ratingSubmittedAt?: string | null;
   createdAt: string;
   analyzedAt: string | null;
   userFullName?: string;

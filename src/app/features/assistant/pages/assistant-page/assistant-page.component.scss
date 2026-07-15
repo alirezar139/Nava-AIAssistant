@@ -889,6 +889,30 @@ main.assistant-layout {
   border-top: 1px solid var(--assistant-border);
 }
 
+.rating-feedback {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating-feedback > span {
+  min-width: 150px;
+  color: var(--assistant-muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.rating-feedback .rating-stars {
+  padding: 4px;
+  gap: 5px;
+}
+
+.rating-feedback .rating-stars button {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 1.18rem;
+}
+
 .feedback button {
   min-height: 32px;
   padding: 6px 10px;
@@ -1017,8 +1041,8 @@ main.assistant-layout {
   place-items: center;
   padding: 20px;
   background: rgba(10, 24, 20, 0.32);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .welcome-card {
@@ -1164,7 +1188,7 @@ main.assistant-layout {
   max-height: min(900px, calc(100dvh - 28px));
   padding: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   overflow: hidden;
   direction: ltr;
   color: #172b4d;
@@ -1510,6 +1534,116 @@ main.assistant-layout {
   white-space: pre-line;
 }
 
+.ticket-rating-card {
+  margin: 12px 0 0 182px;
+  padding: 16px 18px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid #dfe1e6;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.ticket-rating-bottom {
+  margin: 12px 24px 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.ticket-rating-bottom .rating-stars {
+  justify-content: flex-end;
+}
+
+.ticket-rating-card span,
+.ticket-rating-card strong,
+.ticket-rating-card small {
+  display: block;
+}
+
+.ticket-rating-card span {
+  color: #0052cc;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ticket-rating-card strong {
+  margin-top: 3px;
+  color: #172b4d;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ticket-rating-card small {
+  margin-top: 6px;
+  color: #42526e;
+  font-size: 0.82rem;
+  line-height: 1.85;
+}
+
+.rating-stars {
+  padding: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  direction: ltr;
+  border: 1px solid rgba(183, 121, 31, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 248, 226, 0.72);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.rating-stars button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(183, 121, 31, 0.22);
+  border-radius: 12px;
+  color: #b88b34;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 244, 206, 0.78)), #fff8e2;
+  box-shadow: 0 8px 18px rgba(81, 57, 13, 0.08);
+  font-size: 1.55rem;
+  line-height: 1;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.rating-stars button span {
+  transform: translateY(-1px);
+}
+
+.rating-stars button.active {
+  color: #fff9df;
+  border-color: #c58a18;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.56), transparent 32%),
+    linear-gradient(135deg, #ffd76d 0%, #d79a21 52%, #9f6814 100%);
+  box-shadow:
+    0 10px 22px rgba(159, 104, 20, 0.22),
+    inset 0 1px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 2px rgba(71, 45, 8, 0.38);
+}
+
+.rating-stars button:not(:disabled):hover,
+.rating-stars button:not(:disabled):focus-visible {
+  transform: translateY(-2px);
+  border-color: #c58a18;
+  box-shadow:
+    0 12px 24px rgba(159, 104, 20, 0.18),
+    0 0 0 4px rgba(255, 215, 109, 0.2);
+  outline: none;
+}
+
+.rating-stars button:disabled {
+  cursor: wait;
+  opacity: 0.82;
+}
+
 .sahand-footer {
   justify-content: flex-end;
   min-height: 68px;
@@ -1566,6 +1700,7 @@ main.assistant-layout {
 .sahand-header h2,
 .sahand-select strong,
 .ticket-status-card strong,
+.ticket-rating-card strong,
 .create-another {
   color: var(--color-heading);
 }
@@ -1575,6 +1710,7 @@ main.assistant-layout {
 .sahand-modal .modal-close,
 .sahand-help,
 .ticket-status-card small,
+.ticket-rating-card small,
 .sahand-select b,
 .sahand-editor-footer span {
   color: var(--color-secondary);
@@ -1619,8 +1755,28 @@ main.assistant-layout {
   background: color-mix(in srgb, var(--color-link) 12%, var(--surface));
 }
 
+.ticket-rating-card {
+  border-color: color-mix(in srgb, var(--accent-600) 30%, var(--border));
+  background:
+    radial-gradient(
+      circle at 12% 15%,
+      color-mix(in srgb, var(--accent-600) 12%, transparent),
+      transparent 42%
+    ),
+    var(--surface);
+}
+
+.ticket-rating-card .rating-stars {
+  border-color: color-mix(in srgb, var(--accent-600) 24%, var(--border));
+  background: color-mix(in srgb, var(--accent-600) 10%, var(--surface-soft));
+}
+
 .ticket-status-card span {
   color: var(--color-link);
+}
+
+.ticket-rating-card span {
+  color: var(--accent-700);
 }
 
 .ticket-status-card.failed {
@@ -1743,9 +1899,19 @@ main.assistant-layout {
     text-align: left;
   }
 
-  .ticket-status-card {
+  .ticket-status-card,
+  .ticket-rating-card {
     margin-right: 0;
     margin-left: 0;
+  }
+
+  .ticket-rating-bottom {
+    margin: 10px 14px 0;
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-rating-bottom .rating-stars {
+    justify-content: flex-start;
   }
 }
 

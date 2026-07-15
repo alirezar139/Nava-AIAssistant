@@ -56,7 +56,7 @@
             <path d="M8 9h8M8 13h5"></path>
           </svg>
         </div>
-        <span>درخواست کاربران</span><strong>{{ conversations.length.toLocaleString('fa-IR') }}</strong
+        <span>درخواست کاربران</span><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</strong
         ><small>گفت‌وگوی ثبت‌شده</small>
       </article>
       <article>
@@ -67,7 +67,7 @@
             <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.5 6 4"></path>
           </svg>
         </div>
-        <span>کاربران درگیر</span><strong>{{ uniqueUserCount.toLocaleString('fa-IR') }}</strong
+        <span>کاربران درگیر</span><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '-' }}</strong
         ><small>کاربر دارای درخواست</small>
       </article>
     </section>
@@ -84,7 +84,7 @@
             role="tab"
             [attr.aria-selected]="activeTab === 'faqs'"
             [class.active]="activeTab === 'faqs'"
-            (click)="activeTab = 'faqs'"
+            (click)="setActiveTab('faqs')"
           >
             <span class="menu-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -102,7 +102,7 @@
             role="tab"
             [attr.aria-selected]="activeTab === 'reports'"
             [class.active]="activeTab === 'reports'"
-            (click)="activeTab = 'reports'"
+            (click)="setActiveTab('reports')"
           >
             <span class="menu-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -114,14 +114,14 @@
               <b>گزارش کاربران</b>
               <small>گفت‌وگوها و مسئله‌های ثبت‌شده</small>
             </span>
-            <em>{{ conversations.length.toLocaleString('fa-IR') }}</em>
+            <em>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</em>
           </button>
           <button
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'performance'"
             [class.active]="activeTab === 'performance'"
-            (click)="activeTab = 'performance'"
+            (click)="setActiveTab('performance')"
           >
             <span class="menu-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -135,14 +135,36 @@
               <b>ارزیابی عملکرد</b>
               <small>شاخص‌های پاسخ‌گویی، تیکت و کیفیت دانش</small>
             </span>
-            <em>{{ formatPercent(faqCoverageRate) }}</em>
+            <em>{{ conversationsLoaded ? formatPercent(faqCoverageRate) : '-' }}</em>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'tree'"
+            [class.active]="activeTab === 'tree'"
+            (click)="setActiveTab('tree')"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="6" cy="5" r="2"></circle>
+                <circle cx="18" cy="5" r="2"></circle>
+                <circle cx="12" cy="19" r="2"></circle>
+                <path d="M6 7v3l6 4 6-4V7"></path>
+                <path d="M12 14v3"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>مدیریت درختواره</b>
+              <small>ورود، مشاهده، ویرایش و ساخت مسیرهای راهبری</small>
+            </span>
+            <em>{{ treeLoaded ? treeNodeCount.toLocaleString('fa-IR') : '—' }}</em>
           </button>
           <button
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'settings'"
             [class.active]="activeTab === 'settings'"
-            (click)="activeTab = 'settings'"
+            (click)="setActiveTab('settings')"
           >
             <span class="menu-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -162,7 +184,7 @@
             role="tab"
             [attr.aria-selected]="activeTab === 'services'"
             [class.active]="activeTab === 'services'"
-            (click)="activeTab = 'services'"
+            (click)="setActiveTab('services')"
           >
             <span class="menu-icon">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -174,7 +196,7 @@
               <b>سرویس‌ها</b>
               <small>تعریف سرویس‌های قابل استفاده در سامانه</small>
             </span>
-            <em>{{ activeServiceCount.toLocaleString('fa-IR') }}</em>
+            <em>{{ externalServicesLoaded ? activeServiceCount.toLocaleString('fa-IR') : '-' }}</em>
           </button>
         </nav>
       </aside>
@@ -392,9 +414,9 @@
               <span>نظارت پشتیبانی</span>
               <h2>مشکلات و پاسخ‌های کاربران</h2>
             </div>
-            <small>{{ conversations.length.toLocaleString('fa-IR') }} گفتگو</small>
+            <small>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }} گفتگو</small>
           </div>
-          <div class="table-tools reports-search" *ngIf="conversations.length">
+          <div class="table-tools reports-search" *ngIf="conversationsLoaded && conversations.length">
             <label>
               <span>جست‌وجو در گزارش‌ها</span>
               <div class="search-field">
@@ -411,11 +433,12 @@
             </label>
             <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
           </div>
-          <div class="empty" *ngIf="!conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
-          <div class="empty" *ngIf="conversations.length && !filteredConversations.length">
+          <div class="empty" *ngIf="conversationsLoading">در حال دریافت گزارش‌ها...</div>
+          <div class="empty" *ngIf="conversationsLoaded && !conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
+          <div class="empty" *ngIf="conversationsLoaded && conversations.length && !filteredConversations.length">
             نتیجه‌ای مطابق جست‌وجو پیدا نشد.
           </div>
-          <div class="reports" *ngFor="let item of filteredConversations">
+          <div class="reports" *ngFor="let item of conversationsLoaded ? displayedConversations : []">
             <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
             <div class="report-content">
               <div class="report-meta">
@@ -424,8 +447,17 @@
               </div>
               <p class="question">{{ item.question }}</p>
               <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
+              <div class="report-rating" *ngIf="item.rating">
+                <span>امتیاز پاسخ</span>
+                <b>{{ formatStars(item.rating) }}</b>
+                <small>{{ formatRating(item.rating) }}</small>
+              </div>
             </div>
           </div>
+          <p class="tree-list-note" *ngIf="hiddenConversationCount">
+            برای حفظ سرعت، {{ displayedConversations.length.toLocaleString('fa-IR') }} گفت‌وگو نمایش داده شده است؛
+            {{ hiddenConversationCount.toLocaleString('fa-IR') }} مورد دیگر با جست‌وجو قابل دسترسی است.
+          </p>
         </section>
 
         <ng-container *ngIf="activeTab === 'performance'">
@@ -518,6 +550,43 @@
                 </div>
               </section>
 
+              <section class="performance-panel rating-performance-panel">
+                <div class="section-title compact">
+                  <div>
+                    <span>رضایت کاربران</span>
+                    <h3>امتیاز مرحله پایانی</h3>
+                  </div>
+                </div>
+                <div class="empty" *ngIf="!ratedDiagnosticCases.length">
+                  هنوز امتیازی برای پرونده‌های پشتیبانی ثبت نشده است.
+                </div>
+                <ng-container *ngIf="ratedDiagnosticCases.length">
+                  <div class="rating-overview">
+                    <strong>{{ formatRating(averageSupportRating) }}</strong>
+                    <span> میانگین از {{ ratedDiagnosticCases.length.toLocaleString('fa-IR') }} امتیاز </span>
+                  </div>
+                  <div class="rating-distribution">
+                    <article *ngFor="let item of ratingDistribution">
+                      <span>{{ item.label }}</span>
+                      <b><i [style.width.%]="item.percent"></i></b>
+                      <em>{{ item.count.toLocaleString('fa-IR') }}</em>
+                    </article>
+                  </div>
+                  <div class="latest-ratings" *ngIf="latestRatedDiagnostics.length">
+                    <article *ngFor="let item of latestRatedDiagnostics">
+                      <div>
+                        <strong>{{ item.userFullName || item.username || 'کاربر' }}</strong>
+                        <span>{{
+                          item.ratingSubmittedAt || item.createdAt | date: 'yyyy/MM/dd - HH:mm'
+                        }}</span>
+                      </div>
+                      <b>{{ formatRating(item.rating || 0) }}</b>
+                      <small>{{ item.title }}</small>
+                    </article>
+                  </div>
+                </ng-container>
+              </section>
+
               <section class="performance-panel">
                 <div class="section-title compact">
                   <div>
@@ -536,6 +605,492 @@
                 </ul>
               </section>
             </div>
+          </section>
+        </ng-container>
+
+        <ng-container *ngIf="activeTab === 'tree'">
+          <section class="editor-card tree-manager-card">
+            <div class="section-title">
+              <div>
+                <span>مدیریت مسیرهای راهبری</span>
+                <h2>ورود و ویرایش درختواره پشتیبانی</h2>
+              </div>
+              <div class="tree-toolbar">
+                <button type="button" class="ghost" [disabled]="treeLoading" (click)="openTreeWorkspace('demo')">
+                  مشاهده و ویرایش
+                </button>
+                <button
+                  type="button"
+                  [disabled]="treeLoading || !troubleshootingTree"
+                  (click)="openTreeWorkspace('final')"
+                >
+                  ورود به حالت نهایی
+                </button>
+                <input
+                  #treeFileInput
+                  hidden
+                  type="file"
+                  [accept]="treeAcceptedFormats"
+                  (change)="importTroubleshootingTree($event)"
+                />
+              </div>
+            </div>
+
+            <div class="tree-import-strip">
+              <article>
+                <span>نودها</span>
+                <b>{{ treeNodeCount.toLocaleString('fa-IR') }}</b>
+              </article>
+              <article>
+                <span>ارتباط‌ها</span>
+                <b>{{ treeEdgeCount.toLocaleString('fa-IR') }}</b>
+              </article>
+              <article>
+                <span>نود شروع</span>
+                <b>{{ troubleshootingTree?.startNodeId || '-' }}</b>
+              </article>
+              <article>
+                <span>آخرین ورود</span>
+                <b>{{ treeImportSource || 'داده فعلی سامانه' }}</b>
+                <small *ngIf="treeImportFileName">{{ treeImportFileName }}</small>
+              </article>
+            </div>
+
+            <div class="tree-format-note">
+              <strong>فرمت‌های قابل ورود</strong>
+              <span>JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio VSDX</span>
+            </div>
+
+            <ul class="tree-warnings" *ngIf="treeImportWarnings.length">
+              <li *ngFor="let warning of treeImportWarnings">{{ warning }}</li>
+            </ul>
+
+            <div class="tree-preview-launch" *ngIf="!treeLoading">
+              <div class="tree-preview-hero">
+                <span>پیش‌نمایش درختواره</span>
+                <h3>{{ selectedTreeNode ? shortText(selectedTreeNode.text, 64) : 'درختواره‌ای برای نمایش انتخاب نشده است' }}</h3>
+                <p>
+                  عملیات ورود، دریافت، مشاهده کامل، ویرایش نودها، ساخت ارتباط و نهایی‌سازی داخل پنجره اختصاصی انجام می‌شود.
+                </p>
+                <div>
+                  <b>{{ treeWorkspaceModeLabel }}</b>
+                  <b>{{ treeDirty ? 'دارای تغییر ذخیره‌نشده' : 'همگام با نسخه ذخیره‌شده' }}</b>
+                  <b>پروژه {{ treeProjectLabel }}</b>
+                </div>
+              </div>
+              <div class="tree-preview-actions">
+                <button type="button" [disabled]="treeLoading" (click)="openTreeWorkspace('demo')">
+                  مشاهده و ویرایش درختواره
+                </button>
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="treeLoading || !troubleshootingTree"
+                  (click)="openTreeWorkspace('final')"
+                >
+                  بررسی نسخه نهایی
+                </button>
+              </div>
+            </div>
+
+            <div class="tree-preview-note" *ngIf="treePreviewTruncatedCount">
+              پیش‌نمایش برای جلوگیری از کندی، {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود را نشان می‌دهد؛
+              {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر در فهرست و ذخیره‌سازی باقی می‌ماند.
+            </div>
+          </section>
+
+          <section class="empty tree-loading-state" *ngIf="treeLoading">
+            در حال دریافت درختواره پشتیبانی...
+          </section>
+
+          <section class="tree-modal-backdrop" *ngIf="treeWorkspaceOpen" role="dialog" aria-modal="true" aria-label="ویرایش کامل درختواره">
+            <div class="tree-modal-shell">
+              <header class="tree-modal-header">
+                <div>
+                  <span>فضای کاری درختواره</span>
+                  <h2>مشاهده، ویرایش و نهایی‌سازی مسیرهای راهبری</h2>
+                  <small>
+                    پروژه {{ treeProjectLabel }} · {{ treeNodeCount.toLocaleString('fa-IR') }} نود ·
+                    {{ treeDirty ? 'تغییر ذخیره‌نشده وجود دارد' : 'نسخه فعلی ذخیره شده است' }}
+                  </small>
+                </div>
+                <div class="tree-modal-actions">
+                  <label class="tree-project-control">
+                    پروژه
+                    <input [(ngModel)]="treeProjectKey" placeholder="default" />
+                  </label>
+                  <button type="button" class="ghost" [disabled]="treeLoading" (click)="loadTreeProject()">
+                    بارگذاری پروژه
+                  </button>
+                  <div class="tree-mode-switch" role="group" aria-label="حالت ویرایش">
+                    <button
+                      type="button"
+                      [class.active]="treeWorkspaceMode === 'demo'"
+                      (click)="setTreeWorkspaceMode('demo')"
+                    >
+                      دمو
+                    </button>
+                    <button
+                      type="button"
+                      [class.active]="treeWorkspaceMode === 'final'"
+                      (click)="setTreeWorkspaceMode('final')"
+                    >
+                      نهایی
+                    </button>
+                  </div>
+                  <button type="button" class="ghost" (click)="createTroubleshootingTree()">ساخت از صفر</button>
+                  <button type="button" class="ghost" (click)="openTreeFilePicker()">ورود فایل</button>
+                  <label class="tree-download-control">
+                    <span>دریافت</span>
+                    <select [(ngModel)]="treeExportFormat">
+                      <option *ngFor="let format of treeExportFormats" [ngValue]="format.value">
+                        {{ format.label }}
+                      </option>
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    class="ghost"
+                    [disabled]="treeLoading || !troubleshootingTree"
+                    (click)="exportTroubleshootingTree()"
+                  >
+                    دریافت فایل
+                  </button>
+                  <button type="button" class="ghost" [disabled]="treeLoading || !troubleshootingTree" (click)="relayoutTroubleshootingTree()">
+                    چیدمان خودکار
+                  </button>
+                  <button type="button" [disabled]="treeSaving || treeLoading || !troubleshootingTree" (click)="saveTroubleshootingTree()">
+                    {{ treeSaving ? 'در حال ذخیره...' : 'ذخیره پیش‌نویس' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="final"
+                    [disabled]="treeSaving || treeLoading || !troubleshootingTree"
+                    (click)="finalizeTroubleshootingTree()"
+                  >
+                    نهایی‌سازی و اعمال
+                  </button>
+                  <button type="button" class="close" aria-label="بستن" (click)="requestCloseTreeWorkspace()">×</button>
+                </div>
+              </header>
+
+              <div class="tree-modal-body">
+                <section class="empty tree-loading-state" *ngIf="treeLoading">
+                  در حال دریافت درختواره پشتیبانی...
+                </section>
+
+                <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
+                  هنوز درختواره‌ای برای این پروژه آماده نیست. فایل وارد کنید یا یک درختواره جدید بسازید.
+                  <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره جدید</button>
+                </section>
+
+          <section class="tree-workbench" *ngIf="troubleshootingTree && !treeLoading">
+            <aside class="tree-side-panel tree-node-browser">
+              <div class="section-title compact">
+                <div>
+                  <span>فهرست نودها</span>
+                  <h3>انتخاب مسیر</h3>
+                </div>
+              </div>
+              <div class="search-field">
+                <input
+                  [ngModel]="treeSearchTerm"
+                  (ngModelChange)="onTreeSearchChanged($event)"
+                  placeholder="جست‌وجوی شناسه یا عنوان نود..."
+                />
+                <button type="button" *ngIf="treeSearchTerm" (click)="onTreeSearchChanged('')" aria-label="پاک‌کردن">
+                  ×
+                </button>
+              </div>
+              <div class="tree-pagination-summary">
+                <span>
+                  {{ treePageStart.toLocaleString('fa-IR') }} تا
+                  {{ treePageEnd.toLocaleString('fa-IR') }} از
+                  {{ filteredTreeNodes.length.toLocaleString('fa-IR') }} نود
+                </span>
+                <select [ngModel]="treePageSize" (ngModelChange)="setTreePageSize($event)">
+                  <option *ngFor="let size of treePageSizeOptions" [ngValue]="size">
+                    {{ size.toLocaleString('fa-IR') }} نود
+                  </option>
+                </select>
+              </div>
+              <div class="tree-node-list">
+                <button
+                  type="button"
+                  *ngFor="let node of paginatedTreeNodes"
+                  [class.active]="node.id === treeSelectedNodeId"
+                  (click)="focusTreeNode(node.id)"
+                >
+                  <b>{{ shortText(node.text, 54) }}</b>
+                  <span>{{ node.id }}</span>
+                </button>
+              </div>
+              <p class="tree-list-note" *ngIf="!paginatedTreeNodes.length">
+                نودی مطابق جست‌وجو پیدا نشد.
+              </p>
+              <div class="tree-pagination">
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="treeCurrentPage === 1"
+                  (click)="goToTreePage(treeCurrentPage - 1)"
+                >
+                  صفحه قبل
+                </button>
+                <span>
+                  صفحه {{ treeCurrentPage.toLocaleString('fa-IR') }} از
+                  {{ treeTotalPages.toLocaleString('fa-IR') }}
+                </span>
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="treeCurrentPage === treeTotalPages"
+                  (click)="goToTreePage(treeCurrentPage + 1)"
+                >
+                  صفحه بعد
+                </button>
+              </div>
+            </aside>
+
+            <section class="tree-canvas-card">
+              <div class="section-title compact">
+                <div>
+                  <span>حالت ویرایش</span>
+                  <h3>نمای کامل درختواره</h3>
+                </div>
+                <small>برای مدل‌سازی، ابزار را انتخاب کنید و مستقیم روی canvas کار کنید.</small>
+              </div>
+              <div class="tree-modeling-toolbar">
+                <div class="tree-tool-group" role="group" aria-label="ابزار مدل‌سازی">
+                  <button
+                    type="button"
+                    [class.active]="treeCanvasTool === 'select'"
+                    (click)="setTreeCanvasTool('select')"
+                  >
+                    انتخاب و جابه‌جایی
+                  </button>
+                  <button
+                    type="button"
+                    [class.active]="treeCanvasTool === 'add-node'"
+                    (click)="setTreeCanvasTool('add-node')"
+                  >
+                    افزودن نود
+                  </button>
+                  <button
+                    type="button"
+                    [class.active]="treeCanvasTool === 'connect'"
+                    (click)="setTreeCanvasTool('connect')"
+                  >
+                    اتصال نودها
+                  </button>
+                </div>
+                <input [(ngModel)]="treeDraftNodeText" placeholder="عنوان نود جدید..." />
+                <button type="button" class="ghost" (click)="useReadableTreeLayout()">نمای خوانا</button>
+                <button type="button" class="ghost" (click)="useFreeTreeLayout()">چیدمان آزاد</button>
+                <span *ngIf="treeCanvasTool === 'connect' && treeConnectionSourceId">
+                  مبدأ: {{ treeConnectionSourceId }}
+                </span>
+              </div>
+              <div class="tree-map-controls">
+                <button type="button" class="ghost" (click)="selectAdjacentTreeNode(-1)">نود قبلی</button>
+                <button type="button" class="ghost" (click)="centerSelectedTreeNode()" [disabled]="!selectedTreeNode">
+                  تمرکز روی نود
+                </button>
+                <button type="button" class="ghost" (click)="selectAdjacentTreeNode(1)">نود بعدی</button>
+                <span>{{ treeZoomPercent }}</span>
+                <button type="button" class="ghost" (click)="zoomTree(-0.1)">کوچک‌تر</button>
+                <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
+                <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
+              </div>
+              <div
+                class="tree-canvas"
+                #treeCanvas
+                [class.model-add]="treeCanvasTool === 'add-node'"
+                [class.model-connect]="treeCanvasTool === 'connect'"
+                [class.model-dragging]="isTreeDragging"
+              >
+                <svg
+                  [attr.viewBox]="treeViewBox"
+                  [style.width.px]="treeCanvasWidth * treeZoom"
+                  [style.height.px]="treeCanvasHeight * treeZoom"
+                  role="img"
+                  aria-label="نمای کامل درختواره"
+                  (click)="handleTreeCanvasClick($event)"
+                  (pointermove)="handleTreePointerMove($event)"
+                  (pointerup)="endTreeNodeDrag()"
+                  (pointerleave)="endTreeNodeDrag()"
+                >
+                  <defs>
+                    <marker id="tree-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                    </marker>
+                  </defs>
+                  <g class="tree-edge-layer">
+                    <g *ngFor="let edge of treePreviewEdges">
+                      <line
+                        [attr.x1]="edge.x1"
+                        [attr.y1]="edge.y1"
+                        [attr.x2]="edge.x2"
+                        [attr.y2]="edge.y2"
+                        marker-end="url(#tree-arrow)"
+                      ></line>
+                      <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
+                        {{ shortText(edge.label || '', 18) }}
+                      </text>
+                    </g>
+                  </g>
+                  <g class="tree-node-layer">
+                    <g
+                      class="tree-svg-node"
+                      *ngFor="let node of treePreviewNodes"
+                      [class.active]="node.isSelected"
+                      [class.start]="node.isStart"
+                      [class.connecting-source]="node.id === treeConnectionSourceId"
+                      [attr.transform]="'translate(' + node.cx + ' ' + node.cy + ')'"
+                      (click)="handleTreeNodeClick(node.id, $event)"
+                      (pointerdown)="startTreeNodeDrag(node.id, $event)"
+                    >
+                      <rect x="-112" y="-36" width="224" height="72" rx="16"></rect>
+                      <text y="-7">{{ shortText(node.text, 32) }}</text>
+                      <text y="18" class="node-meta">{{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}</text>
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </section>
+
+            <aside class="tree-side-panel tree-editor-panel" *ngIf="selectedTreeNode as node">
+              <div class="section-title compact">
+                <div>
+                  <span>ویرایش نود</span>
+                  <h3>{{ shortText(node.text, 32) }}</h3>
+                </div>
+              </div>
+
+              <label>
+                شناسه نود
+                <input dir="ltr" [value]="node.id" readonly />
+              </label>
+              <div class="tree-node-reader">
+                <strong>مطالعه نود انتخابی</strong>
+                <p>{{ node.text }}</p>
+                <div>
+                  <span>{{ treeIncomingEdges.length.toLocaleString('fa-IR') }} والد</span>
+                  <span>{{ treeOutgoingEdges.length.toLocaleString('fa-IR') }} مسیر خروجی</span>
+                  <span *ngIf="node.id === troubleshootingTree.startNodeId">نود شروع</span>
+                </div>
+              </div>
+              <label>
+                عنوان نود
+                <textarea
+                  [ngModel]="treeNodeTextDraft"
+                  (ngModelChange)="updateSelectedTreeNodeText($event)"
+                  rows="4"
+                ></textarea>
+              </label>
+              <div class="tree-position-grid">
+                <label>
+                  موقعیت افقی
+                  <input
+                    type="number"
+                    min="0"
+                    max="20000"
+                    [ngModel]="node.x ?? 0"
+                    (ngModelChange)="updateSelectedTreeNodePosition('x', $event)"
+                  />
+                </label>
+                <label>
+                  موقعیت عمودی
+                  <input
+                    type="number"
+                    min="0"
+                    max="20000"
+                    [ngModel]="node.y ?? 0"
+                    (ngModelChange)="updateSelectedTreeNodePosition('y', $event)"
+                  />
+                </label>
+              </div>
+
+              <div class="tree-editor-actions">
+                <button type="button" class="ghost" [disabled]="node.id === troubleshootingTree.startNodeId" (click)="setSelectedAsTreeStart()">
+                  تنظیم به عنوان شروع
+                </button>
+                <button type="button" class="danger" (click)="deleteSelectedTreeNode()">حذف نود</button>
+              </div>
+
+              <div class="tree-edit-box">
+                <strong>افزودن فرزند</strong>
+                <input [(ngModel)]="treeNewChildText" placeholder="عنوان مسیر یا پرسش جدید..." />
+                <button type="button" (click)="addTreeChild()">افزودن به نود انتخابی</button>
+              </div>
+
+              <div class="tree-edit-box">
+                <strong>اتصال به نود موجود</strong>
+                <select [(ngModel)]="treeLinkTargetId">
+                  <option value="">انتخاب نود مقصد</option>
+                  <option *ngFor="let target of availableTreeTargets" [value]="target.id">
+                    {{ shortText(target.text, 42) }}
+                  </option>
+                </select>
+                <input [(ngModel)]="treeLinkLabel" placeholder="برچسب ارتباط، مثل بله یا خیر" />
+                <button type="button" [disabled]="!treeLinkTargetId" (click)="addTreeLink()">ایجاد ارتباط</button>
+              </div>
+
+              <div class="tree-edge-editor">
+                <strong>والدهای این نود</strong>
+                <article *ngFor="let edge of treeIncomingEdges">
+                  <div>
+                    <b>{{ shortText(edge.targetText, 38) }}</b>
+                    <span dir="ltr">{{ edge.from }}</span>
+                  </div>
+                  <button type="button" class="ghost" (click)="focusTreeNode(edge.from)">رفتن به والد</button>
+                </article>
+                <p *ngIf="!treeIncomingEdges.length">این نود والد ثبت‌شده ندارد.</p>
+              </div>
+
+              <div class="tree-edge-editor">
+                <strong>مسیرهای خروجی</strong>
+                <article *ngFor="let edge of treeOutgoingEdges">
+                  <div>
+                    <b>{{ shortText(edge.targetText, 38) }}</b>
+                    <span dir="ltr">{{ edge.to }}</span>
+                  </div>
+                  <input
+                    [ngModel]="edge.label || ''"
+                    (ngModelChange)="updateTreeEdgeLabel(edge.index, $event)"
+                    placeholder="برچسب"
+                  />
+                  <button type="button" class="ghost" (click)="focusTreeNode(edge.to)">رفتن به مقصد</button>
+                  <button type="button" class="danger" (click)="deleteTreeEdge(edge.index)">حذف</button>
+                </article>
+                <p *ngIf="!treeOutgoingEdges.length">این نود هنوز مسیر خروجی ندارد.</p>
+              </div>
+            </aside>
+          </section>
+              </div>
+            </div>
+
+            <div class="tree-close-confirm" *ngIf="treeCloseConfirmOpen" role="alertdialog" aria-modal="true">
+              <div>
+                <span>تغییرات ذخیره نشده‌اند</span>
+                <h3>پیش از بستن، وضعیت درختواره را مشخص کنید</h3>
+                <p>
+                  اگر بدون ذخیره خارج شوید، تغییرات این جلسه به آخرین نسخه ذخیره‌شده برمی‌گردد.
+                </p>
+              </div>
+              <div>
+                <button type="button" class="ghost" (click)="continueTreeEditing()">ادامه ویرایش</button>
+                <button type="button" class="danger" (click)="discardTreeChangesAndClose()">خروج بدون ذخیره</button>
+                <button type="button" [disabled]="treeSaving || !troubleshootingTree" (click)="saveTreeAndClose()">
+                  {{ treeSaving ? 'در حال ذخیره...' : 'ذخیره و بستن' }}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
+            هنوز درختواره‌ای دریافت نشده است. یک فایل وارد کنید یا از همین بخش درختواره جدید بسازید.
+            <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره جدید</button>
           </section>
         </ng-container>
 
@@ -688,10 +1243,11 @@
                 <span>سرویس‌های تعریف‌شده</span>
                 <h2>بخش‌های قابل استفاده سامانه</h2>
               </div>
-              <small>{{ externalServices.length.toLocaleString('fa-IR') }} سرویس</small>
+              <small>{{ externalServicesLoaded ? externalServices.length.toLocaleString('fa-IR') : '-' }} سرویس</small>
             </div>
-            <div class="empty" *ngIf="!externalServices.length">هنوز سرویسی تعریف نشده است.</div>
-            <div class="service-grid" *ngIf="externalServices.length">
+            <div class="empty" *ngIf="externalServicesLoading">در حال دریافت سرویس‌ها...</div>
+            <div class="empty" *ngIf="externalServicesLoaded && !externalServices.length">هنوز سرویسی تعریف نشده است.</div>
+            <div class="service-grid" *ngIf="externalServicesLoaded && externalServices.length">
               <article
                 class="service-card"
                 *ngFor="let service of externalServices"
@@ -747,7 +1303,9 @@
             </small>
           </div>
 
-          <form class="service-config-form" (ngSubmit)="saveTicketServiceSettings()">
+          <div class="empty" *ngIf="ticketServiceSettingsLoading">در حال دریافت تنظیمات سرویس...</div>
+
+          <form class="service-config-form" *ngIf="!ticketServiceSettingsLoading" (ngSubmit)="saveTicketServiceSettings()">
             <label class="wide">
               آدرس سرویس
               <input
@@ -815,7 +1373,7 @@
             </label>
 
             <div class="actions wide">
-              <button type="submit" [disabled]="settingsSaving">
+              <button type="submit" [disabled]="settingsSaving || ticketServiceSettingsLoading">
                 {{ settingsSaving ? 'در حال ذخیره...' : 'ذخیره پیکربندی' }}
               </button>
             </div>

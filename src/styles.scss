@@ -40,8 +40,8 @@
   --crystal-edge: rgba(255, 255, 255, 0.96);
   --crystal-inner-edge: rgba(26, 99, 82, 0.12);
   --crystal-shine: rgba(255, 255, 255, 0.58);
-  --crystal-shadow: 0 24px 65px rgba(15, 61, 51, 0.14);
-  --crystal-blur: blur(28px) saturate(165%);
+  --crystal-shadow: 0 16px 38px rgba(15, 61, 51, 0.1);
+  --crystal-blur: blur(10px) saturate(120%);
   --page-bg: #e4eee9;
   --ambient-one: rgba(205, 145, 59, 0.2);
   --ambient-two: rgba(27, 133, 105, 0.2);
@@ -84,7 +84,7 @@
   --crystal-edge: rgba(159, 213, 197, 0.28);
   --crystal-inner-edge: rgba(222, 249, 241, 0.1);
   --crystal-shine: rgba(190, 229, 216, 0.11);
-  --crystal-shadow: 0 30px 92px rgba(0, 0, 0, 0.4);
+  --crystal-shadow: 0 20px 54px rgba(0, 0, 0, 0.32);
   --page-bg: #061a15;
   --ambient-one: rgba(28, 117, 171, 0.18);
   --ambient-two: rgba(28, 103, 77, 0.34);
@@ -354,20 +354,16 @@ body {
   min-height: 100vh;
   color: var(--color-body);
   background:
-    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 13%, transparent), transparent 25rem),
-    radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--color-link) 14%, transparent), transparent 28rem),
-    radial-gradient(circle at 16% 88%, color-mix(in srgb, var(--primary-700) 11%, transparent), transparent 30rem),
-    radial-gradient(circle at 92% 84%, color-mix(in srgb, var(--accent-100) 34%, transparent), transparent 24rem),
-    radial-gradient(circle at 50% 45%, var(--ambient-two), transparent 36rem),
+    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 10%, transparent), transparent 24rem),
+    radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--color-link) 10%, transparent), transparent 27rem),
+    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 34rem),
     var(--page-bg);
 }
 :root[data-theme='dark'] body {
   background:
-    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 14%, transparent), transparent 26rem),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-link) 15%, transparent), transparent 30rem),
-    radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--primary-700) 14%, transparent), transparent 28rem),
-    radial-gradient(circle at 93% 82%, color-mix(in srgb, var(--accent-100) 18%, transparent), transparent 24rem),
-    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 38rem),
+    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 10%, transparent), transparent 25rem),
+    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-link) 11%, transparent), transparent 28rem),
+    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 36rem),
     var(--page-bg);
 }
 body,
@@ -378,8 +374,7 @@ select {
   transition:
     color 0.28s ease,
     background-color 0.28s ease,
-    border-color 0.28s ease,
-    box-shadow 0.28s ease;
+    border-color 0.28s ease;
 }
 button,
 input,
@@ -391,7 +386,6 @@ button {
   cursor: pointer;
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease,
     background-color 0.2s ease,
     border-color 0.2s ease;
 }

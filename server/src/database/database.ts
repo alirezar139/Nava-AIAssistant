@@ -30,6 +30,8 @@ export interface ConversationRecord {
   question: string;
   answer: string;
   matchedFaqId: number | null;
+  rating?: number | null;
+  ratingSubmittedAt?: string | null;
   createdAt: string;
 }
 
@@ -55,6 +57,9 @@ export interface DiagnosticCaseRecord {
   externalTicketId?: string | null;
   externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
+  rating?: number | null;
+  ratingComment?: string;
+  ratingSubmittedAt?: string | null;
   createdAt: string;
   analyzedAt: string | null;
 }
@@ -96,6 +101,26 @@ export interface ExternalServiceRecord {
   updatedAt: string;
 }
 
+export interface TroubleshootingTreeNodeRecord {
+  id: string;
+  text: string;
+  x?: number | null;
+  y?: number | null;
+}
+
+export interface TroubleshootingTreeEdgeRecord {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface TroubleshootingTreeRecord {
+  startNodeId: string;
+  introNodeIds: string[];
+  nodes: TroubleshootingTreeNodeRecord[];
+  edges: TroubleshootingTreeEdgeRecord[];
+}
+
 export interface AppSettingsRecord {
   ticketService: TicketServiceSettingsRecord;
 }
@@ -106,6 +131,8 @@ interface DatabaseSchema {
   conversations: ConversationRecord[];
   diagnosticCases: DiagnosticCaseRecord[];
   externalServices: ExternalServiceRecord[];
+  troubleshootingTree: TroubleshootingTreeRecord | null;
+  troubleshootingTrees: Record<string, TroubleshootingTreeRecord>;
   settings: AppSettingsRecord;
 }
 
@@ -121,6 +148,8 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
   conversations: [],
   diagnosticCases: [],
   externalServices: [],
+  troubleshootingTree: null,
+  troubleshootingTrees: {},
   settings: {
     ticketService: {
       url: '',
@@ -136,6 +165,11 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
 
 database.data.diagnosticCases ??= [];
 database.data.externalServices ??= [];
+database.data.troubleshootingTree ??= null;
+database.data.troubleshootingTrees ??= {};
+if (database.data.troubleshootingTree && !database.data.troubleshootingTrees['default']) {
+  database.data.troubleshootingTrees['default'] = database.data.troubleshootingTree;
+}
 database.data.settings ??= {
   ticketService: {
     url: '',
@@ -163,6 +197,15 @@ database.data.settings.ticketService.serviceDeskId ??= '';
 database.data.settings.ticketService.requestTypeId ??= '';
 database.data.settings.ticketService.requestTypeMappings ??= [];
 database.data.settings.ticketService.updatedAt ??= null;
+database.data.conversations.forEach((item) => {
+  item.rating ??= null;
+  item.ratingSubmittedAt ??= null;
+});
+database.data.diagnosticCases.forEach((item) => {
+  item.rating ??= null;
+  item.ratingComment ??= '';
+  item.ratingSubmittedAt ??= null;
+});
 
 const now = new Date().toISOString();
 if (!database.data.users.some((user) => user.username === 'admin')) {

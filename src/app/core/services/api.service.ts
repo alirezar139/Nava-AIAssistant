@@ -3,9 +3,18 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DiagnosticCaseRecord, DiagnosticPayload } from '../models/diagnostic.models';
 import { ConversationRecord, FaqRecord } from '../models/faq.models';
+import { TroubleshootingTree } from '../models/troubleshooting-tree.models';
 import { environment } from '../../../environments/environment';
 
 export type FaqPayload = Pick<FaqRecord, 'question' | 'answer' | 'category' | 'keywords'>;
+export interface DiagnosticRatingPayload {
+  rating: number;
+  ratingComment?: string;
+}
+
+export interface ConversationRatingPayload {
+  rating: number;
+}
 
 export type ExternalServiceMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -100,8 +109,20 @@ export class ApiService {
     return this.http.get<ConversationRecord[]>(`${this.apiUrl}/conversations`);
   }
 
-  logConversation(question: string, answer: string, matchedFaqId: number | null): Observable<unknown> {
-    return this.http.post(`${this.apiUrl}/conversations`, { question, answer, matchedFaqId });
+  logConversation(
+    question: string,
+    answer: string,
+    matchedFaqId: number | null
+  ): Observable<ConversationRecord> {
+    return this.http.post<ConversationRecord>(`${this.apiUrl}/conversations`, {
+      question,
+      answer,
+      matchedFaqId
+    });
+  }
+
+  rateConversation(id: number, payload: ConversationRatingPayload): Observable<ConversationRecord> {
+    return this.http.patch<ConversationRecord>(`${this.apiUrl}/conversations/${id}/rating`, payload);
   }
 
   createDiagnosticCase(payload: DiagnosticPayload): Observable<DiagnosticCaseRecord> {
@@ -110,6 +131,10 @@ export class ApiService {
 
   analyzeDiagnosticCase(id: number): Observable<DiagnosticCaseRecord> {
     return this.http.post<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/analyze`, {});
+  }
+
+  rateDiagnosticCase(id: number, payload: DiagnosticRatingPayload): Observable<DiagnosticCaseRecord> {
+    return this.http.patch<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/rating`, payload);
   }
 
   getDiagnosticCases(): Observable<DiagnosticCaseRecord[]> {
@@ -122,6 +147,19 @@ export class ApiService {
 
   updateTicketServiceSettings(payload: TicketServiceSettingsPayload): Observable<TicketServiceSettings> {
     return this.http.put<TicketServiceSettings>(`${this.apiUrl}/settings/ticket-service`, payload);
+  }
+
+  getTroubleshootingTree(projectKey = 'default'): Observable<TroubleshootingTree> {
+    return this.http.get<TroubleshootingTree>(
+      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`
+    );
+  }
+
+  updateTroubleshootingTree(payload: TroubleshootingTree, projectKey = 'default'): Observable<TroubleshootingTree> {
+    return this.http.put<TroubleshootingTree>(
+      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`,
+      payload
+    );
   }
 
   getExternalServices(): Observable<ExternalServiceRecord[]> {

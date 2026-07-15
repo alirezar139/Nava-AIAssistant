@@ -103,7 +103,6 @@
             <small>اطلاعاتی که برای نتیجه دقیق‌تر لازم است</small>
           </div>
           <ul>
-            <li><span></span>نام سامانه یا ابزار</li>
             <li><span></span>متن خطا یا نشانه مشکل</li>
             <li><span></span>مراحل انجام‌شده قبل از خطا</li>
             <li><span></span>شناسه، سریال یا فایل مستند</li>
@@ -112,9 +111,7 @@
 
         <section class="panel-section hint">
           <strong>پرسش دقیق‌تر</strong>
-          <p>
-            نام سامانه، کاری که انجام می‌دادید و متن خطا را در یک پیام بنویسید تا مسیر بررسی کوتاه‌تر شود.
-          </p>
+          <p>کاری که انجام می‌دادید و متن خطا را در یک پیام بنویسید تا مسیر بررسی کوتاه‌تر شود.</p>
         </section>
 
         <section class="panel-section support-note">
@@ -245,30 +242,27 @@
                   </button>
                 </div>
                 <div
-                  class="feedback"
+                  class="feedback rating-feedback"
                   *ngIf="
                     message.role === 'assistant' &&
                     !message.treeOptions?.length &&
                     !message.quickReplies?.length
                   "
                 >
-                  <span>{{ message.feedback ? 'بازخورد شما ثبت شد' : 'این پاسخ مفید بود؟' }}</span>
-                  <button
-                    type="button"
-                    [class.active]="message.feedback === 'helpful'"
-                    (click)="rateMessage(message, 'helpful')"
-                    aria-label="پاسخ مفید بود"
-                  >
-                    مفید
-                  </button>
-                  <button
-                    type="button"
-                    [class.active]="message.feedback === 'unhelpful'"
-                    (click)="rateMessage(message, 'unhelpful')"
-                    aria-label="پاسخ مفید نبود"
-                  >
-                    نامفید
-                  </button>
+                  <span>{{ message.ratingMessage || 'به این پاسخ امتیاز دهید' }}</span>
+                  <div class="rating-stars compact-stars" role="group" aria-label="امتیازدهی به پاسخ">
+                    <button
+                      type="button"
+                      *ngFor="let score of ratingScores"
+                      [class.active]="isMessageRatingActive(message, score)"
+                      [disabled]="message.ratingSubmitting"
+                      [attr.aria-label]="score + ' از ۵'"
+                      [attr.aria-pressed]="isMessageRatingActive(message, score)"
+                      (click)="rateMessage(message, score)"
+                    >
+                      <span aria-hidden="true">{{ isMessageRatingActive(message, score) ? '★' : '☆' }}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -440,6 +434,38 @@
           </div>
         </section>
       </div>
+
+      <section
+        class="ticket-rating-card ticket-rating-bottom"
+        *ngIf="showCaseRating"
+        aria-label="امتیازدهی به روند پشتیبانی"
+      >
+        <div>
+          <span>ارزیابی پایانی</span>
+          <strong>به روند پیگیری این درخواست امتیاز دهید</strong>
+          <small>
+            {{
+              ratingMessage ||
+                (selectedCaseRating
+                  ? 'امتیاز ثبت شده است؛ در صورت نیاز می‌توانید آن را تغییر دهید.'
+                  : 'این امتیاز مستقیم در داشبورد ادمین ثبت می‌شود.')
+            }}
+          </small>
+        </div>
+        <div class="rating-stars" role="group" aria-label="انتخاب امتیاز">
+          <button
+            type="button"
+            *ngFor="let score of ratingScores"
+            [class.active]="isCaseRatingActive(score)"
+            [disabled]="ratingSubmitting"
+            [attr.aria-label]="score + ' از ۵'"
+            [attr.aria-pressed]="isCaseRatingActive(score)"
+            (click)="submitCaseRating(score)"
+          >
+            <span aria-hidden="true">{{ isCaseRatingActive(score) ? '★' : '☆' }}</span>
+          </button>
+        </div>
+      </section>
 
       <footer class="sahand-footer">
         <label class="create-another">

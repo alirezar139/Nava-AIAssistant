@@ -11,6 +11,7 @@ interface ThemePreferences {
   profileImage: string | null;
   highContrast: boolean;
   motion: boolean;
+  performanceVersion: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -105,7 +106,8 @@ export class ThemeService {
       paintColor: '#176454',
       profileImage: null,
       highContrast: false,
-      motion: true
+      motion: false,
+      performanceVersion: 1
     };
     try {
       const value = localStorage.getItem(this.storageKey);
@@ -117,7 +119,8 @@ export class ThemeService {
         paintColor: this.normalizeHexColor(stored.paintColor, defaults.paintColor),
         profileImage: typeof stored.profileImage === 'string' ? stored.profileImage : defaults.profileImage,
         highContrast: stored.highContrast ?? defaults.highContrast,
-        motion: stored.motion ?? defaults.motion
+        motion: stored.performanceVersion === defaults.performanceVersion ? (stored.motion ?? defaults.motion) : defaults.motion,
+        performanceVersion: defaults.performanceVersion
       };
     } catch {
       return defaults;

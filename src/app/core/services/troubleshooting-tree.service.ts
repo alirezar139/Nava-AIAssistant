@@ -15,8 +15,10 @@ export class TroubleshootingTreeService {
 
   constructor(private readonly http: HttpClient) {}
 
-  load(): Observable<TroubleshootingTree> {
-    return this.http.get<TroubleshootingTree>(`${this.apiUrl}/troubleshooting-tree`);
+  load(projectKey = 'default'): Observable<TroubleshootingTree> {
+    return this.http.get<TroubleshootingTree>(
+      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`
+    );
   }
 
   createIndex(tree: TroubleshootingTree): TroubleshootingTreeIndex {
