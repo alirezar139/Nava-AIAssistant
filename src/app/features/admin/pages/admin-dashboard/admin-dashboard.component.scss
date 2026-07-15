@@ -3579,7 +3579,7 @@ tbody tr.selected::after {
   position: fixed;
   inset: 0;
   z-index: 1200;
-  padding: 6px;
+  padding: 10px 12px max(22px, env(safe-area-inset-bottom));
   display: grid;
   place-items: center;
   background:
@@ -3599,9 +3599,13 @@ tbody tr.selected::after {
 }
 
 .tree-modal-shell {
-  width: calc(100vw - 12px);
-  height: calc(100vh - 12px);
-  min-height: 620px;
+  width: calc(100vw - 24px);
+  height: calc(100vh - 32px);
+  max-height: calc(100vh - 32px);
+  min-height: min(620px, calc(100vh - 32px));
+  height: calc(100dvh - 32px);
+  max-height: calc(100dvh - 32px);
+  min-height: min(620px, calc(100dvh - 32px));
   overflow: hidden;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
@@ -3734,30 +3738,35 @@ tbody tr.selected::after {
 
 .tree-modal-body {
   min-height: 0;
-  overflow: auto;
-  padding: 10px;
+  overflow: hidden;
+  padding: 8px;
 }
 
 .tree-modal-body .tree-workbench {
+  height: 100%;
   margin-top: 0;
-  grid-template-columns: minmax(210px, 240px) minmax(0, 1fr) minmax(224px, 260px);
-  grid-template-areas: 'browser canvas editor';
+  grid-template-columns: clamp(260px, 17vw, 330px) minmax(760px, 1fr) clamp(280px, 19vw, 360px);
+  grid-template-areas: 'editor canvas browser';
   align-items: stretch;
+  gap: 10px;
 }
 
 .tree-modal-body .tree-node-browser,
 .tree-modal-body .tree-editor-panel {
-  max-height: calc(100vh - 170px);
+  height: 100%;
+  max-height: none;
+  min-height: 0;
   overflow: auto;
 }
 
 .tree-modal-body .tree-canvas-card {
-  min-height: calc(100vh - 170px);
+  height: 100%;
+  min-height: 0;
 }
 
 .tree-modal-body .tree-designer-frame {
-  height: calc(100vh - 212px);
-  min-height: 760px;
+  height: auto;
+  min-height: 0;
 }
 
 .tree-close-confirm {
@@ -3828,10 +3837,10 @@ tbody tr.selected::after {
 }
 
 .tree-side-panel {
-  padding: 16px;
+  padding: 14px;
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 12px;
 }
 
 .tree-node-browser {
@@ -3842,6 +3851,8 @@ tbody tr.selected::after {
   padding: 10px;
   display: grid;
   gap: 10px;
+  max-height: 44vh;
+  overflow: auto;
   border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border));
   border-radius: 18px;
   background: color-mix(in srgb, var(--surface) 78%, transparent);
@@ -3988,6 +3999,14 @@ tbody tr.selected::after {
   border-radius: 3px;
 }
 
+.shape-preview.subprocess {
+  border-radius: 3px;
+  box-shadow:
+    inset 5px 0 0 color-mix(in srgb, #fff 64%, transparent),
+    inset -5px 0 0 color-mix(in srgb, #fff 64%, transparent),
+    0 8px 16px color-mix(in srgb, var(--color-link) 18%, transparent);
+}
+
 .shape-preview.decision {
   width: 26px;
   height: 26px;
@@ -4003,8 +4022,35 @@ tbody tr.selected::after {
   clip-path: polygon(16% 0, 100% 0, 84% 100%, 0 100%);
 }
 
+.shape-preview.database {
+  width: 30px;
+  height: 28px;
+  border-radius: 50% / 16%;
+  background:
+    radial-gradient(ellipse at 50% 18%, color-mix(in srgb, #fff 62%, transparent) 0 34%, transparent 36%),
+    linear-gradient(135deg, var(--color-link), color-mix(in srgb, var(--color-link) 64%, #fff));
+}
+
+.shape-preview.manual-input {
+  clip-path: polygon(0 24%, 100% 0, 100% 100%, 0 100%);
+}
+
 .shape-preview.document {
   clip-path: polygon(0 0, 100% 0, 100% 75%, 70% 100%, 35% 78%, 0 100%);
+}
+
+.shape-preview.connector {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.shape-preview.note {
+  clip-path: polygon(0 0, 76% 0, 100% 28%, 100% 100%, 0 100%);
+}
+
+.shape-preview.external-system {
+  clip-path: polygon(0 0, 88% 0, 100% 24%, 100% 100%, 12% 100%, 0 76%);
 }
 
 .shape-preview.erd-entity {
@@ -4133,12 +4179,12 @@ tbody tr.selected::after {
 
 .tree-editor-panel {
   grid-area: editor;
-  max-height: 820px;
+  max-height: none;
   overflow: auto;
 }
 
 .tree-node-list {
-  max-height: 390px;
+  max-height: 34vh;
   overflow: auto;
   display: grid;
   gap: 8px;
@@ -4147,8 +4193,8 @@ tbody tr.selected::after {
 
 .tree-node-list button {
   width: 100%;
-  min-height: 58px;
-  padding: 10px 12px;
+  min-height: 54px;
+  padding: 9px 11px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 5px 10px;
@@ -4242,12 +4288,12 @@ tbody tr.selected::after {
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: 0;
-  min-height: 820px;
+  min-height: 0;
 }
 
 .tree-canvas-card > .section-title {
   margin: 0;
-  padding: 18px 20px 12px;
+  padding: 14px 16px 10px;
   border-bottom: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border));
   background:
     radial-gradient(
@@ -4259,7 +4305,7 @@ tbody tr.selected::after {
 }
 
 .tree-map-controls {
-  padding: 12px 16px;
+  padding: 10px 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -4270,11 +4316,12 @@ tbody tr.selected::after {
 }
 
 .tree-modeling-toolbar {
-  padding: 12px 16px;
-  display: grid;
-  grid-template-columns: auto minmax(180px, 1fr) auto auto auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+  justify-content: flex-end;
   border-bottom: 1px solid color-mix(in srgb, var(--color-link) 10%, var(--border));
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--color-link) 9%, transparent), transparent 58%),
@@ -4282,8 +4329,10 @@ tbody tr.selected::after {
 }
 
 .tree-tool-group {
+  flex: 0 0 auto;
   padding: 4px;
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 4px;
   border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
   border-radius: 14px;
@@ -4291,8 +4340,8 @@ tbody tr.selected::after {
 }
 
 .tree-tool-group button {
-  min-height: 32px;
-  padding: 6px 11px;
+  min-height: 30px;
+  padding: 6px 9px;
   border-radius: 10px;
   color: var(--color-secondary);
   background: transparent;
@@ -4304,10 +4353,17 @@ tbody tr.selected::after {
   background: linear-gradient(135deg, var(--primary-700), var(--primary-950));
 }
 
+.tree-tool-group .danger {
+  color: #fff;
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 68%, #000));
+}
+
 .tree-modeling-toolbar input {
+  flex: 1 1 240px;
   width: 100%;
-  min-height: 40px;
-  padding: 9px 12px;
+  max-width: 360px;
+  min-height: 36px;
+  padding: 8px 12px;
   border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border));
   border-radius: 12px;
   color: var(--color-body);
@@ -4318,6 +4374,7 @@ tbody tr.selected::after {
 }
 
 .tree-modeling-toolbar span {
+  flex: 0 0 auto;
   min-height: 34px;
   padding: 7px 10px;
   display: inline-grid;
@@ -4331,12 +4388,12 @@ tbody tr.selected::after {
 }
 
 .tree-designer-frame {
-  min-height: 760px;
+  min-height: 0;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   grid-template-rows: 30px minmax(0, 1fr);
   overflow: hidden;
-  border-radius: 0 0 24px 24px;
+  border-radius: 0 0 22px 22px;
   background: #666967;
 }
 
@@ -4432,15 +4489,17 @@ tbody tr.selected::after {
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  padding: 34px;
+  padding: 22px 22px 42px;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
 }
 
 .tree-page-sheet {
   width: max-content;
-  min-width: min(1680px, 100%);
-  min-height: 900px;
-  margin: 0 auto;
-  padding: 24px;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 18px;
   background: #fff;
   box-shadow:
     0 18px 44px rgba(0, 0, 0, 0.24),
@@ -4460,9 +4519,9 @@ tbody tr.selected::after {
 }
 
 .tree-canvas {
-  height: 100%;
-  min-height: 852px;
-  overflow: auto;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
   border: 1px solid #d8dcda;
   border-radius: 0;
   background:
@@ -4474,12 +4533,14 @@ tbody tr.selected::after {
     auto;
 }
 
+.tree-canvas.hide-grid {
+  background: #fff;
+}
+
 .tree-canvas svg {
   min-width: 100%;
-  width: auto;
   max-width: none;
-  min-height: 620px;
-  height: auto;
+  min-height: 100%;
   display: block;
 }
 
@@ -4491,8 +4552,19 @@ tbody tr.selected::after {
   cursor: cell;
 }
 
+.tree-canvas.model-navigate svg,
+.tree-canvas.model-pan svg {
+  cursor: grab;
+}
+
+.tree-canvas.model-navigate .tree-svg-node {
+  cursor: move;
+}
+
 .tree-canvas.model-dragging,
-.tree-canvas.model-dragging svg {
+.tree-canvas.model-dragging svg,
+.tree-canvas.model-panning,
+.tree-canvas.model-panning svg {
   cursor: grabbing;
 }
 

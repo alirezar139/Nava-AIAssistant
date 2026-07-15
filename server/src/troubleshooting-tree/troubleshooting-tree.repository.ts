@@ -19,6 +19,12 @@ type TreeNodeShape =
   | 'terminator'
   | 'data'
   | 'document'
+  | 'subprocess'
+  | 'database'
+  | 'manual-input'
+  | 'connector'
+  | 'note'
+  | 'external-system'
   | 'erd-entity'
   | 'erd-weak-entity'
   | 'erd-relationship'
@@ -36,6 +42,12 @@ const treeNodeShapes = new Set<TreeNodeShape>([
   'terminator',
   'data',
   'document',
+  'subprocess',
+  'database',
+  'manual-input',
+  'connector',
+  'note',
+  'external-system',
   'erd-entity',
   'erd-weak-entity',
   'erd-relationship',

@@ -671,10 +671,10 @@
             </div>
 
             <div class="tree-format-note">
-              <strong>فرمت‌های قابل ورود</strong>
+              <strong>فرمت‌های قابل ورود و خروجی</strong>
               <span
-                >JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio
-                VSDX</span
+                >JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio VSDX؛
+                خروجی مستقیم هم شامل JSON، CSV، Mermaid و Visio VSDX است.</span
               >
             </div>
 
@@ -1029,6 +1029,13 @@
                         </button>
                         <button
                           type="button"
+                          [class.active]="treeCanvasTool === 'pan'"
+                          (click)="setTreeCanvasTool('pan')"
+                        >
+                          پیمایش
+                        </button>
+                        <button
+                          type="button"
                           [class.active]="treeCanvasTool === 'add-node'"
                           (click)="setTreeCanvasTool('add-node')"
                         >
@@ -1043,10 +1050,72 @@
                         </button>
                       </div>
                       <input [(ngModel)]="treeDraftNodeText" placeholder="عنوان نود جدید..." />
-                      <button type="button" class="ghost" (click)="useReadableTreeLayout()">
-                        نمای خوانا
-                      </button>
-                      <button type="button" class="ghost" (click)="useFreeTreeLayout()">چیدمان آزاد</button>
+                      <div
+                        class="tree-tool-group tree-node-action-group"
+                        role="group"
+                        aria-label="عملیات نود"
+                      >
+                        <button
+                          type="button"
+                          class="ghost"
+                          [disabled]="!selectedTreeNode"
+                          (click)="addDraftTreeChildToSelected()"
+                        >
+                          فرزند
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          [disabled]="!selectedTreeNode"
+                          (click)="duplicateSelectedTreeNode()"
+                        >
+                          کپی
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          [disabled]="
+                            !selectedTreeNode || selectedTreeNode.id === troubleshootingTree.startNodeId
+                          "
+                          (click)="setSelectedAsTreeStart()"
+                        >
+                          شروع
+                        </button>
+                        <button
+                          type="button"
+                          class="danger"
+                          [disabled]="!selectedTreeNode"
+                          (click)="deleteSelectedTreeNode()"
+                        >
+                          حذف
+                        </button>
+                      </div>
+                      <div
+                        class="tree-tool-group tree-view-action-group"
+                        role="group"
+                        aria-label="کنترل نمایش"
+                      >
+                        <button type="button" class="ghost" (click)="useReadableTreeLayout()">
+                          نمای خوانا
+                        </button>
+                        <button type="button" class="ghost" (click)="useFreeTreeLayout()">آزاد</button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          [class.active]="treeShowGrid"
+                          (click)="toggleTreeGrid()"
+                        >
+                          Grid
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          [class.active]="treeShowEdgeLabels"
+                          (click)="toggleTreeEdgeLabels()"
+                        >
+                          برچسب
+                        </button>
+                      </div>
                       <span *ngIf="treeCanvasTool === 'connect' && treeConnectionSourceId">
                         مبدأ: {{ treeConnectionSourceId }}
                       </span>
@@ -1068,6 +1137,7 @@
                       </button>
                       <span>{{ treeZoomPercent }}</span>
                       <button type="button" class="ghost" (click)="zoomTree(-0.1)">کوچک‌تر</button>
+                      <button type="button" class="ghost" (click)="fitTreeToViewport()">نمای کلی</button>
                       <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
                       <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
                     </div>
@@ -1088,7 +1158,11 @@
                             #treeCanvas
                             [class.model-add]="treeCanvasTool === 'add-node'"
                             [class.model-connect]="treeCanvasTool === 'connect'"
+                            [class.model-navigate]="treeCanvasTool === 'select'"
+                            [class.model-pan]="treeCanvasTool === 'pan'"
                             [class.model-dragging]="isTreeDragging"
+                            [class.model-panning]="isTreePanning"
+                            [class.hide-grid]="!treeShowGrid"
                           >
                             <svg
                               [attr.viewBox]="treeViewBox"
@@ -1097,6 +1171,7 @@
                               role="img"
                               aria-label="نمای کامل درختواره"
                               (click)="handleTreeCanvasClick($event)"
+                              (pointerdown)="startTreeCanvasPan($event)"
                               (pointermove)="handleTreePointerMove($event)"
                               (pointerup)="endTreeNodeDrag()"
                               (pointerleave)="endTreeNodeDrag()"
@@ -1123,7 +1198,11 @@
                                     [attr.y2]="edge.y2"
                                     marker-end="url(#tree-arrow)"
                                   ></line>
-                                  <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
+                                  <text
+                                    *ngIf="treeShowEdgeLabels && edge.label"
+                                    [attr.x]="edge.labelX"
+                                    [attr.y]="edge.labelY - 6"
+                                  >
                                     {{ shortText(edge.label || '', 18) }}
                                   </text>
                                 </g>
@@ -1162,6 +1241,66 @@
                                       *ngSwitchCase="'document'"
                                       class="node-shape"
                                       d="M -116 -40 H 116 V 28 C 70 50 20 22 -20 36 C -58 50 -84 42 -116 30 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'subprocess'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-118"
+                                        y="-42"
+                                        width="236"
+                                        height="84"
+                                        rx="12"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-92"
+                                        y1="-42"
+                                        x2="-92"
+                                        y2="42"
+                                      ></line>
+                                      <line class="node-shape-detail" x1="92" y1="-42" x2="92" y2="42"></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'database'">
+                                      <path
+                                        class="node-shape"
+                                        d="M -112 -34 C -112 -50 112 -50 112 -34 V 34 C 112 50 -112 50 -112 34 Z"
+                                      ></path>
+                                      <ellipse
+                                        class="node-shape-detail"
+                                        cx="0"
+                                        cy="-34"
+                                        rx="112"
+                                        ry="28"
+                                      ></ellipse>
+                                      <ellipse
+                                        class="node-shape-detail"
+                                        cx="0"
+                                        cy="34"
+                                        rx="112"
+                                        ry="28"
+                                      ></ellipse>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'manual-input'"
+                                      class="node-shape"
+                                      d="M -118 -28 L 118 -44 L 118 44 L -118 44 Z"
+                                    ></path>
+                                    <circle
+                                      *ngSwitchCase="'connector'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      r="46"
+                                    ></circle>
+                                    <path
+                                      *ngSwitchCase="'note'"
+                                      class="node-shape"
+                                      d="M -108 -46 H 82 L 108 -20 V 46 H -108 Z M 82 -46 V -20 H 108"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'external-system'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 102 L 122 -22 V 42 H -98 L -118 22 Z"
                                     ></path>
                                     <ng-container *ngSwitchCase="'erd-entity'">
                                       <rect

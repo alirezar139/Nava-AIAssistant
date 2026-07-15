@@ -46,9 +46,9 @@ type PendingConfirmation =
   | { type: 'import'; payload: FaqPayload[] };
 
 type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services';
-type TreeExportFormat = 'json' | 'csv' | 'mermaid';
+type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
-type TreeCanvasTool = 'select' | 'add-node' | 'connect';
+type TreeCanvasTool = 'select' | 'pan' | 'add-node' | 'connect';
 
 interface PerformanceMetric {
   label: string;
@@ -200,6 +200,8 @@ export class AdminDashboardComponent implements OnInit {
   treeActiveShapeGroup: TreeShapePaletteGroupId = 'flowchart';
   treeConnectionSourceId = '';
   treeManualLayout = false;
+  treeShowGrid = true;
+  treeShowEdgeLabels = true;
   treeLoaded = false;
   treeLoading = false;
   treeSaving = false;
@@ -215,12 +217,20 @@ export class AdminDashboardComponent implements OnInit {
   private treePreviewOriginX = 0;
   private treePreviewOriginY = 0;
   private treeDragState: { nodeId: string; offsetX: number; offsetY: number } | null = null;
+  private treePanState: {
+    pointerId: number;
+    x: number;
+    y: number;
+    scrollLeft: number;
+    scrollTop: number;
+  } | null = null;
   private treeLastDragPreviewAt = 0;
   readonly treePageSizeOptions = [25, 50, 100];
   readonly treeExportFormats: Array<{ value: TreeExportFormat; label: string }> = [
     { value: 'json', label: 'JSON کامل' },
     { value: 'csv', label: 'CSV قابل بررسی' },
-    { value: 'mermaid', label: 'Mermaid گراف' }
+    { value: 'mermaid', label: 'Mermaid گراف' },
+    { value: 'vsdx', label: 'Visio VSDX' }
   ];
   readonly treeStarterTemplates: TreeStarterTemplate[] = [
     {
@@ -368,10 +378,16 @@ export class AdminDashboardComponent implements OnInit {
       description: 'شکل‌های پایه برای مسیر راهبری و تصمیم',
       shapes: [
         { kind: 'process', label: 'Process', hint: 'مرحله یا اقدام' },
+        { kind: 'subprocess', label: 'Subprocess', hint: 'مسیر داخلی' },
         { kind: 'decision', label: 'Decision', hint: 'شرط یا پرسش' },
         { kind: 'terminator', label: 'Start / End', hint: 'شروع یا پایان' },
         { kind: 'data', label: 'Data', hint: 'ورودی یا خروجی' },
-        { kind: 'document', label: 'Document', hint: 'سند یا راهنما' }
+        { kind: 'database', label: 'Database', hint: 'پایگاه داده' },
+        { kind: 'manual-input', label: 'Input', hint: 'ورودی کاربر' },
+        { kind: 'document', label: 'Document', hint: 'سند یا راهنما' },
+        { kind: 'connector', label: 'Connector', hint: 'پیوند داخل صفحه' },
+        { kind: 'note', label: 'Note', hint: 'یادداشت' },
+        { kind: 'external-system', label: 'External', hint: 'سامانه خارجی' }
       ]
     },
     {
@@ -497,6 +513,10 @@ export class AdminDashboardComponent implements OnInit {
     return Boolean(this.treeDragState);
   }
 
+  get isTreePanning(): boolean {
+    return Boolean(this.treePanState);
+  }
+
   get activeTreeShapeGroup(): TreeShapePaletteGroup {
     return (
       this.treeShapePaletteGroups.find((group) => group.id === this.treeActiveShapeGroup) ??
@@ -583,30 +603,36 @@ export class AdminDashboardComponent implements OnInit {
 
     const previewNodes = [...previewNodeMap.values()];
     const previewNodeIds = new Set(previewNodes.map((node) => node.id));
+    const previewTree: TroubleshootingTree = {
+      startNodeId: this.troubleshootingTree?.startNodeId ?? previewNodes[0]!.id,
+      introNodeIds: this.troubleshootingTree?.introNodeIds ?? [],
+      nodes: previewNodes,
+      edges: this.treeEdges.filter((edge) => previewNodeIds.has(edge.from) && previewNodeIds.has(edge.to))
+    };
+    const hasUnusableCoordinates = this.hasUnusableTreeCoordinates(previewTree);
     const shouldUseEditorLayout =
+      hasUnusableCoordinates ||
       (this.treeWorkspaceOpen && !this.treeManualLayout) ||
       previewNodes.some((node) => typeof node.x !== 'number' || typeof node.y !== 'number');
     const fallback = shouldUseEditorLayout
-      ? this.buildTreeFallbackPositions({
-          startNodeId: this.troubleshootingTree?.startNodeId ?? previewNodes[0]!.id,
-          introNodeIds: this.troubleshootingTree?.introNodeIds ?? [],
-          nodes: previewNodes,
-          edges: this.treeEdges.filter((edge) => previewNodeIds.has(edge.from) && previewNodeIds.has(edge.to))
-        })
+      ? this.buildTreeFallbackPositions(previewTree)
       : new Map<string, { x: number; y: number }>();
-    const needsFallback = previewNodes.some(
-      (node) => typeof node.x !== 'number' || typeof node.y !== 'number'
-    );
+    const needsFallback = previewNodes.some((node) => !this.getTreeCoordinatePair(node));
     const outgoingCounts = new Map<string, number>();
     for (const edge of this.treeEdges) {
       outgoingCounts.set(edge.from, (outgoingCounts.get(edge.from) ?? 0) + 1);
     }
     const rawPositions = previewNodes.map((node, index) => {
       const fallbackPosition = fallback.get(node.id) ?? { x: index * 220, y: 0 };
+      const savedPosition = this.getTreeCoordinatePair(node);
       const baseX =
-        shouldUseEditorLayout || needsFallback ? fallbackPosition.x : (node.x ?? fallbackPosition.x);
+        shouldUseEditorLayout || needsFallback
+          ? fallbackPosition.x
+          : (savedPosition?.x ?? fallbackPosition.x);
       const baseY =
-        shouldUseEditorLayout || needsFallback ? fallbackPosition.y : (node.y ?? fallbackPosition.y);
+        shouldUseEditorLayout || needsFallback
+          ? fallbackPosition.y
+          : (savedPosition?.y ?? fallbackPosition.y);
       return {
         node,
         x: baseX,
@@ -1096,7 +1122,9 @@ export class AdminDashboardComponent implements OnInit {
       next: (tree) => {
         this.treeProjectKey = tree.projectKey ?? this.treeProjectLabel;
         this.applyTroubleshootingTree(tree, false);
-        this.treeSavedSnapshot = this.cloneTroubleshootingTree(tree);
+        this.treeSavedSnapshot = this.troubleshootingTree
+          ? this.cloneTroubleshootingTree(this.troubleshootingTree)
+          : null;
         this.treeDirty = false;
         this.treeLoaded = true;
         this.treeLoading = false;
@@ -1457,10 +1485,14 @@ export class AdminDashboardComponent implements OnInit {
 
     try {
       const result = await this.treeImport.parseFile(file);
-      this.treeWorkspaceMode = 'demo';
+      const importedTree: TroubleshootingTree = {
+        ...result.tree,
+        projectKey: this.treeProjectLabel
+      };
+      this.treeWorkspaceMode = 'final';
       this.treeCloseConfirmOpen = false;
       this.treeWorkspaceOpen = true;
-      this.applyTroubleshootingTree(result.tree, true);
+      this.applyTroubleshootingTree(importedTree, true);
       this.markTreeDirty();
       this.treeImportSource = result.sourceFormat;
       this.treeImportFileName = file.name;
@@ -1569,8 +1601,10 @@ export class AdminDashboardComponent implements OnInit {
       if (!canvas || !node) return;
 
       const scrollContainer = viewport ?? canvas;
-      const offsetLeft = viewport ? canvas.offsetLeft : 0;
-      const offsetTop = viewport ? canvas.offsetTop : 0;
+      const viewportRect = scrollContainer.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      const offsetLeft = canvasRect.left - viewportRect.left + scrollContainer.scrollLeft;
+      const offsetTop = canvasRect.top - viewportRect.top + scrollContainer.scrollTop;
       scrollContainer.scrollTo({
         left: Math.max(0, offsetLeft + node.cx * this.treeZoom - scrollContainer.clientWidth / 2),
         top: Math.max(0, offsetTop + node.cy * this.treeZoom - scrollContainer.clientHeight / 2),
@@ -1634,8 +1668,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   useReadableTreeLayout(): void {
+    if (this.troubleshootingTree) {
+      this.troubleshootingTree = this.layoutTree(this.troubleshootingTree);
+      this.markTreeDirty();
+    }
     this.treeManualLayout = false;
     this.rebuildTreePreview();
+    this.centerSelectedTreeNode();
     this.changeDetector.markForCheck();
   }
 
@@ -1644,6 +1683,52 @@ export class AdminDashboardComponent implements OnInit {
     this.markTreeDirty();
     this.rebuildTreePreview();
     this.changeDetector.markForCheck();
+  }
+
+  fitTreeToViewport(): void {
+    const viewport = this.treeViewport?.nativeElement;
+    if (!viewport || !this.treeCanvasWidth || !this.treeCanvasHeight) return;
+    const horizontalZoom = Math.max(0.35, (viewport.clientWidth - 80) / this.treeCanvasWidth);
+    const verticalZoom = Math.max(0.35, (viewport.clientHeight - 80) / this.treeCanvasHeight);
+    this.treeZoom = Math.min(1.35, Math.max(0.35, Number(Math.min(horizontalZoom, verticalZoom).toFixed(2))));
+    viewport.scrollTo({ left: 0, top: 0, behavior: this.theme.motionEnabled ? 'smooth' : 'auto' });
+    this.changeDetector.markForCheck();
+  }
+
+  toggleTreeGrid(): void {
+    this.treeShowGrid = !this.treeShowGrid;
+    this.changeDetector.markForCheck();
+  }
+
+  toggleTreeEdgeLabels(): void {
+    this.treeShowEdgeLabels = !this.treeShowEdgeLabels;
+    this.changeDetector.markForCheck();
+  }
+
+  addDraftTreeChildToSelected(): void {
+    const text = this.treeDraftNodeText.trim();
+    if (!text) return;
+    this.treeNewChildText = text;
+    this.addTreeChild();
+    this.treeDraftNodeText = 'نود جدید';
+  }
+
+  duplicateSelectedTreeNode(): void {
+    const tree = this.troubleshootingTree;
+    const source = this.selectedTreeNode;
+    if (!tree || !source) return;
+    this.ensureTreeManualLayout();
+    const id = this.nextTreeNodeId();
+    tree.nodes.push({
+      id,
+      text: `${source.text} - کپی`,
+      shape: source.shape ?? this.treeActiveShape,
+      x: (source.x ?? 80) + 280,
+      y: (source.y ?? 80) + 120
+    });
+    this.markTreeDirty();
+    this.selectTreeNode(id);
+    this.centerSelectedTreeNode();
   }
 
   handleTreeCanvasClick(event: MouseEvent): void {
@@ -1662,6 +1747,31 @@ export class AdminDashboardComponent implements OnInit {
     this.treeDraftNodeText = 'نود جدید';
     this.markTreeDirty();
     this.selectTreeNode(id);
+  }
+
+  startTreeCanvasPan(event: PointerEvent): void {
+    if (this.treeCanvasTool !== 'pan' && this.treeCanvasTool !== 'select') return;
+    if (event.pointerType === 'mouse' && event.button !== 0 && event.button !== 1) return;
+    if (
+      this.treeCanvasTool === 'select' &&
+      event.target instanceof Element &&
+      event.target.closest('.tree-svg-node')
+    ) {
+      return;
+    }
+    const viewport = this.treeViewport?.nativeElement;
+    if (!viewport) return;
+    event.preventDefault();
+    this.treePanState = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      scrollLeft: viewport.scrollLeft,
+      scrollTop: viewport.scrollTop
+    };
+    const target = event.currentTarget as Element | null;
+    target?.setPointerCapture?.(event.pointerId);
+    this.changeDetector.markForCheck();
   }
 
   handleTreeNodeClick(nodeId: string, event: MouseEvent): void {
@@ -1690,6 +1800,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   handleTreePointerMove(event: PointerEvent): void {
+    if (this.treePanState) {
+      const viewport = this.treeViewport?.nativeElement;
+      if (!viewport) return;
+      viewport.scrollLeft = this.treePanState.scrollLeft - (event.clientX - this.treePanState.x);
+      viewport.scrollTop = this.treePanState.scrollTop - (event.clientY - this.treePanState.y);
+      return;
+    }
     if (!this.treeDragState) return;
     const point = this.getTreeSvgPoint(event);
     const node = this.treeNodes.find((item) => item.id === this.treeDragState?.nodeId);
@@ -1705,6 +1822,10 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   endTreeNodeDrag(): void {
+    if (this.treePanState) {
+      this.treePanState = null;
+      this.changeDetector.markForCheck();
+    }
     if (this.treeDragState) {
       this.rebuildTreePreview();
       this.changeDetector.markForCheck();
@@ -1974,7 +2095,9 @@ export class AdminDashboardComponent implements OnInit {
       next: (tree) => {
         this.treeProjectKey = tree.projectKey ?? this.treeProjectLabel;
         this.applyTroubleshootingTree(tree, false);
-        this.treeSavedSnapshot = this.cloneTroubleshootingTree(tree);
+        this.treeSavedSnapshot = this.troubleshootingTree
+          ? this.cloneTroubleshootingTree(this.troubleshootingTree)
+          : null;
         this.treeDirty = false;
         this.treeSaving = false;
         this.notifications.success(
@@ -2063,7 +2186,16 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private applyTroubleshootingTree(tree: TroubleshootingTree, resetSelection: boolean): void {
-    const normalizedTree = this.hasUnusableTreeCoordinates(tree) ? this.layoutTree(tree) : tree;
+    const shouldNormalizeCompactCoordinates = this.hasCompactExternalTreeCoordinates(tree);
+    const shouldNormalizeLayout = !shouldNormalizeCompactCoordinates && this.hasUnusableTreeCoordinates(tree);
+    const normalizedTree = shouldNormalizeCompactCoordinates
+      ? this.scaleCompactExternalTreeCoordinates(tree)
+      : shouldNormalizeLayout
+        ? this.layoutTree(tree)
+        : tree;
+    if (shouldNormalizeLayout) {
+      this.treeManualLayout = false;
+    }
     this.troubleshootingTree = this.cloneTroubleshootingTree(normalizedTree);
 
     const currentSelectionExists = this.treeNodes.some((node) => node.id === this.treeSelectedNodeId);
@@ -2107,6 +2239,52 @@ export class AdminDashboardComponent implements OnInit {
     return '';
   }
 
+  private hasCompactExternalTreeCoordinates(tree: TroubleshootingTree): boolean {
+    if (tree.nodes.length < 30) return false;
+    const coordinates = tree.nodes
+      .map((node) => this.getTreeCoordinatePair(node))
+      .filter((point): point is { x: number; y: number } => Boolean(point));
+    if (coordinates.length !== tree.nodes.length) return false;
+
+    const xs = coordinates.map((point) => point.x);
+    const ys = coordinates.map((point) => point.y);
+    const maxAbsoluteCoordinate = Math.max(...xs.map(Math.abs), ...ys.map(Math.abs));
+    const horizontalSpread = Math.max(...xs) - Math.min(...xs);
+    const verticalSpread = Math.max(...ys) - Math.min(...ys);
+    return maxAbsoluteCoordinate < 1000 && horizontalSpread < 1000 && verticalSpread < 1000;
+  }
+
+  private scaleCompactExternalTreeCoordinates(tree: TroubleshootingTree): TroubleshootingTree {
+    const coordinates = tree.nodes
+      .map((node) => ({ node, point: this.getTreeCoordinatePair(node) }))
+      .filter((item): item is { node: TroubleshootingTreeNode; point: { x: number; y: number } } =>
+        Boolean(item.point)
+      );
+    if (coordinates.length !== tree.nodes.length) return this.layoutTree(tree);
+
+    const xs = coordinates.map((item) => item.point.x);
+    const ys = coordinates.map((item) => item.point.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const maxY = Math.max(...ys);
+    const horizontalSpread = Math.max(1, maxX - minX);
+    const verticalSpread = Math.max(1, maxY - Math.min(...ys));
+    const scale = Math.max(70, Math.min(130, 16000 / horizontalSpread, 18000 / verticalSpread));
+
+    return {
+      ...tree,
+      nodes: tree.nodes.map((node) => {
+        const point = this.getTreeCoordinatePair(node);
+        if (!point) return node;
+        return {
+          ...node,
+          x: Math.round(180 + (point.x - minX) * scale),
+          y: Math.round(130 + (maxY - point.y) * scale)
+        };
+      })
+    };
+  }
+
   private layoutTree(tree: TroubleshootingTree): TroubleshootingTree {
     const children = new Map<string, string[]>();
     for (const edge of tree.edges) {
@@ -2126,15 +2304,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private hasUnusableTreeCoordinates(tree: TroubleshootingTree): boolean {
+    const hasNonNumericCoordinates = tree.nodes.some(
+      (node) => typeof node.x !== 'number' || typeof node.y !== 'number'
+    );
     const coordinates = tree.nodes
-      .map((node) => ({ x: node.x, y: node.y }))
-      .filter(
-        (point): point is { x: number; y: number } =>
-          typeof point.x === 'number' &&
-          Number.isFinite(point.x) &&
-          typeof point.y === 'number' &&
-          Number.isFinite(point.y)
-      );
+      .map((node) => this.getTreeCoordinatePair(node))
+      .filter((point): point is { x: number; y: number } => Boolean(point));
+    if (coordinates.length !== tree.nodes.length || hasNonNumericCoordinates) return true;
     if (coordinates.length < 2) return false;
 
     const xs = coordinates.map((point) => point.x);
@@ -2143,6 +2319,24 @@ export class AdminDashboardComponent implements OnInit {
     const horizontalSpread = Math.max(...xs) - Math.min(...xs);
     const verticalSpread = Math.max(...ys) - Math.min(...ys);
     return maxAbsoluteCoordinate > 50000 || horizontalSpread > 30000 || verticalSpread > 30000;
+  }
+
+  private getTreeCoordinatePair(
+    node: Pick<TroubleshootingTreeNode, 'x' | 'y'>
+  ): { x: number; y: number } | null {
+    const x = this.getTreeCoordinateValue(node.x);
+    const y = this.getTreeCoordinateValue(node.y);
+    if (x === null || y === null) return null;
+    return { x, y };
+  }
+
+  private getTreeCoordinateValue(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (typeof value === 'string' && value.trim()) {
+      const numericValue = Number(value);
+      return Number.isFinite(numericValue) ? numericValue : null;
+    }
+    return null;
   }
 
   private treeShapeGroupFromTemplate(template: TreeStarterTemplate): TreeShapePaletteGroupId {
@@ -2157,46 +2351,103 @@ export class AdminDashboardComponent implements OnInit {
     const positions = new Map<string, { x: number; y: number }>();
     if (!tree?.nodes.length) return positions;
 
+    const nodeById = new Map(tree.nodes.map((node) => [node.id, node]));
     const children = new Map<string, string[]>();
+    const incomingCount = new Map<string, number>(tree.nodes.map((node) => [node.id, 0]));
     for (const edge of tree.edges) {
+      if (!nodeById.has(edge.from) || !nodeById.has(edge.to)) continue;
       const list = children.get(edge.from) ?? [];
       list.push(edge.to);
       children.set(edge.from, list);
+      incomingCount.set(edge.to, (incomingCount.get(edge.to) ?? 0) + 1);
     }
 
-    const visited = new Set<string>();
-    const rowsByLevel = new Map<number, number>();
-    const horizontalGap = this.treeWorkspaceOpen ? 430 : 240;
-    const verticalGap = this.treeWorkspaceOpen ? 190 : 104;
-    const startX = this.treeWorkspaceOpen ? 160 : 90;
-    const startY = this.treeWorkspaceOpen ? 130 : 70;
-    const queue: Array<{ id: string; depth: number }> = [
-      { id: tree.startNodeId || tree.nodes[0]!.id, depth: 0 }
-    ];
+    const compareNodeIds = (firstId: string, secondId: string): number => {
+      const first = nodeById.get(firstId);
+      const second = nodeById.get(secondId);
+      return (
+        (first?.text ?? '').localeCompare(second?.text ?? '', 'fa', { numeric: true }) ||
+        String(firstId).localeCompare(String(secondId), 'fa', { numeric: true })
+      );
+    };
 
-    while (queue.length) {
-      const item = queue.shift();
-      if (!item || visited.has(item.id)) continue;
-      visited.add(item.id);
-      const row = rowsByLevel.get(item.depth) ?? 0;
-      rowsByLevel.set(item.depth, row + 1);
-      positions.set(item.id, { x: startX + item.depth * horizontalGap, y: startY + row * verticalGap });
-      for (const childId of children.get(item.id) ?? []) {
-        queue.push({ id: childId, depth: item.depth + 1 });
+    for (const list of children.values()) {
+      list.sort(compareNodeIds);
+    }
+
+    const roots = [
+      tree.startNodeId || tree.nodes[0]!.id,
+      ...tree.nodes
+        .filter((node) => node.id !== tree.startNodeId && (incomingCount.get(node.id) ?? 0) === 0)
+        .map((node) => node.id)
+        .sort(compareNodeIds),
+      ...tree.nodes
+        .filter((node) => node.id !== tree.startNodeId && (incomingCount.get(node.id) ?? 0) > 0)
+        .map((node) => node.id)
+        .sort(compareNodeIds)
+    ].filter((id, index, list) => nodeById.has(id) && list.indexOf(id) === index);
+
+    const depthById = new Map<string, number>();
+    const queue: Array<{ id: string; depth: number }> = [];
+    const enqueue = (id: string, depth: number): void => {
+      const previousDepth = depthById.get(id);
+      if (previousDepth !== undefined && previousDepth <= depth) return;
+      depthById.set(id, depth);
+      queue.push({ id, depth });
+    };
+
+    const edgeDepthGuard = tree.nodes.length + 2;
+    const drainQueue = (): void => {
+      while (queue.length) {
+        const item = queue.shift();
+        if (!item || item.depth > edgeDepthGuard) continue;
+        for (const childId of children.get(item.id) ?? []) {
+          enqueue(childId, item.depth + 1);
+        }
       }
+    };
+
+    for (const rootId of roots) {
+      if (depthById.has(rootId)) continue;
+      enqueue(rootId, 0);
+      drainQueue();
     }
 
+    const levels = new Map<number, string[]>();
     for (const node of tree.nodes) {
-      if (positions.has(node.id)) continue;
-      const row = positions.size;
-      positions.set(node.id, { x: startX, y: startY + row * verticalGap });
+      const depth = depthById.get(node.id) ?? 0;
+      const list = levels.get(depth) ?? [];
+      list.push(node.id);
+      levels.set(depth, list);
+    }
+
+    const startX = this.treeWorkspaceOpen ? 180 : 90;
+    const startY = this.treeWorkspaceOpen ? 130 : 70;
+    const columnGap = this.treeWorkspaceOpen ? 330 : 250;
+    const levelGap = this.treeWorkspaceOpen ? 260 : 190;
+    const rowGap = this.treeWorkspaceOpen ? 150 : 108;
+    const maxRowsPerColumn = this.treeWorkspaceOpen ? 12 : 7;
+    let levelStartX = startX;
+
+    for (const depth of [...levels.keys()].sort((first, second) => first - second)) {
+      const ids = (levels.get(depth) ?? []).sort(compareNodeIds);
+      const columnCount = Math.max(1, Math.ceil(ids.length / maxRowsPerColumn));
+      ids.forEach((id, index) => {
+        const column = Math.floor(index / maxRowsPerColumn);
+        const row = index % maxRowsPerColumn;
+        positions.set(id, {
+          x: levelStartX + column * columnGap,
+          y: startY + row * rowGap
+        });
+      });
+      levelStartX += columnCount * columnGap + levelGap;
     }
 
     return positions;
   }
 
   private buildTreeExportFile(format: TreeExportFormat): {
-    content: string;
+    content: string | ArrayBuffer;
     extension: string;
     mimeType: string;
     label: string;
@@ -2220,6 +2471,15 @@ export class AdminDashboardComponent implements OnInit {
         extension: 'mmd',
         mimeType: 'text/plain;charset=utf-8',
         label: 'Mermaid'
+      };
+    }
+
+    if (format === 'vsdx') {
+      return {
+        content: this.exportTreeAsVisioVsdx(),
+        extension: 'vsdx',
+        mimeType: 'application/vnd.visio',
+        label: 'Visio VSDX'
       };
     }
 
@@ -2287,8 +2547,265 @@ export class AdminDashboardComponent implements OnInit {
     return `${lines.join('\n')}\n`;
   }
 
+  private exportTreeAsVisioVsdx(): ArrayBuffer {
+    const tree = this.troubleshootingTree;
+    if (!tree) return new ArrayBuffer(0);
+
+    const nodePositions = this.resolveExportTreePositions(tree);
+    const xs = [...nodePositions.values()].map((point) => point.x);
+    const ys = [...nodePositions.values()].map((point) => point.y);
+    const minX = xs.length ? Math.min(...xs) : 0;
+    const minY = ys.length ? Math.min(...ys) : 0;
+    const maxX = xs.length ? Math.max(...xs) : 900;
+    const maxY = ys.length ? Math.max(...ys) : 620;
+    const pageWidth = Math.max(11, (maxX - minX + 640) / 120);
+    const pageHeight = Math.max(8.5, (maxY - minY + 520) / 120);
+    const shapeIds = new Map(tree.nodes.map((node, index) => [node.id, index + 1]));
+    const nodePoints = new Map<string, { x: number; y: number }>();
+    const nodesXml = tree.nodes
+      .map((node) => {
+        const position = nodePositions.get(node.id) ?? { x: 0, y: 0 };
+        const x = (position.x - minX + 320) / 120;
+        const y = pageHeight - (position.y - minY + 260) / 120;
+        nodePoints.set(node.id, { x, y });
+        const width = Math.min(4.8, Math.max(2.4, 1.6 + this.cleanVisioText(node.text).length * 0.045));
+        const height = node.shape === 'connector' ? 0.9 : 0.72;
+        return this.buildVisioNodeShapeXml(shapeIds.get(node.id) ?? 0, node, x, y, width, height);
+      })
+      .join('');
+
+    const connectorsXml: string[] = [];
+    const connectsXml: string[] = [];
+    let connectorId = tree.nodes.length + 1;
+    for (const edge of tree.edges) {
+      const fromShapeId = shapeIds.get(edge.from);
+      const toShapeId = shapeIds.get(edge.to);
+      const from = nodePoints.get(edge.from);
+      const to = nodePoints.get(edge.to);
+      if (!fromShapeId || !toShapeId || !from || !to) continue;
+      connectorsXml.push(this.buildVisioConnectorShapeXml(connectorId, from, to, edge.label ?? ''));
+      connectsXml.push(
+        `<Connect FromSheet="${connectorId}" FromCell="BeginX" ToSheet="${fromShapeId}" ToCell="PinX"/>`,
+        `<Connect FromSheet="${connectorId}" FromCell="EndX" ToSheet="${toShapeId}" ToCell="PinX"/>`
+      );
+      connectorId += 1;
+    }
+
+    const now = new Date().toISOString();
+    const archive = this.createZipArchive([
+      ['[Content_Types].xml', this.buildVisioContentTypesXml()],
+      ['_rels/.rels', this.buildVisioRootRelationshipsXml()],
+      ['docProps/app.xml', this.buildVisioAppPropertiesXml()],
+      ['docProps/core.xml', this.buildVisioCorePropertiesXml(now)],
+      ['visio/document.xml', this.buildVisioDocumentXml()],
+      ['visio/_rels/document.xml.rels', this.buildVisioDocumentRelationshipsXml()],
+      ['visio/pages/pages.xml', this.buildVisioPagesXml(pageWidth, pageHeight)],
+      ['visio/pages/_rels/pages.xml.rels', this.buildVisioPagesRelationshipsXml()],
+      ['visio/windows.xml', this.buildVisioWindowsXml(pageWidth, pageHeight)],
+      [
+        'visio/pages/page1.xml',
+        `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PageContents xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve"><Shapes>${nodesXml}${connectorsXml.join('')}</Shapes><Connects>${connectsXml.join('')}</Connects></PageContents>`
+      ]
+    ]);
+    return archive.buffer.slice(archive.byteOffset, archive.byteOffset + archive.byteLength) as ArrayBuffer;
+  }
+
   private csvCell(value: string): string {
     return `"${value.replace(/"/g, '""')}"`;
+  }
+
+  private resolveExportTreePositions(tree: TroubleshootingTree): Map<string, { x: number; y: number }> {
+    const fallback = this.buildTreeFallbackPositions(tree);
+    return new Map(
+      tree.nodes.map((node) => {
+        const position =
+          typeof node.x === 'number' &&
+          Number.isFinite(node.x) &&
+          typeof node.y === 'number' &&
+          Number.isFinite(node.y)
+            ? { x: node.x, y: node.y }
+            : (fallback.get(node.id) ?? { x: 0, y: 0 });
+        return [node.id, position];
+      })
+    );
+  }
+
+  private buildVisioNodeShapeXml(
+    shapeId: number,
+    node: TroubleshootingTreeNode,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): string {
+    const text = this.escapeXml(this.cleanVisioText(node.text));
+    const fill = node.id === this.troubleshootingTree?.startNodeId ? '#e6f4ef' : '#f8fbfb';
+    const stroke = node.id === this.troubleshootingTree?.startNodeId ? '#168b6e' : '#2f6f7f';
+    return `<Shape ID="${shapeId}" NameU="${this.visioShapeName(node.shape)}" Name="${this.visioShapeName(node.shape)}" Type="Shape"><Cell N="PinX" V="${this.visioNumber(x)}"/><Cell N="PinY" V="${this.visioNumber(y)}"/><Cell N="Width" V="${this.visioNumber(width)}"/><Cell N="Height" V="${this.visioNumber(height)}"/><Cell N="LocPinX" V="${this.visioNumber(width / 2)}"/><Cell N="LocPinY" V="${this.visioNumber(height / 2)}"/><Cell N="LineColor" V="${stroke}"/><Cell N="FillForegnd" V="${fill}"/><Cell N="LineWeight" V="0.014"/><Cell N="Char.Size" V="0.12"/><Text>${text}</Text>${this.buildVisioGeometryXml(width, height, node.shape)}</Shape>`;
+  }
+
+  private buildVisioConnectorShapeXml(
+    shapeId: number,
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    label: string
+  ): string {
+    const width = Math.max(0.01, Math.abs(to.x - from.x));
+    return `<Shape ID="${shapeId}" NameU="Dynamic connector" Name="Dynamic connector" Type="Shape"><Cell N="BeginX" V="${this.visioNumber(from.x)}"/><Cell N="BeginY" V="${this.visioNumber(from.y)}"/><Cell N="EndX" V="${this.visioNumber(to.x)}"/><Cell N="EndY" V="${this.visioNumber(to.y)}"/><Cell N="Width" V="${this.visioNumber(width)}"/><Cell N="LineColor" V="#2f6f7f"/><Cell N="LineWeight" V="0.012"/><Cell N="EndArrow" V="4"/><Text>${this.escapeXml(this.cleanVisioText(label))}</Text><Section N="Geometry" IX="0"><Row T="MoveTo" IX="1"><Cell N="X" V="0"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="2"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="0"/></Row></Section></Shape>`;
+  }
+
+  private buildVisioGeometryXml(width: number, height: number, shape?: TreeNodeShape): string {
+    if (shape === 'decision' || shape === 'erd-relationship' || shape === 'erd-identifying-relationship') {
+      return `<Section N="Geometry" IX="0"><Row T="MoveTo" IX="1"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="2"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="${this.visioNumber(height / 2)}"/></Row><Row T="LineTo" IX="3"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="4"><Cell N="X" V="0"/><Cell N="Y" V="${this.visioNumber(height / 2)}"/></Row><Row T="LineTo" IX="5"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row></Section>`;
+    }
+
+    return `<Section N="Geometry" IX="0"><Row T="MoveTo" IX="1"><Cell N="X" V="0"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="2"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="3"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="4"><Cell N="X" V="0"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="5"><Cell N="X" V="0"/><Cell N="Y" V="0"/></Row></Section>`;
+  }
+
+  private visioShapeName(shape?: TreeNodeShape): string {
+    if (shape === 'decision') return 'Decision';
+    if (shape === 'terminator') return 'Start / End';
+    if (shape === 'document') return 'Document';
+    if (shape === 'database') return 'Database';
+    return 'Rectangle';
+  }
+
+  private buildVisioContentTypesXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/visio/document.xml" ContentType="application/vnd.ms-visio.drawing.main+xml"/><Override PartName="/visio/pages/pages.xml" ContentType="application/vnd.ms-visio.pages+xml"/><Override PartName="/visio/pages/page1.xml" ContentType="application/vnd.ms-visio.page+xml"/><Override PartName="/visio/windows.xml" ContentType="application/vnd.ms-visio.windows+xml"/></Types>`;
+  }
+
+  private buildVisioRootRelationshipsXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.microsoft.com/visio/2010/relationships/document" Target="visio/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>`;
+  }
+
+  private buildVisioDocumentRelationshipsXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.microsoft.com/visio/2010/relationships/pages" Target="pages/pages.xml"/><Relationship Id="rId2" Type="http://schemas.microsoft.com/visio/2010/relationships/windows" Target="windows.xml"/></Relationships>`;
+  }
+
+  private buildVisioPagesRelationshipsXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.microsoft.com/visio/2010/relationships/page" Target="page1.xml"/></Relationships>`;
+  }
+
+  private buildVisioDocumentXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><VisioDocument xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve"><DocumentSettings TopPage="0" DefaultTextStyle="0" DefaultLineStyle="0" DefaultFillStyle="0"><GlueSettings>9</GlueSettings><SnapSettings>295</SnapSettings><DynamicGridEnabled>1</DynamicGridEnabled></DocumentSettings><DocumentSheet LineStyle="0" FillStyle="0" TextStyle="0"/></VisioDocument>`;
+  }
+
+  private buildVisioPagesXml(width: number, height: number): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Pages xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve"><Page ID="0" NameU="Page-1" Name="Page-1" ViewScale="1" ViewCenterX="${this.visioNumber(width / 2)}" ViewCenterY="${this.visioNumber(height / 2)}"><PageSheet LineStyle="0" FillStyle="0" TextStyle="0"><Cell N="PageWidth" V="${this.visioNumber(width)}" U="IN"/><Cell N="PageHeight" V="${this.visioNumber(height)}" U="IN"/><Cell N="PageScale" V="1" U="IN"/><Cell N="DrawingScale" V="1" U="IN_F"/><Cell N="PrintPageOrientation" V="2"/></PageSheet><Rel r:id="rId1"/></Page></Pages>`;
+  }
+
+  private buildVisioWindowsXml(width: number, height: number): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Windows ClientWidth="1366" ClientHeight="768" xmlns="http://schemas.microsoft.com/office/visio/2012/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xml:space="preserve"><Window ID="0" WindowType="Drawing" WindowState="1073741824" ContainerType="Page" Page="0" ViewScale="1" ViewCenterX="${this.visioNumber(width / 2)}" ViewCenterY="${this.visioNumber(height / 2)}"><ShowRulers>1</ShowRulers><ShowGrid>1</ShowGrid><ShowConnectionPoints>1</ShowConnectionPoints></Window></Windows>`;
+  }
+
+  private buildVisioAppPropertiesXml(): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Microsoft Visio</Application><ScaleCrop>false</ScaleCrop><HeadingPairs><vt:vector size="2" baseType="variant"><vt:variant><vt:lpstr>Pages</vt:lpstr></vt:variant><vt:variant><vt:i4>1</vt:i4></vt:variant></vt:vector></HeadingPairs><TitlesOfParts><vt:vector size="1" baseType="lpstr"><vt:lpstr>Page-1</vt:lpstr></vt:vector></TitlesOfParts><Company></Company><LinksUpToDate>false</LinksUpToDate><SharedDoc>false</SharedDoc><HyperlinksChanged>false</HyperlinksChanged><AppVersion>16.0000</AppVersion></Properties>`;
+  }
+
+  private buildVisioCorePropertiesXml(timestamp: string): string {
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>Troubleshooting Tree</dc:title><dc:creator>Nava AI Assistant</dc:creator><cp:lastModifiedBy>Nava AI Assistant</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:modified><dc:language>fa-IR</dc:language></cp:coreProperties>`;
+  }
+
+  private createZipArchive(entries: Array<[string, string | Uint8Array]>): Uint8Array {
+    const encoder = new TextEncoder();
+    const files = entries.map(([name, content]) => ({
+      nameBytes: encoder.encode(name),
+      data: typeof content === 'string' ? encoder.encode(content) : content
+    }));
+    const fileRecords: Uint8Array[] = [];
+    const centralRecords: Uint8Array[] = [];
+    let offset = 0;
+
+    for (const file of files) {
+      const crc = this.crc32(file.data);
+      const local = this.zipLocalHeader(file.nameBytes, file.data, crc);
+      fileRecords.push(local, file.data);
+      centralRecords.push(this.zipCentralHeader(file.nameBytes, file.data, crc, offset));
+      offset += local.length + file.data.length;
+    }
+
+    const centralSize = centralRecords.reduce((sum, item) => sum + item.length, 0);
+    const end = this.zipEndRecord(files.length, centralSize, offset);
+    const totalSize = offset + centralSize + end.length;
+    const archive = new Uint8Array(totalSize);
+    let cursor = 0;
+    for (const part of [...fileRecords, ...centralRecords, end]) {
+      archive.set(part, cursor);
+      cursor += part.length;
+    }
+    return archive;
+  }
+
+  private zipLocalHeader(name: Uint8Array, data: Uint8Array, crc: number): Uint8Array {
+    const header = new Uint8Array(30 + name.length);
+    const view = new DataView(header.buffer);
+    view.setUint32(0, 0x04034b50, true);
+    view.setUint16(4, 20, true);
+    view.setUint16(6, 0x0800, true);
+    view.setUint16(8, 0, true);
+    view.setUint32(14, crc, true);
+    view.setUint32(18, data.length, true);
+    view.setUint32(22, data.length, true);
+    view.setUint16(26, name.length, true);
+    header.set(name, 30);
+    return header;
+  }
+
+  private zipCentralHeader(name: Uint8Array, data: Uint8Array, crc: number, offset: number): Uint8Array {
+    const header = new Uint8Array(46 + name.length);
+    const view = new DataView(header.buffer);
+    view.setUint32(0, 0x02014b50, true);
+    view.setUint16(4, 20, true);
+    view.setUint16(6, 20, true);
+    view.setUint16(8, 0x0800, true);
+    view.setUint16(10, 0, true);
+    view.setUint32(16, crc, true);
+    view.setUint32(20, data.length, true);
+    view.setUint32(24, data.length, true);
+    view.setUint16(28, name.length, true);
+    view.setUint32(42, offset, true);
+    header.set(name, 46);
+    return header;
+  }
+
+  private zipEndRecord(count: number, centralSize: number, centralOffset: number): Uint8Array {
+    const end = new Uint8Array(22);
+    const view = new DataView(end.buffer);
+    view.setUint32(0, 0x06054b50, true);
+    view.setUint16(8, count, true);
+    view.setUint16(10, count, true);
+    view.setUint32(12, centralSize, true);
+    view.setUint32(16, centralOffset, true);
+    return end;
+  }
+
+  private crc32(bytes: Uint8Array): number {
+    let crc = 0xffffffff;
+    for (const byte of bytes) {
+      crc ^= byte;
+      for (let bit = 0; bit < 8; bit += 1) {
+        crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
+      }
+    }
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+
+  private cleanVisioText(value: string): string {
+    return value.replace(/\s+/g, ' ').trim();
+  }
+
+  private escapeXml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  private visioNumber(value: number): string {
+    return Number.isFinite(value) ? Number(value.toFixed(4)).toString() : '0';
   }
 
   private mermaidId(value: string): string {

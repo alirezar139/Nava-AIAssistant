@@ -25,6 +25,13 @@ interface RawTreeRecord {
   y: number | null;
 }
 
+interface VisioNodeDraft {
+  shapeId: string;
+  node: TroubleshootingTreeNode;
+  pinX: number | null;
+  pinY: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TroubleshootingTreeImportService {
   private readonly idPrefix = 'tree';
@@ -211,43 +218,71 @@ export class TroubleshootingTreeImportService {
 
   private async parseVsdx(file: File): Promise<TroubleshootingTreeImportResult> {
     const entries = await this.unzipTextEntries(await file.arrayBuffer());
-    const pageEntries = [...entries.entries()].filter(([name]) => /visio\/pages\/page.+\.xml$/i.test(name));
+    const pageEntries = [...entries.entries()]
+      .filter(([name]) => /visio\/pages\/page\d+\.xml$/i.test(name))
+      .sort(([first], [second]) => first.localeCompare(second, 'en-US', { numeric: true }));
     const nodes = new Map<string, TroubleshootingTreeNode>();
     const edges: TroubleshootingTreeEdge[] = [];
     const warnings: string[] = [];
+    let pageYOffset = 0;
 
     for (const [pageName, pageXml] of pageEntries) {
       const document = new DOMParser().parseFromString(pageXml, 'text/xml');
       const pageKey = pageName.replace(/[^a-z0-9]+/gi, '_');
-      const shapeTexts = new Map<string, string>();
+      const connectorTexts = new Map<string, string>();
       const connectorIds = new Set<string>();
+      const connectGroups = new Map<string, Element[]>();
+
+      for (const connect of Array.from(document.getElementsByTagName('Connect'))) {
+        const fromSheet = connect.getAttribute('FromSheet') ?? '';
+        if (!fromSheet) continue;
+        connectorIds.add(fromSheet);
+        const group = connectGroups.get(fromSheet) ?? [];
+        group.push(connect);
+        connectGroups.set(fromSheet, group);
+      }
+
+      const pageNodeDrafts: VisioNodeDraft[] = [];
 
       for (const shape of Array.from(document.getElementsByTagName('Shape'))) {
         const shapeId = shape.getAttribute('ID') ?? '';
         if (!shapeId) continue;
         const textValue = this.cleanText(this.getFirstChildText(shape, 'Text'));
-        if (this.isVisioConnector(shape, textValue)) {
+        const isConnector = connectorIds.has(shapeId) || this.isVisioConnector(shape, textValue);
+        if (isConnector) {
           connectorIds.add(shapeId);
+          if (textValue) connectorTexts.set(shapeId, textValue);
+          continue;
         }
-        if (textValue) {
-          shapeTexts.set(shapeId, textValue);
-        }
-      }
-
-      for (const [shapeId, textValue] of shapeTexts.entries()) {
-        if (connectorIds.has(shapeId)) continue;
+        if (!textValue) continue;
         const nodeId = `${pageKey}_${shapeId}`;
-        nodes.set(nodeId, { id: nodeId, text: textValue });
+        const position = this.getVisioShapePosition(shape);
+        pageNodeDrafts.push({
+          shapeId,
+          node: {
+            id: nodeId,
+            text: textValue,
+            shape: this.inferVisioNodeShape(shape)
+          },
+          pinX: position.x,
+          pinY: position.y
+        });
       }
 
-      const connectGroups = new Map<string, Element[]>();
-      for (const connect of Array.from(document.getElementsByTagName('Connect'))) {
-        const fromSheet = connect.getAttribute('FromSheet') ?? '';
-        if (!fromSheet) continue;
-        const group = connectGroups.get(fromSheet) ?? [];
-        group.push(connect);
-        connectGroups.set(fromSheet, group);
+      const positionedDrafts = pageNodeDrafts.filter(
+        (draft): draft is VisioNodeDraft & { pinX: number; pinY: number } =>
+          typeof draft.pinX === 'number' && typeof draft.pinY === 'number'
+      );
+      const maxY = positionedDrafts.length ? Math.max(...positionedDrafts.map((draft) => draft.pinY)) : 0;
+      const minY = positionedDrafts.length ? Math.min(...positionedDrafts.map((draft) => draft.pinY)) : 0;
+      for (const draft of pageNodeDrafts) {
+        nodes.set(draft.node.id, {
+          ...draft.node,
+          x: typeof draft.pinX === 'number' ? Math.round(draft.pinX * 120) : null,
+          y: typeof draft.pinY === 'number' ? Math.round(pageYOffset + (maxY - draft.pinY) * 120) : null
+        });
       }
+      pageYOffset += positionedDrafts.length ? Math.max(900, (maxY - minY) * 120 + 360) : 1100;
 
       for (const [connectorId, connects] of connectGroups.entries()) {
         const begin = connects.find((connect) => (connect.getAttribute('FromCell') ?? '').includes('Begin'));
@@ -259,7 +294,7 @@ export class TroubleshootingTreeImportService {
         const from = `${pageKey}_${fromSheet}`;
         const to = `${pageKey}_${toSheet}`;
         if (!nodes.has(from) || !nodes.has(to) || from === to) continue;
-        const label = shapeTexts.get(connectorId) ?? '';
+        const label = connectorTexts.get(connectorId) ?? '';
         edges.push({ from, to, ...(label ? { label } : {}) });
       }
     }
@@ -395,18 +430,28 @@ export class TroubleshootingTreeImportService {
       nodes.set(id, {
         id,
         text,
+        shape: node.shape,
         x: typeof node.x === 'number' && Number.isFinite(node.x) ? node.x : null,
         y: typeof node.y === 'number' && Number.isFinite(node.y) ? node.y : null
       });
     }
 
+    const seenEdges = new Set<string>();
     const edges = tree.edges
       .map((edge) => ({
         from: String(edge.from).trim(),
         to: String(edge.to).trim(),
         label: this.cleanText(edge.label ?? '')
       }))
-      .filter((edge) => edge.from && edge.to && nodes.has(edge.from) && nodes.has(edge.to))
+      .filter((edge) => {
+        if (!edge.from || !edge.to || !nodes.has(edge.from) || !nodes.has(edge.to) || edge.from === edge.to) {
+          return false;
+        }
+        const key = `${edge.from}\u0000${edge.to}\u0000${edge.label}`;
+        if (seenEdges.has(key)) return false;
+        seenEdges.add(key);
+        return true;
+      })
       .map((edge) => ({ from: edge.from, to: edge.to, ...(edge.label ? { label: edge.label } : {}) }));
 
     const finalNodes = [...nodes.values()];
@@ -567,8 +612,41 @@ export class TroubleshootingTreeImportService {
     );
     return (
       name.includes('connector') ||
+      name.includes('arrow') ||
+      name.includes('dynamic connector') ||
       (!textValue && Array.from(shape.children).some((item) => item.tagName === 'XForm1D'))
     );
+  }
+
+  private getVisioShapePosition(shape: Element): { x: number | null; y: number | null } {
+    return {
+      x: this.numberOrNull(this.getVisioCellValue(shape, 'PinX')),
+      y: this.numberOrNull(this.getVisioCellValue(shape, 'PinY'))
+    };
+  }
+
+  private getVisioCellValue(shape: Element, name: string): string {
+    const cell = Array.from(shape.children).find(
+      (child) => child.tagName === 'Cell' && child.getAttribute('N') === name
+    );
+    if (cell) return cell.getAttribute('V') ?? '';
+
+    const xform = Array.from(shape.children).find((child) => child.tagName === 'XForm');
+    const xformCell = xform
+      ? Array.from(xform.children).find((child) => child.tagName === name || child.getAttribute('N') === name)
+      : null;
+    return xformCell?.textContent ?? xformCell?.getAttribute('V') ?? '';
+  }
+
+  private inferVisioNodeShape(shape: Element): TroubleshootingTreeNode['shape'] {
+    const name = `${shape.getAttribute('NameU') ?? ''} ${shape.getAttribute('Name') ?? ''}`.toLocaleLowerCase(
+      'en-US'
+    );
+    if (name.includes('diamond') || name.includes('decision')) return 'decision';
+    if (name.includes('database') || name.includes('cylinder')) return 'database';
+    if (name.includes('document')) return 'document';
+    if (name.includes('ellipse') || name.includes('start') || name.includes('end')) return 'terminator';
+    return 'process';
   }
 
   private getFirstChildText(element: Element, tagName: string): string {
