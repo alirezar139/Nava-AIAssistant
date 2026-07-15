@@ -105,6 +105,23 @@ interface TreeShapePaletteItem {
   hint: string;
 }
 
+type TreeShapePaletteGroupId = 'flowchart' | 'crows-foot' | 'chen' | 'uml' | 'idef1x';
+
+interface TreeShapePaletteGroup {
+  id: TreeShapePaletteGroupId;
+  label: string;
+  description: string;
+  shapes: TreeShapePaletteItem[];
+}
+
+interface TreeStarterTemplate {
+  id: string;
+  title: string;
+  standard: string;
+  summary: string;
+  tree: TroubleshootingTree;
+}
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -116,6 +133,7 @@ interface TreeShapePaletteItem {
 export class AdminDashboardComponent implements OnInit {
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('treeFileInput') treeFileInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('treeViewport') treeViewport?: ElementRef<HTMLDivElement>;
   @ViewChild('treeCanvas') treeCanvas?: ElementRef<HTMLDivElement>;
 
   faqs: FaqRecord[] = [];
@@ -175,9 +193,11 @@ export class AdminDashboardComponent implements OnInit {
   treeWorkspaceMode: TreeWorkspaceMode = 'demo';
   treeDirty = false;
   treeProjectKey = 'default';
+  treeTemplateId = 'support-flow';
   treeCanvasTool: TreeCanvasTool = 'select';
   treeDraftNodeText = 'نود جدید';
   treeActiveShape: TreeNodeShape = 'process';
+  treeActiveShapeGroup: TreeShapePaletteGroupId = 'flowchart';
   treeConnectionSourceId = '';
   treeManualLayout = false;
   treeLoaded = false;
@@ -202,12 +222,204 @@ export class AdminDashboardComponent implements OnInit {
     { value: 'csv', label: 'CSV قابل بررسی' },
     { value: 'mermaid', label: 'Mermaid گراف' }
   ];
-  readonly treeShapePalette: TreeShapePaletteItem[] = [
-    { kind: 'process', label: 'Process', hint: 'مرحله یا اقدام' },
-    { kind: 'decision', label: 'Decision', hint: 'شرط یا پرسش' },
-    { kind: 'terminator', label: 'Start / End', hint: 'شروع یا پایان' },
-    { kind: 'data', label: 'Data', hint: 'ورودی یا خروجی' },
-    { kind: 'document', label: 'Document', hint: 'سند یا راهنما' }
+  readonly treeStarterTemplates: TreeStarterTemplate[] = [
+    {
+      id: 'support-flow',
+      title: 'مسیر پشتیبانی کاربر',
+      standard: 'Basic Flow',
+      summary: 'شروع، انتخاب حوزه مشکل، جست‌وجوی FAQ، ثبت تیکت و امتیازدهی',
+      tree: {
+        startNodeId: 'start',
+        introNodeIds: ['start'],
+        nodes: [
+          { id: 'start', text: 'شروع گفتگو و دریافت مسئله کاربر', shape: 'terminator', x: 120, y: 120 },
+          { id: 'classify', text: 'انتخاب حوزه بروز مشکل', shape: 'decision', x: 520, y: 120 },
+          { id: 'faq', text: 'جست‌وجوی پاسخ در FAQ', shape: 'process', x: 920, y: 120 },
+          { id: 'answered', text: 'آیا پاسخ برای کاربر کافی بود؟', shape: 'decision', x: 1320, y: 120 },
+          { id: 'ticket', text: 'ثبت تیکت در سامانه پشتیبانی', shape: 'document', x: 1320, y: 360 },
+          { id: 'rating', text: 'ثبت امتیاز و بازخورد کاربر', shape: 'data', x: 920, y: 360 },
+          { id: 'end', text: 'پایان مسیر یا ارجاع به پشتیبان', shape: 'terminator', x: 520, y: 360 }
+        ],
+        edges: [
+          { from: 'start', to: 'classify' },
+          { from: 'classify', to: 'faq', label: 'حوزه انتخاب شد' },
+          { from: 'faq', to: 'answered' },
+          { from: 'answered', to: 'rating', label: 'بله' },
+          { from: 'answered', to: 'ticket', label: 'خیر' },
+          { from: 'ticket', to: 'end' },
+          { from: 'rating', to: 'end' }
+        ]
+      }
+    },
+    {
+      id: 'crows-foot-service',
+      title: 'داده‌های سرویس و تیکت',
+      standard: "Crow's Foot",
+      summary: 'ساختار پایه موجودیت‌های کاربر، درخواست، FAQ، تیکت و ارزیابی',
+      tree: {
+        startNodeId: 'user',
+        introNodeIds: ['user'],
+        nodes: [
+          { id: 'user', text: 'User', shape: 'erd-table', x: 140, y: 140 },
+          { id: 'conversation', text: 'Conversation', shape: 'erd-table', x: 520, y: 140 },
+          { id: 'faq', text: 'FAQ', shape: 'erd-lookup-table', x: 900, y: 140 },
+          { id: 'ticket', text: 'Ticket', shape: 'erd-table', x: 520, y: 390 },
+          { id: 'rating', text: 'Rating', shape: 'erd-associative-entity', x: 900, y: 390 },
+          { id: 'service', text: 'External Service', shape: 'erd-lookup-table', x: 1280, y: 390 }
+        ],
+        edges: [
+          { from: 'user', to: 'conversation', label: '1..N' },
+          { from: 'conversation', to: 'faq', label: '0..1' },
+          { from: 'conversation', to: 'ticket', label: '0..1' },
+          { from: 'ticket', to: 'service', label: 'N..1' },
+          { from: 'conversation', to: 'rating', label: '0..1' },
+          { from: 'faq', to: 'rating', label: '0..N' }
+        ]
+      }
+    },
+    {
+      id: 'chen-knowledge',
+      title: 'مدل مفهومی دانش',
+      standard: 'Chen ERD',
+      summary: 'موجودیت‌ها، رابطه‌ها و ویژگی‌های اصلی پایگاه دانش',
+      tree: {
+        startNodeId: 'entity_user',
+        introNodeIds: ['entity_user'],
+        nodes: [
+          { id: 'entity_user', text: 'کاربر', shape: 'erd-entity', x: 140, y: 160 },
+          { id: 'rel_asks', text: 'می‌پرسد', shape: 'erd-relationship', x: 520, y: 160 },
+          { id: 'entity_question', text: 'پرسش', shape: 'erd-entity', x: 900, y: 160 },
+          { id: 'attr_category', text: 'دسته‌بندی', shape: 'erd-attribute', x: 900, y: 360 },
+          {
+            id: 'rel_matches',
+            text: 'مطابقت دارد با',
+            shape: 'erd-identifying-relationship',
+            x: 1280,
+            y: 160
+          },
+          { id: 'entity_answer', text: 'پاسخ FAQ', shape: 'erd-weak-entity', x: 1660, y: 160 },
+          { id: 'attr_keywords', text: 'کلمات کلیدی', shape: 'erd-multivalued-attribute', x: 1660, y: 360 }
+        ],
+        edges: [
+          { from: 'entity_user', to: 'rel_asks' },
+          { from: 'rel_asks', to: 'entity_question' },
+          { from: 'entity_question', to: 'attr_category' },
+          { from: 'entity_question', to: 'rel_matches' },
+          { from: 'rel_matches', to: 'entity_answer' },
+          { from: 'entity_answer', to: 'attr_keywords' }
+        ]
+      }
+    },
+    {
+      id: 'uml-data-model',
+      title: 'مدل داده نزدیک به پیاده‌سازی',
+      standard: 'UML Data',
+      summary: 'کلاس‌های داده برای Conversation، FAQ، Ticket و Feedback',
+      tree: {
+        startNodeId: 'conversation',
+        introNodeIds: ['conversation'],
+        nodes: [
+          { id: 'conversation', text: 'ConversationRecord', shape: 'erd-table', x: 160, y: 140 },
+          { id: 'faq_record', text: 'FaqRecord', shape: 'erd-table', x: 560, y: 140 },
+          { id: 'ticket_payload', text: 'TicketPayload', shape: 'data', x: 960, y: 140 },
+          { id: 'service_config', text: 'ExternalServiceConfig', shape: 'erd-lookup-table', x: 1360, y: 140 },
+          { id: 'feedback', text: 'FeedbackRecord', shape: 'erd-associative-entity', x: 560, y: 400 },
+          { id: 'status_enum', text: 'StatusEnum', shape: 'erd-lookup-table', x: 960, y: 400 }
+        ],
+        edges: [
+          { from: 'conversation', to: 'faq_record', label: 'matchedFaqId' },
+          { from: 'conversation', to: 'ticket_payload', label: 'creates' },
+          { from: 'ticket_payload', to: 'service_config', label: 'uses' },
+          { from: 'conversation', to: 'feedback', label: 'ratedBy' },
+          { from: 'ticket_payload', to: 'status_enum', label: 'status' }
+        ]
+      }
+    },
+    {
+      id: 'idef1x-project',
+      title: 'مدل پروژه و مسیرهای وابسته',
+      standard: 'IDEF1X',
+      summary: 'موجودیت مستقل پروژه، مسیرهای وابسته، نودها و زیرنوع‌ها',
+      tree: {
+        startNodeId: 'project',
+        introNodeIds: ['project'],
+        nodes: [
+          { id: 'project', text: 'Project', shape: 'erd-table', x: 150, y: 150 },
+          { id: 'tree_version', text: 'Tree Version', shape: 'erd-weak-entity', x: 560, y: 150 },
+          { id: 'node', text: 'Node', shape: 'erd-weak-entity', x: 970, y: 150 },
+          { id: 'edge', text: 'Edge', shape: 'erd-associative-entity', x: 970, y: 410 },
+          { id: 'node_type', text: 'Node Type', shape: 'erd-subtype', x: 1380, y: 150 },
+          { id: 'service_mapping', text: 'Service Mapping', shape: 'erd-lookup-table', x: 1380, y: 410 }
+        ],
+        edges: [
+          { from: 'project', to: 'tree_version', label: 'identifies' },
+          { from: 'tree_version', to: 'node', label: 'contains' },
+          { from: 'node', to: 'edge', label: 'from/to' },
+          { from: 'node', to: 'node_type', label: 'subtype' },
+          { from: 'edge', to: 'service_mapping', label: 'optional' }
+        ]
+      }
+    }
+  ];
+  readonly treeShapePaletteGroups: TreeShapePaletteGroup[] = [
+    {
+      id: 'flowchart',
+      label: 'Basic Flow',
+      description: 'شکل‌های پایه برای مسیر راهبری و تصمیم',
+      shapes: [
+        { kind: 'process', label: 'Process', hint: 'مرحله یا اقدام' },
+        { kind: 'decision', label: 'Decision', hint: 'شرط یا پرسش' },
+        { kind: 'terminator', label: 'Start / End', hint: 'شروع یا پایان' },
+        { kind: 'data', label: 'Data', hint: 'ورودی یا خروجی' },
+        { kind: 'document', label: 'Document', hint: 'سند یا راهنما' }
+      ]
+    },
+    {
+      id: 'crows-foot',
+      label: "Crow's Foot",
+      description: 'مدل پرکاربرد موجودیت، جدول و رابطه‌های چندگانگی',
+      shapes: [
+        { kind: 'erd-table', label: 'Entity Table', hint: 'موجودیت / جدول' },
+        { kind: 'erd-lookup-table', label: 'Lookup Table', hint: 'جدول مرجع' },
+        { kind: 'erd-associative-entity', label: 'Associative', hint: 'موجودیت واسط' },
+        { kind: 'erd-relationship', label: 'Relationship', hint: 'رابطه' }
+      ]
+    },
+    {
+      id: 'chen',
+      label: 'Chen ERD',
+      description: 'مدل مفهومی با موجودیت، رابطه و ویژگی',
+      shapes: [
+        { kind: 'erd-entity', label: 'Entity', hint: 'موجودیت' },
+        { kind: 'erd-weak-entity', label: 'Weak Entity', hint: 'موجودیت وابسته' },
+        { kind: 'erd-relationship', label: 'Relationship', hint: 'رابطه' },
+        { kind: 'erd-identifying-relationship', label: 'Identifying', hint: 'رابطه شناسایی' },
+        { kind: 'erd-attribute', label: 'Attribute', hint: 'ویژگی' },
+        { kind: 'erd-multivalued-attribute', label: 'Multi Attribute', hint: 'ویژگی چندمقداری' }
+      ]
+    },
+    {
+      id: 'uml',
+      label: 'UML Data',
+      description: 'نمای کلاس/جدول برای طراحی نزدیک به پیاده‌سازی',
+      shapes: [
+        { kind: 'erd-table', label: 'Class Table', hint: 'کلاس داده' },
+        { kind: 'erd-lookup-table', label: 'Enum / Lookup', hint: 'مقادیر ثابت' },
+        { kind: 'erd-associative-entity', label: 'Join Class', hint: 'کلاس واسط' },
+        { kind: 'data', label: 'Payload', hint: 'داده ورودی/خروجی' }
+      ]
+    },
+    {
+      id: 'idef1x',
+      label: 'IDEF1X',
+      description: 'مدل دقیق برای رابطه‌های شناسایی و وابستگی',
+      shapes: [
+        { kind: 'erd-table', label: 'Independent', hint: 'موجودیت مستقل' },
+        { kind: 'erd-weak-entity', label: 'Dependent', hint: 'موجودیت وابسته' },
+        { kind: 'erd-associative-entity', label: 'Associative', hint: 'موجودیت پیوندی' },
+        { kind: 'erd-subtype', label: 'Subtype', hint: 'زیرنوع / دسته‌بندی' }
+      ]
+    }
   ];
   readonly treeRulerTicks = Array.from({ length: 15 }, (_, index) => index - 1);
   readonly treeVerticalRulerTicks = Array.from({ length: 10 }, (_, index) => index);
@@ -285,6 +497,32 @@ export class AdminDashboardComponent implements OnInit {
     return Boolean(this.treeDragState);
   }
 
+  get activeTreeShapeGroup(): TreeShapePaletteGroup {
+    return (
+      this.treeShapePaletteGroups.find((group) => group.id === this.treeActiveShapeGroup) ??
+      this.treeShapePaletteGroups[0]
+    );
+  }
+
+  get visibleTreeShapePalette(): TreeShapePaletteItem[] {
+    return this.activeTreeShapeGroup.shapes;
+  }
+
+  get selectedTreeStarterTemplate(): TreeStarterTemplate {
+    return (
+      this.treeStarterTemplates.find((template) => template.id === this.treeTemplateId) ??
+      this.treeStarterTemplates[0]
+    );
+  }
+
+  trackTreeStarterTemplate(_index: number, template: TreeStarterTemplate): string {
+    return template.id;
+  }
+
+  trackTreeShapeGroup(_index: number, group: TreeShapePaletteGroup): TreeShapePaletteGroupId {
+    return group.id;
+  }
+
   trackTreeShape(_index: number, shape: TreeShapePaletteItem): TreeNodeShape {
     return shape.kind;
   }
@@ -347,9 +585,7 @@ export class AdminDashboardComponent implements OnInit {
     const previewNodeIds = new Set(previewNodes.map((node) => node.id));
     const shouldUseEditorLayout =
       (this.treeWorkspaceOpen && !this.treeManualLayout) ||
-      previewNodes.some(
-        (node) => typeof node.x !== 'number' || typeof node.y !== 'number'
-      );
+      previewNodes.some((node) => typeof node.x !== 'number' || typeof node.y !== 'number');
     const fallback = shouldUseEditorLayout
       ? this.buildTreeFallbackPositions({
           startNodeId: this.troubleshootingTree?.startNodeId ?? previewNodes[0]!.id,
@@ -367,8 +603,10 @@ export class AdminDashboardComponent implements OnInit {
     }
     const rawPositions = previewNodes.map((node, index) => {
       const fallbackPosition = fallback.get(node.id) ?? { x: index * 220, y: 0 };
-      const baseX = shouldUseEditorLayout || needsFallback ? fallbackPosition.x : node.x ?? fallbackPosition.x;
-      const baseY = shouldUseEditorLayout || needsFallback ? fallbackPosition.y : node.y ?? fallbackPosition.y;
+      const baseX =
+        shouldUseEditorLayout || needsFallback ? fallbackPosition.x : (node.x ?? fallbackPosition.x);
+      const baseY =
+        shouldUseEditorLayout || needsFallback ? fallbackPosition.y : (node.y ?? fallbackPosition.y);
       return {
         node,
         x: baseX,
@@ -381,8 +619,12 @@ export class AdminDashboardComponent implements OnInit {
     const maxY = Math.max(...rawPositions.map((item) => item.y));
     const paddingX = this.treeWorkspaceOpen ? 220 : 140;
     const paddingY = this.treeWorkspaceOpen ? 150 : 110;
-    this.treeCanvasWidth = Math.ceil(Math.max(this.treeWorkspaceOpen ? 1240 : 900, maxX - minX + paddingX * 2));
-    this.treeCanvasHeight = Math.ceil(Math.max(this.treeWorkspaceOpen ? 820 : 620, maxY - minY + paddingY * 2));
+    this.treeCanvasWidth = Math.ceil(
+      Math.max(this.treeWorkspaceOpen ? 1520 : 900, maxX - minX + paddingX * 2)
+    );
+    this.treeCanvasHeight = Math.ceil(
+      Math.max(this.treeWorkspaceOpen ? 900 : 620, maxY - minY + paddingY * 2)
+    );
     this.treeViewBox = `0 0 ${this.treeCanvasWidth} ${this.treeCanvasHeight}`;
     this.treePreviewOriginX = minX - paddingX;
     this.treePreviewOriginY = minY - paddingY;
@@ -1150,6 +1392,7 @@ export class AdminDashboardComponent implements OnInit {
 
   createTroubleshootingTree(): void {
     const id = 'node_1';
+    this.treeManualLayout = true;
     this.applyTroubleshootingTree(
       {
         startNodeId: id,
@@ -1160,11 +1403,33 @@ export class AdminDashboardComponent implements OnInit {
       true
     );
     this.markTreeDirty();
-    this.treeImportSource = 'ساخت دستی';
+    this.treeImportSource = 'فایل خام جدید';
     this.treeImportFileName = '';
     this.treeImportWarnings = [];
-    this.notifications.success('درختواره جدید آماده شد', 'اکنون می‌توانید نودها و ارتباط‌ها را مرحله‌به‌مرحله بسازید.');
+    this.treeActiveShapeGroup = 'flowchart';
+    this.notifications.success(
+      'فایل خام آماده شد',
+      'اکنون می‌توانید نودها و ارتباط‌ها را از صفر بسازید و ذخیره کنید.'
+    );
     this.changeDetector.markForCheck();
+  }
+
+  createTroubleshootingTreeFromTemplate(): void {
+    const template = this.selectedTreeStarterTemplate;
+    if (!template) return;
+    this.treeManualLayout = true;
+    this.applyTroubleshootingTree(template.tree, true);
+    this.markTreeDirty();
+    this.treeImportSource = `قالب آماده: ${template.title}`;
+    this.treeImportFileName = template.standard;
+    this.treeImportWarnings = [];
+    this.treeActiveShapeGroup = this.treeShapeGroupFromTemplate(template);
+    this.notifications.success(
+      'قالب آماده شد',
+      'قالب انتخابی وارد محیط ویرایش شد؛ پس از تغییرات می‌توانید آن را ذخیره کنید.'
+    );
+    this.changeDetector.markForCheck();
+    this.centerSelectedTreeNode();
   }
 
   exportTroubleshootingTree(): void {
@@ -1192,6 +1457,9 @@ export class AdminDashboardComponent implements OnInit {
 
     try {
       const result = await this.treeImport.parseFile(file);
+      this.treeWorkspaceMode = 'demo';
+      this.treeCloseConfirmOpen = false;
+      this.treeWorkspaceOpen = true;
       this.applyTroubleshootingTree(result.tree, true);
       this.markTreeDirty();
       this.treeImportSource = result.sourceFormat;
@@ -1202,6 +1470,7 @@ export class AdminDashboardComponent implements OnInit {
         `${result.tree.nodes.length.toLocaleString('fa-IR')} نود و ${result.tree.edges.length.toLocaleString('fa-IR')} ارتباط از ${result.sourceFormat} خوانده شد.`
       );
       this.changeDetector.markForCheck();
+      this.centerSelectedTreeNode();
     } catch (error) {
       this.notifications.error(
         'خواندن درختواره ممکن نیست',
@@ -1294,12 +1563,17 @@ export class AdminDashboardComponent implements OnInit {
   centerSelectedTreeNode(): void {
     if (!this.treeSelectedNodeId) return;
     setTimeout(() => {
+      const viewport = this.treeViewport?.nativeElement;
       const canvas = this.treeCanvas?.nativeElement;
       const node = this.treePreviewNodes.find((item) => item.id === this.treeSelectedNodeId);
       if (!canvas || !node) return;
-      canvas.scrollTo({
-        left: Math.max(0, node.cx * this.treeZoom - canvas.clientWidth / 2),
-        top: Math.max(0, node.cy * this.treeZoom - canvas.clientHeight / 2),
+
+      const scrollContainer = viewport ?? canvas;
+      const offsetLeft = viewport ? canvas.offsetLeft : 0;
+      const offsetTop = viewport ? canvas.offsetTop : 0;
+      scrollContainer.scrollTo({
+        left: Math.max(0, offsetLeft + node.cx * this.treeZoom - scrollContainer.clientWidth / 2),
+        top: Math.max(0, offsetTop + node.cy * this.treeZoom - scrollContainer.clientHeight / 2),
         behavior: this.theme.motionEnabled ? 'smooth' : 'auto'
       });
     }, 0);
@@ -1327,6 +1601,16 @@ export class AdminDashboardComponent implements OnInit {
     this.treeCanvasTool = tool;
     if (tool !== 'connect') {
       this.treeConnectionSourceId = '';
+    }
+    this.changeDetector.markForCheck();
+  }
+
+  setTreeShapeGroup(groupId: TreeShapePaletteGroupId): void {
+    const group = this.treeShapePaletteGroups.find((item) => item.id === groupId);
+    if (!group) return;
+    this.treeActiveShapeGroup = groupId;
+    if (!group.shapes.some((shape) => shape.kind === this.treeActiveShape)) {
+      this.treeActiveShape = group.shapes[0]?.kind ?? 'process';
     }
     this.changeDetector.markForCheck();
   }
@@ -1432,7 +1716,7 @@ export class AdminDashboardComponent implements OnInit {
   onTreeSearchChanged(value: string): void {
     this.treeSearchTerm = value;
     this.treeCurrentPage = 1;
-    this.focusFirstNodeOnCurrentTreePage();
+    this.focusBestTreeSearchMatch();
   }
 
   setTreePageSize(size: number): void {
@@ -1452,6 +1736,27 @@ export class AdminDashboardComponent implements OnInit {
     if (firstNode) {
       this.focusTreeNode(firstNode.id);
     }
+  }
+
+  private focusBestTreeSearchMatch(): void {
+    this.changeDetector.markForCheck();
+    const query = this.treeSearchTerm.trim().toLocaleLowerCase('fa');
+    const exactMatch = query
+      ? this.filteredTreeNodes.find((node) => String(node.id).toLocaleLowerCase('fa') === query)
+      : null;
+    const node = exactMatch ?? this.paginatedTreeNodes[0];
+    if (node) {
+      this.focusTreeNode(node.id);
+    }
+  }
+
+  handleTreeListNodeClick(nodeId: string): void {
+    if (this.treeCanvasTool === 'connect') {
+      this.connectTreeNodeFromCanvas(nodeId);
+      this.centerSelectedTreeNode();
+      return;
+    }
+    this.focusTreeNode(nodeId);
   }
 
   private syncTreePageWithSelection(): void {
@@ -1475,7 +1780,9 @@ export class AdminDashboardComponent implements OnInit {
       this.treeConnectionSourceId = '';
       return;
     }
-    const exists = this.treeEdges.some((edge) => edge.from === this.treeConnectionSourceId && edge.to === nodeId);
+    const exists = this.treeEdges.some(
+      (edge) => edge.from === this.treeConnectionSourceId && edge.to === nodeId
+    );
     if (exists) {
       this.notifications.info('ارتباط تکراری است', 'این دو نود از قبل به هم متصل هستند.');
       this.treeConnectionSourceId = '';
@@ -1565,7 +1872,10 @@ export class AdminDashboardComponent implements OnInit {
     const parent = this.selectedTreeNode ?? this.treeNodes[0];
     const text = this.treeNewChildText.trim();
     if (!parent || !text) {
-      this.notifications.error('عنوان فرزند کامل نیست', 'ابتدا نود والد را انتخاب کنید و عنوان فرزند را بنویسید.');
+      this.notifications.error(
+        'عنوان فرزند کامل نیست',
+        'ابتدا نود والد را انتخاب کنید و عنوان فرزند را بنویسید.'
+      );
       return;
     }
 
@@ -1753,7 +2063,8 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private applyTroubleshootingTree(tree: TroubleshootingTree, resetSelection: boolean): void {
-    this.troubleshootingTree = this.cloneTroubleshootingTree(tree);
+    const normalizedTree = this.hasUnusableTreeCoordinates(tree) ? this.layoutTree(tree) : tree;
+    this.troubleshootingTree = this.cloneTroubleshootingTree(normalizedTree);
 
     const currentSelectionExists = this.treeNodes.some((node) => node.id === this.treeSelectedNodeId);
     if (resetSelection || !currentSelectionExists) {
@@ -1814,6 +2125,34 @@ export class AdminDashboardComponent implements OnInit {
     };
   }
 
+  private hasUnusableTreeCoordinates(tree: TroubleshootingTree): boolean {
+    const coordinates = tree.nodes
+      .map((node) => ({ x: node.x, y: node.y }))
+      .filter(
+        (point): point is { x: number; y: number } =>
+          typeof point.x === 'number' &&
+          Number.isFinite(point.x) &&
+          typeof point.y === 'number' &&
+          Number.isFinite(point.y)
+      );
+    if (coordinates.length < 2) return false;
+
+    const xs = coordinates.map((point) => point.x);
+    const ys = coordinates.map((point) => point.y);
+    const maxAbsoluteCoordinate = Math.max(...xs.map(Math.abs), ...ys.map(Math.abs));
+    const horizontalSpread = Math.max(...xs) - Math.min(...xs);
+    const verticalSpread = Math.max(...ys) - Math.min(...ys);
+    return maxAbsoluteCoordinate > 50000 || horizontalSpread > 30000 || verticalSpread > 30000;
+  }
+
+  private treeShapeGroupFromTemplate(template: TreeStarterTemplate): TreeShapePaletteGroupId {
+    if (template.standard === "Crow's Foot") return 'crows-foot';
+    if (template.standard === 'Chen ERD') return 'chen';
+    if (template.standard === 'UML Data') return 'uml';
+    if (template.standard === 'IDEF1X') return 'idef1x';
+    return 'flowchart';
+  }
+
   private buildTreeFallbackPositions(tree = this.troubleshootingTree): Map<string, { x: number; y: number }> {
     const positions = new Map<string, { x: number; y: number }>();
     if (!tree?.nodes.length) return positions;
@@ -1831,7 +2170,9 @@ export class AdminDashboardComponent implements OnInit {
     const verticalGap = this.treeWorkspaceOpen ? 190 : 104;
     const startX = this.treeWorkspaceOpen ? 160 : 90;
     const startY = this.treeWorkspaceOpen ? 130 : 70;
-    const queue: Array<{ id: string; depth: number }> = [{ id: tree.startNodeId || tree.nodes[0]!.id, depth: 0 }];
+    const queue: Array<{ id: string; depth: number }> = [
+      { id: tree.startNodeId || tree.nodes[0]!.id, depth: 0 }
+    ];
 
     while (queue.length) {
       const item = queue.shift();
@@ -1900,14 +2241,7 @@ export class AdminDashboardComponent implements OnInit {
     for (const node of tree.nodes) {
       const incoming = tree.edges.filter((edge) => edge.to === node.id);
       if (!incoming.length) {
-        rows.push([
-          node.id,
-          node.text,
-          '',
-          '',
-          String(node.x ?? ''),
-          String(node.y ?? '')
-        ]);
+        rows.push([node.id, node.text, '', '', String(node.x ?? ''), String(node.y ?? '')]);
         continue;
       }
 

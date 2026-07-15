@@ -50,8 +50,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 32% 28%, rgba(72, 190, 180, 0.14), transparent 42%),
-    rgba(29, 120, 98, 0.09);
+    radial-gradient(circle at 32% 28%, rgba(72, 190, 180, 0.14), transparent 42%), rgba(29, 120, 98, 0.09);
   filter: blur(2px);
   pointer-events: none;
 }
@@ -190,8 +189,16 @@ app-theme-toggle.theme-switch {
   border-radius: 26px;
   color: #f8fbf4;
   background:
-    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--accent-600) 38%, transparent), transparent 22rem),
-    radial-gradient(circle at 98% 90%, color-mix(in srgb, var(--primary-950) 44%, transparent), transparent 28rem),
+    radial-gradient(
+      circle at 18% 12%,
+      color-mix(in srgb, var(--accent-600) 38%, transparent),
+      transparent 22rem
+    ),
+    radial-gradient(
+      circle at 98% 90%,
+      color-mix(in srgb, var(--primary-950) 44%, transparent),
+      transparent 28rem
+    ),
     linear-gradient(135deg, var(--primary-800), var(--primary-950));
   box-shadow:
     0 30px 90px color-mix(in srgb, var(--primary-950) 24%, transparent),
@@ -605,8 +612,7 @@ form > button[type='submit']:disabled {
 
 :host-context([data-theme='dark']) .login-page::after {
   background:
-    radial-gradient(circle at 32% 28%, rgba(22, 117, 157, 0.28), transparent 42%),
-    rgba(31, 124, 86, 0.2);
+    radial-gradient(circle at 32% 28%, rgba(22, 117, 157, 0.28), transparent 42%), rgba(31, 124, 86, 0.2);
   filter: blur(1px);
 }
 
@@ -689,9 +695,7 @@ form > button[type='submit']:disabled {
 :host-context([data-theme='dark']) input {
   border-color: rgba(132, 194, 177, 0.28);
   color: #f1fbf8;
-  background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%),
-    rgba(8, 35, 29, 0.76);
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%), rgba(8, 35, 29, 0.76);
   box-shadow:
     inset 1px 1px 0 rgba(222, 249, 241, 0.1),
     0 8px 24px rgba(0, 0, 0, 0.2);
@@ -716,9 +720,7 @@ form > button[type='submit']:disabled {
 :host-context([data-theme='dark']) .captcha-image,
 :host-context([data-theme='dark']) .demo {
   border-color: rgba(132, 194, 177, 0.28);
-  background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%),
-    rgba(8, 35, 29, 0.7);
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%), rgba(8, 35, 29, 0.7);
   box-shadow: inset 1px 1px 0 rgba(222, 249, 241, 0.1);
 }
 

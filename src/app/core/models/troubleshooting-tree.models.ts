@@ -6,7 +6,22 @@ export interface TroubleshootingTreeNode {
   y?: number | null;
 }
 
-export type TreeNodeShape = 'process' | 'decision' | 'terminator' | 'data' | 'document';
+export type TreeNodeShape =
+  | 'process'
+  | 'decision'
+  | 'terminator'
+  | 'data'
+  | 'document'
+  | 'erd-entity'
+  | 'erd-weak-entity'
+  | 'erd-relationship'
+  | 'erd-identifying-relationship'
+  | 'erd-attribute'
+  | 'erd-multivalued-attribute'
+  | 'erd-table'
+  | 'erd-lookup-table'
+  | 'erd-associative-entity'
+  | 'erd-subtype';
 
 export interface TroubleshootingTreeEdge {
   from: string;

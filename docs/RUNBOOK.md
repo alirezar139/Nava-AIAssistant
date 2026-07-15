@@ -75,6 +75,7 @@ $env:ARANGO_URL = "http://127.0.0.1:8529"
 $env:ARANGO_DATABASE = "rahyar"
 $env:ARANGO_USERNAME = "root"
 $env:ARANGO_PASSWORD = "your-arango-password"
+npm run db:arango:init
 npm --prefix server run build
 node server/dist/main.js
 ```
@@ -86,9 +87,10 @@ Invoke-RestMethod http://127.0.0.1:8529/_api/version
 ```
 
 اگر این دستور پاسخ ندهد، ArangoDB نصب شده اما سرویس آن بالا نیست یا روی پورت
-دیگری اجرا شده است. در حالت Arango، API هنگام startup دیتابیس و collectionهای
-لازم را می‌سازد. درختواره از `GET /api/troubleshooting-tree` خوانده می‌شود و اگر
-graph خالی باشد، فایل JSON فعلی به عنوان seed اولیه ذخیره می‌شود.
+دیگری اجرا شده است. در حالت Arango، API هنگام startup دیتابیس، collectionها و
+indexهای لازم را می‌سازد. داده‌های کاربران، FAQ، گفتگوها، پرونده‌ها، تنظیمات،
+سرویس‌ها و graph درختواره در Arango نگهداری می‌شوند. اگر graph خالی باشد، فایل
+JSON فعلی به عنوان seed اولیه ذخیره می‌شود.
 
 ## پیکربندی سرویس ثبت تیکت
 

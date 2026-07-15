@@ -56,7 +56,8 @@
             <path d="M8 9h8M8 13h5"></path>
           </svg>
         </div>
-        <span>درخواست کاربران</span><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</strong
+        <span>درخواست کاربران</span
+        ><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</strong
         ><small>گفت‌وگوی ثبت‌شده</small>
       </article>
       <article>
@@ -67,7 +68,8 @@
             <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.5 6 4"></path>
           </svg>
         </div>
-        <span>کاربران درگیر</span><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '-' }}</strong
+        <span>کاربران درگیر</span
+        ><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '-' }}</strong
         ><small>کاربر دارای درخواست</small>
       </article>
     </section>
@@ -414,7 +416,9 @@
               <span>نظارت پشتیبانی</span>
               <h2>مشکلات و پاسخ‌های کاربران</h2>
             </div>
-            <small>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }} گفتگو</small>
+            <small
+              >{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }} گفتگو</small
+            >
           </div>
           <div class="table-tools reports-search" *ngIf="conversationsLoaded && conversations.length">
             <label>
@@ -434,8 +438,13 @@
             <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
           </div>
           <div class="empty" *ngIf="conversationsLoading">در حال دریافت گزارش‌ها...</div>
-          <div class="empty" *ngIf="conversationsLoaded && !conversations.length">هنوز گفت‌وگویی ثبت نشده است.</div>
-          <div class="empty" *ngIf="conversationsLoaded && conversations.length && !filteredConversations.length">
+          <div class="empty" *ngIf="conversationsLoaded && !conversations.length">
+            هنوز گفت‌وگویی ثبت نشده است.
+          </div>
+          <div
+            class="empty"
+            *ngIf="conversationsLoaded && conversations.length && !filteredConversations.length"
+          >
             نتیجه‌ای مطابق جست‌وجو پیدا نشد.
           </div>
           <div class="reports" *ngFor="let item of conversationsLoaded ? displayedConversations : []">
@@ -455,8 +464,8 @@
             </div>
           </div>
           <p class="tree-list-note" *ngIf="hiddenConversationCount">
-            برای حفظ سرعت، {{ displayedConversations.length.toLocaleString('fa-IR') }} گفت‌وگو نمایش داده شده است؛
-            {{ hiddenConversationCount.toLocaleString('fa-IR') }} مورد دیگر با جست‌وجو قابل دسترسی است.
+            برای حفظ سرعت، {{ displayedConversations.length.toLocaleString('fa-IR') }} گفت‌وگو نمایش داده شده
+            است؛ {{ hiddenConversationCount.toLocaleString('fa-IR') }} مورد دیگر با جست‌وجو قابل دسترسی است.
           </p>
         </section>
 
@@ -616,7 +625,12 @@
                 <h2>ورود و ویرایش درختواره پشتیبانی</h2>
               </div>
               <div class="tree-toolbar">
-                <button type="button" class="ghost" [disabled]="treeLoading" (click)="openTreeWorkspace('demo')">
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="treeLoading"
+                  (click)="openTreeWorkspace('demo')"
+                >
                   مشاهده و ویرایش
                 </button>
                 <button
@@ -658,19 +672,75 @@
 
             <div class="tree-format-note">
               <strong>فرمت‌های قابل ورود</strong>
-              <span>JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio VSDX</span>
+              <span
+                >JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio
+                VSDX</span
+              >
             </div>
 
             <ul class="tree-warnings" *ngIf="treeImportWarnings.length">
               <li *ngFor="let warning of treeImportWarnings">{{ warning }}</li>
             </ul>
 
+            <div class="tree-create-panel" *ngIf="!treeLoading">
+              <article>
+                <span>ایجاد فایل خام</span>
+                <h3>درختواره جدید از صفر</h3>
+                <p>
+                  یک فایل خام با نود شروع ساخته می‌شود و همه ساختار را خودتان مرحله‌به‌مرحله طراحی می‌کنید.
+                </p>
+                <button type="button" (click)="createTroubleshootingTree(); openTreeWorkspace('demo')">
+                  ایجاد فایل خام
+                </button>
+              </article>
+              <article class="tree-file-create-card">
+                <span>ایجاد از فایل</span>
+                <h3>ورود Visio یا فرمت‌های پشتیبانی‌شده</h3>
+                <p>
+                  فایل خام موجود را با دکمه پلاس وارد کنید؛ پس از خواندن، مستقیم وارد محیط مشاهده و ویرایش
+                  می‌شود.
+                </p>
+                <button type="button" class="tree-plus-action" (click)="openTreeFilePicker()">
+                  <strong>+</strong>
+                  <em>انتخاب فایل و ویرایش</em>
+                </button>
+              </article>
+              <article>
+                <span>ایجاد از قالب</span>
+                <h3>{{ selectedTreeStarterTemplate.title }}</h3>
+                <p>{{ selectedTreeStarterTemplate.summary }}</p>
+                <div class="tree-template-picker">
+                  <select [(ngModel)]="treeTemplateId">
+                    <option
+                      *ngFor="let template of treeStarterTemplates; trackBy: trackTreeStarterTemplate"
+                      [ngValue]="template.id"
+                    >
+                      {{ template.title }} - {{ template.standard }}
+                    </option>
+                  </select>
+                  <button
+                    type="button"
+                    (click)="createTroubleshootingTreeFromTemplate(); openTreeWorkspace('demo')"
+                  >
+                    انتخاب و ویرایش
+                  </button>
+                </div>
+              </article>
+            </div>
+
             <div class="tree-preview-launch" *ngIf="!treeLoading">
               <div class="tree-preview-hero">
                 <span>پیش‌نمایش درختواره</span>
-                <h3>{{ selectedTreeNode ? shortText(selectedTreeNode.text, 64) : 'درختواره‌ای برای نمایش انتخاب نشده است' }}</h3>
+                <h3>
+                  {{
+                    selectedTreeNode
+                      ? shortText(selectedTreeNode.text, 64)
+                      : 'درختواره‌ای برای نمایش انتخاب نشده است'
+                  }}
+                </h3>
                 <p>
-                  عملیات ورود، دریافت، مشاهده کامل، ویرایش نودها، ساخت ارتباط و نهایی‌سازی داخل پنجره اختصاصی انجام می‌شود.
+                  عملیات ورود، دریافت، مشاهده کامل، ویرایش نودها، ساخت ارتباط و نهایی‌سازی داخل پنجره اختصاصی
+                  انجام می‌شود.
                 </p>
                 <div>
                   <b>{{ treeWorkspaceModeLabel }}</b>
@@ -694,8 +764,9 @@
             </div>
 
             <div class="tree-preview-note" *ngIf="treePreviewTruncatedCount">
-              پیش‌نمایش برای جلوگیری از کندی، {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود را نشان می‌دهد؛
-              {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر در فهرست و ذخیره‌سازی باقی می‌ماند.
+              پیش‌نمایش برای جلوگیری از کندی، {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود را
+              نشان می‌دهد؛ {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر در فهرست و
+              ذخیره‌سازی باقی می‌ماند.
             </div>
           </section>
 
@@ -703,7 +774,13 @@
             در حال دریافت درختواره پشتیبانی...
           </section>
 
-          <section class="tree-modal-backdrop" *ngIf="treeWorkspaceOpen" role="dialog" aria-modal="true" aria-label="ویرایش کامل درختواره">
+          <section
+            class="tree-modal-backdrop"
+            *ngIf="treeWorkspaceOpen"
+            role="dialog"
+            aria-modal="true"
+            aria-label="ویرایش کامل درختواره"
+          >
             <div class="tree-modal-shell">
               <header class="tree-modal-header">
                 <div>
@@ -738,8 +815,24 @@
                       نهایی
                     </button>
                   </div>
-                  <button type="button" class="ghost" (click)="createTroubleshootingTree()">ساخت از صفر</button>
-                  <button type="button" class="ghost" (click)="openTreeFilePicker()">ورود فایل</button>
+                  <button type="button" class="ghost" (click)="createTroubleshootingTree()">فایل خام</button>
+                  <label class="tree-template-control">
+                    <span>قالب</span>
+                    <select [(ngModel)]="treeTemplateId">
+                      <option
+                        *ngFor="let template of treeStarterTemplates; trackBy: trackTreeStarterTemplate"
+                        [ngValue]="template.id"
+                      >
+                        {{ template.title }}
+                      </option>
+                    </select>
+                  </label>
+                  <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
+                    ایجاد از قالب
+                  </button>
+                  <button type="button" class="ghost tree-plus-inline" (click)="openTreeFilePicker()">
+                    + فایل
+                  </button>
                   <label class="tree-download-control">
                     <span>دریافت</span>
                     <select [(ngModel)]="treeExportFormat">
@@ -756,10 +849,19 @@
                   >
                     دریافت فایل
                   </button>
-                  <button type="button" class="ghost" [disabled]="treeLoading || !troubleshootingTree" (click)="relayoutTroubleshootingTree()">
+                  <button
+                    type="button"
+                    class="ghost"
+                    [disabled]="treeLoading || !troubleshootingTree"
+                    (click)="relayoutTroubleshootingTree()"
+                  >
                     چیدمان خودکار
                   </button>
-                  <button type="button" [disabled]="treeSaving || treeLoading || !troubleshootingTree" (click)="saveTroubleshootingTree()">
+                  <button
+                    type="button"
+                    [disabled]="treeSaving || treeLoading || !troubleshootingTree"
+                    (click)="saveTroubleshootingTree()"
+                  >
                     {{ treeSaving ? 'در حال ذخیره...' : 'ذخیره پیش‌نویس' }}
                   </button>
                   <button
@@ -770,7 +872,9 @@
                   >
                     نهایی‌سازی و اعمال
                   </button>
-                  <button type="button" class="close" aria-label="بستن" (click)="requestCloseTreeWorkspace()">×</button>
+                  <button type="button" class="close" aria-label="بستن" (click)="requestCloseTreeWorkspace()">
+                    ×
+                  </button>
                 </div>
               </header>
 
@@ -781,348 +885,540 @@
 
                 <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
                   هنوز درختواره‌ای برای این پروژه آماده نیست. فایل وارد کنید یا یک درختواره جدید بسازید.
-                  <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره جدید</button>
+                  <div class="tree-empty-actions">
+                    <button type="button" (click)="createTroubleshootingTree()">ایجاد فایل خام</button>
+                    <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
+                      ایجاد از قالب انتخابی
+                    </button>
+                  </div>
                 </section>
 
-          <section class="tree-workbench" *ngIf="troubleshootingTree && !treeLoading">
-            <aside class="tree-side-panel tree-node-browser">
-              <div class="section-title compact">
-                <div>
-                  <span>Shapes</span>
-                  <h3>کتابخانه شکل‌ها</h3>
-                </div>
-              </div>
-              <section class="tree-shapes-library">
-                <div class="shape-search">
-                  <input value="Basic Shapes" readonly aria-label="جست‌وجوی شکل‌ها" />
-                  <span></span>
-                </div>
-                <div class="shape-stencil-list">
-                  <button type="button" class="active">Basic Shapes</button>
-                  <button type="button">Flowchart</button>
-                  <button type="button">Data Flow</button>
-                </div>
-                <div class="shape-palette-grid">
-                  <button
-                    type="button"
-                    *ngFor="let shape of treeShapePalette; trackBy: trackTreeShape"
-                    [class.active]="treeActiveShape === shape.kind"
-                    (click)="setTreeActiveShape(shape.kind)"
-                  >
-                    <i [class]="'shape-preview ' + shape.kind"></i>
-                    <b>{{ shape.label }}</b>
-                    <small>{{ shape.hint }}</small>
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  class="shape-apply"
-                  [disabled]="!selectedTreeNode"
-                  (click)="applyActiveShapeToSelectedNode()"
-                >
-                  اعمال روی نود انتخابی
-                </button>
-              </section>
-              <div class="section-title compact tree-node-list-title">
-                <div>
-                  <span>نودها</span>
-                  <h3>فهرست مسیرها</h3>
-                </div>
-              </div>
-              <div class="search-field">
-                <input
-                  [ngModel]="treeSearchTerm"
-                  (ngModelChange)="onTreeSearchChanged($event)"
-                  placeholder="جست‌وجوی شناسه یا عنوان نود..."
-                />
-                <button type="button" *ngIf="treeSearchTerm" (click)="onTreeSearchChanged('')" aria-label="پاک‌کردن">
-                  ×
-                </button>
-              </div>
-              <div class="tree-pagination-summary">
-                <span>
-                  {{ treePageStart.toLocaleString('fa-IR') }} تا
-                  {{ treePageEnd.toLocaleString('fa-IR') }} از
-                  {{ filteredTreeNodes.length.toLocaleString('fa-IR') }} نود
-                </span>
-                <select [ngModel]="treePageSize" (ngModelChange)="setTreePageSize($event)">
-                  <option *ngFor="let size of treePageSizeOptions" [ngValue]="size">
-                    {{ size.toLocaleString('fa-IR') }} نود
-                  </option>
-                </select>
-              </div>
-              <div class="tree-node-list">
-                <button
-                  type="button"
-                  *ngFor="let node of paginatedTreeNodes; trackBy: trackTroubleshootingNode"
-                  [class.active]="node.id === treeSelectedNodeId"
-                  (click)="focusTreeNode(node.id)"
-                >
-                  <b>{{ shortText(node.text, 54) }}</b>
-                  <span>{{ node.id }}</span>
-                </button>
-              </div>
-              <p class="tree-list-note" *ngIf="!paginatedTreeNodes.length">
-                نودی مطابق جست‌وجو پیدا نشد.
-              </p>
-              <div class="tree-pagination">
-                <button
-                  type="button"
-                  class="ghost"
-                  [disabled]="treeCurrentPage === 1"
-                  (click)="goToTreePage(treeCurrentPage - 1)"
-                >
-                  صفحه قبل
-                </button>
-                <span>
-                  صفحه {{ treeCurrentPage.toLocaleString('fa-IR') }} از
-                  {{ treeTotalPages.toLocaleString('fa-IR') }}
-                </span>
-                <button
-                  type="button"
-                  class="ghost"
-                  [disabled]="treeCurrentPage === treeTotalPages"
-                  (click)="goToTreePage(treeCurrentPage + 1)"
-                >
-                  صفحه بعد
-                </button>
-              </div>
-            </aside>
-
-            <section class="tree-canvas-card">
-              <div class="section-title compact">
-                <div>
-                  <span>حالت ویرایش</span>
-                  <h3>نمای کامل درختواره</h3>
-                </div>
-                <small>برای مدل‌سازی، ابزار را انتخاب کنید و مستقیم روی canvas کار کنید.</small>
-              </div>
-              <div class="tree-modeling-toolbar">
-                <div class="tree-tool-group" role="group" aria-label="ابزار مدل‌سازی">
-                  <button
-                    type="button"
-                    [class.active]="treeCanvasTool === 'select'"
-                    (click)="setTreeCanvasTool('select')"
-                  >
-                    انتخاب و جابه‌جایی
-                  </button>
-                  <button
-                    type="button"
-                    [class.active]="treeCanvasTool === 'add-node'"
-                    (click)="setTreeCanvasTool('add-node')"
-                  >
-                    افزودن نود
-                  </button>
-                  <button
-                    type="button"
-                    [class.active]="treeCanvasTool === 'connect'"
-                    (click)="setTreeCanvasTool('connect')"
-                  >
-                    اتصال نودها
-                  </button>
-                </div>
-                <input [(ngModel)]="treeDraftNodeText" placeholder="عنوان نود جدید..." />
-                <button type="button" class="ghost" (click)="useReadableTreeLayout()">نمای خوانا</button>
-                <button type="button" class="ghost" (click)="useFreeTreeLayout()">چیدمان آزاد</button>
-                <span *ngIf="treeCanvasTool === 'connect' && treeConnectionSourceId">
-                  مبدأ: {{ treeConnectionSourceId }}
-                </span>
-              </div>
-              <div class="tree-map-controls">
-                <button type="button" class="ghost" (click)="selectAdjacentTreeNode(-1)">نود قبلی</button>
-                <button type="button" class="ghost" (click)="centerSelectedTreeNode()" [disabled]="!selectedTreeNode">
-                  تمرکز روی نود
-                </button>
-                <button type="button" class="ghost" (click)="selectAdjacentTreeNode(1)">نود بعدی</button>
-                <span>{{ treeZoomPercent }}</span>
-                <button type="button" class="ghost" (click)="zoomTree(-0.1)">کوچک‌تر</button>
-                <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
-                <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
-              </div>
-              <div class="tree-designer-frame">
-                <div class="tree-ruler-corner"></div>
-                <div class="tree-ruler-horizontal" aria-hidden="true">
-                  <span *ngFor="let tick of treeRulerTicks; trackBy: trackTreeTick">{{ tick }}</span>
-                </div>
-                <div class="tree-ruler-vertical" aria-hidden="true">
-                  <span *ngFor="let tick of treeVerticalRulerTicks; trackBy: trackTreeTick">{{ tick }}</span>
-                </div>
-                <div class="tree-page-stage">
-                  <div class="tree-page-sheet">
-                    <div
-                      class="tree-canvas"
-                      #treeCanvas
-                      [class.model-add]="treeCanvasTool === 'add-node'"
-                      [class.model-connect]="treeCanvasTool === 'connect'"
-                      [class.model-dragging]="isTreeDragging"
-                    >
-                      <svg
-                        [attr.viewBox]="treeViewBox"
-                        [style.width.px]="treeCanvasWidth * treeZoom"
-                        [style.height.px]="treeCanvasHeight * treeZoom"
-                        role="img"
-                        aria-label="نمای کامل درختواره"
-                        (click)="handleTreeCanvasClick($event)"
-                        (pointermove)="handleTreePointerMove($event)"
-                        (pointerup)="endTreeNodeDrag()"
-                        (pointerleave)="endTreeNodeDrag()"
-                      >
-                        <defs>
-                          <marker id="tree-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z"></path>
-                          </marker>
-                        </defs>
-                        <g class="tree-edge-layer">
-                          <g *ngFor="let edge of treePreviewEdges; trackBy: trackTreePreviewEdge">
-                            <line
-                              [attr.x1]="edge.x1"
-                              [attr.y1]="edge.y1"
-                              [attr.x2]="edge.x2"
-                              [attr.y2]="edge.y2"
-                              marker-end="url(#tree-arrow)"
-                            ></line>
-                            <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
-                              {{ shortText(edge.label || '', 18) }}
-                            </text>
-                          </g>
-                        </g>
-                        <g class="tree-node-layer">
-                          <g
-                            class="tree-svg-node"
-                            *ngFor="let node of treePreviewNodes; trackBy: trackTroubleshootingNode"
-                            [class.active]="node.isSelected"
-                            [class.start]="node.isStart"
-                            [class.connecting-source]="node.id === treeConnectionSourceId"
-                            [attr.transform]="'translate(' + node.cx + ' ' + node.cy + ')'"
-                            (click)="handleTreeNodeClick(node.id, $event)"
-                            (pointerdown)="startTreeNodeDrag(node.id, $event)"
-                          >
-                            <ng-container [ngSwitch]="node.shape || 'process'">
-                              <path *ngSwitchCase="'decision'" class="node-shape" d="M 0 -46 L 124 0 L 0 46 L -124 0 Z"></path>
-                              <ellipse *ngSwitchCase="'terminator'" class="node-shape" cx="0" cy="0" rx="122" ry="42"></ellipse>
-                              <path *ngSwitchCase="'data'" class="node-shape" d="M -96 -40 L 124 -40 L 96 40 L -124 40 Z"></path>
-                              <path *ngSwitchCase="'document'" class="node-shape" d="M -116 -40 H 116 V 28 C 70 50 20 22 -20 36 C -58 50 -84 42 -116 30 Z"></path>
-                              <rect *ngSwitchDefault class="node-shape" x="-118" y="-42" width="236" height="84" rx="14"></rect>
-                            </ng-container>
-                            <text y="-7">{{ shortText(node.text, 32) }}</text>
-                            <text y="18" class="node-meta">{{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}</text>
-                          </g>
-                        </g>
-                      </svg>
+                <section class="tree-workbench" *ngIf="troubleshootingTree && !treeLoading">
+                  <aside class="tree-side-panel tree-node-browser">
+                    <div class="section-title compact">
+                      <div>
+                        <span>Shapes</span>
+                        <h3>کتابخانه شکل‌ها</h3>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+                    <section class="tree-shapes-library">
+                      <div class="shape-search">
+                        <input [value]="activeTreeShapeGroup.label" readonly aria-label="استاندارد شکل‌ها" />
+                        <span></span>
+                      </div>
+                      <div class="shape-stencil-list">
+                        <button
+                          type="button"
+                          *ngFor="let group of treeShapePaletteGroups; trackBy: trackTreeShapeGroup"
+                          [class.active]="treeActiveShapeGroup === group.id"
+                          (click)="setTreeShapeGroup(group.id)"
+                        >
+                          <b>{{ group.label }}</b>
+                          <small>{{ group.description }}</small>
+                        </button>
+                      </div>
+                      <p class="shape-standard-note">{{ activeTreeShapeGroup.description }}</p>
+                      <div class="shape-palette-grid">
+                        <button
+                          type="button"
+                          *ngFor="let shape of visibleTreeShapePalette; trackBy: trackTreeShape"
+                          [class.active]="treeActiveShape === shape.kind"
+                          (click)="setTreeActiveShape(shape.kind)"
+                        >
+                          <i [class]="'shape-preview ' + shape.kind"></i>
+                          <b>{{ shape.label }}</b>
+                          <small>{{ shape.hint }}</small>
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        class="shape-apply"
+                        [disabled]="!selectedTreeNode"
+                        (click)="applyActiveShapeToSelectedNode()"
+                      >
+                        اعمال روی نود انتخابی
+                      </button>
+                    </section>
+                    <div class="section-title compact tree-node-list-title">
+                      <div>
+                        <span>نودها</span>
+                        <h3>فهرست مسیرها</h3>
+                      </div>
+                    </div>
+                    <div class="search-field">
+                      <input
+                        [ngModel]="treeSearchTerm"
+                        (ngModelChange)="onTreeSearchChanged($event)"
+                        placeholder="جست‌وجوی شناسه یا عنوان نود..."
+                      />
+                      <button
+                        type="button"
+                        *ngIf="treeSearchTerm"
+                        (click)="onTreeSearchChanged('')"
+                        aria-label="پاک‌کردن"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div class="tree-pagination-summary">
+                      <span>
+                        {{ treePageStart.toLocaleString('fa-IR') }} تا
+                        {{ treePageEnd.toLocaleString('fa-IR') }} از
+                        {{ filteredTreeNodes.length.toLocaleString('fa-IR') }} نود
+                      </span>
+                      <select [ngModel]="treePageSize" (ngModelChange)="setTreePageSize($event)">
+                        <option *ngFor="let size of treePageSizeOptions" [ngValue]="size">
+                          {{ size.toLocaleString('fa-IR') }} نود
+                        </option>
+                      </select>
+                    </div>
+                    <div class="tree-node-list">
+                      <button
+                        type="button"
+                        *ngFor="let node of paginatedTreeNodes; trackBy: trackTroubleshootingNode"
+                        [class.active]="node.id === treeSelectedNodeId"
+                        (click)="handleTreeListNodeClick(node.id)"
+                      >
+                        <b>{{ shortText(node.text, 54) }}</b>
+                        <span>{{ node.id }}</span>
+                      </button>
+                    </div>
+                    <p class="tree-list-note" *ngIf="!paginatedTreeNodes.length">
+                      نودی مطابق جست‌وجو پیدا نشد.
+                    </p>
+                    <div class="tree-pagination">
+                      <button
+                        type="button"
+                        class="ghost"
+                        [disabled]="treeCurrentPage === 1"
+                        (click)="goToTreePage(treeCurrentPage - 1)"
+                      >
+                        صفحه قبل
+                      </button>
+                      <span>
+                        صفحه {{ treeCurrentPage.toLocaleString('fa-IR') }} از
+                        {{ treeTotalPages.toLocaleString('fa-IR') }}
+                      </span>
+                      <button
+                        type="button"
+                        class="ghost"
+                        [disabled]="treeCurrentPage === treeTotalPages"
+                        (click)="goToTreePage(treeCurrentPage + 1)"
+                      >
+                        صفحه بعد
+                      </button>
+                    </div>
+                  </aside>
 
-            <aside class="tree-side-panel tree-editor-panel" *ngIf="selectedTreeNode as node">
-              <div class="section-title compact">
-                <div>
-                  <span>ویرایش نود</span>
-                  <h3>{{ shortText(node.text, 32) }}</h3>
-                </div>
-              </div>
+                  <section class="tree-canvas-card">
+                    <div class="section-title compact">
+                      <div>
+                        <span>حالت ویرایش</span>
+                        <h3>نمای کامل درختواره</h3>
+                      </div>
+                      <small>برای مدل‌سازی، ابزار را انتخاب کنید و مستقیم روی canvas کار کنید.</small>
+                    </div>
+                    <div class="tree-modeling-toolbar">
+                      <div class="tree-tool-group" role="group" aria-label="ابزار مدل‌سازی">
+                        <button
+                          type="button"
+                          [class.active]="treeCanvasTool === 'select'"
+                          (click)="setTreeCanvasTool('select')"
+                        >
+                          انتخاب و جابه‌جایی
+                        </button>
+                        <button
+                          type="button"
+                          [class.active]="treeCanvasTool === 'add-node'"
+                          (click)="setTreeCanvasTool('add-node')"
+                        >
+                          افزودن نود
+                        </button>
+                        <button
+                          type="button"
+                          [class.active]="treeCanvasTool === 'connect'"
+                          (click)="setTreeCanvasTool('connect')"
+                        >
+                          اتصال نودها
+                        </button>
+                      </div>
+                      <input [(ngModel)]="treeDraftNodeText" placeholder="عنوان نود جدید..." />
+                      <button type="button" class="ghost" (click)="useReadableTreeLayout()">
+                        نمای خوانا
+                      </button>
+                      <button type="button" class="ghost" (click)="useFreeTreeLayout()">چیدمان آزاد</button>
+                      <span *ngIf="treeCanvasTool === 'connect' && treeConnectionSourceId">
+                        مبدأ: {{ treeConnectionSourceId }}
+                      </span>
+                    </div>
+                    <div class="tree-map-controls">
+                      <button type="button" class="ghost" (click)="selectAdjacentTreeNode(-1)">
+                        نود قبلی
+                      </button>
+                      <button
+                        type="button"
+                        class="ghost"
+                        (click)="centerSelectedTreeNode()"
+                        [disabled]="!selectedTreeNode"
+                      >
+                        تمرکز روی نود
+                      </button>
+                      <button type="button" class="ghost" (click)="selectAdjacentTreeNode(1)">
+                        نود بعدی
+                      </button>
+                      <span>{{ treeZoomPercent }}</span>
+                      <button type="button" class="ghost" (click)="zoomTree(-0.1)">کوچک‌تر</button>
+                      <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
+                      <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
+                    </div>
+                    <div class="tree-designer-frame">
+                      <div class="tree-ruler-corner"></div>
+                      <div class="tree-ruler-horizontal" aria-hidden="true">
+                        <span *ngFor="let tick of treeRulerTicks; trackBy: trackTreeTick">{{ tick }}</span>
+                      </div>
+                      <div class="tree-ruler-vertical" aria-hidden="true">
+                        <span *ngFor="let tick of treeVerticalRulerTicks; trackBy: trackTreeTick">{{
+                          tick
+                        }}</span>
+                      </div>
+                      <div class="tree-page-stage" #treeViewport>
+                        <div class="tree-page-sheet">
+                          <div
+                            class="tree-canvas"
+                            #treeCanvas
+                            [class.model-add]="treeCanvasTool === 'add-node'"
+                            [class.model-connect]="treeCanvasTool === 'connect'"
+                            [class.model-dragging]="isTreeDragging"
+                          >
+                            <svg
+                              [attr.viewBox]="treeViewBox"
+                              [style.width.px]="treeCanvasWidth * treeZoom"
+                              [style.height.px]="treeCanvasHeight * treeZoom"
+                              role="img"
+                              aria-label="نمای کامل درختواره"
+                              (click)="handleTreeCanvasClick($event)"
+                              (pointermove)="handleTreePointerMove($event)"
+                              (pointerup)="endTreeNodeDrag()"
+                              (pointerleave)="endTreeNodeDrag()"
+                            >
+                              <defs>
+                                <marker
+                                  id="tree-arrow"
+                                  viewBox="0 0 10 10"
+                                  refX="8"
+                                  refY="5"
+                                  markerWidth="7"
+                                  markerHeight="7"
+                                  orient="auto-start-reverse"
+                                >
+                                  <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                                </marker>
+                              </defs>
+                              <g class="tree-edge-layer">
+                                <g *ngFor="let edge of treePreviewEdges; trackBy: trackTreePreviewEdge">
+                                  <line
+                                    [attr.x1]="edge.x1"
+                                    [attr.y1]="edge.y1"
+                                    [attr.x2]="edge.x2"
+                                    [attr.y2]="edge.y2"
+                                    marker-end="url(#tree-arrow)"
+                                  ></line>
+                                  <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
+                                    {{ shortText(edge.label || '', 18) }}
+                                  </text>
+                                </g>
+                              </g>
+                              <g class="tree-node-layer">
+                                <g
+                                  class="tree-svg-node"
+                                  *ngFor="let node of treePreviewNodes; trackBy: trackTroubleshootingNode"
+                                  [class.active]="node.isSelected"
+                                  [class.start]="node.isStart"
+                                  [class.connecting-source]="node.id === treeConnectionSourceId"
+                                  [attr.transform]="'translate(' + node.cx + ' ' + node.cy + ')'"
+                                  (click)="handleTreeNodeClick(node.id, $event)"
+                                  (pointerdown)="startTreeNodeDrag(node.id, $event)"
+                                >
+                                  <ng-container [ngSwitch]="node.shape || 'process'">
+                                    <path
+                                      *ngSwitchCase="'decision'"
+                                      class="node-shape"
+                                      d="M 0 -46 L 124 0 L 0 46 L -124 0 Z"
+                                    ></path>
+                                    <ellipse
+                                      *ngSwitchCase="'terminator'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      rx="122"
+                                      ry="42"
+                                    ></ellipse>
+                                    <path
+                                      *ngSwitchCase="'data'"
+                                      class="node-shape"
+                                      d="M -96 -40 L 124 -40 L 96 40 L -124 40 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'document'"
+                                      class="node-shape"
+                                      d="M -116 -40 H 116 V 28 C 70 50 20 22 -20 36 C -58 50 -84 42 -116 30 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'erd-entity'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-122"
+                                        y="-44"
+                                        width="244"
+                                        height="88"
+                                        rx="10"
+                                      ></rect>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-weak-entity'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-124"
+                                        y="-46"
+                                        width="248"
+                                        height="92"
+                                        rx="10"
+                                      ></rect>
+                                      <rect
+                                        class="node-shape-outline"
+                                        x="-114"
+                                        y="-36"
+                                        width="228"
+                                        height="72"
+                                        rx="8"
+                                      ></rect>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-relationship'">
+                                      <path class="node-shape" d="M 0 -50 L 128 0 L 0 50 L -128 0 Z"></path>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-identifying-relationship'">
+                                      <path class="node-shape" d="M 0 -52 L 132 0 L 0 52 L -132 0 Z"></path>
+                                      <path
+                                        class="node-shape-outline"
+                                        d="M 0 -40 L 104 0 L 0 40 L -104 0 Z"
+                                      ></path>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-attribute'">
+                                      <ellipse class="node-shape" cx="0" cy="0" rx="126" ry="44"></ellipse>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-multivalued-attribute'">
+                                      <ellipse class="node-shape" cx="0" cy="0" rx="126" ry="44"></ellipse>
+                                      <ellipse
+                                        class="node-shape-outline"
+                                        cx="0"
+                                        cy="0"
+                                        rx="112"
+                                        ry="34"
+                                      ></ellipse>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-table'">
+                                      <rect
+                                        class="node-shape erd-table-shape"
+                                        x="-126"
+                                        y="-52"
+                                        width="252"
+                                        height="104"
+                                        rx="10"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="-20"
+                                        x2="126"
+                                        y2="-20"
+                                      ></line>
+                                      <line
+                                        class="node-shape-detail muted"
+                                        x1="-68"
+                                        y1="-52"
+                                        x2="-68"
+                                        y2="52"
+                                      ></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-lookup-table'">
+                                      <rect
+                                        class="node-shape erd-lookup-shape"
+                                        x="-126"
+                                        y="-52"
+                                        width="252"
+                                        height="104"
+                                        rx="10"
+                                      ></rect>
+                                      <path
+                                        class="node-shape-detail-fill"
+                                        d="M -126 -52 H 126 V -20 H -126 Z"
+                                      ></path>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="-20"
+                                        x2="126"
+                                        y2="-20"
+                                      ></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-associative-entity'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-126"
+                                        y="-50"
+                                        width="252"
+                                        height="100"
+                                        rx="12"
+                                      ></rect>
+                                      <path
+                                        class="node-shape-outline"
+                                        d="M 0 -36 L 86 0 L 0 36 L -86 0 Z"
+                                      ></path>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'erd-subtype'">
+                                      <path class="node-shape" d="M 0 -58 L 128 52 L -128 52 Z"></path>
+                                      <line class="node-shape-detail" x1="-72" y1="20" x2="72" y2="20"></line>
+                                    </ng-container>
+                                    <rect
+                                      *ngSwitchDefault
+                                      class="node-shape"
+                                      x="-118"
+                                      y="-42"
+                                      width="236"
+                                      height="84"
+                                      rx="14"
+                                    ></rect>
+                                  </ng-container>
+                                  <text y="-7">{{ shortText(node.text, 32) }}</text>
+                                  <text y="18" class="node-meta">
+                                    {{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}
+                                  </text>
+                                </g>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
 
-              <label>
-                شناسه نود
-                <input dir="ltr" [value]="node.id" readonly />
-              </label>
-              <div class="tree-node-reader">
-                <strong>مطالعه نود انتخابی</strong>
-                <p>{{ node.text }}</p>
-                <div>
-                  <span>{{ treeIncomingEdges.length.toLocaleString('fa-IR') }} والد</span>
-                  <span>{{ treeOutgoingEdges.length.toLocaleString('fa-IR') }} مسیر خروجی</span>
-                  <span *ngIf="node.id === troubleshootingTree.startNodeId">نود شروع</span>
-                </div>
-              </div>
-              <label>
-                عنوان نود
-                <textarea
-                  [ngModel]="treeNodeTextDraft"
-                  (ngModelChange)="updateSelectedTreeNodeText($event)"
-                  rows="4"
-                ></textarea>
-              </label>
-              <div class="tree-position-grid">
-                <label>
-                  موقعیت افقی
-                  <input
-                    type="number"
-                    min="0"
-                    max="20000"
-                    [ngModel]="node.x ?? 0"
-                    (ngModelChange)="updateSelectedTreeNodePosition('x', $event)"
-                  />
-                </label>
-                <label>
-                  موقعیت عمودی
-                  <input
-                    type="number"
-                    min="0"
-                    max="20000"
-                    [ngModel]="node.y ?? 0"
-                    (ngModelChange)="updateSelectedTreeNodePosition('y', $event)"
-                  />
-                </label>
-              </div>
+                  <aside class="tree-side-panel tree-editor-panel" *ngIf="selectedTreeNode as node">
+                    <div class="section-title compact">
+                      <div>
+                        <span>ویرایش نود</span>
+                        <h3>{{ shortText(node.text, 32) }}</h3>
+                      </div>
+                    </div>
 
-              <div class="tree-editor-actions">
-                <button type="button" class="ghost" [disabled]="node.id === troubleshootingTree.startNodeId" (click)="setSelectedAsTreeStart()">
-                  تنظیم به عنوان شروع
-                </button>
-                <button type="button" class="danger" (click)="deleteSelectedTreeNode()">حذف نود</button>
-              </div>
+                    <label>
+                      شناسه نود
+                      <input dir="ltr" [value]="node.id" readonly />
+                    </label>
+                    <div class="tree-node-reader">
+                      <strong>مطالعه نود انتخابی</strong>
+                      <p>{{ node.text }}</p>
+                      <div>
+                        <span>{{ treeIncomingEdges.length.toLocaleString('fa-IR') }} والد</span>
+                        <span>{{ treeOutgoingEdges.length.toLocaleString('fa-IR') }} مسیر خروجی</span>
+                        <span *ngIf="node.id === troubleshootingTree.startNodeId">نود شروع</span>
+                      </div>
+                    </div>
+                    <label>
+                      عنوان نود
+                      <textarea
+                        [ngModel]="treeNodeTextDraft"
+                        (ngModelChange)="updateSelectedTreeNodeText($event)"
+                        rows="4"
+                      ></textarea>
+                    </label>
+                    <div class="tree-position-grid">
+                      <label>
+                        موقعیت افقی
+                        <input
+                          type="number"
+                          min="0"
+                          max="20000"
+                          [ngModel]="node.x ?? 0"
+                          (ngModelChange)="updateSelectedTreeNodePosition('x', $event)"
+                        />
+                      </label>
+                      <label>
+                        موقعیت عمودی
+                        <input
+                          type="number"
+                          min="0"
+                          max="20000"
+                          [ngModel]="node.y ?? 0"
+                          (ngModelChange)="updateSelectedTreeNodePosition('y', $event)"
+                        />
+                      </label>
+                    </div>
 
-              <div class="tree-edit-box">
-                <strong>افزودن فرزند</strong>
-                <input [(ngModel)]="treeNewChildText" placeholder="عنوان مسیر یا پرسش جدید..." />
-                <button type="button" (click)="addTreeChild()">افزودن به نود انتخابی</button>
-              </div>
+                    <div class="tree-editor-actions">
+                      <button
+                        type="button"
+                        class="ghost"
+                        [disabled]="node.id === troubleshootingTree.startNodeId"
+                        (click)="setSelectedAsTreeStart()"
+                      >
+                        تنظیم به عنوان شروع
+                      </button>
+                      <button type="button" class="danger" (click)="deleteSelectedTreeNode()">حذف نود</button>
+                    </div>
 
-              <div class="tree-edit-box">
-                <strong>اتصال به نود موجود</strong>
-                <select [(ngModel)]="treeLinkTargetId">
-                  <option value="">انتخاب نود مقصد</option>
-                  <option *ngFor="let target of availableTreeTargets" [value]="target.id">
-                    {{ shortText(target.text, 42) }}
-                  </option>
-                </select>
-                <input [(ngModel)]="treeLinkLabel" placeholder="برچسب ارتباط، مثل بله یا خیر" />
-                <button type="button" [disabled]="!treeLinkTargetId" (click)="addTreeLink()">ایجاد ارتباط</button>
-              </div>
+                    <div class="tree-edit-box">
+                      <strong>افزودن فرزند</strong>
+                      <input [(ngModel)]="treeNewChildText" placeholder="عنوان مسیر یا پرسش جدید..." />
+                      <button type="button" (click)="addTreeChild()">افزودن به نود انتخابی</button>
+                    </div>
 
-              <div class="tree-edge-editor">
-                <strong>والدهای این نود</strong>
-                <article *ngFor="let edge of treeIncomingEdges">
-                  <div>
-                    <b>{{ shortText(edge.targetText, 38) }}</b>
-                    <span dir="ltr">{{ edge.from }}</span>
-                  </div>
-                  <button type="button" class="ghost" (click)="focusTreeNode(edge.from)">رفتن به والد</button>
-                </article>
-                <p *ngIf="!treeIncomingEdges.length">این نود والد ثبت‌شده ندارد.</p>
-              </div>
+                    <div class="tree-edit-box">
+                      <strong>اتصال به نود موجود</strong>
+                      <select [(ngModel)]="treeLinkTargetId">
+                        <option value="">انتخاب نود مقصد</option>
+                        <option *ngFor="let target of availableTreeTargets" [value]="target.id">
+                          {{ shortText(target.text, 42) }}
+                        </option>
+                      </select>
+                      <input [(ngModel)]="treeLinkLabel" placeholder="برچسب ارتباط، مثل بله یا خیر" />
+                      <button type="button" [disabled]="!treeLinkTargetId" (click)="addTreeLink()">
+                        ایجاد ارتباط
+                      </button>
+                    </div>
 
-              <div class="tree-edge-editor">
-                <strong>مسیرهای خروجی</strong>
-                <article *ngFor="let edge of treeOutgoingEdges">
-                  <div>
-                    <b>{{ shortText(edge.targetText, 38) }}</b>
-                    <span dir="ltr">{{ edge.to }}</span>
-                  </div>
-                  <input
-                    [ngModel]="edge.label || ''"
-                    (ngModelChange)="updateTreeEdgeLabel(edge.index, $event)"
-                    placeholder="برچسب"
-                  />
-                  <button type="button" class="ghost" (click)="focusTreeNode(edge.to)">رفتن به مقصد</button>
-                  <button type="button" class="danger" (click)="deleteTreeEdge(edge.index)">حذف</button>
-                </article>
-                <p *ngIf="!treeOutgoingEdges.length">این نود هنوز مسیر خروجی ندارد.</p>
-              </div>
-            </aside>
-          </section>
+                    <div class="tree-edge-editor">
+                      <strong>والدهای این نود</strong>
+                      <article *ngFor="let edge of treeIncomingEdges">
+                        <div>
+                          <b>{{ shortText(edge.targetText, 38) }}</b>
+                          <span dir="ltr">{{ edge.from }}</span>
+                        </div>
+                        <button type="button" class="ghost" (click)="focusTreeNode(edge.from)">
+                          رفتن به والد
+                        </button>
+                      </article>
+                      <p *ngIf="!treeIncomingEdges.length">این نود والد ثبت‌شده ندارد.</p>
+                    </div>
+
+                    <div class="tree-edge-editor">
+                      <strong>مسیرهای خروجی</strong>
+                      <article *ngFor="let edge of treeOutgoingEdges">
+                        <div>
+                          <b>{{ shortText(edge.targetText, 38) }}</b>
+                          <span dir="ltr">{{ edge.to }}</span>
+                        </div>
+                        <input
+                          [ngModel]="edge.label || ''"
+                          (ngModelChange)="updateTreeEdgeLabel(edge.index, $event)"
+                          placeholder="برچسب"
+                        />
+                        <button type="button" class="ghost" (click)="focusTreeNode(edge.to)">
+                          رفتن به مقصد
+                        </button>
+                        <button type="button" class="danger" (click)="deleteTreeEdge(edge.index)">حذف</button>
+                      </article>
+                      <p *ngIf="!treeOutgoingEdges.length">این نود هنوز مسیر خروجی ندارد.</p>
+                    </div>
+                  </aside>
+                </section>
               </div>
             </div>
 
@@ -1130,14 +1426,18 @@
               <div>
                 <span>تغییرات ذخیره نشده‌اند</span>
                 <h3>پیش از بستن، وضعیت درختواره را مشخص کنید</h3>
-                <p>
-                  اگر بدون ذخیره خارج شوید، تغییرات این جلسه به آخرین نسخه ذخیره‌شده برمی‌گردد.
-                </p>
+                <p>اگر بدون ذخیره خارج شوید، تغییرات این جلسه به آخرین نسخه ذخیره‌شده برمی‌گردد.</p>
               </div>
               <div>
                 <button type="button" class="ghost" (click)="continueTreeEditing()">ادامه ویرایش</button>
-                <button type="button" class="danger" (click)="discardTreeChangesAndClose()">خروج بدون ذخیره</button>
-                <button type="button" [disabled]="treeSaving || !troubleshootingTree" (click)="saveTreeAndClose()">
+                <button type="button" class="danger" (click)="discardTreeChangesAndClose()">
+                  خروج بدون ذخیره
+                </button>
+                <button
+                  type="button"
+                  [disabled]="treeSaving || !troubleshootingTree"
+                  (click)="saveTreeAndClose()"
+                >
                   {{ treeSaving ? 'در حال ذخیره...' : 'ذخیره و بستن' }}
                 </button>
               </div>
@@ -1146,7 +1446,12 @@
 
           <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
             هنوز درختواره‌ای دریافت نشده است. یک فایل وارد کنید یا از همین بخش درختواره جدید بسازید.
-            <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره جدید</button>
+            <div class="tree-empty-actions">
+              <button type="button" (click)="createTroubleshootingTree()">ایجاد فایل خام</button>
+              <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
+                ایجاد از قالب انتخابی
+              </button>
+            </div>
           </section>
         </ng-container>
 
@@ -1299,10 +1604,17 @@
                 <span>سرویس‌های تعریف‌شده</span>
                 <h2>بخش‌های قابل استفاده سامانه</h2>
               </div>
-              <small>{{ externalServicesLoaded ? externalServices.length.toLocaleString('fa-IR') : '-' }} سرویس</small>
+              <small
+                >{{
+                  externalServicesLoaded ? externalServices.length.toLocaleString('fa-IR') : '-'
+                }}
+                سرویس</small
+              >
             </div>
             <div class="empty" *ngIf="externalServicesLoading">در حال دریافت سرویس‌ها...</div>
-            <div class="empty" *ngIf="externalServicesLoaded && !externalServices.length">هنوز سرویسی تعریف نشده است.</div>
+            <div class="empty" *ngIf="externalServicesLoaded && !externalServices.length">
+              هنوز سرویسی تعریف نشده است.
+            </div>
             <div class="service-grid" *ngIf="externalServicesLoaded && externalServices.length">
               <article
                 class="service-card"
@@ -1361,7 +1673,11 @@
 
           <div class="empty" *ngIf="ticketServiceSettingsLoading">در حال دریافت تنظیمات سرویس...</div>
 
-          <form class="service-config-form" *ngIf="!ticketServiceSettingsLoading" (ngSubmit)="saveTicketServiceSettings()">
+          <form
+            class="service-config-form"
+            *ngIf="!ticketServiceSettingsLoading"
+            (ngSubmit)="saveTicketServiceSettings()"
+          >
             <label class="wide">
               آدرس سرویس
               <input

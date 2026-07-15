@@ -166,7 +166,7 @@ nodeId | serviceDeskId | requestTypeId | عنوان اختیاری
 خودشان را می‌سازند و از همان‌جا اجرا می‌شوند. مقدارهای محرمانه سرویس فقط در
 بک‌اند نگهداری می‌شوند و به مرورگر کاربر ارسال نمی‌شوند.
 
-برای اجرای درختواره روی ArangoDB:
+برای اجرای دیتابیس عملیاتی روی ArangoDB:
 
 ```powershell
 $env:DB_PROVIDER = "arango"
@@ -174,6 +174,7 @@ $env:ARANGO_URL = "http://127.0.0.1:8529"
 $env:ARANGO_DATABASE = "rahyar"
 $env:ARANGO_USERNAME = "root"
 $env:ARANGO_PASSWORD = "your-arango-password"
+npm run db:arango:init
 npm --prefix server run build
 node server/dist/main.js
 ```
@@ -189,6 +190,7 @@ node server/dist/main.js
 | `npm run build`                 | ساخت خروجی فرانت‌اند.                                  |
 | `npm run build:all`             | ساخت فرانت‌اند و بک‌اند.                               |
 | `npm run build:webapp`          | ساخت خروجی کامل وب‌اپ برای اجرا با Node.               |
+| `npm run db:arango:init`        | ساخت دیتابیس، collectionها، indexها و seed اولیه ArangoDB. |
 | `npm run release:webapp`        | ساخت zip آماده انتقال به سرور در `release/`.           |
 | `npm run webapp:windows`        | build در صورت نیاز و اجرای وب‌اپ روی ویندوز.           |
 | `npm run format`                | قالب‌بندی فایل‌ها با Prettier.                         |

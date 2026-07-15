@@ -119,7 +119,10 @@ export class ThemeService {
         paintColor: this.normalizeHexColor(stored.paintColor, defaults.paintColor),
         profileImage: typeof stored.profileImage === 'string' ? stored.profileImage : defaults.profileImage,
         highContrast: stored.highContrast ?? defaults.highContrast,
-        motion: stored.performanceVersion === defaults.performanceVersion ? (stored.motion ?? defaults.motion) : defaults.motion,
+        motion:
+          stored.performanceVersion === defaults.performanceVersion
+            ? (stored.motion ?? defaults.motion)
+            : defaults.motion,
         performanceVersion: defaults.performanceVersion
       };
     } catch {

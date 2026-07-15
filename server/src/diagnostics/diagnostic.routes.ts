@@ -27,8 +27,8 @@ const diagnosticRatingSchema = z.object({
   ratingComment: z.string().trim().max(1000).optional().default('')
 });
 
-diagnosticRouter.get('/', requireAuth(['admin']), (_request, response) => {
-  response.json(diagnosticRepository.listWithUsers());
+diagnosticRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+  response.json(await diagnosticRepository.listWithUsers());
 });
 
 diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response) => {
@@ -38,7 +38,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     return;
   }
   const diagnosticCase: DiagnosticCaseRecord = {
-    id: diagnosticRepository.nextId(),
+    id: await diagnosticRepository.nextId(),
     userId: request.user.id,
     title: result.data.title,
     problem: result.data.problem,
@@ -98,7 +98,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
 
 diagnosticRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const item = diagnosticRepository.findById(id);
+  const item = await diagnosticRepository.findById(id);
   if (!item || (request.user?.role !== 'admin' && item.userId !== request.user?.id)) {
     sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
     return;
@@ -106,12 +106,7 @@ diagnosticRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest
 
   const result = diagnosticRatingSchema.safeParse(request.body);
   if (!result.success) {
-    sendError(
-      response,
-      400,
-      'DIAGNOSTIC_RATING_INVALID',
-      'امتیاز ثبت‌شده معتبر نیست.'
-    );
+    sendError(response, 400, 'DIAGNOSTIC_RATING_INVALID', 'امتیاز ثبت‌شده معتبر نیست.');
     return;
   }
 
@@ -119,13 +114,13 @@ diagnosticRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest
   item.ratingComment = result.data.ratingComment;
   item.ratingSubmittedAt = new Date().toISOString();
 
-  await diagnosticRepository.save();
+  await diagnosticRepository.save(item);
   response.json(item);
 });
 
 diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const item = diagnosticRepository.findById(id);
+  const item = await diagnosticRepository.findById(id);
   if (!item || (request.user?.role !== 'admin' && item.userId !== request.user?.id)) {
     sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
     return;
@@ -151,6 +146,6 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
       : 'ابتدا اعتبار دسترسی، مسیر انجام عملیات و داده ورودی کنترل شود. در صورت تکرار، پرونده به تحلیل داده ارجاع شود.';
   item.analyzedAt = new Date().toISOString();
 
-  await diagnosticRepository.save();
+  await diagnosticRepository.save(item);
   response.json(item);
 });

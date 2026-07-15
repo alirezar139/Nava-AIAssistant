@@ -13,8 +13,8 @@ const faqSchema = z.object({
 
 export const faqRouter = Router();
 
-faqRouter.get('/', requireAuth(), (_request, response) => {
-  response.json(faqRepository.list());
+faqRouter.get('/', requireAuth(), async (_request, response) => {
+  response.json(await faqRepository.list());
 });
 
 faqRouter.post('/', requireAuth(['admin']), async (request, response) => {
@@ -51,7 +51,7 @@ faqRouter.post('/bulk-delete', requireAuth(['admin']), async (request, response)
 faqRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
   const result = faqSchema.safeParse(request.body);
   const id = Number(request.params['id']);
-  if (!faqRepository.exists(id)) {
+  if (!(await faqRepository.exists(id))) {
     sendError(response, 404, 'FAQ_NOT_FOUND', 'FAQ موردنظر پیدا نشد.');
     return;
   }

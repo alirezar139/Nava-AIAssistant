@@ -26,12 +26,12 @@ const ticketServiceSettingsSchema = z.object({
     .default([])
 });
 
-function getStoredTicketServiceSettings(): TicketServiceSettingsRecord {
+async function getStoredTicketServiceSettings(): Promise<TicketServiceSettingsRecord> {
   return settingsRepository.getTicketServiceSettings();
 }
 
-settingsRouter.get('/ticket-service', requireAuth(['admin']), (_request, response) => {
-  const stored = getStoredTicketServiceSettings();
+settingsRouter.get('/ticket-service', requireAuth(['admin']), async (_request, response) => {
+  const stored = await getStoredTicketServiceSettings();
 
   response.json({
     url: stored.url || config.sahandTicketUrl,

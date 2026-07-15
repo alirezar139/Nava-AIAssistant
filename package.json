@@ -9,6 +9,7 @@
     "build": "ng build",
     "build:all": "npm run build && npm --prefix server run build",
     "build:webapp": "npm run build:all",
+    "db:arango:init": "npm --prefix server run db:arango:init",
     "release:webapp": "powershell -ExecutionPolicy Bypass -File scripts/package-webapp-release.ps1",
     "webapp:windows": "powershell -ExecutionPolicy Bypass -File scripts/start-webapp-windows.ps1",
     "format": "prettier --write \"src/**/*.{ts,html,scss,js,webmanifest}\" \"server/src/**/*.ts\"",

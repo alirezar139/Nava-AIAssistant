@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/main.ts",
+    "db:arango:init": "tsx src/database/bootstrap-arango.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js"
   },

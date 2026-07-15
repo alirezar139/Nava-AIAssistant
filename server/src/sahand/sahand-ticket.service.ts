@@ -17,8 +17,10 @@ export interface SahandTicketResult {
   trackingId: string | null;
 }
 
-function resolveTicketRoute(treeNodeId: string): { serviceDeskId: string; requestTypeId: string } {
-  const ticketServiceSettings = settingsRepository.getTicketServiceSettings();
+async function resolveTicketRoute(
+  treeNodeId: string
+): Promise<{ serviceDeskId: string; requestTypeId: string }> {
+  const ticketServiceSettings = await settingsRepository.getTicketServiceSettings();
   const nodeMapping = ticketServiceSettings?.requestTypeMappings?.find(
     (item) => item.nodeId.trim() === treeNodeId.trim()
   );
@@ -65,9 +67,9 @@ function buildAuthorizationHeader(configuredAuthorization: string): string | nul
 }
 
 export async function submitSahandTicket(payload: SahandTicketPayload): Promise<SahandTicketResult> {
-  const ticketServiceSettings = settingsRepository.getTicketServiceSettings();
+  const ticketServiceSettings = await settingsRepository.getTicketServiceSettings();
   const ticketUrl = ticketServiceSettings?.url.trim() || config.sahandTicketUrl.trim();
-  const { serviceDeskId, requestTypeId } = resolveTicketRoute(payload.metadata['treeNodeId'] ?? '');
+  const { serviceDeskId, requestTypeId } = await resolveTicketRoute(payload.metadata['treeNodeId'] ?? '');
   const authorization = buildAuthorizationHeader(ticketServiceSettings?.authorizationHeader ?? '');
   const authHeader = ticketServiceSettings?.authHeader.trim() || config.sahandAuthHeader.trim();
 

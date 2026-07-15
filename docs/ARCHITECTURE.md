@@ -18,7 +18,7 @@ Express API
     |
     +--> ذخیره‌سازی پیش‌فرض LowDB JSON
     |
-    +--> اتصال اختیاری ArangoDB برای graph درختواره
+    +--> اتصال اختیاری ArangoDB برای داده‌های عملیاتی و graph درختواره
     |
     +--> اتصال اختیاری به سهند/Jira
 ```
@@ -26,8 +26,8 @@ Express API
 فرانت‌اند یک برنامه تک‌صفحه‌ای Angular است. بک‌اند یک API با Express است که در
 یک پردازش Node جدا اجرا می‌شود. داده‌های عملیاتی در اجرای پیش‌فرض با فایل JSON
 محلی ذخیره می‌شوند. اگر `DB_PROVIDER=arango` تنظیم شود، API اتصال ArangoDB را
-بررسی می‌کند، دیتابیس و collectionهای لازم را می‌سازد و درختواره عیب‌یابی را از
-graph برمی‌گرداند.
+بررسی می‌کند، دیتابیس و collectionهای لازم را می‌سازد و داده‌های عملیاتی، تنظیمات
+و درختواره عیب‌یابی را از ArangoDB می‌خواند و در همان‌جا ذخیره می‌کند.
 
 در اجرای توسعه، Angular dev server روی پورت `4200` و API روی پورت `3000` اجرا
 می‌شوند. فرانت‌اند درخواست‌های `/api` را از طریق `proxy.conf.json` به API منتقل
@@ -142,17 +142,19 @@ service worker فقط خارج از Angular dev server ثبت می‌شود تا
 ## ذخیره‌سازی و ArangoDB
 
 در اجرای پیش‌فرض، repositoryهای بک‌اند از LowDB استفاده می‌کنند تا برنامه بدون
-نیاز به سرویس خارجی قابل اجرا باشد. ArangoDB به عنوان مسیر graph-ready اضافه شده
-است و با این متغیر فعال می‌شود:
+نیاز به سرویس خارجی قابل اجرا باشد. ArangoDB به عنوان مسیر دیتابیس عملیاتی و
+graph-ready اضافه شده است و با این متغیر فعال می‌شود:
 
 ```text
 DB_PROVIDER=arango
 ```
 
 در حالت ArangoDB، `server/src/database/arango.ts` دیتابیس `rahyar`، collectionهای
-سندی و collection لبه `troubleshooting_edges` را آماده می‌کند. درختواره از مسیر
-`GET /api/troubleshooting-tree` خوانده می‌شود؛ اگر graph خالی باشد، فایل
-`src/assets/troubleshooting-tree.json` seed اولیه است.
+سندی، collection لبه `troubleshooting_edges` و indexهای لازم را آماده می‌کند.
+Repositoryهای عمومی FAQ، گفتگو، پرونده، تنظیمات، سرویس‌ها و کاربران در همین حالت
+روی Arango کار می‌کنند. درختواره از مسیر `GET /api/troubleshooting-tree` خوانده
+می‌شود؛ اگر graph خالی باشد، فایل `src/assets/troubleshooting-tree.json` seed
+اولیه است.
 
 جزئیات عملیاتی در سند [پایگاه داده ArangoDB](DATABASE_ARANGO.md) آمده است.
 

@@ -13,9 +13,40 @@ export interface TroubleshootingTreeNode {
   y?: number | null;
 }
 
-type TreeNodeShape = 'process' | 'decision' | 'terminator' | 'data' | 'document';
+type TreeNodeShape =
+  | 'process'
+  | 'decision'
+  | 'terminator'
+  | 'data'
+  | 'document'
+  | 'erd-entity'
+  | 'erd-weak-entity'
+  | 'erd-relationship'
+  | 'erd-identifying-relationship'
+  | 'erd-attribute'
+  | 'erd-multivalued-attribute'
+  | 'erd-table'
+  | 'erd-lookup-table'
+  | 'erd-associative-entity'
+  | 'erd-subtype';
 
-const treeNodeShapes = new Set<TreeNodeShape>(['process', 'decision', 'terminator', 'data', 'document']);
+const treeNodeShapes = new Set<TreeNodeShape>([
+  'process',
+  'decision',
+  'terminator',
+  'data',
+  'document',
+  'erd-entity',
+  'erd-weak-entity',
+  'erd-relationship',
+  'erd-identifying-relationship',
+  'erd-attribute',
+  'erd-multivalued-attribute',
+  'erd-table',
+  'erd-lookup-table',
+  'erd-associative-entity',
+  'erd-subtype'
+]);
 
 export interface TroubleshootingTreeEdge {
   from: string;
@@ -56,7 +87,9 @@ interface TroubleshootingTreeSettingsDocument {
 
 const defaultProjectKey = 'default';
 
-export async function getTroubleshootingTree(projectKeyInput = defaultProjectKey): Promise<TroubleshootingTree> {
+export async function getTroubleshootingTree(
+  projectKeyInput = defaultProjectKey
+): Promise<TroubleshootingTree> {
   const projectKey = normalizeProjectKey(projectKeyInput);
   if (!isArangoEnabled()) {
     return loadLocalTree(projectKey);
@@ -410,9 +443,7 @@ function treeSettingsKey(projectKey: string): string {
 }
 
 function nodeDocumentKey(projectKey: string, nodeId: string): string {
-  return projectKey === defaultProjectKey
-    ? toDocumentKey(nodeId)
-    : toDocumentKey(`${projectKey}_${nodeId}`);
+  return projectKey === defaultProjectKey ? toDocumentKey(nodeId) : toDocumentKey(`${projectKey}_${nodeId}`);
 }
 
 function withProjectKey(tree: TroubleshootingTree, projectKey: string): TroubleshootingTree {

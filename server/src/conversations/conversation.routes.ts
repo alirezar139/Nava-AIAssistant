@@ -11,8 +11,8 @@ const conversationRatingSchema = z.object({
   rating: z.number().int().min(1).max(5)
 });
 
-conversationRouter.get('/', requireAuth(['admin']), (_request, response) => {
-  response.json(conversationRepository.listWithUsers());
+conversationRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+  response.json(await conversationRepository.listWithUsers());
 });
 
 conversationRouter.post('/', requireAuth(), async (request: AuthRequest, response) => {
@@ -27,7 +27,7 @@ conversationRouter.post('/', requireAuth(), async (request: AuthRequest, respons
     sendError(response, 400, 'CONVERSATION_INVALID', 'اطلاعات گفتگو معتبر نیست.');
     return;
   }
-  if (result.data.matchedFaqId && !faqRepository.exists(result.data.matchedFaqId)) {
+  if (result.data.matchedFaqId && !(await faqRepository.exists(result.data.matchedFaqId))) {
     sendError(response, 400, 'MATCHED_FAQ_INVALID', 'FAQ مرتبط وجود ندارد یا حذف شده است.');
     return;
   }
@@ -42,7 +42,7 @@ conversationRouter.post('/', requireAuth(), async (request: AuthRequest, respons
 
 conversationRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const conversation = conversationRepository.findById(id);
+  const conversation = await conversationRepository.findById(id);
   if (!conversation || (request.user?.role !== 'admin' && conversation.userId !== request.user?.id)) {
     sendError(response, 404, 'CONVERSATION_NOT_FOUND', 'گفت‌وگوی موردنظر پیدا نشد.');
     return;
@@ -57,6 +57,6 @@ conversationRouter.patch('/:id/rating', requireAuth(), async (request: AuthReque
   conversation.rating = result.data.rating;
   conversation.ratingSubmittedAt = new Date().toISOString();
 
-  await conversationRepository.save();
+  await conversationRepository.save(conversation);
   response.json(conversation);
 });

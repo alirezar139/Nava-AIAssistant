@@ -60,7 +60,10 @@ export class TroubleshootingTreeImportService {
     }
 
     if (Array.isArray(parsed)) {
-      return this.recordsToTree(parsed.map((item) => this.recordFromUnknown(item)), 'JSON رکوردی');
+      return this.recordsToTree(
+        parsed.map((item) => this.recordFromUnknown(item)),
+        'JSON رکوردی'
+      );
     }
 
     if (this.isRecord(parsed)) {
@@ -68,7 +71,9 @@ export class TroubleshootingTreeImportService {
       const edges = this.arrayValue(parsed, ['edges', 'links', 'connections']);
       if (nodes.length) {
         const treeNodes = nodes.map((node, index) => this.nodeFromUnknown(node, index));
-        const treeEdges = edges.map((edge) => this.edgeFromUnknown(edge)).filter((edge) => edge.from && edge.to);
+        const treeEdges = edges
+          .map((edge) => this.edgeFromUnknown(edge))
+          .filter((edge) => edge.from && edge.to);
         return {
           tree: this.finishTree({
             startNodeId: this.stringValue(parsed, ['startNodeId', 'rootId']) || treeNodes[0]?.id || '',
@@ -85,7 +90,11 @@ export class TroubleshootingTreeImportService {
     throw new Error('INVALID_JSON_TREE');
   }
 
-  private parseDelimited(text: string, delimiter: ',' | '\t', sourceFormat: string): TroubleshootingTreeImportResult {
+  private parseDelimited(
+    text: string,
+    delimiter: ',' | '\t',
+    sourceFormat: string
+  ): TroubleshootingTreeImportResult {
     const lines = text
       .split(/\r?\n/)
       .map((line) => line.trim())
@@ -331,7 +340,11 @@ export class TroubleshootingTreeImportService {
         .replace(/^\d+[.)]\s*/, '')
         .trim();
       if (!label) continue;
-      const id = this.uniqueNodeId(label, nodes.length + 1, nodes.map((node) => node.id));
+      const id = this.uniqueNodeId(
+        label,
+        nodes.length + 1,
+        nodes.map((node) => node.id)
+      );
       while (stack.length && stack[stack.length - 1]!.depth >= depth) stack.pop();
       const parent = stack[stack.length - 1];
       nodes.push({ id, text: label });
@@ -397,7 +410,9 @@ export class TroubleshootingTreeImportService {
       .map((edge) => ({ from: edge.from, to: edge.to, ...(edge.label ? { label: edge.label } : {}) }));
 
     const finalNodes = [...nodes.values()];
-    const startNodeId = nodes.has(tree.startNodeId) ? tree.startNodeId : this.resolveStartNodeId(finalNodes, edges);
+    const startNodeId = nodes.has(tree.startNodeId)
+      ? tree.startNodeId
+      : this.resolveStartNodeId(finalNodes, edges);
     const laidOut = this.ensureLayout({
       startNodeId,
       introNodeIds: (tree.introNodeIds ?? []).filter((id) => nodes.has(id)),
@@ -429,7 +444,8 @@ export class TroubleshootingTreeImportService {
     }
 
     for (const node of tree.nodes) {
-      if (!levels.has(node.id)) levels.set(node.id, Math.max(0, levels.size ? Math.max(...levels.values()) : 0));
+      if (!levels.has(node.id))
+        levels.set(node.id, Math.max(0, levels.size ? Math.max(...levels.values()) : 0));
     }
 
     const rowsByLevel = new Map<number, number>();
@@ -496,9 +512,11 @@ export class TroubleshootingTreeImportService {
   }
 
   private async inflateRaw(bytes: Uint8Array): Promise<Uint8Array> {
-    const streamCtor = (globalThis as unknown as {
-      DecompressionStream?: new (format: string) => TransformStream<Uint8Array, Uint8Array>;
-    }).DecompressionStream;
+    const streamCtor = (
+      globalThis as unknown as {
+        DecompressionStream?: new (format: string) => TransformStream<Uint8Array, Uint8Array>;
+      }
+    ).DecompressionStream;
     if (!streamCtor) throw new Error('BROWSER_ZIP_INFLATE_NOT_SUPPORTED');
     const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
     const stream = new Blob([buffer]).stream().pipeThrough(new streamCtor('deflate-raw'));
@@ -547,7 +565,10 @@ export class TroubleshootingTreeImportService {
     const name = `${shape.getAttribute('NameU') ?? ''} ${shape.getAttribute('Name') ?? ''}`.toLocaleLowerCase(
       'en-US'
     );
-    return name.includes('connector') || (!textValue && Array.from(shape.children).some((item) => item.tagName === 'XForm1D'));
+    return (
+      name.includes('connector') ||
+      (!textValue && Array.from(shape.children).some((item) => item.tagName === 'XForm1D'))
+    );
   }
 
   private getFirstChildText(element: Element, tagName: string): string {
@@ -556,7 +577,11 @@ export class TroubleshootingTreeImportService {
 
   private isTree(value: unknown): value is TroubleshootingTree {
     if (!this.isRecord(value)) return false;
-    return Array.isArray(value['nodes']) && Array.isArray(value['edges']) && typeof value['startNodeId'] === 'string';
+    return (
+      Array.isArray(value['nodes']) &&
+      Array.isArray(value['edges']) &&
+      typeof value['startNodeId'] === 'string'
+    );
   }
 
   private isRecord(value: unknown): value is Record<string, unknown> {
@@ -572,7 +597,8 @@ export class TroubleshootingTreeImportService {
   }
 
   private recordFromUnknown(value: unknown): RawTreeRecord {
-    if (!this.isRecord(value)) return { id: '', text: String(value ?? ''), parentId: '', label: '', x: null, y: null };
+    if (!this.isRecord(value))
+      return { id: '', text: String(value ?? ''), parentId: '', label: '', x: null, y: null };
     return {
       id: this.stringValue(value, ['id', 'nodeId', 'key']),
       text: this.stringValue(value, ['text', 'title', 'name', 'label']),
@@ -631,7 +657,10 @@ export class TroubleshootingTreeImportService {
   }
 
   private normalizeKey(value: string): string {
-    return value.trim().replace(/[\s_-]+/g, '').toLocaleLowerCase('en-US');
+    return value
+      .trim()
+      .replace(/[\s_-]+/g, '')
+      .toLocaleLowerCase('en-US');
   }
 
   private indentationDepth(line: string): number {

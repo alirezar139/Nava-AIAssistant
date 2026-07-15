@@ -354,17 +354,31 @@ body {
   min-height: 100vh;
   color: var(--color-body);
   background:
-    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 10%, transparent), transparent 24rem),
-    radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--color-link) 10%, transparent), transparent 27rem),
-    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 34rem),
-    var(--page-bg);
+    radial-gradient(
+      circle at 9% 8%,
+      color-mix(in srgb, var(--accent-600) 10%, transparent),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 88% 16%,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 27rem
+    ),
+    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 34rem), var(--page-bg);
 }
 :root[data-theme='dark'] body {
   background:
-    radial-gradient(circle at 9% 8%, color-mix(in srgb, var(--accent-600) 10%, transparent), transparent 25rem),
-    radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--color-link) 11%, transparent), transparent 28rem),
-    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 36rem),
-    var(--page-bg);
+    radial-gradient(
+      circle at 9% 8%,
+      color-mix(in srgb, var(--accent-600) 10%, transparent),
+      transparent 25rem
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, var(--color-link) 11%, transparent),
+      transparent 28rem
+    ),
+    radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 36rem), var(--page-bg);
 }
 body,
 button,

@@ -155,7 +155,10 @@ export class ApiService {
     );
   }
 
-  updateTroubleshootingTree(payload: TroubleshootingTree, projectKey = 'default'): Observable<TroubleshootingTree> {
+  updateTroubleshootingTree(
+    payload: TroubleshootingTree,
+    projectKey = 'default'
+  ): Observable<TroubleshootingTree> {
     return this.http.put<TroubleshootingTree>(
       `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`,
       payload

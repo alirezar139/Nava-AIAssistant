@@ -42,7 +42,7 @@ interface ServiceExecutionResult {
   errorMessage?: string;
 }
 
-function getServices(): ExternalServiceRecord[] {
+async function getServices(): Promise<ExternalServiceRecord[]> {
   return externalServiceRepository.list();
 }
 
@@ -202,13 +202,13 @@ async function executeService(
   }
 }
 
-serviceCatalogRouter.get('/', requireAuth(['admin']), (_request, response) => {
-  response.json(getServices());
+serviceCatalogRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+  response.json(await getServices());
 });
 
-serviceCatalogRouter.get('/active', requireAuth(), (_request, response) => {
+serviceCatalogRouter.get('/active', requireAuth(), async (_request, response) => {
   response.json(
-    getServices()
+    (await getServices())
       .filter((service) => service.isActive && service.showInAssistant)
       .map(toPublicService)
   );
@@ -221,7 +221,7 @@ serviceCatalogRouter.post('/', requireAuth(['admin']), async (request, response)
     return;
   }
 
-  if (externalServiceRepository.keyExists(result.data.key)) {
+  if (await externalServiceRepository.keyExists(result.data.key)) {
     sendError(response, 409, 'SERVICE_KEY_EXISTS', 'کلید سرویس تکراری است.');
     return;
   }
@@ -232,7 +232,7 @@ serviceCatalogRouter.post('/', requireAuth(['admin']), async (request, response)
 
 serviceCatalogRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
   const id = Number(request.params['id']);
-  const existing = externalServiceRepository.findById(id);
+  const existing = await externalServiceRepository.findById(id);
   if (!existing) {
     sendError(response, 404, 'SERVICE_NOT_FOUND', 'سرویس پیدا نشد.');
     return;
@@ -244,7 +244,7 @@ serviceCatalogRouter.put('/:id', requireAuth(['admin']), async (request, respons
     return;
   }
 
-  if (externalServiceRepository.keyExists(result.data.key, id)) {
+  if (await externalServiceRepository.keyExists(result.data.key, id)) {
     sendError(response, 409, 'SERVICE_KEY_EXISTS', 'کلید سرویس تکراری است.');
     return;
   }
@@ -266,7 +266,7 @@ serviceCatalogRouter.delete('/:id', requireAuth(['admin']), async (request, resp
 
 serviceCatalogRouter.post('/:id/test', requireAuth(['admin']), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const service = externalServiceRepository.findById(id);
+  const service = await externalServiceRepository.findById(id);
   if (!service) {
     sendError(response, 404, 'SERVICE_NOT_FOUND', 'سرویس پیدا نشد.');
     return;
@@ -277,7 +277,7 @@ serviceCatalogRouter.post('/:id/test', requireAuth(['admin']), async (request: A
 
 serviceCatalogRouter.post('/:id/run', requireAuth(), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
-  const service = externalServiceRepository.findById(id);
+  const service = await externalServiceRepository.findById(id);
   if (!service || !service.isActive || !service.showInAssistant) {
     sendError(response, 404, 'SERVICE_NOT_AVAILABLE', 'سرویس فعال برای اجرا پیدا نشد.');
     return;

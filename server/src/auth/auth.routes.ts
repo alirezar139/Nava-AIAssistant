@@ -13,7 +13,7 @@ authRouter.get('/captcha', (_request, response) => {
   response.json(captchaService.create());
 });
 
-authRouter.post('/login', (request, response) => {
+authRouter.post('/login', async (request, response) => {
   const result = z
     .object({
       username: z.string().min(1),
@@ -32,7 +32,7 @@ authRouter.post('/login', (request, response) => {
     return;
   }
 
-  const row = userRepository.findByUsername(result.data.username);
+  const row = await userRepository.findByUsername(result.data.username);
 
   if (!row || !bcrypt.compareSync(result.data.password, row.passwordHash)) {
     sendError(response, 401, 'CREDENTIALS_INVALID', 'نام کاربری یا رمز عبور صحیح نیست.');
