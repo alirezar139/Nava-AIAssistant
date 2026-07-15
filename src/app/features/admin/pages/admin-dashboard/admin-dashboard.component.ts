@@ -14,7 +14,8 @@ import { ConversationRecord, FaqRecord } from '../../../../core/models/faq.model
 import {
   TroubleshootingTree,
   TroubleshootingTreeEdge,
-  TroubleshootingTreeNode
+  TroubleshootingTreeNode,
+  TreeNodeShape
 } from '../../../../core/models/troubleshooting-tree.models';
 import {
   ApiService,
@@ -98,6 +99,12 @@ interface TreePreviewEdge extends TroubleshootingTreeEdge {
   labelY: number;
 }
 
+interface TreeShapePaletteItem {
+  kind: TreeNodeShape;
+  label: string;
+  hint: string;
+}
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -170,6 +177,7 @@ export class AdminDashboardComponent implements OnInit {
   treeProjectKey = 'default';
   treeCanvasTool: TreeCanvasTool = 'select';
   treeDraftNodeText = 'نود جدید';
+  treeActiveShape: TreeNodeShape = 'process';
   treeConnectionSourceId = '';
   treeManualLayout = false;
   treeLoaded = false;
@@ -187,12 +195,22 @@ export class AdminDashboardComponent implements OnInit {
   private treePreviewOriginX = 0;
   private treePreviewOriginY = 0;
   private treeDragState: { nodeId: string; offsetX: number; offsetY: number } | null = null;
+  private treeLastDragPreviewAt = 0;
   readonly treePageSizeOptions = [25, 50, 100];
   readonly treeExportFormats: Array<{ value: TreeExportFormat; label: string }> = [
     { value: 'json', label: 'JSON کامل' },
     { value: 'csv', label: 'CSV قابل بررسی' },
     { value: 'mermaid', label: 'Mermaid گراف' }
   ];
+  readonly treeShapePalette: TreeShapePaletteItem[] = [
+    { kind: 'process', label: 'Process', hint: 'مرحله یا اقدام' },
+    { kind: 'decision', label: 'Decision', hint: 'شرط یا پرسش' },
+    { kind: 'terminator', label: 'Start / End', hint: 'شروع یا پایان' },
+    { kind: 'data', label: 'Data', hint: 'ورودی یا خروجی' },
+    { kind: 'document', label: 'Document', hint: 'سند یا راهنما' }
+  ];
+  readonly treeRulerTicks = Array.from({ length: 15 }, (_, index) => index - 1);
+  readonly treeVerticalRulerTicks = Array.from({ length: 10 }, (_, index) => index);
   private treeSavedSnapshot: TroubleshootingTree | null = null;
 
   get treeNodes(): TroubleshootingTreeNode[] {
@@ -265,6 +283,22 @@ export class AdminDashboardComponent implements OnInit {
 
   get isTreeDragging(): boolean {
     return Boolean(this.treeDragState);
+  }
+
+  trackTreeShape(_index: number, shape: TreeShapePaletteItem): TreeNodeShape {
+    return shape.kind;
+  }
+
+  trackTreeTick(_index: number, tick: number): number {
+    return tick;
+  }
+
+  trackTroubleshootingNode(_index: number, node: Pick<TroubleshootingTreeNode, 'id'>): string {
+    return node.id;
+  }
+
+  trackTreePreviewEdge(_index: number, edge: TreePreviewEdge): string {
+    return `${edge.from}->${edge.to}:${edge.label ?? ''}`;
   }
 
   private rebuildTreeOutgoingEdges(): void {
@@ -1120,7 +1154,7 @@ export class AdminDashboardComponent implements OnInit {
       {
         startNodeId: id,
         introNodeIds: [],
-        nodes: [{ id, text: 'شروع درختواره', x: 90, y: 80 }],
+        nodes: [{ id, text: 'شروع درختواره', shape: 'terminator', x: 90, y: 80 }],
         edges: []
       },
       true
@@ -1245,6 +1279,7 @@ export class AdminDashboardComponent implements OnInit {
     if (!node) return;
     this.treeSelectedNodeId = node.id;
     this.treeNodeTextDraft = node.text;
+    this.treeActiveShape = node.shape ?? 'process';
     this.treeLinkTargetId = this.availableTreeTargets[0]?.id ?? '';
     this.syncTreePageWithSelection();
     this.rebuildTreeOutgoingEdges();
@@ -1296,6 +1331,24 @@ export class AdminDashboardComponent implements OnInit {
     this.changeDetector.markForCheck();
   }
 
+  setTreeActiveShape(shape: TreeNodeShape): void {
+    this.treeActiveShape = shape;
+    if (this.treeCanvasTool !== 'add-node') {
+      this.treeCanvasTool = 'add-node';
+      this.treeConnectionSourceId = '';
+    }
+    this.changeDetector.markForCheck();
+  }
+
+  applyActiveShapeToSelectedNode(): void {
+    const node = this.selectedTreeNode;
+    if (!node) return;
+    node.shape = this.treeActiveShape;
+    this.markTreeDirty();
+    this.rebuildTreePreview();
+    this.changeDetector.markForCheck();
+  }
+
   useReadableTreeLayout(): void {
     this.treeManualLayout = false;
     this.rebuildTreePreview();
@@ -1318,6 +1371,7 @@ export class AdminDashboardComponent implements OnInit {
     this.troubleshootingTree.nodes.push({
       id,
       text: this.treeDraftNodeText.trim() || 'نود جدید',
+      shape: this.treeActiveShape,
       x: Math.max(0, point.x + this.treePreviewOriginX),
       y: Math.max(0, point.y + this.treePreviewOriginY)
     });
@@ -1348,6 +1402,7 @@ export class AdminDashboardComponent implements OnInit {
       offsetX: point.x + this.treePreviewOriginX - (node.x ?? 0),
       offsetY: point.y + this.treePreviewOriginY - (node.y ?? 0)
     };
+    this.treeLastDragPreviewAt = 0;
   }
 
   handleTreePointerMove(event: PointerEvent): void {
@@ -1358,12 +1413,20 @@ export class AdminDashboardComponent implements OnInit {
     node.x = Math.max(0, point.x + this.treePreviewOriginX - this.treeDragState.offsetX);
     node.y = Math.max(0, point.y + this.treePreviewOriginY - this.treeDragState.offsetY);
     this.markTreeDirty();
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (now - this.treeLastDragPreviewAt < 16) return;
+    this.treeLastDragPreviewAt = now;
     this.rebuildTreePreview();
     this.changeDetector.markForCheck();
   }
 
   endTreeNodeDrag(): void {
+    if (this.treeDragState) {
+      this.rebuildTreePreview();
+      this.changeDetector.markForCheck();
+    }
     this.treeDragState = null;
+    this.treeLastDragPreviewAt = 0;
   }
 
   onTreeSearchChanged(value: string): void {
@@ -1487,7 +1550,12 @@ export class AdminDashboardComponent implements OnInit {
     if (!this.troubleshootingTree) {
       const id = 'node_1';
       this.applyTroubleshootingTree(
-        { startNodeId: id, introNodeIds: [], nodes: [{ id, text: 'شروع درختواره', x: 90, y: 80 }], edges: [] },
+        {
+          startNodeId: id,
+          introNodeIds: [],
+          nodes: [{ id, text: 'شروع درختواره', shape: 'terminator', x: 90, y: 80 }],
+          edges: []
+        },
         true
       );
       this.markTreeDirty();
@@ -1506,6 +1574,7 @@ export class AdminDashboardComponent implements OnInit {
     this.troubleshootingTree.nodes.push({
       id,
       text,
+      shape: this.treeActiveShape,
       x: (parent.x ?? 80) + 220,
       y: (parent.y ?? 80) + siblings * 84
     });

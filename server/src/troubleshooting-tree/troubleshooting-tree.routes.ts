@@ -14,6 +14,7 @@ const troubleshootingTreeSchema = z.object({
       z.object({
         id: z.string().trim().min(1),
         text: z.string().trim().min(1),
+        shape: z.enum(['process', 'decision', 'terminator', 'data', 'document']).optional(),
         x: z.number().finite().nullable().optional(),
         y: z.number().finite().nullable().optional()
       })

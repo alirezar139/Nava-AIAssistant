@@ -788,8 +788,45 @@
             <aside class="tree-side-panel tree-node-browser">
               <div class="section-title compact">
                 <div>
-                  <span>فهرست نودها</span>
-                  <h3>انتخاب مسیر</h3>
+                  <span>Shapes</span>
+                  <h3>کتابخانه شکل‌ها</h3>
+                </div>
+              </div>
+              <section class="tree-shapes-library">
+                <div class="shape-search">
+                  <input value="Basic Shapes" readonly aria-label="جست‌وجوی شکل‌ها" />
+                  <span></span>
+                </div>
+                <div class="shape-stencil-list">
+                  <button type="button" class="active">Basic Shapes</button>
+                  <button type="button">Flowchart</button>
+                  <button type="button">Data Flow</button>
+                </div>
+                <div class="shape-palette-grid">
+                  <button
+                    type="button"
+                    *ngFor="let shape of treeShapePalette; trackBy: trackTreeShape"
+                    [class.active]="treeActiveShape === shape.kind"
+                    (click)="setTreeActiveShape(shape.kind)"
+                  >
+                    <i [class]="'shape-preview ' + shape.kind"></i>
+                    <b>{{ shape.label }}</b>
+                    <small>{{ shape.hint }}</small>
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  class="shape-apply"
+                  [disabled]="!selectedTreeNode"
+                  (click)="applyActiveShapeToSelectedNode()"
+                >
+                  اعمال روی نود انتخابی
+                </button>
+              </section>
+              <div class="section-title compact tree-node-list-title">
+                <div>
+                  <span>نودها</span>
+                  <h3>فهرست مسیرها</h3>
                 </div>
               </div>
               <div class="search-field">
@@ -817,7 +854,7 @@
               <div class="tree-node-list">
                 <button
                   type="button"
-                  *ngFor="let node of paginatedTreeNodes"
+                  *ngFor="let node of paginatedTreeNodes; trackBy: trackTroubleshootingNode"
                   [class.active]="node.id === treeSelectedNodeId"
                   (click)="focusTreeNode(node.id)"
                 >
@@ -902,60 +939,79 @@
                 <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
                 <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
               </div>
-              <div
-                class="tree-canvas"
-                #treeCanvas
-                [class.model-add]="treeCanvasTool === 'add-node'"
-                [class.model-connect]="treeCanvasTool === 'connect'"
-                [class.model-dragging]="isTreeDragging"
-              >
-                <svg
-                  [attr.viewBox]="treeViewBox"
-                  [style.width.px]="treeCanvasWidth * treeZoom"
-                  [style.height.px]="treeCanvasHeight * treeZoom"
-                  role="img"
-                  aria-label="نمای کامل درختواره"
-                  (click)="handleTreeCanvasClick($event)"
-                  (pointermove)="handleTreePointerMove($event)"
-                  (pointerup)="endTreeNodeDrag()"
-                  (pointerleave)="endTreeNodeDrag()"
-                >
-                  <defs>
-                    <marker id="tree-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z"></path>
-                    </marker>
-                  </defs>
-                  <g class="tree-edge-layer">
-                    <g *ngFor="let edge of treePreviewEdges">
-                      <line
-                        [attr.x1]="edge.x1"
-                        [attr.y1]="edge.y1"
-                        [attr.x2]="edge.x2"
-                        [attr.y2]="edge.y2"
-                        marker-end="url(#tree-arrow)"
-                      ></line>
-                      <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
-                        {{ shortText(edge.label || '', 18) }}
-                      </text>
-                    </g>
-                  </g>
-                  <g class="tree-node-layer">
-                    <g
-                      class="tree-svg-node"
-                      *ngFor="let node of treePreviewNodes"
-                      [class.active]="node.isSelected"
-                      [class.start]="node.isStart"
-                      [class.connecting-source]="node.id === treeConnectionSourceId"
-                      [attr.transform]="'translate(' + node.cx + ' ' + node.cy + ')'"
-                      (click)="handleTreeNodeClick(node.id, $event)"
-                      (pointerdown)="startTreeNodeDrag(node.id, $event)"
+              <div class="tree-designer-frame">
+                <div class="tree-ruler-corner"></div>
+                <div class="tree-ruler-horizontal" aria-hidden="true">
+                  <span *ngFor="let tick of treeRulerTicks; trackBy: trackTreeTick">{{ tick }}</span>
+                </div>
+                <div class="tree-ruler-vertical" aria-hidden="true">
+                  <span *ngFor="let tick of treeVerticalRulerTicks; trackBy: trackTreeTick">{{ tick }}</span>
+                </div>
+                <div class="tree-page-stage">
+                  <div class="tree-page-sheet">
+                    <div
+                      class="tree-canvas"
+                      #treeCanvas
+                      [class.model-add]="treeCanvasTool === 'add-node'"
+                      [class.model-connect]="treeCanvasTool === 'connect'"
+                      [class.model-dragging]="isTreeDragging"
                     >
-                      <rect x="-112" y="-36" width="224" height="72" rx="16"></rect>
-                      <text y="-7">{{ shortText(node.text, 32) }}</text>
-                      <text y="18" class="node-meta">{{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}</text>
-                    </g>
-                  </g>
-                </svg>
+                      <svg
+                        [attr.viewBox]="treeViewBox"
+                        [style.width.px]="treeCanvasWidth * treeZoom"
+                        [style.height.px]="treeCanvasHeight * treeZoom"
+                        role="img"
+                        aria-label="نمای کامل درختواره"
+                        (click)="handleTreeCanvasClick($event)"
+                        (pointermove)="handleTreePointerMove($event)"
+                        (pointerup)="endTreeNodeDrag()"
+                        (pointerleave)="endTreeNodeDrag()"
+                      >
+                        <defs>
+                          <marker id="tree-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                          </marker>
+                        </defs>
+                        <g class="tree-edge-layer">
+                          <g *ngFor="let edge of treePreviewEdges; trackBy: trackTreePreviewEdge">
+                            <line
+                              [attr.x1]="edge.x1"
+                              [attr.y1]="edge.y1"
+                              [attr.x2]="edge.x2"
+                              [attr.y2]="edge.y2"
+                              marker-end="url(#tree-arrow)"
+                            ></line>
+                            <text *ngIf="edge.label" [attr.x]="edge.labelX" [attr.y]="edge.labelY - 6">
+                              {{ shortText(edge.label || '', 18) }}
+                            </text>
+                          </g>
+                        </g>
+                        <g class="tree-node-layer">
+                          <g
+                            class="tree-svg-node"
+                            *ngFor="let node of treePreviewNodes; trackBy: trackTroubleshootingNode"
+                            [class.active]="node.isSelected"
+                            [class.start]="node.isStart"
+                            [class.connecting-source]="node.id === treeConnectionSourceId"
+                            [attr.transform]="'translate(' + node.cx + ' ' + node.cy + ')'"
+                            (click)="handleTreeNodeClick(node.id, $event)"
+                            (pointerdown)="startTreeNodeDrag(node.id, $event)"
+                          >
+                            <ng-container [ngSwitch]="node.shape || 'process'">
+                              <path *ngSwitchCase="'decision'" class="node-shape" d="M 0 -46 L 124 0 L 0 46 L -124 0 Z"></path>
+                              <ellipse *ngSwitchCase="'terminator'" class="node-shape" cx="0" cy="0" rx="122" ry="42"></ellipse>
+                              <path *ngSwitchCase="'data'" class="node-shape" d="M -96 -40 L 124 -40 L 96 40 L -124 40 Z"></path>
+                              <path *ngSwitchCase="'document'" class="node-shape" d="M -116 -40 H 116 V 28 C 70 50 20 22 -20 36 C -58 50 -84 42 -116 30 Z"></path>
+                              <rect *ngSwitchDefault class="node-shape" x="-118" y="-42" width="236" height="84" rx="14"></rect>
+                            </ng-container>
+                            <text y="-7">{{ shortText(node.text, 32) }}</text>
+                            <text y="18" class="node-meta">{{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}</text>
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 

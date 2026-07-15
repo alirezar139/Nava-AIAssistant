@@ -104,6 +104,7 @@ export interface ExternalServiceRecord {
 export interface TroubleshootingTreeNodeRecord {
   id: string;
   text: string;
+  shape?: 'process' | 'decision' | 'terminator' | 'data' | 'document';
   x?: number | null;
   y?: number | null;
 }

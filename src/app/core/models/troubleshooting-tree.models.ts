@@ -1,9 +1,12 @@
 export interface TroubleshootingTreeNode {
   id: string;
   text: string;
+  shape?: TreeNodeShape;
   x?: number | null;
   y?: number | null;
 }
+
+export type TreeNodeShape = 'process' | 'decision' | 'terminator' | 'data' | 'document';
 
 export interface TroubleshootingTreeEdge {
   from: string;

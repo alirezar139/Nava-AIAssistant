@@ -8,9 +8,14 @@ import { database as localDatabase } from '../database/database.js';
 export interface TroubleshootingTreeNode {
   id: string;
   text: string;
+  shape?: TreeNodeShape;
   x?: number | null;
   y?: number | null;
 }
+
+type TreeNodeShape = 'process' | 'decision' | 'terminator' | 'data' | 'document';
+
+const treeNodeShapes = new Set<TreeNodeShape>(['process', 'decision', 'terminator', 'data', 'document']);
 
 export interface TroubleshootingTreeEdge {
   from: string;
@@ -112,9 +117,10 @@ async function readArangoTree(projectKey: string): Promise<TroubleshootingTree> 
       RETURN edge
   `);
 
-  const nodes = (await nodesCursor.all()).map(({ id, text, x, y }) => ({
+  const nodes = (await nodesCursor.all()).map(({ id, text, shape, x, y }) => ({
     id,
     text,
+    shape,
     x: x ?? null,
     y: y ?? null
   }));
@@ -164,6 +170,7 @@ async function replaceArangoTree(projectKey: string, tree: TroubleshootingTree):
       nodeId: node.id,
       id: node.id,
       text: node.text,
+      shape: node.shape ?? 'process',
       x: node.x ?? null,
       y: node.y ?? null,
       sortOrder: index
@@ -230,6 +237,7 @@ async function seedArangoTreeIfEmpty(projectKey: string): Promise<void> {
       nodeId: node.id,
       id: node.id,
       text: node.text,
+      shape: node.shape ?? 'process',
       x: node.x ?? null,
       y: node.y ?? null,
       sortOrder: index
@@ -269,6 +277,7 @@ function normalizeTroubleshootingTree(tree: TroubleshootingTree): Troubleshootin
     .map((node) => ({
       id: String(node.id ?? '').trim(),
       text: String(node.text ?? '').trim(),
+      shape: normalizeTreeNodeShape(node.shape),
       x: typeof node.x === 'number' && Number.isFinite(node.x) ? node.x : null,
       y: typeof node.y === 'number' && Number.isFinite(node.y) ? node.y : null
     }))
@@ -388,6 +397,10 @@ function normalizeProjectKey(value: unknown): string {
     .replace(/\s+/g, '-')
     .slice(0, 80);
   return key || defaultProjectKey;
+}
+
+function normalizeTreeNodeShape(value: unknown): TreeNodeShape {
+  return treeNodeShapes.has(value as TreeNodeShape) ? (value as TreeNodeShape) : 'process';
 }
 
 function treeSettingsKey(projectKey: string): string {
