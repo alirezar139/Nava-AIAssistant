@@ -48,7 +48,22 @@ const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../..
 const frontendIndexPath = join(frontendDistPath, 'index.html');
 
 if (existsSync(frontendIndexPath)) {
-  app.use(express.static(frontendDistPath));
+  app.use(
+    express.static(frontendDistPath, {
+      setHeaders(response, assetPath) {
+        if (assetPath.endsWith('.html')) {
+          response.setHeader('Cache-Control', 'no-store');
+          return;
+        }
+
+        const isHashedAsset = /\.[a-f0-9]{12,}\./i.test(assetPath);
+        response.setHeader(
+          'Cache-Control',
+          isHashedAsset ? 'public, max-age=31536000, immutable' : 'public, max-age=3600'
+        );
+      }
+    })
+  );
   app.get(/^(?!\/api).*/, (_request, response) => response.sendFile(frontendIndexPath));
 }
 

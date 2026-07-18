@@ -7,11 +7,13 @@ import { database as localDatabase } from './database.js';
 
 export const arangoCollections = {
   users: 'users',
+  projects: 'projects',
   faqs: 'faqs',
   conversations: 'conversations',
   diagnosticCases: 'diagnostic_cases',
   externalServices: 'external_services',
   settings: 'settings',
+  troubleshootingTreeVersions: 'troubleshooting_tree_versions',
   troubleshootingNodes: 'troubleshooting_nodes',
   troubleshootingEdges: 'troubleshooting_edges'
 } as const;
@@ -42,11 +44,13 @@ export async function ensureArangoSchema(): Promise<void> {
   await ensureArangoDatabaseExists();
   const database = getArangoDatabase();
   await ensureDocumentCollection(database, arangoCollections.users);
+  await ensureDocumentCollection(database, arangoCollections.projects);
   await ensureDocumentCollection(database, arangoCollections.faqs);
   await ensureDocumentCollection(database, arangoCollections.conversations);
   await ensureDocumentCollection(database, arangoCollections.diagnosticCases);
   await ensureDocumentCollection(database, arangoCollections.externalServices);
   await ensureDocumentCollection(database, arangoCollections.settings);
+  await ensureDocumentCollection(database, arangoCollections.troubleshootingTreeVersions);
   await ensureDocumentCollection(database, arangoCollections.troubleshootingNodes);
   await ensureEdgeCollection(database, arangoCollections.troubleshootingEdges);
 
@@ -59,6 +63,15 @@ export async function ensureArangoSchema(): Promise<void> {
     type: 'persistent',
     fields: ['username'],
     unique: true
+  });
+  await database.collection(arangoCollections.projects).ensureIndex({
+    type: 'persistent',
+    fields: ['key'],
+    unique: true
+  });
+  await database.collection(arangoCollections.projects).ensureIndex({
+    type: 'persistent',
+    fields: ['isActive', 'updatedAt']
   });
   await database.collection(arangoCollections.faqs).ensureIndex({
     type: 'persistent',
@@ -109,23 +122,32 @@ export async function ensureArangoSchema(): Promise<void> {
     fields: ['key'],
     unique: true
   });
-  await dropLegacyTroubleshootingNodeIndex(database);
+  await database.collection(arangoCollections.troubleshootingTreeVersions).ensureIndex({
+    type: 'persistent',
+    fields: ['projectKey', 'mode'],
+    unique: true
+  });
+  await database.collection(arangoCollections.troubleshootingTreeVersions).ensureIndex({
+    type: 'persistent',
+    fields: ['status', 'updatedAt']
+  });
+  await dropLegacyTroubleshootingIndexes(database);
   await database.collection(arangoCollections.troubleshootingNodes).ensureIndex({
     type: 'persistent',
-    fields: ['projectKey', 'nodeId'],
+    fields: ['projectKey', 'treeMode', 'nodeId'],
     unique: true
   });
   await database.collection(arangoCollections.troubleshootingNodes).ensureIndex({
     type: 'persistent',
-    fields: ['projectKey', 'sortOrder']
+    fields: ['projectKey', 'treeMode', 'sortOrder']
   });
   await database.collection(arangoCollections.troubleshootingEdges).ensureIndex({
     type: 'persistent',
-    fields: ['projectKey', 'sortOrder']
+    fields: ['projectKey', 'treeMode', 'sortOrder']
   });
   await database.collection(arangoCollections.troubleshootingEdges).ensureIndex({
     type: 'persistent',
-    fields: ['projectKey', 'from', 'to']
+    fields: ['projectKey', 'treeMode', 'from', 'to']
   });
 
   await seedArangoApplicationData(database);
@@ -176,8 +198,24 @@ async function ensureArangoDatabaseExists(): Promise<void> {
   }
 }
 
-async function dropLegacyTroubleshootingNodeIndex(database: Database): Promise<void> {
-  const collection = database.collection(arangoCollections.troubleshootingNodes);
+async function dropLegacyTroubleshootingIndexes(database: Database): Promise<void> {
+  await dropLegacyPersistentIndexes(database, arangoCollections.troubleshootingNodes, [
+    ['nodeId'],
+    ['projectKey', 'nodeId'],
+    ['projectKey', 'sortOrder']
+  ]);
+  await dropLegacyPersistentIndexes(database, arangoCollections.troubleshootingEdges, [
+    ['projectKey', 'sortOrder'],
+    ['projectKey', 'from', 'to']
+  ]);
+}
+
+async function dropLegacyPersistentIndexes(
+  database: Database,
+  collectionName: string,
+  legacyFields: string[][]
+): Promise<void> {
+  const collection = database.collection(collectionName);
   const indexes = (await collection.indexes()) as Array<{
     id?: string;
     name?: string;
@@ -189,9 +227,7 @@ async function dropLegacyTroubleshootingNodeIndex(database: Database): Promise<v
   for (const index of indexes) {
     if (
       index.type === 'persistent' &&
-      index.unique === true &&
-      index.fields?.length === 1 &&
-      index.fields[0] === 'nodeId'
+      legacyFields.some((fields) => index.fields?.join('|') === fields.join('|'))
     ) {
       await collection.dropIndex(index.id ?? index.name ?? '');
     }
@@ -222,6 +258,12 @@ async function seedArangoApplicationData(database: Database): Promise<void> {
       ];
 
   await seedCollectionIfEmpty(database, arangoCollections.users, users, (item) => String(item.id));
+  await seedCollectionIfEmpty(
+    database,
+    arangoCollections.projects,
+    Object.values(localDatabase.data.projects),
+    (item) => item.key
+  );
   await seedCollectionIfEmpty(database, arangoCollections.faqs, localDatabase.data.faqs, (item) =>
     String(item.id)
   );

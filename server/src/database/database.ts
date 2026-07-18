@@ -81,6 +81,15 @@ export interface TicketRequestTypeMappingRecord {
   requestTypeId: string;
 }
 
+export interface ProjectRecord {
+  key: string;
+  title: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type ExternalServiceMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface ExternalServiceRecord {
@@ -137,10 +146,25 @@ export interface TroubleshootingTreeEdgeRecord {
 }
 
 export interface TroubleshootingTreeRecord {
+  projectKey?: string;
   startNodeId: string;
   introNodeIds: string[];
   nodes: TroubleshootingTreeNodeRecord[];
   edges: TroubleshootingTreeEdgeRecord[];
+}
+
+export type TroubleshootingTreeMode = 'active' | 'draft';
+
+export interface TroubleshootingTreeVersionRecord extends TroubleshootingTreeRecord {
+  projectKey: string;
+  mode: TroubleshootingTreeMode;
+  version: number;
+  status: TroubleshootingTreeMode;
+  nodeCount: number;
+  edgeCount: number;
+  createdAt: string;
+  updatedAt: string;
+  activatedAt: string | null;
 }
 
 export interface AppSettingsRecord {
@@ -149,12 +173,14 @@ export interface AppSettingsRecord {
 
 interface DatabaseSchema {
   users: UserRecord[];
+  projects: Record<string, ProjectRecord>;
   faqs: FaqRecord[];
   conversations: ConversationRecord[];
   diagnosticCases: DiagnosticCaseRecord[];
   externalServices: ExternalServiceRecord[];
   troubleshootingTree: TroubleshootingTreeRecord | null;
   troubleshootingTrees: Record<string, TroubleshootingTreeRecord>;
+  troubleshootingTreeVersions: Record<string, TroubleshootingTreeVersionRecord>;
   settings: AppSettingsRecord;
 }
 
@@ -166,12 +192,14 @@ await mkdir(dataDirectory, { recursive: true });
 
 export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirectory, config.dataFileName), {
   users: [],
+  projects: {},
   faqs: [],
   conversations: [],
   diagnosticCases: [],
   externalServices: [],
   troubleshootingTree: null,
   troubleshootingTrees: {},
+  troubleshootingTreeVersions: {},
   settings: {
     ticketService: {
       url: '',
@@ -185,13 +213,18 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
   }
 });
 
+const now = new Date().toISOString();
+database.data.projects ??= {};
 database.data.diagnosticCases ??= [];
 database.data.externalServices ??= [];
 database.data.troubleshootingTree ??= null;
 database.data.troubleshootingTrees ??= {};
+database.data.troubleshootingTreeVersions ??= {};
 if (database.data.troubleshootingTree && !database.data.troubleshootingTrees['default']) {
   database.data.troubleshootingTrees['default'] = database.data.troubleshootingTree;
 }
+ensureLocalProject('default', 'پروژه پیش‌فرض', now);
+migrateLegacyTroubleshootingTrees(now);
 database.data.settings ??= {
   ticketService: {
     url: '',
@@ -229,7 +262,6 @@ database.data.diagnosticCases.forEach((item) => {
   item.ratingSubmittedAt ??= null;
 });
 
-const now = new Date().toISOString();
 if (!database.data.users.some((user) => user.username === 'admin')) {
   database.data.users.push({
     id: 1,
@@ -254,4 +286,58 @@ await database.write();
 
 export function nextId(records: Array<{ id: number }>): number {
   return records.reduce((maximum, record) => Math.max(maximum, record.id), 0) + 1;
+}
+
+export function troubleshootingTreeVersionKey(projectKey: string, mode: TroubleshootingTreeMode): string {
+  return `${projectKey}:${mode}`;
+}
+
+function ensureLocalProject(projectKey: string, title: string, timestamp: string): void {
+  database.data.projects[projectKey] ??= {
+    key: projectKey,
+    title,
+    description: '',
+    isActive: true,
+    createdAt: timestamp,
+    updatedAt: timestamp
+  };
+}
+
+function migrateLegacyTroubleshootingTrees(timestamp: string): void {
+  const trees = {
+    ...database.data.troubleshootingTrees,
+    ...(database.data.troubleshootingTree ? { default: database.data.troubleshootingTree } : {})
+  };
+
+  Object.entries(trees).forEach(([storageKey, tree]) => {
+    if (!tree?.nodes?.length) return;
+    const { projectKey, mode } = parseLegacyTreeStorageKey(storageKey);
+    ensureLocalProject(projectKey, projectKey === 'default' ? 'پروژه پیش‌فرض' : projectKey, timestamp);
+    const versionKey = troubleshootingTreeVersionKey(projectKey, mode);
+    database.data.troubleshootingTreeVersions[versionKey] ??= {
+      ...tree,
+      projectKey,
+      mode,
+      status: mode,
+      version: 1,
+      nodeCount: tree.nodes.length,
+      edgeCount: tree.edges.length,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      activatedAt: mode === 'active' ? timestamp : null
+    };
+  });
+}
+
+function parseLegacyTreeStorageKey(storageKey: string): {
+  projectKey: string;
+  mode: TroubleshootingTreeMode;
+} {
+  if (storageKey.endsWith('__draft')) {
+    return {
+      projectKey: storageKey.slice(0, -'__draft'.length) || 'default',
+      mode: 'draft'
+    };
+  }
+  return { projectKey: storageKey || 'default', mode: 'active' };
 }

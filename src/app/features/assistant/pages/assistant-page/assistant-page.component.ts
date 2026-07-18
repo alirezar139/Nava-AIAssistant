@@ -9,7 +9,8 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { DiagnosticCaseRecord, DiagnosticPayload } from '../../../../core/models/diagnostic.models';
 import { ChatMessage, FaqRecord } from '../../../../core/models/faq.models';
 import {
@@ -77,6 +78,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   question = '';
   loading = true;
   error = '';
+  activeProjectKey = 'default';
   typing = false;
   diagnosticStep: keyof DiagnosticPayload | null = null;
   diagnosticDraft: DiagnosticPayload = this.createEmptyDiagnostic();
@@ -103,8 +105,10 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private currentTreeNodeId = '';
   private currentTreeNodeText = '';
   private conversationHistory: ConversationSnapshot[] = [];
+  private projectRouteSubscription?: Subscription;
   private typingTimer?: ReturnType<typeof setTimeout>;
   private welcomeTimer?: ReturnType<typeof setTimeout>;
+  private readonly projectStorageKey = 'rahyar-active-project-key';
   readonly ratingScores = [1, 2, 3, 4, 5];
 
   readonly supportProgressSteps: SupportProgressItem[] = [
@@ -165,6 +169,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     private readonly searchService: FaqSearchService,
     private readonly treeService: TroubleshootingTreeService,
     private readonly wordReader: WordReaderService,
+    private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly changeDetector: ChangeDetectorRef
   ) {}
@@ -172,7 +177,19 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.showLoginWelcomeOnce();
 
-    this.loadTroubleshootingTree();
+    this.projectRouteSubscription = this.route.queryParamMap.subscribe((params) => {
+      const nextProjectKey = this.resolveProjectKey(
+        params.get('projectKey') || params.get('project') || params.get('p')
+      );
+      const projectChanged = nextProjectKey !== this.activeProjectKey;
+      this.activeProjectKey = nextProjectKey;
+      this.persistActiveProjectKey(nextProjectKey);
+      if (projectChanged) {
+        this.restartConversationForProjectChange();
+      }
+      this.loadTroubleshootingTree();
+    });
+
     this.loadActiveExternalServices();
 
     this.api.getFaqs().subscribe({
@@ -191,6 +208,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.projectRouteSubscription?.unsubscribe();
     if (this.typingTimer) clearTimeout(this.typingTimer);
     if (this.welcomeTimer) clearTimeout(this.welcomeTimer);
   }
@@ -391,7 +409,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return {
       title: '',
       problem: '',
-      systemName: '',
+      systemName: this.activeProjectKey || 'default',
       processName: '',
       scenario: '',
       serialNumber: '',
@@ -801,6 +819,57 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return username ? `nava-welcome-seen:${username}` : null;
   }
 
+  private resolveProjectKey(routeProjectKey: string | null): string {
+    return this.normalizeProjectKey(routeProjectKey || this.readStoredProjectKey() || 'default');
+  }
+
+  private normalizeProjectKey(value: string): string {
+    const key = value.trim().replace(/\s+/g, '-').slice(0, 80);
+    return key || 'default';
+  }
+
+  private readStoredProjectKey(): string {
+    try {
+      return localStorage.getItem(this.projectStorageKey) ?? '';
+    } catch {
+      return '';
+    }
+  }
+
+  private persistActiveProjectKey(projectKey: string): void {
+    try {
+      localStorage.setItem(this.projectStorageKey, projectKey);
+    } catch {
+      // Storage can be unavailable in restricted browser contexts.
+    }
+  }
+
+  private restartConversationForProjectChange(): void {
+    if (this.typingTimer) clearTimeout(this.typingTimer);
+    this.typing = false;
+    this.messages = [];
+    this.question = '';
+    this.error = '';
+    this.diagnosticStep = null;
+    this.diagnosticDraft = this.createEmptyDiagnostic();
+    this.diagnosticCase = null;
+    this.ticketDialogOpen = false;
+    this.ticketSubmitting = false;
+    this.ticketAutomationState = 'idle';
+    this.ticketErrorMessage = '';
+    this.ratingSubmitting = false;
+    this.ratingMessage = '';
+    this.supportStage = 'selecting';
+    this.awaitingInitialProblem = true;
+    this.treeIndex = null;
+    this.treeStartNodeId = '';
+    this.activeTreeOptions = [];
+    this.treeTrail = [];
+    this.currentTreeNodeId = '';
+    this.currentTreeNodeText = '';
+    this.conversationHistory = [];
+  }
+
   private loadActiveExternalServices(): void {
     this.api.getActiveExternalServices().subscribe({
       next: (services) => {
@@ -816,13 +885,18 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private loadTroubleshootingTree(): void {
-    this.treeService.load().subscribe({
+    const projectKey = this.activeProjectKey;
+    this.treeService.load(projectKey).subscribe({
       next: (tree) => {
+        if (projectKey !== this.activeProjectKey) return;
         this.treeIndex = this.treeService.createIndex(tree);
         this.treeStartNodeId = tree.startNodeId;
-        this.showInitialProblemPrompt();
+        if (!this.messages.length || this.awaitingInitialProblem) {
+          this.showInitialProblemPrompt();
+        }
       },
       error: () => {
+        this.error = `دریافت درختواره پروژه ${projectKey} ممکن نبود.`;
         this.changeDetector.markForCheck();
       }
     });
@@ -1040,7 +1114,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return {
       title: this.limitText(`درخواست پشتیبانی - ${leaf}`, 120),
       problem: this.limitText(problem || fullPath || leaf, 3000),
-      systemName: this.resolveSystemName(domain),
+      systemName: this.resolveProjectScopedSystemName(domain),
       processName: this.limitText(middlePath.join(' / ') || leaf || 'مسیر درختواره پشتیبانی', 260),
       scenario: this.limitText(fullPath || leaf, 4000),
       serialNumber: 'در دسترس نیست',
@@ -1050,6 +1124,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       evidence: this.limitText(
         [
           `ثبت خودکار از صفحه کاربر راهیار`,
+          `پروژه: ${this.activeProjectKey}`,
           `تعداد انتخاب‌های کاربر: ${this.treeTrail.length.toLocaleString('fa-IR')}`,
           `مسیر: ${fullPath || leaf}`,
           `Node: ${mappedNodeId || '-'}${mappedNodeText ? ` - ${mappedNodeText}` : ''}`
@@ -1065,6 +1140,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     if (normalizedDomain.includes('دیتابیس')) return 'دیتابیس';
     if (normalizedDomain.includes('زیرساخت')) return 'زیرساخت';
     return 'پلتفرم تحلیل روابط';
+  }
+
+  private resolveProjectScopedSystemName(domain: string): string {
+    const systemName = this.resolveSystemName(domain);
+    return this.activeProjectKey === 'default'
+      ? systemName
+      : `${systemName} - پروژه ${this.activeProjectKey}`;
   }
 
   private isDecisionLabel(value: string): boolean {

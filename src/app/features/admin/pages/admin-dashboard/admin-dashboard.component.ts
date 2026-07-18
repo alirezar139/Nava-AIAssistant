@@ -1118,7 +1118,7 @@ export class AdminDashboardComponent implements OnInit {
   loadTroubleshootingTree(force = false): void {
     if (this.treeLoading || (this.treeLoaded && !force)) return;
     this.treeLoading = true;
-    this.api.getTroubleshootingTree(this.treeProjectLabel).subscribe({
+    this.api.getTroubleshootingTree(this.treeProjectLabel, 'draft').subscribe({
       next: (tree) => {
         this.treeProjectKey = tree.projectKey ?? this.treeProjectLabel;
         this.applyTroubleshootingTree(tree, false);
@@ -2091,7 +2091,8 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     this.treeSaving = true;
-    this.api.updateTroubleshootingTree(this.troubleshootingTree, this.treeProjectLabel).subscribe({
+    const mode = options.finalize ? 'active' : 'draft';
+    this.api.updateTroubleshootingTree(this.troubleshootingTree, this.treeProjectLabel, mode).subscribe({
       next: (tree) => {
         this.treeProjectKey = tree.projectKey ?? this.treeProjectLabel;
         this.applyTroubleshootingTree(tree, false);
@@ -2104,7 +2105,7 @@ export class AdminDashboardComponent implements OnInit {
           options.finalize ? 'درختواره نهایی شد' : 'درختواره ذخیره شد',
           options.finalize
             ? `نسخه نهایی برای پروژه ${this.treeProjectLabel} ذخیره شد و از این پس مبنای مسیر راهبری است.`
-            : 'مسیرهای راهبری کاربران با نسخه جدید به روز شد.'
+            : 'پیش‌نویس پروژه ذخیره شد؛ مسیر کاربران تا زمان نهایی‌سازی تغییر نمی‌کند.'
         );
         if (options.closeAfterSave) {
           this.closeTreeWorkspace();

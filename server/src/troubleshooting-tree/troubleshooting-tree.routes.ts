@@ -60,9 +60,15 @@ function projectKeyFromRequest(request: { query: Record<string, unknown> }): str
   return typeof value === 'string' ? value : 'default';
 }
 
+function treeModeFromRequest(request: { query: Record<string, unknown> }): 'active' | 'draft' {
+  return request.query['mode'] === 'draft' ? 'draft' : 'active';
+}
+
 troubleshootingTreeRouter.get('/', async (request, response) => {
   try {
-    response.json(await getTroubleshootingTree(projectKeyFromRequest(request)));
+    const mode = treeModeFromRequest(request);
+    response.setHeader('Cache-Control', mode === 'active' ? 'private, max-age=60' : 'no-store');
+    response.json(await getTroubleshootingTree(projectKeyFromRequest(request), mode));
   } catch (error) {
     console.error(error);
     sendError(response, 500, 'TROUBLESHOOTING_TREE_LOAD_FAILED', 'درختواره راهبری قابل دریافت نیست.');
@@ -89,7 +95,9 @@ troubleshootingTreeRouter.put('/', requireAuth(['admin']), async (request, respo
   }
 
   try {
-    response.json(await saveTroubleshootingTree(result.data, projectKeyFromRequest(request)));
+    response.json(
+      await saveTroubleshootingTree(result.data, projectKeyFromRequest(request), treeModeFromRequest(request))
+    );
   } catch (error) {
     console.error(error);
     sendError(response, 500, 'TROUBLESHOOTING_TREE_SAVE_FAILED', 'ذخیره درختواره انجام نشد.');

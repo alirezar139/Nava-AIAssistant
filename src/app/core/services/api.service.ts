@@ -149,18 +149,22 @@ export class ApiService {
     return this.http.put<TicketServiceSettings>(`${this.apiUrl}/settings/ticket-service`, payload);
   }
 
-  getTroubleshootingTree(projectKey = 'default'): Observable<TroubleshootingTree> {
+  getTroubleshootingTree(
+    projectKey = 'default',
+    mode: 'active' | 'draft' = 'active'
+  ): Observable<TroubleshootingTree> {
     return this.http.get<TroubleshootingTree>(
-      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`
+      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}&mode=${mode}`
     );
   }
 
   updateTroubleshootingTree(
     payload: TroubleshootingTree,
-    projectKey = 'default'
+    projectKey = 'default',
+    mode: 'active' | 'draft' = 'active'
   ): Observable<TroubleshootingTree> {
     return this.http.put<TroubleshootingTree>(
-      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}`,
+      `${this.apiUrl}/troubleshooting-tree?projectKey=${encodeURIComponent(projectKey || 'default')}&mode=${mode}`,
       payload
     );
   }

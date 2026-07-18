@@ -50,6 +50,63 @@ interface TroubleshootingTree {
 GET /api/troubleshooting-tree
 ```
 
+برای چند پروژه مستقل، پارامتر `projectKey` باید همراه درخواست ارسال شود. صفحه کاربر فقط نسخه فعال را مصرف می‌کند:
+
+```text
+GET /api/troubleshooting-tree?projectKey=default&mode=active
+```
+
+پنل مدیر هنگام ویرایش از نسخه پیش‌نویس استفاده می‌کند:
+
+```text
+GET /api/troubleshooting-tree?projectKey=default&mode=draft
+PUT /api/troubleshooting-tree?projectKey=default&mode=draft
+```
+
+دکمه «نهایی‌سازی و اعمال» نسخه فعال همان پروژه را جایگزین می‌کند:
+
+```text
+PUT /api/troubleshooting-tree?projectKey=default&mode=active
+```
+
+بنابراین ذخیره پیش‌نویس روی مسیر واقعی کاربران اثر نمی‌گذارد؛ فقط نسخه فعال مبنای پیمایش دستیار و ثبت تیکت است.
+
+## مدل ذخیره‌سازی پروژه‌ای
+
+درختواره‌ها به صورت پروژه‌محور نگهداری می‌شوند. هر پروژه یک کلید پایدار دارد و هر پروژه دو نسخه عملیاتی دارد:
+
+| نسخه | کاربرد |
+| ---- | ----- |
+| `active` | نسخه قطعی که صفحه کاربر و ثبت تیکت از آن استفاده می‌کنند. |
+| `draft` | نسخه قابل ویرایش در پنل مدیر که تا زمان نهایی‌سازی روی کاربران اثر ندارد. |
+
+در lowdb نسخه‌ها در `troubleshootingTreeVersions` با کلید `projectKey:mode` نگهداری می‌شوند. ساختار قدیمی `troubleshootingTrees` فقط برای سازگاری و migration باقی مانده است.
+
+در ArangoDB داده‌ها در collectionهای زیر نگهداری می‌شوند:
+
+| collection | نقش |
+| ---------- | --- |
+| `projects` | مشخصات پروژه‌ها و فعال بودن هر پروژه. |
+| `troubleshooting_tree_versions` | metadata نسخه‌های active/draft شامل شماره نسخه، تعداد نود و زمان به‌روزرسانی. |
+| `troubleshooting_nodes` | نودهای گراف با کلیدهای `projectKey` و `treeMode`. |
+| `troubleshooting_edges` | ارتباط‌های گراف با `_from` و `_to` واقعی Arango و کلیدهای `projectKey` و `treeMode`. |
+
+Index اصلی نودها روی `projectKey + treeMode + nodeId` است. بنابراین یک پروژه می‌تواند هم‌زمان نسخه active و draft با شناسه نودهای یکسان داشته باشد، بدون اینکه داده‌ها روی هم نوشته شوند.
+
+## ملاحظات عملکرد
+
+برای پشتیبانی از کاربران زیاد، خواندن درختواره در بک‌اند cache کوتاه‌مدت دارد. کلید cache از `projectKey` و `mode` ساخته می‌شود و بعد از ذخیره یا نهایی‌سازی همان پروژه پاک می‌شود. بنابراین درخواست‌های پرتکرار صفحه کاربر به جای query مستقیم مداوم روی دیتابیس، از cache داخلی پاسخ می‌گیرند.
+
+قواعد cache فعلی:
+
+| مورد | رفتار |
+| ---- | ----- |
+| `mode=active` | cache داخلی ۶۰ ثانیه و header مرورگر `private, max-age=60` |
+| `mode=draft` | cache مرورگر غیرفعال؛ برای ویرایش مدیر باید تازه خوانده شود |
+| ذخیره draft یا active | پاک شدن cache همان پروژه |
+
+در محیط production باید `DB_PROVIDER=arango` فعال باشد. `lowdb` فقط برای توسعه و اجرای سبک محلی مناسب است و برای هزاران کاربر نباید مبنای سرویس عملیاتی قرار بگیرد.
+
 در اجرای پیش‌فرض، بک‌اند همین خروجی را از فایل
 `src/assets/troubleshooting-tree.json` می‌سازد. اگر `DB_PROVIDER=arango` فعال
 باشد، بک‌اند graph را از collectionهای `troubleshooting_nodes` و
