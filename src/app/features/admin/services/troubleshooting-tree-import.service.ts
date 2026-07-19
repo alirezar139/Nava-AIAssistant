@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   TroubleshootingTree,
   TroubleshootingTreeEdge,
-  TroubleshootingTreeNode
+  TroubleshootingTreeNode,
+  TreeNodeShape
 } from '../../../core/models/troubleshooting-tree.models';
 
 export interface TroubleshootingTreeImportResult {
@@ -21,6 +22,7 @@ interface RawTreeRecord {
   text: string;
   parentId: string;
   label: string;
+  shape: TreeNodeShape | null;
   x: number | null;
   y: number | null;
 }
@@ -35,6 +37,7 @@ interface VisioNodeDraft {
 @Injectable({ providedIn: 'root' })
 export class TroubleshootingTreeImportService {
   private readonly idPrefix = 'tree';
+  private readonly treeNodeShapePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
   async parseFile(file: File): Promise<TroubleshootingTreeImportResult> {
     const extension = file.name.split('.').pop()?.toLocaleLowerCase('en-US') ?? '';
@@ -111,7 +114,7 @@ export class TroubleshootingTreeImportService {
     const firstRow = this.parseDelimitedLine(lines[0]!, delimiter);
     const normalizedHeader = firstRow.map((cell) => this.normalizeKey(cell));
     const hasHeader = normalizedHeader.some((cell) =>
-      ['id', 'text', 'title', 'parentid', 'parent', 'from', 'to', 'label'].includes(cell)
+      ['id', 'text', 'title', 'parentid', 'parent', 'from', 'to', 'label', 'shape', 'type'].includes(cell)
     );
     const headers = hasHeader ? normalizedHeader : ['id', 'text', 'parentid', 'label', 'x', 'y'];
     const rows = hasHeader ? lines.slice(1) : lines;
@@ -126,8 +129,16 @@ export class TroubleshootingTreeImportService {
       const from = value('from');
       const to = value('to');
       if (from && to) {
-        records.push({ id: from, text: from, parentId: '', label: '', x: null, y: null });
-        records.push({ id: to, text: to, parentId: from, label: value('label'), x: null, y: null });
+        records.push({ id: from, text: from, parentId: '', label: '', shape: null, x: null, y: null });
+        records.push({
+          id: to,
+          text: to,
+          parentId: from,
+          label: value('label'),
+          shape: null,
+          x: null,
+          y: null
+        });
         continue;
       }
       records.push({
@@ -135,6 +146,7 @@ export class TroubleshootingTreeImportService {
         text: value('text') || value('title') || value('name') || value('label'),
         parentId: value('parentid') || value('parent') || value('pid'),
         label: value('edgelabel') || value('label'),
+        shape: this.normalizeTreeNodeShape(value('shape') || value('type')) ?? null,
         x: this.numberOrNull(value('x')),
         y: this.numberOrNull(value('y'))
       });
@@ -397,7 +409,7 @@ export class TroubleshootingTreeImportService {
     for (const record of records) {
       const id = record.id || this.uniqueNodeId(record.text, nodes.size + 1, [...nodes.keys()]);
       const text = record.text || id;
-      nodes.set(id, { id, text, x: record.x, y: record.y });
+      nodes.set(id, { id, text, shape: record.shape ?? undefined, x: record.x, y: record.y });
       if (record.parentId) {
         edges.push({ from: record.parentId, to: id, ...(record.label ? { label: record.label } : {}) });
       }
@@ -430,7 +442,7 @@ export class TroubleshootingTreeImportService {
       nodes.set(id, {
         id,
         text,
-        shape: node.shape,
+        shape: this.normalizeTreeNodeShape(node.shape),
         x: typeof node.x === 'number' && Number.isFinite(node.x) ? node.x : null,
         y: typeof node.y === 'number' && Number.isFinite(node.y) ? node.y : null
       });
@@ -642,6 +654,89 @@ export class TroubleshootingTreeImportService {
     const name = `${shape.getAttribute('NameU') ?? ''} ${shape.getAttribute('Name') ?? ''}`.toLocaleLowerCase(
       'en-US'
     );
+    if (name.includes('multiple document')) return 'multiple-documents';
+    if (name.includes('manual operation')) return 'manual-operation';
+    if (name.includes('manual input')) return 'manual-input';
+    if (name.includes('delay')) return 'delay';
+    if (name.includes('preparation')) return 'preparation';
+    if (name.includes('off-page')) return 'off-page-reference';
+    if (name.includes('on-page')) return 'connector';
+    if (name.includes('dynamic connector')) return 'dynamic-connector';
+    if (name.includes('gateway') && name.includes('parallel')) return 'bpmn-gateway-parallel';
+    if (name.includes('gateway') && name.includes('inclusive')) return 'bpmn-gateway-inclusive';
+    if (name.includes('gateway') && name.includes('complex')) return 'bpmn-gateway-complex';
+    if (name.includes('gateway')) return 'bpmn-gateway-exclusive';
+    if (name.includes('event') && name.includes('start')) return 'bpmn-event-start';
+    if (name.includes('event') && name.includes('end')) return 'bpmn-event-end';
+    if (name.includes('event')) return 'bpmn-event-intermediate';
+    if (name.includes('task')) return 'bpmn-task';
+    if (name.includes('pool')) return 'pool';
+    if (name.includes('lane')) return 'lane';
+    if (name.includes('data object')) return 'data-object';
+    if (name.includes('data store')) return 'data-store';
+    if (name.includes('annotation')) return 'annotation';
+    if (name.includes('group')) return 'group';
+    if (name.includes('database server')) return 'database-server';
+    if (name.includes('web server')) return 'web-server';
+    if (name.includes('application server')) return 'application-server';
+    if (name.includes('file server')) return 'file-server';
+    if (name.includes('server')) return 'network-server';
+    if (name.includes('router')) return 'router';
+    if (name.includes('switch')) return 'network-switch';
+    if (name.includes('firewall')) return 'firewall';
+    if (name.includes('load balancer')) return 'load-balancer';
+    if (name.includes('cloud')) return 'cloud';
+    if (name.includes('actor')) return 'actor';
+    if (name.includes('use case')) return 'use-case';
+    if (name.includes('system boundary')) return 'system-boundary';
+    if (name.includes('component')) return 'component';
+    if (name.includes('interface')) return 'interface';
+    if (name.includes('package')) return 'package';
+    if (name.includes('enumeration')) return 'enumeration';
+    if (name.includes('class')) return 'class';
+    if (name.includes('entity') || name.includes('table')) return 'db-entity';
+    if (name.includes('column') || name.includes('attribute')) return 'db-column';
+    if (name.includes('primary key')) return 'primary-key';
+    if (name.includes('foreign key')) return 'foreign-key';
+    if (name.includes('rounded rectangle')) return 'rounded-rectangle';
+    if (name.includes('snip same')) return 'snip-same-side-rectangle';
+    if (name.includes('snip diagonal')) return 'snip-diagonal-rectangle';
+    if (name.includes('snip') && name.includes('round')) return 'snip-round-rectangle';
+    if (name.includes('snip')) return 'snip-corner-rectangle';
+    if (name.includes('round same')) return 'round-same-side-rectangle';
+    if (name.includes('round diagonal')) return 'round-diagonal-rectangle';
+    if (name.includes('single round')) return 'single-round-rectangle';
+    if (name.includes('square')) return 'square';
+    if (name.includes('rectangle')) return 'rectangle';
+    if (name.includes('circle')) return 'circle';
+    if (name.includes('ellipse')) return 'ellipse';
+    if (name.includes('right triangle')) return 'right-triangle';
+    if (name.includes('triangle')) return 'triangle';
+    if (name.includes('heptagon')) return 'heptagon';
+    if (name.includes('octagon')) return 'octagon';
+    if (name.includes('decagon')) return 'decagon';
+    if (name.includes('parallelogram')) return 'parallelogram';
+    if (name.includes('trapezoid')) return 'trapezoid';
+    if (name.includes('cross')) return 'cross';
+    if (name.includes('chevron')) return 'chevron';
+    if (name.includes('cube')) return 'cube';
+    if (name.includes('4-point star')) return 'star-4';
+    if (name.includes('5-point star')) return 'star-5';
+    if (name.includes('6-point star')) return 'star-6';
+    if (name.includes('7-point star')) return 'star-7';
+    if (name.includes('16-point star')) return 'star-16';
+    if (name.includes('24-point star')) return 'star-24';
+    if (name.includes('32-point star')) return 'star-32';
+    if (name.includes('frame corner')) return 'frame-corner';
+    if (name.includes('frame')) return 'frame';
+    if (name.includes('l shape')) return 'l-shape';
+    if (name.includes('diagonal stripe')) return 'diagonal-stripe';
+    if (name.includes('plaque')) return 'plaque';
+    if (name.includes('donut')) return 'donut';
+    if (name.includes('no symbol')) return 'no-symbol';
+    if (name.includes('parenthesis') && name.includes('right')) return 'right-parenthesis';
+    if (name.includes('parenthesis') && name.includes('left')) return 'left-parenthesis';
+    if (/\bcan\b/.test(name)) return 'can';
     if (name.includes('diamond') || name.includes('decision')) return 'decision';
     if (name.includes('database') || name.includes('cylinder')) return 'database';
     if (name.includes('document')) return 'document';
@@ -666,6 +761,11 @@ export class TroubleshootingTreeImportService {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 
+  private normalizeTreeNodeShape(value: unknown): TreeNodeShape | undefined {
+    const normalized = typeof value === 'string' ? value.trim().toLocaleLowerCase('en-US') : '';
+    return normalized.length <= 80 && this.treeNodeShapePattern.test(normalized) ? normalized : undefined;
+  }
+
   private arrayValue(record: Record<string, unknown>, keys: string[]): unknown[] {
     for (const key of keys) {
       const value = record[key];
@@ -676,12 +776,13 @@ export class TroubleshootingTreeImportService {
 
   private recordFromUnknown(value: unknown): RawTreeRecord {
     if (!this.isRecord(value))
-      return { id: '', text: String(value ?? ''), parentId: '', label: '', x: null, y: null };
+      return { id: '', text: String(value ?? ''), parentId: '', label: '', shape: null, x: null, y: null };
     return {
       id: this.stringValue(value, ['id', 'nodeId', 'key']),
       text: this.stringValue(value, ['text', 'title', 'name', 'label']),
       parentId: this.stringValue(value, ['parentId', 'parent', 'pid']),
       label: this.stringValue(value, ['edgeLabel', 'label']),
+      shape: this.normalizeTreeNodeShape(this.stringValue(value, ['shape', 'type'])) ?? null,
       x: this.numberOrNull(value['x']),
       y: this.numberOrNull(value['y'])
     };
@@ -696,6 +797,7 @@ export class TroubleshootingTreeImportService {
     return {
       id: this.stringValue(value, ['id', 'nodeId', 'key']) || this.uniqueNodeId(text, index + 1, []),
       text: text || this.stringValue(value, ['id', 'nodeId', 'key']),
+      shape: this.normalizeTreeNodeShape(this.stringValue(value, ['shape', 'type'])),
       x: this.numberOrNull(value['x']),
       y: this.numberOrNull(value['y'])
     };

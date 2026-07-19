@@ -47,6 +47,14 @@
   --ambient-two: rgba(27, 133, 105, 0.2);
   --shadow-sm: 0 8px 24px rgba(14, 49, 42, 0.06);
   --shadow-lg: 0 28px 80px rgba(14, 49, 42, 0.12);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --control-height: 44px;
+  --page-inline: clamp(16px, 4vw, 56px);
+  --surface-line: color-mix(in srgb, var(--color-link) 15%, var(--border));
+  --surface-hover: color-mix(in srgb, var(--color-link) 7%, var(--surface));
 }
 
 :root[data-theme='dark'] {
@@ -90,6 +98,8 @@
   --ambient-two: rgba(28, 103, 77, 0.34);
   --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.2);
   --shadow-lg: 0 30px 90px rgba(0, 0, 0, 0.34);
+  --surface-line: color-mix(in srgb, var(--color-link) 18%, var(--border));
+  --surface-hover: color-mix(in srgb, var(--color-link) 11%, var(--surface));
 }
 
 /* User-selectable palettes */
@@ -365,6 +375,8 @@ body {
       transparent 27rem
     ),
     radial-gradient(circle at 52% 42%, var(--ambient-two), transparent 34rem), var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 :root[data-theme='dark'] body {
   background:
@@ -403,6 +415,24 @@ button {
     background-color 0.2s ease,
     border-color 0.2s ease;
 }
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--color-link);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--color-subtle) 82%, transparent);
+}
 button:not(:disabled):active {
   transform: translateY(1px);
 }
@@ -421,7 +451,7 @@ button:disabled {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(173, 124, 63, 0.45);
+  outline: 2px solid color-mix(in srgb, var(--color-link) 54%, var(--accent-600));
   outline-offset: 3px;
 }
 

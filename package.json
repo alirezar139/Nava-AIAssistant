@@ -14,7 +14,8 @@
     "webapp:windows": "powershell -ExecutionPolicy Bypass -File scripts/start-webapp-windows.ps1",
     "format": "prettier --write \"src/**/*.{ts,html,scss,js,webmanifest}\" \"server/src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,js,webmanifest}\" \"server/src/**/*.ts\"",
-    "test": "ng test"
+    "verify": "npm run format:check && npm run build:all",
+    "test": "npm run verify"
   },
   "dependencies": {
     "@angular/common": "21.2.17",

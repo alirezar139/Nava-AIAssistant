@@ -46,6 +46,7 @@ type PendingConfirmation =
   | { type: 'import'; payload: FaqPayload[] };
 
 type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services';
+type TreeManagementView = 'overview' | 'create' | 'files' | 'editor' | 'versions';
 type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
 type TreeCanvasTool = 'select' | 'pan' | 'add-node' | 'connect';
@@ -105,7 +106,7 @@ interface TreeShapePaletteItem {
   hint: string;
 }
 
-type TreeShapePaletteGroupId = 'flowchart' | 'crows-foot' | 'chen' | 'uml' | 'idef1x';
+type TreeShapePaletteGroupId = string;
 
 interface TreeShapePaletteGroup {
   id: TreeShapePaletteGroupId;
@@ -168,9 +169,14 @@ export class AdminDashboardComponent implements OnInit {
   reportSearchTerm = '';
   categoryFilter = '';
   currentPage = 1;
-  pageSize = 10;
-  readonly pageSizeOptions = [10, 20, 50];
-  readonly reportListLimit = 120;
+  pageSize = 5;
+  readonly pageSizeOptions = [5, 10, 20, 50];
+  reportCurrentPage = 1;
+  reportPageSize = 6;
+  readonly reportPageSizeOptions = [6, 12, 24, 48];
+  serviceCurrentPage = 1;
+  servicePageSize = 4;
+  readonly servicePageSizeOptions = [4, 8, 12, 24];
   readonly serviceMethods: ExternalServiceMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   readonly treeAcceptedFormats =
     '.json,.csv,.tsv,.txt,.dot,.gv,.mmd,.mermaid,.puml,.plantuml,.xml,.drawio,.mdl,.cat,.vsdx';
@@ -188,6 +194,7 @@ export class AdminDashboardComponent implements OnInit {
   treeImportSource = '';
   treeImportFileName = '';
   treeImportWarnings: string[] = [];
+  treeManagementView: TreeManagementView = 'overview';
   treeWorkspaceOpen = false;
   treeCloseConfirmOpen = false;
   treeWorkspaceMode: TreeWorkspaceMode = 'demo';
@@ -196,8 +203,8 @@ export class AdminDashboardComponent implements OnInit {
   treeTemplateId = 'support-flow';
   treeCanvasTool: TreeCanvasTool = 'select';
   treeDraftNodeText = 'نود جدید';
-  treeActiveShape: TreeNodeShape = 'process';
-  treeActiveShapeGroup: TreeShapePaletteGroupId = 'flowchart';
+  treeActiveShape: TreeNodeShape = 'rectangle';
+  treeActiveShapeGroup: TreeShapePaletteGroupId = 'basic-shapes';
   treeConnectionSourceId = '';
   treeManualLayout = false;
   treeShowGrid = true;
@@ -226,6 +233,17 @@ export class AdminDashboardComponent implements OnInit {
   } | null = null;
   private treeLastDragPreviewAt = 0;
   readonly treePageSizeOptions = [25, 50, 100];
+  readonly treeManagementViews: Array<{
+    id: TreeManagementView;
+    label: string;
+    hint: string;
+  }> = [
+    { id: 'overview', label: 'نمای کلی', hint: 'آمار، وضعیت ذخیره و نسخه فعال' },
+    { id: 'create', label: 'ساخت درختواره', hint: 'ایجاد از صفر، قالب آماده یا فایل' },
+    { id: 'files', label: 'ورود و خروجی فایل', hint: 'بارگذاری فایل و دریافت خروجی استاندارد' },
+    { id: 'editor', label: 'ویرایشگر', hint: 'پیمایش، اصلاح نودها و ارتباط‌ها' },
+    { id: 'versions', label: 'نسخه‌ها', hint: 'ذخیره پیش‌نویس و انتشار نسخه نهایی' }
+  ];
   readonly treeExportFormats: Array<{ value: TreeExportFormat; label: string }> = [
     { value: 'json', label: 'JSON کامل' },
     { value: 'csv', label: 'CSV قابل بررسی' },
@@ -373,6 +391,54 @@ export class AdminDashboardComponent implements OnInit {
   ];
   readonly treeShapePaletteGroups: TreeShapePaletteGroup[] = [
     {
+      id: 'basic-shapes',
+      label: 'Basic Shapes',
+      description: 'شکل‌های پایه مشابه Visio برای مدل‌سازی آزاد و ترسیم سریع مسیرها',
+      shapes: [
+        { kind: 'rectangle', label: 'Rectangle', hint: 'مستطیل ساده' },
+        { kind: 'rounded-rectangle', label: 'Rounded Rectangle', hint: 'مستطیل با گوشه گرد' },
+        { kind: 'square', label: 'Square', hint: 'مربع' },
+        { kind: 'circle', label: 'Circle', hint: 'دایره' },
+        { kind: 'ellipse', label: 'Ellipse', hint: 'بیضی' },
+        { kind: 'triangle', label: 'Triangle', hint: 'مثلث' },
+        { kind: 'right-triangle', label: 'Right Triangle', hint: 'مثلث قائم' },
+        { kind: 'heptagon', label: 'Heptagon', hint: 'هفت‌ضلعی' },
+        { kind: 'octagon', label: 'Octagon', hint: 'هشت‌ضلعی' },
+        { kind: 'decagon', label: 'Decagon', hint: 'ده‌ضلعی' },
+        { kind: 'can', label: 'Can', hint: 'استوانه' },
+        { kind: 'parallelogram', label: 'Parallelogram', hint: 'متوازی‌الاضلاع' },
+        { kind: 'trapezoid', label: 'Trapezoid', hint: 'ذوزنقه' },
+        { kind: 'diamond', label: 'Diamond', hint: 'لوزی' },
+        { kind: 'cross', label: 'Cross', hint: 'علامت جمع' },
+        { kind: 'chevron', label: 'Chevron', hint: 'پیکان مرحله‌ای' },
+        { kind: 'cube', label: 'Cube', hint: 'مکعب' },
+        { kind: 'star-4', label: '4-Point Star', hint: 'ستاره چهارپر' },
+        { kind: 'star-5', label: '5-Point Star', hint: 'ستاره پنج‌پر' },
+        { kind: 'star-6', label: '6-Point Star', hint: 'ستاره شش‌پر' },
+        { kind: 'star-7', label: '7-Point Star', hint: 'ستاره هفت‌پر' },
+        { kind: 'star-16', label: '16-Point Star', hint: 'ستاره چندپر' },
+        { kind: 'star-24', label: '24-Point Star', hint: 'ستاره پرتعداد' },
+        { kind: 'star-32', label: '32-Point Star', hint: 'ستاره پرتعداد' },
+        { kind: 'snip-corner-rectangle', label: 'Snip Corner', hint: 'گوشه بریده' },
+        { kind: 'snip-same-side-rectangle', label: 'Snip Same Side', hint: 'دو گوشه بریده' },
+        { kind: 'snip-diagonal-rectangle', label: 'Snip Diagonal', hint: 'گوشه‌های قطری بریده' },
+        { kind: 'single-round-rectangle', label: 'Single Round', hint: 'یک گوشه گرد' },
+        { kind: 'round-same-side-rectangle', label: 'Round Same Side', hint: 'دو گوشه گرد' },
+        { kind: 'round-diagonal-rectangle', label: 'Round Diagonal', hint: 'گوشه‌های قطری گرد' },
+        { kind: 'snip-round-rectangle', label: 'Snip & Round', hint: 'ترکیب گوشه گرد و بریده' },
+        { kind: 'frame', label: 'Frame', hint: 'قاب' },
+        { kind: 'frame-corner', label: 'Frame Corner', hint: 'گوشه قاب' },
+        { kind: 'l-shape', label: 'L Shape', hint: 'شکل L' },
+        { kind: 'diagonal-stripe', label: 'Diagonal Stripe', hint: 'نوار مورب' },
+        { kind: 'plaque', label: 'Plaque', hint: 'پلاک' },
+        { kind: 'donut', label: 'Donut', hint: 'حلقه' },
+        { kind: 'no-symbol', label: 'No Symbol', hint: 'نماد ممنوع' },
+        { kind: 'center-drag-circle', label: 'Center Drag Circle', hint: 'دایره مرکزی' },
+        { kind: 'left-parenthesis', label: 'Left Parenthesis', hint: 'پرانتز چپ' },
+        { kind: 'right-parenthesis', label: 'Right Parenthesis', hint: 'پرانتز راست' }
+      ]
+    },
+    {
       id: 'flowchart',
       label: 'Basic Flow',
       description: 'شکل‌های پایه برای مسیر راهبری و تصمیم',
@@ -384,10 +450,224 @@ export class AdminDashboardComponent implements OnInit {
         { kind: 'data', label: 'Data', hint: 'ورودی یا خروجی' },
         { kind: 'database', label: 'Database', hint: 'پایگاه داده' },
         { kind: 'manual-input', label: 'Input', hint: 'ورودی کاربر' },
+        { kind: 'manual-operation', label: 'Manual Operation', hint: 'فرایند دستی' },
         { kind: 'document', label: 'Document', hint: 'سند یا راهنما' },
-        { kind: 'connector', label: 'Connector', hint: 'پیوند داخل صفحه' },
+        { kind: 'multiple-documents', label: 'Multiple Documents', hint: 'چند سند' },
+        { kind: 'delay', label: 'Delay', hint: 'تأخیر یا انتظار' },
+        { kind: 'preparation', label: 'Preparation', hint: 'آماده‌سازی' },
+        { kind: 'connector', label: 'On-page Reference', hint: 'اتصال داخل صفحه' },
+        { kind: 'off-page-reference', label: 'Off-page Reference', hint: 'اتصال به صفحه دیگر' },
+        { kind: 'dynamic-connector', label: 'Dynamic Connector', hint: 'خط اتصال پویا' },
         { kind: 'note', label: 'Note', hint: 'یادداشت' },
         { kind: 'external-system', label: 'External', hint: 'سامانه خارجی' }
+      ]
+    },
+    {
+      id: 'bpmn',
+      label: 'BPMN Shapes',
+      description: 'نمادهای فرایند کسب‌وکار برای فعالیت، رخداد، درگاه تصمیم، مسیر و گروه‌بندی',
+      shapes: [
+        { kind: 'bpmn-task', label: 'Task', hint: 'وظیفه یا فعالیت' },
+        { kind: 'bpmn-event-start', label: 'Event Start', hint: 'رخداد شروع' },
+        { kind: 'bpmn-event-intermediate', label: 'Event Intermediate', hint: 'رخداد میانی' },
+        { kind: 'bpmn-event-end', label: 'Event End', hint: 'رخداد پایان' },
+        { kind: 'bpmn-gateway-exclusive', label: 'Gateway Exclusive', hint: 'انشعاب انحصاری' },
+        { kind: 'bpmn-gateway-parallel', label: 'Gateway Parallel', hint: 'انشعاب موازی' },
+        { kind: 'bpmn-gateway-inclusive', label: 'Gateway Inclusive', hint: 'انشعاب فراگیر' },
+        { kind: 'bpmn-gateway-complex', label: 'Gateway Complex', hint: 'درگاه پیچیده' },
+        { kind: 'sequence-flow', label: 'Sequence Flow', hint: 'ترتیب اجرا' },
+        { kind: 'message-flow', label: 'Message Flow', hint: 'تبادل پیام' },
+        { kind: 'pool', label: 'Pool', hint: 'مجموعه اصلی' },
+        { kind: 'lane', label: 'Lane', hint: 'نقش یا واحد' },
+        { kind: 'data-object', label: 'Data Object', hint: 'شیء داده' },
+        { kind: 'data-store', label: 'Data Store', hint: 'محل ذخیره داده' },
+        { kind: 'annotation', label: 'Annotation', hint: 'توضیح' },
+        { kind: 'group', label: 'Group', hint: 'گروه مراحل' }
+      ]
+    },
+    {
+      id: 'organization-chart',
+      label: 'Organization Chart',
+      description: 'نمودار سازمانی برای سمت‌ها، مدیران، تیم‌ها، واحدها و پست‌های خالی',
+      shapes: [
+        { kind: 'org-executive', label: 'Executive', hint: 'مدیر ارشد' },
+        { kind: 'org-manager', label: 'Manager', hint: 'مدیر' },
+        { kind: 'org-position', label: 'Position', hint: 'سمت سازمانی' },
+        { kind: 'org-assistant', label: 'Assistant', hint: 'دستیار' },
+        { kind: 'org-consultant', label: 'Consultant', hint: 'مشاور' },
+        { kind: 'org-vacancy', label: 'Vacancy', hint: 'پست خالی' },
+        { kind: 'org-team-frame', label: 'Team Frame', hint: 'قاب تیم' },
+        { kind: 'org-staff', label: 'Staff', hint: 'کارمند یا کارشناس' },
+        { kind: 'org-department', label: 'Department', hint: 'واحد سازمانی' }
+      ]
+    },
+    {
+      id: 'network',
+      label: 'Network',
+      description: 'نمادهای شبکه و زیرساخت برای طراحی ارتباط سرویس‌ها و تجهیزات',
+      shapes: [
+        { kind: 'network-server', label: 'Server', hint: 'سرور' },
+        { kind: 'database-server', label: 'Database Server', hint: 'سرور پایگاه داده' },
+        { kind: 'web-server', label: 'Web Server', hint: 'وب‌سرور' },
+        { kind: 'application-server', label: 'Application Server', hint: 'سرور برنامه' },
+        { kind: 'file-server', label: 'File Server', hint: 'سرور فایل' },
+        { kind: 'router', label: 'Router', hint: 'مسیریاب' },
+        { kind: 'network-switch', label: 'Switch', hint: 'سوئیچ' },
+        { kind: 'firewall', label: 'Firewall', hint: 'دیواره آتش' },
+        { kind: 'load-balancer', label: 'Load Balancer', hint: 'توزیع بار' },
+        { kind: 'cloud', label: 'Cloud', hint: 'سرویس ابری' },
+        { kind: 'modem', label: 'Modem', hint: 'مودم' },
+        { kind: 'access-point', label: 'Access Point', hint: 'نقطه دسترسی' },
+        { kind: 'desktop-computer', label: 'Desktop PC', hint: 'رایانه رومیزی' },
+        { kind: 'laptop', label: 'Laptop', hint: 'لپ‌تاپ' },
+        { kind: 'mobile-device', label: 'Mobile Device', hint: 'تلفن همراه' },
+        { kind: 'printer', label: 'Printer', hint: 'چاپگر' },
+        { kind: 'storage', label: 'Storage', hint: 'فضای ذخیره‌سازی' },
+        { kind: 'rack', label: 'Rack', hint: 'رک تجهیزات' },
+        { kind: 'network-link', label: 'Network Link', hint: 'ارتباط شبکه' },
+        { kind: 'wireless-link', label: 'Wireless Link', hint: 'ارتباط بی‌سیم' }
+      ]
+    },
+    {
+      id: 'software',
+      label: 'Software',
+      description: 'نمادهای نرم‌افزار و سیستم برای مؤلفه‌ها، API، سرویس و استقرار',
+      shapes: [
+        { kind: 'component', label: 'Component', hint: 'مؤلفه نرم‌افزاری' },
+        { kind: 'interface', label: 'Interface', hint: 'رابط' },
+        { kind: 'package', label: 'Package', hint: 'بسته نرم‌افزاری' },
+        { kind: 'class', label: 'Class', hint: 'کلاس' },
+        { kind: 'object', label: 'Object', hint: 'شیء' },
+        { kind: 'actor', label: 'Actor', hint: 'کاربر یا نقش' },
+        { kind: 'use-case', label: 'Use Case', hint: 'سناریوی سیستم' },
+        { kind: 'activity', label: 'Activity', hint: 'فعالیت' },
+        { kind: 'state', label: 'State', hint: 'وضعیت' },
+        { kind: 'deployment-node', label: 'Deployment Node', hint: 'محیط استقرار' },
+        { kind: 'artifact', label: 'Artifact', hint: 'فایل یا خروجی' },
+        { kind: 'api', label: 'API', hint: 'رابط برنامه‌نویسی' },
+        { kind: 'web-application', label: 'Web Application', hint: 'برنامه وب' },
+        { kind: 'mobile-application', label: 'Mobile Application', hint: 'برنامه موبایل' },
+        { kind: 'service', label: 'Service', hint: 'سرویس نرم‌افزاری' },
+        { kind: 'software-database', label: 'Database', hint: 'پایگاه داده نرم‌افزار' }
+      ]
+    },
+    {
+      id: 'database-modeling',
+      label: 'Database',
+      description: 'اشکال پایگاه داده برای جدول، ستون، کلید، رابطه، View و Procedure',
+      shapes: [
+        { kind: 'db-entity', label: 'Entity / Table', hint: 'جدول' },
+        { kind: 'db-column', label: 'Attribute / Column', hint: 'ستون' },
+        { kind: 'primary-key', label: 'Primary Key', hint: 'کلید اصلی' },
+        { kind: 'foreign-key', label: 'Foreign Key', hint: 'کلید خارجی' },
+        { kind: 'db-relationship', label: 'Relationship', hint: 'ارتباط جداول' },
+        { kind: 'one-to-one', label: 'One-to-One', hint: 'یک‌به‌یک' },
+        { kind: 'one-to-many', label: 'One-to-Many', hint: 'یک‌به‌چند' },
+        { kind: 'many-to-many', label: 'Many-to-Many', hint: 'چندبه‌چند' },
+        { kind: 'db-view', label: 'View', hint: 'نما' },
+        { kind: 'stored-procedure', label: 'Stored Procedure', hint: 'رویه ذخیره‌شده' },
+        { kind: 'db-database', label: 'Database', hint: 'پایگاه داده' },
+        { kind: 'data-warehouse', label: 'Data Warehouse', hint: 'انبار داده' },
+        { kind: 'data-mart', label: 'Data Mart', hint: 'داده‌گاه' }
+      ]
+    },
+    {
+      id: 'cloud',
+      label: 'Cloud',
+      description: 'نمادهای معماری ابری برای سرویس، ذخیره‌سازی، شبکه و پایش',
+      shapes: [
+        { kind: 'virtual-machine', label: 'Virtual Machine', hint: 'ماشین مجازی' },
+        { kind: 'container', label: 'Container', hint: 'کانتینر' },
+        { kind: 'kubernetes-cluster', label: 'Kubernetes Cluster', hint: 'کلاستر کوبرنتیز' },
+        { kind: 'cloud-storage', label: 'Cloud Storage', hint: 'ذخیره‌سازی ابری' },
+        { kind: 'cloud-database', label: 'Cloud Database', hint: 'پایگاه داده ابری' },
+        { kind: 'api-gateway', label: 'API Gateway', hint: 'درگاه API' },
+        { kind: 'cloud-load-balancer', label: 'Load Balancer', hint: 'توزیع بار ابری' },
+        { kind: 'identity-service', label: 'Identity Service', hint: 'احراز هویت' },
+        { kind: 'monitoring', label: 'Monitoring', hint: 'پایش' },
+        { kind: 'message-queue', label: 'Message Queue', hint: 'صف پیام' },
+        { kind: 'serverless-function', label: 'Function / Serverless', hint: 'تابع بدون سرور' },
+        { kind: 'virtual-network', label: 'Virtual Network', hint: 'شبکه مجازی' }
+      ]
+    },
+    {
+      id: 'floor-plan',
+      label: 'Floor Plan',
+      description: 'نمادهای نقشه ساختمان برای اتاق، دیوار، در، پنجره، تجهیزات و امنیت',
+      shapes: [
+        { kind: 'wall', label: 'Wall', hint: 'دیوار' },
+        { kind: 'door', label: 'Door', hint: 'در' },
+        { kind: 'window', label: 'Window', hint: 'پنجره' },
+        { kind: 'room', label: 'Room', hint: 'اتاق' },
+        { kind: 'desk', label: 'Desk', hint: 'میز' },
+        { kind: 'chair', label: 'Chair', hint: 'صندلی' },
+        { kind: 'table', label: 'Table', hint: 'میز جلسه' },
+        { kind: 'cabinet', label: 'Cabinet', hint: 'کمد' },
+        { kind: 'stairs', label: 'Stairs', hint: 'راه‌پله' },
+        { kind: 'elevator', label: 'Elevator', hint: 'آسانسور' },
+        { kind: 'restroom-fixtures', label: 'Restroom Fixtures', hint: 'تجهیزات سرویس' },
+        { kind: 'electrical-outlet', label: 'Electrical Outlet', hint: 'پریز برق' },
+        { kind: 'lighting', label: 'Lighting', hint: 'روشنایی' },
+        { kind: 'security-camera', label: 'Security Camera', hint: 'دوربین مداربسته' }
+      ]
+    },
+    {
+      id: 'electrical-engineering',
+      label: 'Electrical Engineering',
+      description: 'نمادهای برق برای مدار، قطعه، منبع، اتصال و حفاظت',
+      shapes: [
+        { kind: 'resistor', label: 'Resistor', hint: 'مقاومت' },
+        { kind: 'capacitor', label: 'Capacitor', hint: 'خازن' },
+        { kind: 'inductor', label: 'Inductor', hint: 'سلف' },
+        { kind: 'diode', label: 'Diode', hint: 'دیود' },
+        { kind: 'transistor', label: 'Transistor', hint: 'ترانزیستور' },
+        { kind: 'electrical-switch', label: 'Switch', hint: 'کلید' },
+        { kind: 'battery', label: 'Battery', hint: 'باتری' },
+        { kind: 'ground', label: 'Ground', hint: 'اتصال زمین' },
+        { kind: 'transformer', label: 'Transformer', hint: 'ترانسفورماتور' },
+        { kind: 'motor', label: 'Motor', hint: 'موتور' },
+        { kind: 'relay', label: 'Relay', hint: 'رله' },
+        { kind: 'fuse', label: 'Fuse', hint: 'فیوز' },
+        { kind: 'circuit-breaker', label: 'Circuit Breaker', hint: 'کلید حفاظتی' },
+        { kind: 'wire-connector', label: 'Connector', hint: 'اتصال سیم' }
+      ]
+    },
+    {
+      id: 'process-engineering',
+      label: 'Process Engineering',
+      description: 'نمادهای مهندسی فرایند برای مخزن، پمپ، شیر، لوله و تجهیزات کنترلی',
+      shapes: [
+        { kind: 'tank', label: 'Tank', hint: 'مخزن' },
+        { kind: 'pump', label: 'Pump', hint: 'پمپ' },
+        { kind: 'valve', label: 'Valve', hint: 'شیر' },
+        { kind: 'pipe', label: 'Pipe', hint: 'لوله' },
+        { kind: 'compressor', label: 'Compressor', hint: 'کمپرسور' },
+        { kind: 'heat-exchanger', label: 'Heat Exchanger', hint: 'مبدل حرارتی' },
+        { kind: 'boiler', label: 'Boiler', hint: 'دیگ بخار' },
+        { kind: 'filter', label: 'Filter', hint: 'فیلتر' },
+        { kind: 'mixer', label: 'Mixer', hint: 'مخلوط‌کن' },
+        { kind: 'sensor', label: 'Sensor', hint: 'حسگر' },
+        { kind: 'flow-meter', label: 'Flow Meter', hint: 'دبی‌سنج' },
+        { kind: 'pressure-gauge', label: 'Pressure Gauge', hint: 'فشارسنج' },
+        { kind: 'control-valve', label: 'Control Valve', hint: 'شیر کنترلی' }
+      ]
+    },
+    {
+      id: 'general-shapes',
+      label: 'General Shapes',
+      description: 'شکل‌های عمومی برای توضیح، جهت‌دهی، قاب‌بندی، متن و راهنما',
+      shapes: [
+        { kind: 'rectangle', label: 'Rectangle', hint: 'کادر یا فعالیت' },
+        { kind: 'rounded-rectangle', label: 'Rounded Rectangle', hint: 'کادر گوشه‌گرد' },
+        { kind: 'circle', label: 'Circle / Ellipse', hint: 'مرحله یا تأکید' },
+        { kind: 'triangle', label: 'Triangle', hint: 'هشدار یا جهت' },
+        { kind: 'diamond', label: 'Diamond', hint: 'تصمیم' },
+        { kind: 'arrow', label: 'Arrow', hint: 'نمایش جهت' },
+        { kind: 'callout', label: 'Callout', hint: 'توضیح کنار شکل' },
+        { kind: 'container', label: 'Container', hint: 'گروه‌بندی' },
+        { kind: 'legend', label: 'Legend', hint: 'راهنمای نمودار' },
+        { kind: 'text-box', label: 'Text Box', hint: 'درج متن' },
+        { kind: 'icon', label: 'Icon', hint: 'نمایش مفهوم' }
       ]
     },
     {
@@ -416,13 +696,29 @@ export class AdminDashboardComponent implements OnInit {
     },
     {
       id: 'uml',
-      label: 'UML Data',
-      description: 'نمای کلاس/جدول برای طراحی نزدیک به پیاده‌سازی',
+      label: 'UML',
+      description: 'نمودارهای Use Case، Class و Sequence برای مدل‌سازی نرم‌افزار',
       shapes: [
-        { kind: 'erd-table', label: 'Class Table', hint: 'کلاس داده' },
-        { kind: 'erd-lookup-table', label: 'Enum / Lookup', hint: 'مقادیر ثابت' },
-        { kind: 'erd-associative-entity', label: 'Join Class', hint: 'کلاس واسط' },
-        { kind: 'data', label: 'Payload', hint: 'داده ورودی/خروجی' }
+        { kind: 'actor', label: 'Actor', hint: 'کاربر یا سیستم خارجی' },
+        { kind: 'use-case', label: 'Use Case', hint: 'عملکرد سیستم' },
+        { kind: 'system-boundary', label: 'System Boundary', hint: 'محدوده سیستم' },
+        { kind: 'association', label: 'Association', hint: 'ارتباط' },
+        { kind: 'include', label: 'Include', hint: 'قابلیت الزامی' },
+        { kind: 'extend', label: 'Extend', hint: 'قابلیت اختیاری' },
+        { kind: 'class', label: 'Class', hint: 'کلاس' },
+        { kind: 'uml-interface', label: 'Interface', hint: 'رابط' },
+        { kind: 'enumeration', label: 'Enumeration', hint: 'مقادیر ثابت' },
+        { kind: 'aggregation', label: 'Aggregation', hint: 'جزء و کل ضعیف' },
+        { kind: 'composition', label: 'Composition', hint: 'جزء و کل قوی' },
+        { kind: 'generalization', label: 'Generalization', hint: 'وراثت' },
+        { kind: 'dependency', label: 'Dependency', hint: 'وابستگی' },
+        { kind: 'actor-lifeline', label: 'Actor Lifeline', hint: 'خط زمانی کاربر' },
+        { kind: 'object-lifeline', label: 'Object Lifeline', hint: 'خط زمانی سیستم' },
+        { kind: 'activation', label: 'Activation', hint: 'زمان اجرای عملیات' },
+        { kind: 'message', label: 'Message', hint: 'ارسال پیام' },
+        { kind: 'return-message', label: 'Return Message', hint: 'پاسخ پیام' },
+        { kind: 'self-message', label: 'Self Message', hint: 'فراخوانی داخلی' },
+        { kind: 'combined-fragment', label: 'Combined Fragment', hint: 'شرط یا حلقه' }
       ]
     },
     {
@@ -443,6 +739,17 @@ export class AdminDashboardComponent implements OnInit {
 
   get treeNodes(): TroubleshootingTreeNode[] {
     return this.troubleshootingTree?.nodes ?? [];
+  }
+
+  get activeTreeManagementView(): {
+    id: TreeManagementView;
+    label: string;
+    hint: string;
+  } {
+    return (
+      this.treeManagementViews.find((view) => view.id === this.treeManagementView) ??
+      this.treeManagementViews[0]
+    );
   }
 
   get treeEdges(): TroubleshootingTreeEdge[] {
@@ -938,11 +1245,45 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get displayedConversations(): ConversationRecord[] {
-    return this.filteredConversations.slice(0, this.reportListLimit);
+    const start = (this.reportActivePage - 1) * this.reportPageSize;
+    return this.filteredConversations.slice(start, start + this.reportPageSize);
   }
 
-  get hiddenConversationCount(): number {
-    return Math.max(0, this.filteredConversations.length - this.reportListLimit);
+  get reportActivePage(): number {
+    return Math.min(Math.max(this.reportCurrentPage, 1), this.reportTotalPages);
+  }
+
+  get reportTotalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredConversations.length / this.reportPageSize));
+  }
+
+  get reportPaginationStart(): number {
+    return this.filteredConversations.length ? (this.reportActivePage - 1) * this.reportPageSize + 1 : 0;
+  }
+
+  get reportPaginationEnd(): number {
+    return Math.min(this.reportActivePage * this.reportPageSize, this.filteredConversations.length);
+  }
+
+  get serviceTotalPages(): number {
+    return Math.max(1, Math.ceil(this.externalServices.length / this.servicePageSize));
+  }
+
+  get serviceActivePage(): number {
+    return Math.min(Math.max(this.serviceCurrentPage, 1), this.serviceTotalPages);
+  }
+
+  get paginatedExternalServices(): ExternalServiceRecord[] {
+    const start = (this.serviceActivePage - 1) * this.servicePageSize;
+    return this.externalServices.slice(start, start + this.servicePageSize);
+  }
+
+  get servicePaginationStart(): number {
+    return this.externalServices.length ? (this.serviceActivePage - 1) * this.servicePageSize + 1 : 0;
+  }
+
+  get servicePaginationEnd(): number {
+    return Math.min(this.serviceActivePage * this.servicePageSize, this.externalServices.length);
   }
 
   get totalPages(): number {
@@ -1029,6 +1370,22 @@ export class AdminDashboardComponent implements OnInit {
     this.loadActiveTabData();
   }
 
+  setTreeManagementView(view: TreeManagementView): void {
+    this.treeManagementView = view;
+    this.changeDetector.markForCheck();
+  }
+
+  openTreeManagementView(view: TreeManagementView): void {
+    const shouldLoadTree = this.activeTab !== 'tree';
+    this.treeManagementView = view;
+    this.activeTab = 'tree';
+    if (shouldLoadTree) {
+      this.loadActiveTabData();
+      return;
+    }
+    this.changeDetector.markForCheck();
+  }
+
   refresh(showNotification = false): void {
     this.loadFaqs(showNotification, true);
     if (this.activeTab !== 'faqs') {
@@ -1070,6 +1427,7 @@ export class AdminDashboardComponent implements OnInit {
     this.api.getConversations().subscribe({
       next: (conversations) => {
         this.conversations = conversations;
+        this.reportCurrentPage = Math.min(this.reportCurrentPage, this.reportTotalPages);
         this.conversationsLoaded = true;
         this.conversationsLoading = false;
         this.changeDetector.markForCheck();
@@ -1247,6 +1605,12 @@ export class AdminDashboardComponent implements OnInit {
 
   clearReportSearch(): void {
     this.reportSearchTerm = '';
+    this.reportCurrentPage = 1;
+  }
+
+  setReportSearchTerm(value: string): void {
+    this.reportSearchTerm = value;
+    this.reportCurrentPage = 1;
   }
 
   formatPercent(value: number): string {
@@ -1373,6 +1737,24 @@ export class AdminDashboardComponent implements OnInit {
     this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
   }
 
+  setReportPageSize(size: number): void {
+    this.reportPageSize = size;
+    this.reportCurrentPage = 1;
+  }
+
+  goToReportPage(page: number): void {
+    this.reportCurrentPage = Math.min(Math.max(page, 1), this.reportTotalPages);
+  }
+
+  setServicePageSize(size: number): void {
+    this.servicePageSize = size;
+    this.serviceCurrentPage = 1;
+  }
+
+  goToServicePage(page: number): void {
+    this.serviceCurrentPage = Math.min(Math.max(page, 1), this.serviceTotalPages);
+  }
+
   resetForm(): void {
     this.form = this.emptyForm();
     this.saving = false;
@@ -1431,12 +1813,12 @@ export class AdminDashboardComponent implements OnInit {
       true
     );
     this.markTreeDirty();
-    this.treeImportSource = 'فایل خام جدید';
+    this.treeImportSource = 'درختواره خالی';
     this.treeImportFileName = '';
     this.treeImportWarnings = [];
-    this.treeActiveShapeGroup = 'flowchart';
+    this.setTreeShapeGroup('flowchart');
     this.notifications.success(
-      'فایل خام آماده شد',
+      'درختواره خالی آماده شد',
       'اکنون می‌توانید نودها و ارتباط‌ها را از صفر بسازید و ذخیره کنید.'
     );
     this.changeDetector.markForCheck();
@@ -1451,7 +1833,7 @@ export class AdminDashboardComponent implements OnInit {
     this.treeImportSource = `قالب آماده: ${template.title}`;
     this.treeImportFileName = template.standard;
     this.treeImportWarnings = [];
-    this.treeActiveShapeGroup = this.treeShapeGroupFromTemplate(template);
+    this.setTreeShapeGroup(this.treeShapeGroupFromTemplate(template));
     this.notifications.success(
       'قالب آماده شد',
       'قالب انتخابی وارد محیط ویرایش شد؛ پس از تغییرات می‌توانید آن را ذخیره کنید.'
@@ -2104,8 +2486,8 @@ export class AdminDashboardComponent implements OnInit {
         this.notifications.success(
           options.finalize ? 'درختواره نهایی شد' : 'درختواره ذخیره شد',
           options.finalize
-            ? `نسخه نهایی برای پروژه ${this.treeProjectLabel} ذخیره شد و از این پس مبنای مسیر راهبری است.`
-            : 'پیش‌نویس پروژه ذخیره شد؛ مسیر کاربران تا زمان نهایی‌سازی تغییر نمی‌کند.'
+            ? `نسخه نهایی برای پروژه ${this.treeProjectLabel} ذخیره شد و از این پس مبنای راهنمای کاربر است.`
+            : 'پیش‌نویس پروژه ذخیره شد؛ مسیر کاربران تا زمان انتشار نهایی تغییر نمی‌کند.'
         );
         if (options.closeAfterSave) {
           this.closeTreeWorkspace();
@@ -2497,12 +2879,12 @@ export class AdminDashboardComponent implements OnInit {
     if (!tree) return '';
     const nodeMap = new Map(tree.nodes.map((node) => [node.id, node]));
     const parentIds = new Set(tree.edges.map((edge) => edge.to));
-    const rows = [['id', 'text', 'parentId', 'edgeLabel', 'x', 'y']];
+    const rows = [['id', 'text', 'shape', 'parentId', 'edgeLabel', 'x', 'y']];
 
     for (const node of tree.nodes) {
       const incoming = tree.edges.filter((edge) => edge.to === node.id);
       if (!incoming.length) {
-        rows.push([node.id, node.text, '', '', String(node.x ?? ''), String(node.y ?? '')]);
+        rows.push([node.id, node.text, node.shape ?? '', '', '', String(node.x ?? ''), String(node.y ?? '')]);
         continue;
       }
 
@@ -2510,6 +2892,7 @@ export class AdminDashboardComponent implements OnInit {
         rows.push([
           node.id,
           node.text,
+          node.shape ?? '',
           nodeMap.has(edge.from) ? edge.from : '',
           edge.label ?? '',
           String(node.x ?? ''),
@@ -2520,7 +2903,7 @@ export class AdminDashboardComponent implements OnInit {
 
     for (const edge of tree.edges) {
       if (nodeMap.has(edge.to) || parentIds.has(edge.to)) continue;
-      rows.push([edge.to, edge.to, edge.from, edge.label ?? '', '', '']);
+      rows.push([edge.to, edge.to, '', edge.from, edge.label ?? '', '', '']);
     }
 
     return `\ufeff${rows.map((row) => row.map((cell) => this.csvCell(cell)).join(',')).join('\n')}\n`;
@@ -2569,8 +2952,34 @@ export class AdminDashboardComponent implements OnInit {
         const x = (position.x - minX + 320) / 120;
         const y = pageHeight - (position.y - minY + 260) / 120;
         nodePoints.set(node.id, { x, y });
-        const width = Math.min(4.8, Math.max(2.4, 1.6 + this.cleanVisioText(node.text).length * 0.045));
-        const height = node.shape === 'connector' ? 0.9 : 0.72;
+        const compactShape = Boolean(
+          node.shape &&
+          [
+            'connector',
+            'square',
+            'circle',
+            'triangle',
+            'right-triangle',
+            'diamond',
+            'cross',
+            'star-4',
+            'star-5',
+            'star-6',
+            'star-7',
+            'star-16',
+            'star-24',
+            'star-32',
+            'donut',
+            'no-symbol',
+            'center-drag-circle',
+            'left-parenthesis',
+            'right-parenthesis'
+          ].includes(node.shape)
+        );
+        const width = compactShape
+          ? 1.08
+          : Math.min(4.8, Math.max(2.4, 1.6 + this.cleanVisioText(node.text).length * 0.045));
+        const height = compactShape ? 1.08 : 0.72;
         return this.buildVisioNodeShapeXml(shapeIds.get(node.id) ?? 0, node, x, y, width, height);
       })
       .join('');
@@ -2657,11 +3066,217 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private buildVisioGeometryXml(width: number, height: number, shape?: TreeNodeShape): string {
-    if (shape === 'decision' || shape === 'erd-relationship' || shape === 'erd-identifying-relationship') {
-      return `<Section N="Geometry" IX="0"><Row T="MoveTo" IX="1"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="2"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="${this.visioNumber(height / 2)}"/></Row><Row T="LineTo" IX="3"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="4"><Cell N="X" V="0"/><Cell N="Y" V="${this.visioNumber(height / 2)}"/></Row><Row T="LineTo" IX="5"><Cell N="X" V="${this.visioNumber(width / 2)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row></Section>`;
-    }
+    const polygonShapes: Partial<Record<TreeNodeShape, Array<[number, number]>>> = {
+      decision: [
+        [0.5, 1],
+        [1, 0.5],
+        [0.5, 0],
+        [0, 0.5]
+      ],
+      diamond: [
+        [0.5, 1],
+        [1, 0.5],
+        [0.5, 0],
+        [0, 0.5]
+      ],
+      'erd-relationship': [
+        [0.5, 1],
+        [1, 0.5],
+        [0.5, 0],
+        [0, 0.5]
+      ],
+      'erd-identifying-relationship': [
+        [0.5, 1],
+        [1, 0.5],
+        [0.5, 0],
+        [0, 0.5]
+      ],
+      data: [
+        [0.12, 0],
+        [1, 0],
+        [0.88, 1],
+        [0, 1]
+      ],
+      parallelogram: [
+        [0.12, 0],
+        [1, 0],
+        [0.88, 1],
+        [0, 1]
+      ],
+      'manual-input': [
+        [0, 0.25],
+        [1, 0],
+        [1, 1],
+        [0, 1]
+      ],
+      trapezoid: [
+        [0.18, 0],
+        [0.82, 0],
+        [1, 1],
+        [0, 1]
+      ],
+      triangle: [
+        [0.5, 1],
+        [1, 0],
+        [0, 0]
+      ],
+      'right-triangle': [
+        [0, 1],
+        [1, 0],
+        [0, 0]
+      ],
+      heptagon: [
+        [0.5, 1],
+        [0.86, 0.84],
+        [1, 0.45],
+        [0.72, 0],
+        [0.28, 0],
+        [0, 0.45],
+        [0.14, 0.84]
+      ],
+      octagon: [
+        [0.3, 1],
+        [0.7, 1],
+        [1, 0.7],
+        [1, 0.3],
+        [0.7, 0],
+        [0.3, 0],
+        [0, 0.3],
+        [0, 0.7]
+      ],
+      decagon: [
+        [0.32, 1],
+        [0.68, 1],
+        [0.9, 0.86],
+        [1, 0.5],
+        [0.9, 0.14],
+        [0.68, 0],
+        [0.32, 0],
+        [0.1, 0.14],
+        [0, 0.5],
+        [0.1, 0.86]
+      ],
+      chevron: [
+        [0, 1],
+        [0.62, 1],
+        [1, 0.5],
+        [0.62, 0],
+        [0, 0],
+        [0.36, 0.5]
+      ],
+      cross: [
+        [0.35, 1],
+        [0.65, 1],
+        [0.65, 0.65],
+        [1, 0.65],
+        [1, 0.35],
+        [0.65, 0.35],
+        [0.65, 0],
+        [0.35, 0],
+        [0.35, 0.35],
+        [0, 0.35],
+        [0, 0.65],
+        [0.35, 0.65]
+      ],
+      'star-4': [
+        [0.5, 1],
+        [0.62, 0.62],
+        [1, 0.5],
+        [0.62, 0.38],
+        [0.5, 0],
+        [0.38, 0.38],
+        [0, 0.5],
+        [0.38, 0.62]
+      ],
+      'star-5': [
+        [0.5, 1],
+        [0.62, 0.62],
+        [1, 0.62],
+        [0.69, 0.44],
+        [0.82, 0],
+        [0.5, 0.28],
+        [0.18, 0],
+        [0.31, 0.44],
+        [0, 0.62],
+        [0.38, 0.62]
+      ],
+      'star-6': [
+        [0.5, 1],
+        [0.62, 0.7],
+        [0.96, 0.82],
+        [0.78, 0.5],
+        [0.96, 0.18],
+        [0.62, 0.3],
+        [0.5, 0],
+        [0.38, 0.3],
+        [0.04, 0.18],
+        [0.22, 0.5],
+        [0.04, 0.82],
+        [0.38, 0.7]
+      ],
+      'snip-corner-rectangle': [
+        [0, 1],
+        [0.78, 1],
+        [1, 0.72],
+        [1, 0],
+        [0, 0]
+      ],
+      'snip-same-side-rectangle': [
+        [0, 1],
+        [0.78, 1],
+        [1, 0.72],
+        [1, 0.28],
+        [0.78, 0],
+        [0, 0]
+      ],
+      'snip-diagonal-rectangle': [
+        [0, 1],
+        [0.78, 1],
+        [1, 0.72],
+        [1, 0],
+        [0.22, 0],
+        [0, 0.28]
+      ],
+      'l-shape': [
+        [0, 1],
+        [0.36, 1],
+        [0.36, 0.38],
+        [1, 0.38],
+        [1, 0],
+        [0, 0]
+      ],
+      'diagonal-stripe': [
+        [0.36, 1],
+        [1, 1],
+        [0.64, 0],
+        [0, 0]
+      ]
+    };
+
+    const polygon = shape ? polygonShapes[shape] : undefined;
+    if (polygon) return this.buildVisioPolygonGeometryXml(width, height, polygon);
 
     return `<Section N="Geometry" IX="0"><Row T="MoveTo" IX="1"><Cell N="X" V="0"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="2"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="0"/></Row><Row T="LineTo" IX="3"><Cell N="X" V="${this.visioNumber(width)}"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="4"><Cell N="X" V="0"/><Cell N="Y" V="${this.visioNumber(height)}"/></Row><Row T="LineTo" IX="5"><Cell N="X" V="0"/><Cell N="Y" V="0"/></Row></Section>`;
+  }
+
+  private buildVisioPolygonGeometryXml(
+    width: number,
+    height: number,
+    points: Array<[number, number]>
+  ): string {
+    if (!points.length) return '';
+    const [firstX, firstY] = points[0]!;
+    const rows = [
+      `<Row T="MoveTo" IX="1"><Cell N="X" V="${this.visioNumber(firstX * width)}"/><Cell N="Y" V="${this.visioNumber(firstY * height)}"/></Row>`,
+      ...points
+        .slice(1)
+        .map(
+          ([x, y], index) =>
+            `<Row T="LineTo" IX="${index + 2}"><Cell N="X" V="${this.visioNumber(x * width)}"/><Cell N="Y" V="${this.visioNumber(y * height)}"/></Row>`
+        ),
+      `<Row T="LineTo" IX="${points.length + 1}"><Cell N="X" V="${this.visioNumber(firstX * width)}"/><Cell N="Y" V="${this.visioNumber(firstY * height)}"/></Row>`
+    ];
+    return `<Section N="Geometry" IX="0">${rows.join('')}</Section>`;
   }
 
   private visioShapeName(shape?: TreeNodeShape): string {
@@ -2669,7 +3284,52 @@ export class AdminDashboardComponent implements OnInit {
     if (shape === 'terminator') return 'Start / End';
     if (shape === 'document') return 'Document';
     if (shape === 'database') return 'Database';
-    return 'Rectangle';
+    if (shape === 'rounded-rectangle') return 'Rounded Rectangle';
+    if (shape === 'square') return 'Square';
+    if (shape === 'circle') return 'Circle';
+    if (shape === 'ellipse') return 'Ellipse';
+    if (shape === 'triangle') return 'Triangle';
+    if (shape === 'right-triangle') return 'Right Triangle';
+    if (shape === 'heptagon') return 'Heptagon';
+    if (shape === 'octagon') return 'Octagon';
+    if (shape === 'decagon') return 'Decagon';
+    if (shape === 'can') return 'Can';
+    if (shape === 'parallelogram') return 'Parallelogram';
+    if (shape === 'trapezoid') return 'Trapezoid';
+    if (shape === 'diamond') return 'Diamond';
+    if (shape === 'cross') return 'Cross';
+    if (shape === 'chevron') return 'Chevron';
+    if (shape === 'cube') return 'Cube';
+    if (shape === 'star-4') return '4-Point Star';
+    if (shape === 'star-5') return '5-Point Star';
+    if (shape === 'star-6') return '6-Point Star';
+    if (shape === 'star-7') return '7-Point Star';
+    if (shape === 'star-16') return '16-Point Star';
+    if (shape === 'star-24') return '24-Point Star';
+    if (shape === 'star-32') return '32-Point Star';
+    if (shape === 'snip-corner-rectangle') return 'Snip Corner Rectangle';
+    if (shape === 'snip-same-side-rectangle') return 'Snip Same Side Rectangle';
+    if (shape === 'snip-diagonal-rectangle') return 'Snip Diagonal Corner Rectangle';
+    if (shape === 'single-round-rectangle') return 'Single Round Corner Rectangle';
+    if (shape === 'round-same-side-rectangle') return 'Round Same Side Corner Rectangle';
+    if (shape === 'round-diagonal-rectangle') return 'Round Diagonal Corner Rectangle';
+    if (shape === 'snip-round-rectangle') return 'Snip and Round Corner Rectangle';
+    if (shape === 'frame') return 'Frame';
+    if (shape === 'frame-corner') return 'Frame Corner';
+    if (shape === 'l-shape') return 'L Shape';
+    if (shape === 'diagonal-stripe') return 'Diagonal Stripe';
+    if (shape === 'plaque') return 'Plaque';
+    if (shape === 'donut') return 'Donut';
+    if (shape === 'no-symbol') return 'No Symbol';
+    if (shape === 'center-drag-circle') return 'Center Drag Circle';
+    if (shape === 'left-parenthesis') return 'Left Parenthesis';
+    if (shape === 'right-parenthesis') return 'Right Parenthesis';
+    return shape
+      ? shape
+          .split('-')
+          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+          .join(' ')
+      : 'Rectangle';
   }
 
   private buildVisioContentTypesXml(): string {
@@ -2885,6 +3545,7 @@ export class AdminDashboardComponent implements OnInit {
     this.api.getExternalServices().subscribe({
       next: (services) => {
         this.externalServices = services;
+        this.serviceCurrentPage = Math.min(this.serviceCurrentPage, this.serviceTotalPages);
         this.externalServicesLoaded = true;
         this.externalServicesLoading = false;
         this.settingsSaving = false;

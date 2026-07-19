@@ -57,7 +57,7 @@
           </svg>
         </div>
         <span>درخواست کاربران</span
-        ><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</strong
+        ><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '۰' }}</strong
         ><small>گفت‌وگوی ثبت‌شده</small>
       </article>
       <article>
@@ -69,7 +69,7 @@
           </svg>
         </div>
         <span>کاربران درگیر</span
-        ><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '-' }}</strong
+        ><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '۰' }}</strong
         ><small>کاربر دارای درخواست</small>
       </article>
     </section>
@@ -77,10 +77,16 @@
     <div class="admin-workspace">
       <aside class="admin-menu" aria-label="منوی پنل مدیریت">
         <div class="admin-menu-heading">
-          <span>منوی مدیریت</span>
-          <strong>بخش‌های سامانه</strong>
+          <span>مرکز کنترل</span>
+          <strong>پنل مدیریت سامانه</strong>
+          <small>دسترسی سریع به مدیریت دانش، گزارش‌ها و سرویس‌ها</small>
+        </div>
+        <div class="admin-menu-status">
+          <span>وضعیت سامانه</span>
+          <b>{{ loading || treeLoading ? 'در حال به‌روزرسانی' : 'آماده استفاده' }}</b>
         </div>
         <nav class="admin-menu-list" role="tablist" aria-label="بخش‌های پنل مدیریت">
+          <span class="menu-group-label">دانش و پایش</span>
           <button
             type="button"
             role="tab"
@@ -95,7 +101,7 @@
             </span>
             <span class="menu-copy">
               <b>مدیریت FAQ</b>
-              <small>افزودن، ورود فایل و ویرایش پایگاه دانش</small>
+              <small>افزودن و ویرایش پاسخ‌های پایگاه دانش</small>
             </span>
             <em>{{ faqs.length.toLocaleString('fa-IR') }}</em>
           </button>
@@ -114,9 +120,9 @@
             </span>
             <span class="menu-copy">
               <b>گزارش کاربران</b>
-              <small>گفت‌وگوها و مسئله‌های ثبت‌شده</small>
+              <small>بررسی گفت‌وگوها و مسائل ثبت‌شده</small>
             </span>
-            <em>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }}</em>
+            <em>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '۰' }}</em>
           </button>
           <button
             type="button"
@@ -135,10 +141,11 @@
             </span>
             <span class="menu-copy">
               <b>ارزیابی عملکرد</b>
-              <small>شاخص‌های پاسخ‌گویی، تیکت و کیفیت دانش</small>
+              <small>پایش کیفیت پاسخ‌گویی و ثبت تیکت</small>
             </span>
-            <em>{{ conversationsLoaded ? formatPercent(faqCoverageRate) : '-' }}</em>
+            <em>{{ conversationsLoaded ? formatPercent(faqCoverageRate) : '۰٪' }}</em>
           </button>
+          <span class="menu-group-label">راهبری کاربر</span>
           <button
             type="button"
             role="tab"
@@ -157,10 +164,30 @@
             </span>
             <span class="menu-copy">
               <b>مدیریت درختواره</b>
-              <small>ورود، مشاهده، ویرایش و ساخت مسیرهای راهبری</small>
+              <small>مدیریت مسیرهای عیب‌یابی و راهنمای کاربر</small>
             </span>
-            <em>{{ treeLoaded ? treeNodeCount.toLocaleString('fa-IR') : '—' }}</em>
+            <em>{{ treeLoaded ? treeNodeCount.toLocaleString('fa-IR') : '۰' }}</em>
           </button>
+          <div class="admin-tree-submenu" *ngIf="activeTab === 'tree'">
+            <div class="admin-tree-submenu-head">
+              <span>مسیرهای درختواره</span>
+              <strong>{{ activeTreeManagementView.label }}</strong>
+              <small>{{ activeTreeManagementView.hint }}</small>
+            </div>
+            <button
+              type="button"
+              *ngFor="let view of treeManagementViews; let viewIndex = index"
+              [class.active]="activeTab === 'tree' && treeManagementView === view.id"
+              (click)="openTreeManagementView(view.id)"
+            >
+              <i>{{ viewIndex + 1 }}</i>
+              <span>
+                <b>{{ view.label }}</b>
+                <small>{{ view.hint }}</small>
+              </span>
+            </button>
+          </div>
+          <span class="menu-group-label">سرویس‌ها و تنظیمات</span>
           <button
             type="button"
             role="tab"
@@ -177,8 +204,8 @@
               </svg>
             </span>
             <span class="menu-copy">
-              <b>پیکربندی سرویس</b>
-              <small>اتصال سهند و نگاشت RequestType</small>
+              <b>پیکربندی تیکت سهند</b>
+              <small>تنظیم آدرس سرویس و شناسه‌های درخواست</small>
             </span>
           </button>
           <button
@@ -195,15 +222,19 @@
               </svg>
             </span>
             <span class="menu-copy">
-              <b>سرویس‌ها</b>
+              <b>مدیریت سرویس‌ها</b>
               <small>تعریف سرویس‌های قابل استفاده در سامانه</small>
             </span>
-            <em>{{ externalServicesLoaded ? activeServiceCount.toLocaleString('fa-IR') : '-' }}</em>
+            <em>{{ externalServicesLoaded ? activeServiceCount.toLocaleString('fa-IR') : '۰' }}</em>
           </button>
         </nav>
       </aside>
 
-      <section class="admin-content">
+      <section
+        class="admin-content"
+        [class.faq-layout]="activeTab === 'faqs'"
+        [class.tree-layout]="activeTab === 'tree'"
+      >
         <ng-container *ngIf="activeTab === 'faqs'">
           <section class="editor-card">
             <div class="section-title">
@@ -463,10 +494,46 @@
               </div>
             </div>
           </div>
-          <p class="tree-list-note" *ngIf="hiddenConversationCount">
-            برای حفظ سرعت، {{ displayedConversations.length.toLocaleString('fa-IR') }} گفت‌وگو نمایش داده شده
-            است؛ {{ hiddenConversationCount.toLocaleString('fa-IR') }} مورد دیگر با جست‌وجو قابل دسترسی است.
-          </p>
+          <div
+            class="pagination-bar compact-pagination"
+            *ngIf="conversationsLoaded && filteredConversations.length"
+          >
+            <div class="pagination-summary">
+              نمایش {{ reportPaginationStart.toLocaleString('fa-IR') }} تا
+              {{ reportPaginationEnd.toLocaleString('fa-IR') }} از
+              {{ filteredConversations.length.toLocaleString('fa-IR') }} گزارش
+            </div>
+            <label class="page-size">
+              تعداد در صفحه
+              <select [ngModel]="reportPageSize" (ngModelChange)="setReportPageSize($event)">
+                <option *ngFor="let option of reportPageSizeOptions" [ngValue]="option">
+                  {{ option.toLocaleString('fa-IR') }}
+                </option>
+              </select>
+            </label>
+            <div class="pagination-actions">
+              <button
+                type="button"
+                class="ghost"
+                [disabled]="reportActivePage === 1"
+                (click)="goToReportPage(reportActivePage - 1)"
+              >
+                صفحه قبل
+              </button>
+              <span
+                >صفحه {{ reportActivePage.toLocaleString('fa-IR') }} از
+                {{ reportTotalPages.toLocaleString('fa-IR') }}</span
+              >
+              <button
+                type="button"
+                class="ghost"
+                [disabled]="reportActivePage === reportTotalPages"
+                (click)="goToReportPage(reportActivePage + 1)"
+              >
+                صفحه بعد
+              </button>
+            </div>
+          </div>
         </section>
 
         <ng-container *ngIf="activeTab === 'performance'">
@@ -621,25 +688,14 @@
           <section class="editor-card tree-manager-card">
             <div class="section-title">
               <div>
-                <span>مدیریت مسیرهای راهبری</span>
-                <h2>ورود و ویرایش درختواره پشتیبانی</h2>
+                <span>مدیریت مسیرهای پشتیبانی</span>
+                <h2>مدیریت درختواره پشتیبانی</h2>
               </div>
-              <div class="tree-toolbar">
-                <button
-                  type="button"
-                  class="ghost"
-                  [disabled]="treeLoading"
-                  (click)="openTreeWorkspace('demo')"
-                >
-                  مشاهده و ویرایش
-                </button>
-                <button
-                  type="button"
-                  [disabled]="treeLoading || !troubleshootingTree"
-                  (click)="openTreeWorkspace('final')"
-                >
-                  ورود به حالت نهایی
-                </button>
+              <div class="tree-toolbar tree-status-toolbar">
+                <span>پروژه {{ treeProjectLabel }}</span>
+                <span [class.dirty]="treeDirty">
+                  {{ treeDirty ? 'تغییرات ذخیره نشده' : 'آخرین نسخه ذخیره است' }}
+                </span>
                 <input
                   #treeFileInput
                   hidden
@@ -650,7 +706,7 @@
               </div>
             </div>
 
-            <div class="tree-import-strip">
+            <div class="tree-import-strip" *ngIf="treeManagementView === 'overview'">
               <article>
                 <span>نودها</span>
                 <b>{{ treeNodeCount.toLocaleString('fa-IR') }}</b>
@@ -664,17 +720,17 @@
                 <b>{{ troubleshootingTree?.startNodeId || '-' }}</b>
               </article>
               <article>
-                <span>آخرین ورود</span>
-                <b>{{ treeImportSource || 'داده فعلی سامانه' }}</b>
+                <span>منبع داده</span>
+                <b>{{ treeImportSource || 'نسخه فعال سامانه' }}</b>
                 <small *ngIf="treeImportFileName">{{ treeImportFileName }}</small>
               </article>
             </div>
 
-            <div class="tree-format-note">
-              <strong>فرمت‌های قابل ورود و خروجی</strong>
+            <div class="tree-format-note" *ngIf="treeManagementView === 'files'">
+              <strong>فرمت‌های پشتیبانی‌شده</strong>
               <span
-                >JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose متنی و Visio VSDX؛
-                خروجی مستقیم هم شامل JSON، CSV، Mermaid و Visio VSDX است.</span
+                >برای ورود فایل: JSON، CSV/TSV، Mermaid، Graphviz DOT، PlantUML، XML/draw.io، Rational Rose
+                متنی و Visio VSDX. برای خروجی: JSON، CSV، Mermaid و Visio VSDX.</span
               >
             </div>
 
@@ -682,34 +738,133 @@
               <li *ngFor="let warning of treeImportWarnings">{{ warning }}</li>
             </ul>
 
-            <div class="tree-create-panel" *ngIf="!treeLoading">
-              <article>
-                <span>ایجاد فایل خام</span>
-                <h3>درختواره جدید از صفر</h3>
-                <p>
-                  یک فایل خام با نود شروع ساخته می‌شود و همه ساختار را خودتان مرحله‌به‌مرحله طراحی می‌کنید.
-                </p>
-                <button type="button" (click)="createTroubleshootingTree(); openTreeWorkspace('demo')">
-                  ایجاد فایل خام
-                </button>
-              </article>
-              <article class="tree-file-create-card">
-                <span>ایجاد از فایل</span>
-                <h3>ورود Visio یا فرمت‌های پشتیبانی‌شده</h3>
-                <p>
-                  فایل خام موجود را با دکمه پلاس وارد کنید؛ پس از خواندن، مستقیم وارد محیط مشاهده و ویرایش
-                  می‌شود.
-                </p>
-                <button type="button" class="tree-plus-action" (click)="openTreeFilePicker()">
-                  <strong>+</strong>
-                  <em>انتخاب فایل و ویرایش</em>
-                </button>
-              </article>
-              <article>
-                <span>ایجاد از قالب</span>
+            <div
+              class="tree-create-panel tree-create-console"
+              *ngIf="!treeLoading && treeManagementView === 'create'"
+            >
+              <section class="tree-visio-start" aria-label="ایجاد درختواره">
+                <aside class="tree-visio-rail" aria-label="مسیرهای ایجاد">
+                  <strong>درختواره</strong>
+                  <button type="button" class="active">
+                    <span></span>
+                    خانه
+                  </button>
+                  <button type="button" (click)="createTroubleshootingTree(); openTreeWorkspace('demo')">
+                    <span></span>
+                    جدید
+                  </button>
+                  <button type="button" (click)="openTreeFilePicker()">
+                    <span></span>
+                    ورود فایل
+                  </button>
+                </aside>
+
+                <section class="tree-visio-main">
+                  <header class="tree-visio-heading">
+                    <span>شروع سریع</span>
+                    <h3>یک درختواره جدید بسازید</h3>
+                  </header>
+
+                  <div class="tree-visio-gallery" aria-label="قالب‌های شروع">
+                    <button
+                      type="button"
+                      class="tree-visio-template blank"
+                      (click)="createTroubleshootingTree(); openTreeWorkspace('demo')"
+                    >
+                      <i></i>
+                      <b>فایل خام</b>
+                      <small>شروع از یک نود خالی</small>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="tree-visio-template"
+                      *ngFor="let template of treeStarterTemplates; trackBy: trackTreeStarterTemplate"
+                      [class.active]="template.id === treeTemplateId"
+                      (click)="treeTemplateId = template.id"
+                    >
+                      <i></i>
+                      <b>{{ template.title }}</b>
+                      <small>{{ template.standard }}</small>
+                    </button>
+
+                    <button type="button" class="tree-visio-template upload" (click)="openTreeFilePicker()">
+                      <i></i>
+                      <b>ورود فایل</b>
+                      <small>Visio، JSON، CSV یا Mermaid</small>
+                    </button>
+                  </div>
+
+                  <section class="tree-visio-recent" aria-label="آخرین وضعیت">
+                    <div class="tree-visio-recent-tabs">
+                      <b>نسخه فعلی</b>
+                      <span>پروژه {{ treeProjectLabel }}</span>
+                    </div>
+                    <article>
+                      <span>{{ treeImportSource || 'نسخه فعال سامانه' }}</span>
+                      <b>{{ treeNodeCount.toLocaleString('fa-IR') }} نود</b>
+                      <small>{{ treeEdgeCount.toLocaleString('fa-IR') }} ارتباط</small>
+                    </article>
+                    <button
+                      type="button"
+                      class="ghost"
+                      [disabled]="!troubleshootingTree"
+                      (click)="openTreeWorkspace('demo')"
+                    >
+                      باز کردن ویرایشگر فعلی
+                    </button>
+                  </section>
+                </section>
+
+                <aside class="tree-visio-detail" aria-label="جزئیات قالب انتخاب‌شده">
+                  <button type="button" class="tree-visio-close" aria-label="بستن پیش‌نمایش">×</button>
+                  <div class="tree-visio-preview">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="tree-visio-detail-copy">
+                    <span>{{ selectedTreeStarterTemplate.standard }}</span>
+                    <h3>{{ selectedTreeStarterTemplate.title }}</h3>
+                    <p>{{ selectedTreeStarterTemplate.summary }}</p>
+                  </div>
+                  <label class="tree-visio-unit">
+                    <input
+                      type="radio"
+                      name="treeCreateMode"
+                      [checked]="treeWorkspaceMode === 'demo'"
+                      (change)="setTreeWorkspaceMode('demo')"
+                    />
+                    نسخه دمو
+                  </label>
+                  <label class="tree-visio-unit">
+                    <input
+                      type="radio"
+                      name="treeCreateMode"
+                      [checked]="treeWorkspaceMode === 'final'"
+                      (change)="setTreeWorkspaceMode('final')"
+                    />
+                    نسخه نهایی
+                  </label>
+                  <button
+                    type="button"
+                    class="tree-visio-create"
+                    (click)="createTroubleshootingTreeFromTemplate(); openTreeWorkspace(treeWorkspaceMode)"
+                  >
+                    ایجاد و ورود به ویرایشگر
+                  </button>
+                </aside>
+              </section>
+
+              <section class="tree-create-primary">
+                <div class="tree-create-kicker">
+                  <span>مسیر پیشنهادی</span>
+                  <em>{{ selectedTreeStarterTemplate.standard }}</em>
+                </div>
                 <h3>{{ selectedTreeStarterTemplate.title }}</h3>
                 <p>{{ selectedTreeStarterTemplate.summary }}</p>
-                <div class="tree-template-picker">
+                <label class="tree-template-picker tree-template-control-inline">
+                  قالب پایه
                   <select [(ngModel)]="treeTemplateId">
                     <option
                       *ngFor="let template of treeStarterTemplates; trackBy: trackTreeStarterTemplate"
@@ -718,34 +873,117 @@
                       {{ template.title }} - {{ template.standard }}
                     </option>
                   </select>
+                </label>
+                <div class="tree-create-primary-actions">
                   <button
                     type="button"
                     (click)="createTroubleshootingTreeFromTemplate(); openTreeWorkspace('demo')"
                   >
-                    انتخاب و ویرایش
+                    ساخت از قالب و ورود به ویرایشگر
+                  </button>
+                  <button type="button" class="ghost" (click)="openTreeWorkspace('demo')">
+                    مشاهده ویرایشگر فعلی
                   </button>
                 </div>
+              </section>
+
+              <section class="tree-create-methods" aria-label="روش‌های شروع درختواره">
+                <article>
+                  <i>01</i>
+                  <div>
+                    <span>شروع آزاد</span>
+                    <h3>درختواره خالی</h3>
+                    <p>
+                      برای طراحی مسیر جدید، فقط یک نود شروع ساخته می‌شود و ادامه ساختار را خودتان کامل
+                      می‌کنید.
+                    </p>
+                  </div>
+                  <button type="button" (click)="createTroubleshootingTree(); openTreeWorkspace('demo')">
+                    ساخت از صفر
+                  </button>
+                </article>
+
+                <article class="tree-file-create-card">
+                  <i>02</i>
+                  <div>
+                    <span>ورود فایل</span>
+                    <h3>بارگذاری فایل موجود</h3>
+                    <p>
+                      فایل Visio، JSON یا فرمت‌های پشتیبانی‌شده را وارد کنید تا ساختار در محیط ویرایش باز شود.
+                    </p>
+                  </div>
+                  <button type="button" class="tree-plus-action" (click)="openTreeFilePicker()">
+                    <strong>+</strong>
+                    <em>انتخاب فایل</em>
+                  </button>
+                </article>
+              </section>
+
+              <section class="tree-create-guide" aria-label="روند پیشنهادی مدیریت درختواره">
+                <span>روند استاندارد</span>
+                <h3>از ساخت تا انتشار</h3>
+                <ol>
+                  <li>
+                    <b>ساخت یا ورود فایل</b>
+                    <small>درختواره را از قالب، فایل یا ساختار خالی آماده کنید.</small>
+                  </li>
+                  <li>
+                    <b>بازبینی در ویرایشگر</b>
+                    <small>نودها، ارتباط‌ها و مسیرهای خروجی را در نمای تمام‌صفحه بررسی کنید.</small>
+                  </li>
+                  <li>
+                    <b>انتشار نسخه نهایی</b>
+                    <small>بعد از تایید، نسخه نهایی برای پروژه فعال می‌شود.</small>
+                  </li>
+                </ol>
+              </section>
+            </div>
+
+            <div class="tree-file-actions-panel" *ngIf="!treeLoading && treeManagementView === 'files'">
+              <article>
+                <span>ورود اطلاعات</span>
+                <h3>بارگذاری درختواره</h3>
+                <p>فایل پشتیبانی‌شده را وارد کنید تا ساختار آن در ویرایشگر نمایش داده شود.</p>
+                <button type="button" class="tree-plus-action" (click)="openTreeFilePicker()">
+                  <strong>+</strong>
+                  <em>انتخاب فایل</em>
+                </button>
+              </article>
+              <article>
+                <span>خروجی</span>
+                <h3>دریافت خروجی استاندارد</h3>
+                <p>برای انتقال، بررسی یا نگهداری نسخه پشتیبان، خروجی استاندارد دریافت کنید.</p>
+                <label class="tree-download-control">
+                  نوع خروجی
+                  <select [(ngModel)]="treeExportFormat">
+                    <option *ngFor="let format of treeExportFormats" [ngValue]="format.value">
+                      {{ format.label }}
+                    </option>
+                  </select>
+                </label>
+                <button type="button" [disabled]="!troubleshootingTree" (click)="exportTroubleshootingTree()">
+                  دریافت خروجی
+                </button>
               </article>
             </div>
 
-            <div class="tree-preview-launch" *ngIf="!treeLoading">
+            <div class="tree-preview-launch" *ngIf="!treeLoading && treeManagementView === 'overview'">
               <div class="tree-preview-hero">
                 <span>پیش‌نمایش درختواره</span>
                 <h3>
                   {{
                     selectedTreeNode
                       ? shortText(selectedTreeNode.text, 64)
-                      : 'درختواره‌ای برای نمایش انتخاب نشده است'
+                      : 'درختواره برای بازبینی آماده است'
                   }}
                 </h3>
                 <p>
-                  عملیات ورود، دریافت، مشاهده کامل، ویرایش نودها، ساخت ارتباط و نهایی‌سازی داخل پنجره اختصاصی
-                  انجام می‌شود.
+                  برای بررسی کامل، ویرایش نودها، ساخت ارتباط و انتشار نهایی، ویرایشگر تمام‌صفحه را باز کنید.
                 </p>
                 <div>
                   <b>{{ treeWorkspaceModeLabel }}</b>
-                  <b>{{ treeDirty ? 'دارای تغییر ذخیره‌نشده' : 'همگام با نسخه ذخیره‌شده' }}</b>
-                  <b>پروژه {{ treeProjectLabel }}</b>
+                  <b>{{ treeDirty ? 'تغییرات ذخیره نشده' : 'آخرین نسخه ذخیره است' }}</b>
+                  <b>پروژه: {{ treeProjectLabel }}</b>
                 </div>
               </div>
               <div class="tree-preview-actions">
@@ -758,15 +996,92 @@
                   [disabled]="treeLoading || !troubleshootingTree"
                   (click)="openTreeWorkspace('final')"
                 >
-                  بررسی نسخه نهایی
+                  بازبینی نسخه نهایی
                 </button>
               </div>
             </div>
 
-            <div class="tree-preview-note" *ngIf="treePreviewTruncatedCount">
-              پیش‌نمایش برای جلوگیری از کندی، {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود را
-              نشان می‌دهد؛ {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر در فهرست و
-              ذخیره‌سازی باقی می‌ماند.
+            <div
+              class="tree-preview-launch tree-editor-entry"
+              *ngIf="!treeLoading && treeManagementView === 'editor'"
+            >
+              <div class="tree-preview-hero">
+                <span>ویرایش درختواره</span>
+                <h3>ویرایشگر تمام‌صفحه</h3>
+                <p>
+                  در این محیط می‌توانید نودها را پیمایش کنید، مسیرها را اصلاح کنید و ارتباط‌های جدید بسازید.
+                </p>
+                <div>
+                  <b>{{ treeNodeCount.toLocaleString('fa-IR') }} نود</b>
+                  <b>{{ treeEdgeCount.toLocaleString('fa-IR') }} ارتباط</b>
+                  <b>پروژه: {{ treeProjectLabel }}</b>
+                </div>
+              </div>
+              <div class="tree-preview-actions">
+                <button type="button" [disabled]="treeLoading" (click)="openTreeWorkspace('demo')">
+                  باز کردن ویرایشگر
+                </button>
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="!troubleshootingTree"
+                  (click)="centerSelectedTreeNode()"
+                >
+                  تمرکز روی نود انتخاب‌شده
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="tree-preview-launch tree-version-panel"
+              *ngIf="!treeLoading && treeManagementView === 'versions'"
+            >
+              <div class="tree-preview-hero">
+                <span>مدیریت نسخه‌ها</span>
+                <h3>{{ treeDirty ? 'پیش‌نویس آماده ذخیره است' : 'نسخه ذخیره‌شده آماده بازبینی است' }}</h3>
+                <p>
+                  تغییرات تا زمان انتشار نهایی برای کاربران اعمال نمی‌شود. پس از بازبینی، نسخه فعال پروژه
+                  جایگزین خواهد شد.
+                </p>
+                <div>
+                  <b>{{ treeWorkspaceModeLabel }}</b>
+                  <b>{{ treeDirty ? 'نیازمند ذخیره' : 'ذخیره شده' }}</b>
+                  <b>پروژه: {{ treeProjectLabel }}</b>
+                </div>
+              </div>
+              <div class="tree-preview-actions">
+                <button
+                  type="button"
+                  [disabled]="treeSaving || !troubleshootingTree"
+                  (click)="openTreeWorkspace('final')"
+                >
+                  بازبینی نسخه نهایی
+                </button>
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="treeSaving || !troubleshootingTree"
+                  (click)="saveTroubleshootingTree()"
+                >
+                  ذخیره پیش‌نویس
+                </button>
+                <button
+                  type="button"
+                  [disabled]="treeSaving || !troubleshootingTree"
+                  (click)="finalizeTroubleshootingTree()"
+                >
+                  انتشار نسخه نهایی
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="tree-preview-note"
+              *ngIf="treePreviewTruncatedCount && treeManagementView === 'overview'"
+            >
+              برای حفظ سرعت، فقط {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود در پیش‌نمایش نمایش
+              داده می‌شود. {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر همچنان در فهرست و
+              نسخه ذخیره‌شده وجود دارد.
             </div>
           </section>
 
@@ -785,10 +1100,10 @@
               <header class="tree-modal-header">
                 <div>
                   <span>فضای کاری درختواره</span>
-                  <h2>مشاهده، ویرایش و نهایی‌سازی مسیرهای راهبری</h2>
+                  <h2>مشاهده، ویرایش و انتشار مسیرهای پشتیبانی</h2>
                   <small>
                     پروژه {{ treeProjectLabel }} · {{ treeNodeCount.toLocaleString('fa-IR') }} نود ·
-                    {{ treeDirty ? 'تغییر ذخیره‌نشده وجود دارد' : 'نسخه فعلی ذخیره شده است' }}
+                    {{ treeDirty ? 'تغییرات هنوز ذخیره نشده‌اند' : 'نسخه فعلی ذخیره شده است' }}
                   </small>
                 </div>
                 <div class="tree-modal-actions">
@@ -815,7 +1130,9 @@
                       نهایی
                     </button>
                   </div>
-                  <button type="button" class="ghost" (click)="createTroubleshootingTree()">فایل خام</button>
+                  <button type="button" class="ghost" (click)="createTroubleshootingTree()">
+                    درختواره خالی
+                  </button>
                   <label class="tree-template-control">
                     <span>قالب</span>
                     <select [(ngModel)]="treeTemplateId">
@@ -828,13 +1145,13 @@
                     </select>
                   </label>
                   <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
-                    ایجاد از قالب
+                    ساخت از قالب
                   </button>
                   <button type="button" class="ghost tree-plus-inline" (click)="openTreeFilePicker()">
                     + فایل
                   </button>
                   <label class="tree-download-control">
-                    <span>دریافت</span>
+                    <span>خروجی</span>
                     <select [(ngModel)]="treeExportFormat">
                       <option *ngFor="let format of treeExportFormats" [ngValue]="format.value">
                         {{ format.label }}
@@ -870,7 +1187,7 @@
                     [disabled]="treeSaving || treeLoading || !troubleshootingTree"
                     (click)="finalizeTroubleshootingTree()"
                   >
-                    نهایی‌سازی و اعمال
+                    انتشار نسخه نهایی
                   </button>
                   <button type="button" class="close" aria-label="بستن" (click)="requestCloseTreeWorkspace()">
                     ×
@@ -884,11 +1201,11 @@
                 </section>
 
                 <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
-                  هنوز درختواره‌ای برای این پروژه آماده نیست. فایل وارد کنید یا یک درختواره جدید بسازید.
+                  برای این پروژه هنوز درختواره‌ای ثبت نشده است. فایل وارد کنید یا یک درختواره جدید بسازید.
                   <div class="tree-empty-actions">
-                    <button type="button" (click)="createTroubleshootingTree()">ایجاد فایل خام</button>
+                    <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره خالی</button>
                     <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
-                      ایجاد از قالب انتخابی
+                      ساخت از قالب انتخابی
                     </button>
                   </div>
                 </section>
@@ -897,7 +1214,7 @@
                   <aside class="tree-side-panel tree-node-browser">
                     <div class="section-title compact">
                       <div>
-                        <span>Shapes</span>
+                        <span>استاندارد شکل‌ها</span>
                         <h3>کتابخانه شکل‌ها</h3>
                       </div>
                     </div>
@@ -1018,13 +1335,14 @@
                       </div>
                       <small>برای مدل‌سازی، ابزار را انتخاب کنید و مستقیم روی canvas کار کنید.</small>
                     </div>
-                    <div class="tree-modeling-toolbar">
+                    <div class="tree-modeling-toolbar" aria-label="ابزار ویرایش درختواره">
                       <div class="tree-tool-group" role="group" aria-label="ابزار مدل‌سازی">
                         <button
                           type="button"
                           [class.active]="treeCanvasTool === 'select'"
                           (click)="setTreeCanvasTool('select')"
                         >
+                          <span class="tool-icon" aria-hidden="true">⌖</span>
                           انتخاب و جابه‌جایی
                         </button>
                         <button
@@ -1032,6 +1350,7 @@
                           [class.active]="treeCanvasTool === 'pan'"
                           (click)="setTreeCanvasTool('pan')"
                         >
+                          <span class="tool-icon" aria-hidden="true">✋</span>
                           پیمایش
                         </button>
                         <button
@@ -1039,6 +1358,7 @@
                           [class.active]="treeCanvasTool === 'add-node'"
                           (click)="setTreeCanvasTool('add-node')"
                         >
+                          <span class="tool-icon" aria-hidden="true">+</span>
                           افزودن نود
                         </button>
                         <button
@@ -1046,6 +1366,7 @@
                           [class.active]="treeCanvasTool === 'connect'"
                           (click)="setTreeCanvasTool('connect')"
                         >
+                          <span class="tool-icon" aria-hidden="true">⛓</span>
                           اتصال نودها
                         </button>
                       </div>
@@ -1061,6 +1382,7 @@
                           [disabled]="!selectedTreeNode"
                           (click)="addDraftTreeChildToSelected()"
                         >
+                          <span class="tool-icon" aria-hidden="true">↳</span>
                           فرزند
                         </button>
                         <button
@@ -1069,6 +1391,7 @@
                           [disabled]="!selectedTreeNode"
                           (click)="duplicateSelectedTreeNode()"
                         >
+                          <span class="tool-icon" aria-hidden="true">⧉</span>
                           کپی
                         </button>
                         <button
@@ -1079,6 +1402,7 @@
                           "
                           (click)="setSelectedAsTreeStart()"
                         >
+                          <span class="tool-icon" aria-hidden="true">★</span>
                           شروع
                         </button>
                         <button
@@ -1087,6 +1411,7 @@
                           [disabled]="!selectedTreeNode"
                           (click)="deleteSelectedTreeNode()"
                         >
+                          <span class="tool-icon" aria-hidden="true">×</span>
                           حذف
                         </button>
                       </div>
@@ -1096,15 +1421,20 @@
                         aria-label="کنترل نمایش"
                       >
                         <button type="button" class="ghost" (click)="useReadableTreeLayout()">
+                          <span class="tool-icon" aria-hidden="true">◎</span>
                           نمای خوانا
                         </button>
-                        <button type="button" class="ghost" (click)="useFreeTreeLayout()">آزاد</button>
+                        <button type="button" class="ghost" (click)="useFreeTreeLayout()">
+                          <span class="tool-icon" aria-hidden="true">↔</span>
+                          آزاد
+                        </button>
                         <button
                           type="button"
                           class="ghost"
                           [class.active]="treeShowGrid"
                           (click)="toggleTreeGrid()"
                         >
+                          <span class="tool-icon" aria-hidden="true">#</span>
                           Grid
                         </button>
                         <button
@@ -1113,6 +1443,7 @@
                           [class.active]="treeShowEdgeLabels"
                           (click)="toggleTreeEdgeLabels()"
                         >
+                          <span class="tool-icon" aria-hidden="true">Aa</span>
                           برچسب
                         </button>
                       </div>
@@ -1120,8 +1451,9 @@
                         مبدأ: {{ treeConnectionSourceId }}
                       </span>
                     </div>
-                    <div class="tree-map-controls">
+                    <div class="tree-map-controls" aria-label="پیمایش و بزرگ‌نمایی">
                       <button type="button" class="ghost" (click)="selectAdjacentTreeNode(-1)">
+                        <span class="tool-icon" aria-hidden="true">‹</span>
                         نود قبلی
                       </button>
                       <button
@@ -1130,16 +1462,30 @@
                         (click)="centerSelectedTreeNode()"
                         [disabled]="!selectedTreeNode"
                       >
+                        <span class="tool-icon" aria-hidden="true">⊙</span>
                         تمرکز روی نود
                       </button>
                       <button type="button" class="ghost" (click)="selectAdjacentTreeNode(1)">
+                        <span class="tool-icon" aria-hidden="true">›</span>
                         نود بعدی
                       </button>
                       <span>{{ treeZoomPercent }}</span>
-                      <button type="button" class="ghost" (click)="zoomTree(-0.1)">کوچک‌تر</button>
-                      <button type="button" class="ghost" (click)="fitTreeToViewport()">نمای کلی</button>
-                      <button type="button" class="ghost" (click)="resetTreeZoom()">اندازه اصلی</button>
-                      <button type="button" class="ghost" (click)="zoomTree(0.1)">بزرگ‌تر</button>
+                      <button type="button" class="ghost" (click)="zoomTree(-0.1)">
+                        <span class="tool-icon" aria-hidden="true">−</span>
+                        کوچک‌تر
+                      </button>
+                      <button type="button" class="ghost" (click)="fitTreeToViewport()">
+                        <span class="tool-icon" aria-hidden="true">□</span>
+                        نمای کلی
+                      </button>
+                      <button type="button" class="ghost" (click)="resetTreeZoom()">
+                        <span class="tool-icon" aria-hidden="true">1:1</span>
+                        اندازه اصلی
+                      </button>
+                      <button type="button" class="ghost" (click)="zoomTree(0.1)">
+                        <span class="tool-icon" aria-hidden="true">+</span>
+                        بزرگ‌تر
+                      </button>
                     </div>
                     <div class="tree-designer-frame">
                       <div class="tree-ruler-corner"></div>
@@ -1302,6 +1648,296 @@
                                       class="node-shape"
                                       d="M -118 -42 H 102 L 122 -22 V 42 H -98 L -118 22 Z"
                                     ></path>
+                                    <ng-container *ngSwitchCase="'multiple-documents'">
+                                      <path
+                                        class="node-shape-detail-fill"
+                                        d="M -86 -58 H 96 V 8 C 58 26 14 8 -22 20 C -52 30 -70 26 -86 16 Z"
+                                      ></path>
+                                      <path
+                                        class="node-shape-detail-fill"
+                                        d="M -100 -48 H 110 V 20 C 66 38 18 14 -18 28 C -54 42 -76 36 -100 24 Z"
+                                      ></path>
+                                      <path
+                                        class="node-shape"
+                                        d="M -116 -38 H 116 V 30 C 70 50 20 22 -20 36 C -58 50 -84 42 -116 30 Z"
+                                      ></path>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'manual-operation'"
+                                      class="node-shape"
+                                      d="M -86 -42 H 86 L 124 42 H -124 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'delay'"
+                                      class="node-shape"
+                                      d="M -112 -42 H 34 C 92 -42 124 -24 124 0 C 124 24 92 42 34 42 H -112 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'preparation'"
+                                      class="node-shape"
+                                      d="M -82 -44 H 82 L 124 0 L 82 44 H -82 L -124 0 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'off-page-reference'"
+                                      class="node-shape"
+                                      d="M -100 -48 H 100 V 18 L 0 58 L -100 18 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'dynamic-connector'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M -112 0 H 92 M 72 -18 L 112 0 L 72 18"
+                                    ></path>
+                                    <rect
+                                      *ngSwitchCase="'bpmn-task'"
+                                      class="node-shape"
+                                      x="-118"
+                                      y="-42"
+                                      width="236"
+                                      height="84"
+                                      rx="12"
+                                    ></rect>
+                                    <circle
+                                      *ngSwitchCase="'bpmn-event-start'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      r="48"
+                                    ></circle>
+                                    <ng-container *ngSwitchCase="'bpmn-event-intermediate'">
+                                      <circle class="node-shape" cx="0" cy="0" r="50"></circle>
+                                      <circle class="node-shape-outline" cx="0" cy="0" r="38"></circle>
+                                    </ng-container>
+                                    <circle
+                                      *ngSwitchCase="'bpmn-event-end'"
+                                      class="node-shape thick-shape"
+                                      cx="0"
+                                      cy="0"
+                                      r="48"
+                                    ></circle>
+                                    <ng-container *ngSwitchCase="'bpmn-gateway-exclusive'">
+                                      <path class="node-shape" d="M 0 -52 L 128 0 L 0 52 L -128 0 Z"></path>
+                                      <path
+                                        class="node-shape-detail"
+                                        d="M -24 -24 L 24 24 M 24 -24 L -24 24"
+                                      ></path>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'bpmn-gateway-parallel'">
+                                      <path class="node-shape" d="M 0 -52 L 128 0 L 0 52 L -128 0 Z"></path>
+                                      <path class="node-shape-detail" d="M -34 0 H 34 M 0 -34 V 34"></path>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'bpmn-gateway-inclusive'">
+                                      <path class="node-shape" d="M 0 -52 L 128 0 L 0 52 L -128 0 Z"></path>
+                                      <circle class="node-shape-detail" cx="0" cy="0" r="24"></circle>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'bpmn-gateway-complex'">
+                                      <path class="node-shape" d="M 0 -52 L 128 0 L 0 52 L -128 0 Z"></path>
+                                      <path
+                                        class="node-shape-detail"
+                                        d="M 0 -34 L 10 -10 L 34 0 L 10 10 L 0 34 L -10 10 L -34 0 L -10 -10 Z"
+                                      ></path>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'sequence-flow'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M -112 0 H 92 M 72 -18 L 112 0 L 72 18"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'message-flow'"
+                                      class="node-shape-detail dashed-shape"
+                                      d="M -112 0 H 92 M 72 -18 L 112 0 L 72 18"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'pool'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-126"
+                                        y="-54"
+                                        width="252"
+                                        height="108"
+                                        rx="6"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-86"
+                                        y1="-54"
+                                        x2="-86"
+                                        y2="54"
+                                      ></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'lane'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-126"
+                                        y="-42"
+                                        width="252"
+                                        height="84"
+                                        rx="4"
+                                      ></rect>
+                                      <line class="node-shape-detail" x1="-126" y1="0" x2="126" y2="0"></line>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'data-object'"
+                                      class="node-shape"
+                                      d="M -90 -50 H 72 L 104 -18 V 50 H -90 Z M 72 -50 V -18 H 104"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'data-store'">
+                                      <path
+                                        class="node-shape"
+                                        d="M -112 -34 C -112 -50 112 -50 112 -34 V 34 C 112 50 -112 50 -112 34 Z"
+                                      ></path>
+                                      <ellipse
+                                        class="node-shape-detail"
+                                        cx="0"
+                                        cy="-34"
+                                        rx="112"
+                                        ry="28"
+                                      ></ellipse>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'annotation'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M 64 -44 H -80 V 44 H 64"
+                                    ></path>
+                                    <rect
+                                      *ngSwitchCase="'group'"
+                                      class="node-shape dashed-shape"
+                                      x="-126"
+                                      y="-52"
+                                      width="252"
+                                      height="104"
+                                      rx="14"
+                                    ></rect>
+                                    <path
+                                      *ngSwitchCase="'actor'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M 0 -50 m -18 0 a 18 18 0 1 0 36 0 a 18 18 0 1 0 -36 0 M 0 -32 V 20 M -44 -8 H 44 M 0 20 L -36 54 M 0 20 L 36 54"
+                                    ></path>
+                                    <ellipse
+                                      *ngSwitchCase="'use-case'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      rx="126"
+                                      ry="44"
+                                    ></ellipse>
+                                    <ng-container *ngSwitchCase="'class'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-126"
+                                        y="-52"
+                                        width="252"
+                                        height="104"
+                                        rx="8"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="-18"
+                                        x2="126"
+                                        y2="-18"
+                                      ></line>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="18"
+                                        x2="126"
+                                        y2="18"
+                                      ></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'package'">
+                                      <path
+                                        class="node-shape"
+                                        d="M -126 -38 H -54 L -38 -54 H 126 V 54 H -126 Z"
+                                      ></path>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="-38"
+                                        x2="126"
+                                        y2="-38"
+                                      ></line>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'component'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-118"
+                                        y="-44"
+                                        width="236"
+                                        height="88"
+                                        rx="8"
+                                      ></rect>
+                                      <rect
+                                        class="node-shape-outline"
+                                        x="-136"
+                                        y="-26"
+                                        width="36"
+                                        height="18"
+                                        rx="3"
+                                      ></rect>
+                                      <rect
+                                        class="node-shape-outline"
+                                        x="-136"
+                                        y="10"
+                                        width="36"
+                                        height="18"
+                                        rx="3"
+                                      ></rect>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'network-server'">
+                                      <rect
+                                        class="node-shape"
+                                        x="-58"
+                                        y="-62"
+                                        width="116"
+                                        height="124"
+                                        rx="8"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-40"
+                                        y1="-28"
+                                        x2="40"
+                                        y2="-28"
+                                      ></line>
+                                      <line class="node-shape-detail" x1="-40" y1="0" x2="40" y2="0"></line>
+                                      <circle class="node-shape-detail" cx="32" cy="32" r="5"></circle>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'cloud'"
+                                      class="node-shape"
+                                      d="M -92 28 C -130 24 -128 -28 -88 -28 C -74 -62 -20 -66 0 -36 C 28 -56 74 -40 76 -6 C 118 -8 126 40 82 42 H -88 C -112 42 -116 30 -92 28 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'db-entity'">
+                                      <rect
+                                        class="node-shape erd-table-shape"
+                                        x="-126"
+                                        y="-52"
+                                        width="252"
+                                        height="104"
+                                        rx="10"
+                                      ></rect>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-126"
+                                        y1="-20"
+                                        x2="126"
+                                        y2="-20"
+                                      ></line>
+                                      <line
+                                        class="node-shape-detail muted"
+                                        x1="-68"
+                                        y1="-52"
+                                        x2="-68"
+                                        y2="52"
+                                      ></line>
+                                    </ng-container>
+                                    <ellipse
+                                      *ngSwitchCase="'db-column'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      rx="126"
+                                      ry="44"
+                                    ></ellipse>
                                     <ng-container *ngSwitchCase="'erd-entity'">
                                       <rect
                                         class="node-shape"
@@ -1416,6 +2052,249 @@
                                       <path class="node-shape" d="M 0 -58 L 128 52 L -128 52 Z"></path>
                                       <line class="node-shape-detail" x1="-72" y1="20" x2="72" y2="20"></line>
                                     </ng-container>
+                                    <rect
+                                      *ngSwitchCase="'rectangle'"
+                                      class="node-shape"
+                                      x="-118"
+                                      y="-42"
+                                      width="236"
+                                      height="84"
+                                      rx="2"
+                                    ></rect>
+                                    <rect
+                                      *ngSwitchCase="'rounded-rectangle'"
+                                      class="node-shape"
+                                      x="-118"
+                                      y="-42"
+                                      width="236"
+                                      height="84"
+                                      rx="16"
+                                    ></rect>
+                                    <rect
+                                      *ngSwitchCase="'square'"
+                                      class="node-shape"
+                                      x="-52"
+                                      y="-52"
+                                      width="104"
+                                      height="104"
+                                      rx="4"
+                                    ></rect>
+                                    <circle
+                                      *ngSwitchCase="'circle'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      r="54"
+                                    ></circle>
+                                    <ellipse
+                                      *ngSwitchCase="'ellipse'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      rx="126"
+                                      ry="44"
+                                    ></ellipse>
+                                    <path
+                                      *ngSwitchCase="'triangle'"
+                                      class="node-shape"
+                                      d="M 0 -58 L 128 52 L -128 52 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'right-triangle'"
+                                      class="node-shape"
+                                      d="M -118 -52 L 118 52 L -118 52 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'heptagon'"
+                                      class="node-shape"
+                                      d="M 0 -54 L 86 -34 L 120 14 L 54 52 L -54 52 L -120 14 L -86 -34 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'octagon'"
+                                      class="node-shape"
+                                      d="M -76 -52 H 76 L 122 -10 V 10 L 76 52 H -76 L -122 10 V -10 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'decagon'"
+                                      class="node-shape"
+                                      d="M -42 -54 H 42 L 98 -34 L 126 -4 L 108 36 L 42 54 H -42 L -108 36 L -126 -4 L -98 -34 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'can'">
+                                      <path
+                                        class="node-shape"
+                                        d="M -112 -34 C -112 -50 112 -50 112 -34 V 34 C 112 50 -112 50 -112 34 Z"
+                                      ></path>
+                                      <ellipse
+                                        class="node-shape-detail"
+                                        cx="0"
+                                        cy="-34"
+                                        rx="112"
+                                        ry="28"
+                                      ></ellipse>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'parallelogram'"
+                                      class="node-shape"
+                                      d="M -96 -42 L 124 -42 L 96 42 L -124 42 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'trapezoid'"
+                                      class="node-shape"
+                                      d="M -82 -42 H 82 L 124 42 H -124 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'diamond'"
+                                      class="node-shape"
+                                      d="M 0 -50 L 128 0 L 0 50 L -128 0 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'cross'"
+                                      class="node-shape"
+                                      d="M -24 -58 H 24 V -20 H 76 V 20 H 24 V 58 H -24 V 20 H -76 V -20 H -24 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'chevron'"
+                                      class="node-shape"
+                                      d="M -118 -42 H -34 L 58 0 L -34 42 H -118 L -28 0 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'cube'">
+                                      <path class="node-shape" d="M -86 -28 H 70 V 52 H -86 Z"></path>
+                                      <path
+                                        class="node-shape-detail-fill"
+                                        d="M -86 -28 L -52 -58 H 104 L 70 -28 Z"
+                                      ></path>
+                                      <path
+                                        class="node-shape-detail"
+                                        d="M 70 -28 L 104 -58 V 20 L 70 52 Z"
+                                      ></path>
+                                    </ng-container>
+                                    <path
+                                      *ngSwitchCase="'star-4'"
+                                      class="node-shape"
+                                      d="M 0 -62 L 18 -18 L 62 0 L 18 18 L 0 62 L -18 18 L -62 0 L -18 -18 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-5'"
+                                      class="node-shape"
+                                      d="M 0 -62 L 16 -20 L 60 -20 L 24 7 L 38 52 L 0 25 L -38 52 L -24 7 L -60 -20 L -16 -20 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-6'"
+                                      class="node-shape"
+                                      d="M 0 -62 L 18 -22 L 60 -32 L 36 4 L 60 40 L 18 30 L 0 62 L -18 30 L -60 40 L -36 4 L -60 -32 L -18 -22 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-7'"
+                                      class="node-shape"
+                                      d="M 0 -62 L 14 -30 L 44 -46 L 36 -12 L 66 0 L 36 12 L 44 46 L 14 30 L 0 62 L -14 30 L -44 46 L -36 12 L -66 0 L -36 -12 L -44 -46 L -14 -30 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-16'"
+                                      class="node-shape"
+                                      d="M 0 -62 L 10 -44 L 24 -56 L 28 -36 L 48 -48 L 38 -24 L 62 -18 L 44 -6 L 64 0 L 44 6 L 62 18 L 38 24 L 48 48 L 28 36 L 24 56 L 10 44 L 0 62 L -10 44 L -24 56 L -28 36 L -48 48 L -38 24 L -62 18 L -44 6 L -64 0 L -44 -6 L -62 -18 L -38 -24 L -48 -48 L -28 -36 L -24 -56 L -10 -44 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-24'"
+                                      class="node-shape"
+                                      d="M 0 -64 L 8 -43 L 18 -60 L 22 -38 L 36 -52 L 34 -30 L 54 -38 L 42 -20 L 64 -12 L 44 -4 L 64 8 L 42 14 L 54 34 L 34 28 L 36 52 L 22 36 L 18 60 L 8 42 L 0 64 L -8 42 L -18 60 L -22 36 L -36 52 L -34 28 L -54 34 L -42 14 L -64 8 L -44 -4 L -64 -12 L -42 -20 L -54 -38 L -34 -30 L -36 -52 L -22 -38 L -18 -60 L -8 -43 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'star-32'"
+                                      class="node-shape"
+                                      d="M 0 -66 L 7 -42 L 14 -64 L 20 -40 L 30 -58 L 29 -36 L 44 -50 L 37 -30 L 56 -36 L 43 -20 L 64 -18 L 45 -8 L 66 0 L 45 8 L 64 18 L 43 20 L 56 36 L 37 30 L 44 50 L 29 36 L 30 58 L 20 40 L 14 64 L 7 42 L 0 66 L -7 42 L -14 64 L -20 40 L -30 58 L -29 36 L -44 50 L -37 30 L -56 36 L -43 20 L -64 18 L -45 8 L -66 0 L -45 -8 L -64 -18 L -43 -20 L -56 -36 L -37 -30 L -44 -50 L -29 -36 L -30 -58 L -20 -40 L -14 -64 L -7 -42 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'snip-corner-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 88 L 118 -12 V 42 H -118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'snip-same-side-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 88 L 118 -14 V 14 L 88 42 H -118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'snip-diagonal-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 88 L 118 -12 V 42 H -88 L -118 12 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'single-round-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 84 Q 118 -42 118 -8 V 42 H -118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'round-same-side-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 82 Q 118 -42 118 -6 V 6 Q 118 42 82 42 H -118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'round-diagonal-rectangle'"
+                                      class="node-shape"
+                                      d="M -82 -42 H 118 V 6 Q 118 42 82 42 H -118 V -6 Q -118 -42 -82 -42 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'snip-round-rectangle'"
+                                      class="node-shape"
+                                      d="M -118 -42 H 88 L 118 -12 V 6 Q 118 42 82 42 H -88 L -118 12 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'frame'"
+                                      class="node-shape"
+                                      fill-rule="evenodd"
+                                      d="M -124 -54 H 124 V 54 H -124 Z M -98 -32 V 32 H 98 V -32 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'frame-corner'"
+                                      class="node-shape"
+                                      d="M -118 -48 H -38 V -28 H -98 V 32 H -118 Z M 118 48 H 38 V 28 H 98 V -32 H 118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'l-shape'"
+                                      class="node-shape"
+                                      d="M -118 -54 H -68 V 10 H 104 V 54 H -118 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'diagonal-stripe'"
+                                      class="node-shape"
+                                      d="M -112 46 L 46 -46 H 112 L -46 46 Z"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'plaque'"
+                                      class="node-shape"
+                                      d="M -106 -42 C -86 -58 86 -58 106 -42 C 126 -24 126 24 106 42 C 86 58 -86 58 -106 42 C -126 24 -126 -24 -106 -42 Z"
+                                    ></path>
+                                    <ng-container *ngSwitchCase="'donut'">
+                                      <circle class="node-shape" cx="0" cy="0" r="58"></circle>
+                                      <circle class="node-shape-detail-fill" cx="0" cy="0" r="28"></circle>
+                                    </ng-container>
+                                    <ng-container *ngSwitchCase="'no-symbol'">
+                                      <circle class="node-shape" cx="0" cy="0" r="58"></circle>
+                                      <line
+                                        class="node-shape-detail"
+                                        x1="-40"
+                                        y1="40"
+                                        x2="40"
+                                        y2="-40"
+                                      ></line>
+                                    </ng-container>
+                                    <circle
+                                      *ngSwitchCase="'center-drag-circle'"
+                                      class="node-shape"
+                                      cx="0"
+                                      cy="0"
+                                      r="46"
+                                    ></circle>
+                                    <path
+                                      *ngSwitchCase="'left-parenthesis'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M 42 -58 C -48 -36 -48 36 42 58"
+                                    ></path>
+                                    <path
+                                      *ngSwitchCase="'right-parenthesis'"
+                                      class="node-shape-detail parenthesis-shape"
+                                      d="M -42 -58 C 48 -36 48 36 -42 58"
+                                    ></path>
                                     <rect
                                       *ngSwitchDefault
                                       class="node-shape"
@@ -1584,11 +2463,11 @@
           </section>
 
           <section class="empty tree-empty-state" *ngIf="!treeLoading && !troubleshootingTree">
-            هنوز درختواره‌ای دریافت نشده است. یک فایل وارد کنید یا از همین بخش درختواره جدید بسازید.
+            برای این پروژه هنوز درختواره‌ای ثبت نشده است. فایل وارد کنید یا یک درختواره جدید بسازید.
             <div class="tree-empty-actions">
-              <button type="button" (click)="createTroubleshootingTree()">ایجاد فایل خام</button>
+              <button type="button" (click)="createTroubleshootingTree()">ساخت درختواره خالی</button>
               <button type="button" class="ghost" (click)="createTroubleshootingTreeFromTemplate()">
-                ایجاد از قالب انتخابی
+                ساخت از قالب انتخابی
               </button>
             </div>
           </section>
@@ -1757,7 +2636,7 @@
             <div class="service-grid" *ngIf="externalServicesLoaded && externalServices.length">
               <article
                 class="service-card"
-                *ngFor="let service of externalServices"
+                *ngFor="let service of paginatedExternalServices"
                 [class.inactive]="!service.isActive"
               >
                 <header>
@@ -1783,6 +2662,46 @@
                   <button type="button" class="danger" (click)="deleteExternalService(service)">حذف</button>
                 </div>
               </article>
+            </div>
+            <div
+              class="pagination-bar compact-pagination"
+              *ngIf="externalServicesLoaded && externalServices.length"
+            >
+              <div class="pagination-summary">
+                نمایش {{ servicePaginationStart.toLocaleString('fa-IR') }} تا
+                {{ servicePaginationEnd.toLocaleString('fa-IR') }} از
+                {{ externalServices.length.toLocaleString('fa-IR') }} سرویس
+              </div>
+              <label class="page-size">
+                تعداد در صفحه
+                <select [ngModel]="servicePageSize" (ngModelChange)="setServicePageSize($event)">
+                  <option *ngFor="let option of servicePageSizeOptions" [ngValue]="option">
+                    {{ option.toLocaleString('fa-IR') }}
+                  </option>
+                </select>
+              </label>
+              <div class="pagination-actions">
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="serviceActivePage === 1"
+                  (click)="goToServicePage(serviceActivePage - 1)"
+                >
+                  صفحه قبل
+                </button>
+                <span
+                  >صفحه {{ serviceActivePage.toLocaleString('fa-IR') }} از
+                  {{ serviceTotalPages.toLocaleString('fa-IR') }}</span
+                >
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="serviceActivePage === serviceTotalPages"
+                  (click)="goToServicePage(serviceActivePage + 1)"
+                >
+                  صفحه بعد
+                </button>
+              </div>
             </div>
             <section
               class="service-test-result"

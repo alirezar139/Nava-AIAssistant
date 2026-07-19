@@ -2073,3 +2073,716 @@ main.assistant-layout {
     justify-content: center;
   }
 }
+
+/* Platform polish: assistant workspace */
+:host {
+  --assistant-radius: 18px;
+  --assistant-radius-lg: 24px;
+  --assistant-gap: 16px;
+}
+
+.page-shell {
+  background:
+    radial-gradient(
+      circle at 9% 8%,
+      color-mix(in srgb, var(--accent-600) 10%, transparent),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, var(--color-link) 11%, transparent),
+      transparent 28rem
+    ),
+    linear-gradient(135deg, color-mix(in srgb, var(--page-bg) 86%, #ffffff), var(--page-bg));
+}
+
+.page-shell::before {
+  opacity: 0.62;
+  mask-image: radial-gradient(circle at 50% 30%, #000 0%, transparent 72%);
+}
+
+.topbar {
+  height: 72px;
+  padding-inline: var(--page-inline);
+  border-bottom-color: color-mix(in srgb, var(--assistant-border) 80%, transparent);
+  background: color-mix(in srgb, var(--assistant-panel) 78%, transparent);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--primary-950) 5%, transparent);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+
+.brand-mark,
+.account-info .account-avatar,
+.knowledge-icon,
+.avatar,
+.mini-logo,
+.welcome-mark {
+  border-radius: 14px;
+}
+
+.topbar-status,
+.account-info,
+.overview-strip article,
+.panel-section,
+.chat-panel,
+.composer,
+.document-tools,
+.welcome,
+.bubble,
+.typing-bubble,
+.ticket-modal,
+.welcome-card {
+  border-color: var(--surface-line);
+  border-radius: var(--assistant-radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #ffffff 28%, transparent), transparent 56%),
+    color-mix(in srgb, var(--assistant-panel) 86%, transparent);
+  box-shadow:
+    0 14px 34px color-mix(in srgb, var(--primary-950) 7%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #ffffff 62%, transparent);
+}
+
+.assistant-layout,
+main.assistant-layout {
+  width: min(1500px, calc(100vw - 40px));
+  padding-block: 18px;
+  gap: var(--assistant-gap);
+}
+
+.overview-strip {
+  gap: var(--assistant-gap);
+}
+
+.overview-strip article {
+  min-height: 82px;
+  padding: 15px 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-strip article::after {
+  content: '';
+  position: absolute;
+  inset-block: 14px;
+  inset-inline-start: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--assistant-primary) 68%, var(--assistant-blue));
+  opacity: 0;
+}
+
+.overview-strip article:hover::after {
+  opacity: 1;
+}
+
+.overview-strip span {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.28), transparent 34%),
+    linear-gradient(135deg, var(--assistant-primary), var(--assistant-primary-strong));
+}
+
+.workspace {
+  gap: var(--assistant-gap);
+}
+
+.chat-panel {
+  padding: 18px;
+  border-radius: var(--assistant-radius-lg);
+  background:
+    radial-gradient(
+      circle at 5% 0,
+      color-mix(in srgb, var(--assistant-blue) 9%, transparent),
+      transparent 20rem
+    ),
+    color-mix(in srgb, var(--assistant-panel) 88%, transparent);
+}
+
+.data-panel {
+  gap: var(--assistant-gap);
+}
+
+.panel-section {
+  padding: 18px;
+}
+
+.operator-card,
+.support-progress,
+.hint,
+.support-note,
+.external-services {
+  border-right-width: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.operator-card::before,
+.support-progress::before,
+.hint::before,
+.support-note::before,
+.external-services::before {
+  content: '';
+  position: absolute;
+  inset-block: 14px;
+  inset-inline-start: 0;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--assistant-primary);
+}
+
+.hint::before,
+.external-services::before {
+  background: var(--assistant-blue);
+}
+
+.support-note::before {
+  background: var(--assistant-accent);
+}
+
+.chat-heading {
+  min-height: 62px;
+  padding: 0 2px 14px;
+}
+
+.conversation-actions button,
+.examples button,
+.tree-options button,
+.feedback button,
+.document-tools label,
+.ticket-modal .secondary {
+  min-height: 38px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--assistant-panel) 90%, transparent);
+}
+
+.conversation-actions button:hover:not(:disabled),
+.examples button:hover,
+.tree-options button:hover,
+.feedback button:hover,
+.document-tools label:hover,
+.ticket-modal .secondary:hover {
+  background: var(--surface-hover);
+}
+
+.conversation {
+  gap: 16px;
+  padding: 6px 6px 14px;
+}
+
+.message {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.message.user {
+  grid-template-columns: minmax(0, 1fr) 44px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+}
+
+.bubble {
+  padding: 15px 17px;
+  border-radius: 18px 18px 18px 7px;
+}
+
+.message.user .bubble {
+  border-radius: 18px 18px 7px 18px;
+  background:
+    radial-gradient(circle at 14% 0, color-mix(in srgb, #ffffff 16%, transparent), transparent 10rem),
+    linear-gradient(135deg, var(--assistant-primary), var(--assistant-primary-strong));
+}
+
+.bubble p,
+.bubble article p {
+  font-size: 0.9rem;
+  line-height: 2.05;
+}
+
+.rating-feedback {
+  gap: 10px;
+}
+
+.rating-feedback .rating-stars {
+  border-radius: 13px;
+}
+
+.rating-feedback .rating-stars button {
+  border-radius: 11px;
+}
+
+.composer {
+  min-height: 72px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.composer input {
+  height: 52px;
+  border-radius: 15px;
+}
+
+.composer input:focus {
+  border-color: var(--assistant-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--assistant-primary) 12%, transparent);
+}
+
+.composer button {
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.28), transparent 34%),
+    linear-gradient(135deg, var(--assistant-accent), var(--assistant-primary-strong));
+}
+
+.readonly-note,
+.error,
+.service-run-status {
+  border-radius: 14px;
+}
+
+:where(button, input, textarea, select, a, [role='button'], [role='tab']):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--assistant-blue) 68%, var(--assistant-accent));
+  outline-offset: 3px;
+}
+
+:host-context([data-theme='dark']) .topbar,
+:host-context([data-theme='dark']) .topbar-status,
+:host-context([data-theme='dark']) .account-info,
+:host-context([data-theme='dark']) .overview-strip article,
+:host-context([data-theme='dark']) .panel-section,
+:host-context([data-theme='dark']) .chat-panel,
+:host-context([data-theme='dark']) .composer,
+:host-context([data-theme='dark']) .document-tools,
+:host-context([data-theme='dark']) .welcome,
+:host-context([data-theme='dark']) .bubble,
+:host-context([data-theme='dark']) .typing-bubble,
+:host-context([data-theme='dark']) .welcome-card {
+  border-color: color-mix(in srgb, var(--assistant-blue) 18%, transparent);
+  background:
+    linear-gradient(135deg, rgba(92, 180, 164, 0.08), transparent 58%),
+    color-mix(in srgb, var(--assistant-panel) 84%, transparent);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.24),
+    inset 1px 1px 0 rgba(225, 248, 241, 0.08);
+}
+
+@media (max-width: 920px) {
+  .topbar {
+    height: auto;
+    padding-inline: 14px;
+  }
+
+  .assistant-layout,
+  main.assistant-layout {
+    width: min(100% - 24px, 1500px);
+  }
+
+  .chat-panel {
+    min-height: 72dvh;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-actions {
+    gap: 8px;
+  }
+
+  .chat-panel {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .panel-section {
+    padding: 15px;
+  }
+
+  .composer {
+    grid-template-columns: 50px minmax(0, 1fr);
+  }
+}
+
+/* UI balance pass: assistant page controls and content rhythm */
+.topbar-actions,
+.conversation-actions,
+.document-tools,
+.examples,
+.tree-options,
+.feedback,
+.ticket-modal footer,
+.sahand-footer {
+  gap: 10px;
+  align-items: center;
+}
+
+.topbar-actions,
+.conversation-actions,
+.document-tools,
+.examples,
+.tree-options,
+.feedback,
+.ticket-modal footer,
+.sahand-footer {
+  flex-wrap: wrap;
+}
+
+.overview-strip,
+.workspace {
+  align-items: stretch;
+}
+
+.overview-strip article,
+.panel-section,
+.chat-panel,
+.document-tools,
+.composer,
+.ticket-modal,
+.ticket-status-card,
+.ticket-rating-card {
+  min-width: 0;
+}
+
+.overview-strip article {
+  height: 100%;
+}
+
+.chat-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.chat-title,
+.chat-title strong,
+.chat-title small {
+  min-width: 0;
+}
+
+.conversation-actions {
+  justify-content: flex-end;
+}
+
+.conversation-actions button,
+.examples button,
+.tree-options button,
+.feedback button,
+.document-tools label,
+.ticket-modal .secondary,
+.create-button,
+.cancel-button,
+.sahand-toolbar button,
+.sahand-editor-footer button {
+  min-height: 38px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.45;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.examples button,
+.tree-options button,
+.feedback button {
+  flex: 0 1 auto;
+}
+
+.feedback,
+.rating-feedback {
+  justify-content: flex-start;
+}
+
+.rating-stars {
+  align-items: center;
+}
+
+.composer {
+  align-items: center;
+}
+
+.composer input {
+  min-width: 0;
+}
+
+.sahand-row {
+  align-items: start;
+}
+
+.sahand-footer {
+  justify-content: space-between;
+}
+
+.sahand-footer > * {
+  min-width: 0;
+}
+
+.sahand-footer button {
+  min-width: min(148px, 100%);
+}
+
+.ticket-rating-card {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .chat-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .conversation-actions {
+    justify-content: stretch;
+  }
+
+  .conversation-actions button,
+  .document-tools label,
+  .create-button,
+  .cancel-button,
+  .ticket-modal .secondary {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .overview-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sahand-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sahand-footer button {
+    width: 100%;
+  }
+}
+
+/* Toolbar placement pass: keep assistant actions horizontal and balanced */
+.topbar-actions,
+.conversation-actions,
+.document-tools,
+.sahand-toolbar,
+.sahand-editor-footer,
+.sahand-footer,
+.ticket-modal footer {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-gutter: stable;
+}
+
+:where(
+    .topbar-actions,
+    .conversation-actions,
+    .document-tools,
+    .sahand-toolbar,
+    .sahand-editor-footer,
+    .sahand-footer,
+    .ticket-modal footer
+  )
+  button,
+.document-tools label {
+  flex: 0 0 auto;
+  width: auto;
+  white-space: nowrap;
+}
+
+.topbar-actions,
+.conversation-actions {
+  justify-content: flex-end;
+}
+
+.document-tools,
+.sahand-footer,
+.ticket-modal footer {
+  justify-content: space-between;
+}
+
+@media (max-width: 720px) {
+  .conversation-actions,
+  .document-tools,
+  .sahand-toolbar,
+  .sahand-editor-footer,
+  .sahand-footer,
+  .ticket-modal footer {
+    justify-content: flex-start;
+  }
+
+  .conversation-actions button,
+  .document-tools label,
+  .create-button,
+  .cancel-button,
+  .ticket-modal .secondary,
+  .sahand-toolbar button,
+  .sahand-editor-footer button,
+  .sahand-footer button {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
+/* Toolbar visual polish */
+.topbar-actions,
+.conversation-actions,
+.document-tools,
+.sahand-toolbar,
+.sahand-editor-footer,
+.sahand-footer,
+.ticket-modal footer {
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--assistant-primary) 14%, var(--assistant-border));
+  border-radius: 15px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #fff 36%, transparent), transparent 70%),
+    color-mix(in srgb, var(--assistant-panel) 82%, transparent);
+  box-shadow:
+    0 14px 30px color-mix(in srgb, var(--assistant-heading) 6%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 62%, transparent);
+}
+
+.topbar-actions {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.conversation-actions button,
+.document-tools label,
+.sahand-toolbar button,
+.sahand-editor-footer button,
+.sahand-footer button,
+.ticket-modal footer button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--assistant-primary) 12%, var(--assistant-border));
+  border-radius: 12px;
+  color: var(--assistant-heading);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--assistant-panel) 96%, transparent), transparent 70%),
+    color-mix(in srgb, var(--assistant-primary) 6%, var(--assistant-panel));
+  box-shadow: none;
+}
+
+.conversation-actions button::before,
+.document-tools label::before,
+.sahand-toolbar button::before,
+.sahand-editor-footer button::before,
+.sahand-footer button::before,
+.ticket-modal footer button::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--assistant-primary) 58%, var(--assistant-accent));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--assistant-primary) 9%, transparent);
+}
+
+.conversation-actions button:hover:not(:disabled),
+.document-tools label:hover,
+.sahand-toolbar button:hover:not(:disabled),
+.sahand-editor-footer button:hover:not(:disabled),
+.sahand-footer button:hover:not(:disabled),
+.ticket-modal footer button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  color: #fff;
+  border-color: color-mix(in srgb, #fff 14%, transparent);
+  background: linear-gradient(135deg, var(--assistant-primary), var(--assistant-accent));
+}
+
+.conversation-actions button:hover:not(:disabled)::before,
+.document-tools label:hover::before,
+.sahand-toolbar button:hover:not(:disabled)::before,
+.sahand-editor-footer button:hover:not(:disabled)::before,
+.sahand-footer button:hover:not(:disabled)::before,
+.ticket-modal footer button:hover:not(:disabled)::before {
+  background: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #fff 16%, transparent);
+}
+
+:host-context([data-theme='dark']) .conversation-actions,
+:host-context([data-theme='dark']) .document-tools,
+:host-context([data-theme='dark']) .sahand-toolbar,
+:host-context([data-theme='dark']) .sahand-editor-footer,
+:host-context([data-theme='dark']) .sahand-footer,
+:host-context([data-theme='dark']) .ticket-modal footer {
+  border-color: rgba(160, 213, 196, 0.14);
+  background: linear-gradient(135deg, rgba(34, 92, 76, 0.28), transparent 70%), rgba(8, 34, 27, 0.72);
+}
+
+:host-context([data-theme='dark']) .conversation-actions button,
+:host-context([data-theme='dark']) .document-tools label,
+:host-context([data-theme='dark']) .sahand-toolbar button,
+:host-context([data-theme='dark']) .sahand-editor-footer button,
+:host-context([data-theme='dark']) .sahand-footer button,
+:host-context([data-theme='dark']) .ticket-modal footer button {
+  border-color: rgba(160, 213, 196, 0.13);
+  background: rgba(12, 42, 34, 0.76);
+}
+
+/* Toolbar refinement: calmer controls, no decorative bullets */
+.conversation-actions button::before,
+.document-tools label::before,
+.sahand-toolbar button::before,
+.sahand-editor-footer button::before,
+.sahand-footer button::before,
+.ticket-modal footer button::before,
+.conversation-actions button:hover:not(:disabled)::before,
+.document-tools label:hover::before,
+.sahand-toolbar button:hover:not(:disabled)::before,
+.sahand-editor-footer button:hover:not(:disabled)::before,
+.sahand-footer button:hover:not(:disabled)::before,
+.ticket-modal footer button:hover:not(:disabled)::before {
+  content: none;
+}
+
+.conversation-actions,
+.document-tools,
+.sahand-toolbar,
+.sahand-editor-footer,
+.sahand-footer,
+.ticket-modal footer {
+  gap: 8px;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 12% 0,
+      color-mix(in srgb, var(--assistant-primary) 8%, transparent),
+      transparent 9rem
+    ),
+    color-mix(in srgb, var(--assistant-panel) 84%, transparent);
+}
+
+.conversation-actions button,
+.document-tools label,
+.sahand-toolbar button,
+.sahand-editor-footer button,
+.sahand-footer button,
+.ticket-modal footer button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 13px;
+  box-shadow: inset 1px 1px 0 color-mix(in srgb, #fff 56%, transparent);
+}
+
+.conversation-actions button:hover:not(:disabled),
+.document-tools label:hover,
+.sahand-toolbar button:hover:not(:disabled),
+.sahand-editor-footer button:hover:not(:disabled),
+.sahand-footer button:hover:not(:disabled),
+.ticket-modal footer button:hover:not(:disabled) {
+  box-shadow:
+    0 10px 22px color-mix(in srgb, var(--assistant-primary) 14%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 22%, transparent);
+}

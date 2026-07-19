@@ -19,52 +19,9 @@ export interface TroubleshootingTreeNode {
   y?: number | null;
 }
 
-type TreeNodeShape =
-  | 'process'
-  | 'decision'
-  | 'terminator'
-  | 'data'
-  | 'document'
-  | 'subprocess'
-  | 'database'
-  | 'manual-input'
-  | 'connector'
-  | 'note'
-  | 'external-system'
-  | 'erd-entity'
-  | 'erd-weak-entity'
-  | 'erd-relationship'
-  | 'erd-identifying-relationship'
-  | 'erd-attribute'
-  | 'erd-multivalued-attribute'
-  | 'erd-table'
-  | 'erd-lookup-table'
-  | 'erd-associative-entity'
-  | 'erd-subtype';
+type TreeNodeShape = string;
 
-const treeNodeShapes = new Set<TreeNodeShape>([
-  'process',
-  'decision',
-  'terminator',
-  'data',
-  'document',
-  'subprocess',
-  'database',
-  'manual-input',
-  'connector',
-  'note',
-  'external-system',
-  'erd-entity',
-  'erd-weak-entity',
-  'erd-relationship',
-  'erd-identifying-relationship',
-  'erd-attribute',
-  'erd-multivalued-attribute',
-  'erd-table',
-  'erd-lookup-table',
-  'erd-associative-entity',
-  'erd-subtype'
-]);
+const treeNodeShapePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export interface TroubleshootingTreeEdge {
   from: string;
@@ -573,7 +530,10 @@ function normalizeTreeMode(value: unknown): TroubleshootingTreeMode {
 }
 
 function normalizeTreeNodeShape(value: unknown): TreeNodeShape {
-  return treeNodeShapes.has(value as TreeNodeShape) ? (value as TreeNodeShape) : 'process';
+  const shape = String(value ?? '')
+    .trim()
+    .toLowerCase();
+  return treeNodeShapePattern.test(shape) ? shape : 'process';
 }
 
 function treeStorageProjectKey(projectKey: string, mode: TroubleshootingTreeMode): string {

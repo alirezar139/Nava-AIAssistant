@@ -260,7 +260,7 @@ h1 {
   max-width: 100%;
   margin: 10px 0 14px;
   color: #fff9ec;
-  font-size: clamp(31px, 3.1vw, 42px);
+  font-size: clamp(31px, 2.35rem, 42px);
   line-height: 1.3;
   letter-spacing: 0;
   text-wrap: balance;
@@ -349,7 +349,7 @@ h1 em {
 .card-heading h2 {
   margin: 5px 0;
   color: var(--color-heading);
-  font-size: clamp(24px, 2.5vw, 30px);
+  font-size: clamp(24px, 1.7rem, 30px);
   line-height: 1.28;
 }
 
@@ -863,7 +863,7 @@ form > button[type='submit']:disabled {
   }
 
   h1 {
-    font-size: clamp(32px, 11vw, 42px);
+    font-size: clamp(32px, 2.25rem, 42px);
   }
 
   .intro p {
@@ -902,4 +902,86 @@ form > button[type='submit']:disabled {
 
 :host-context([data-motion='reduced']) .qa-question {
   opacity: 0.54;
+}
+
+:where(button, input, a):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-link) 62%, var(--accent-600));
+  outline-offset: 4px;
+}
+
+/* UI balance pass: login panels and form controls */
+.login-page {
+  align-content: center;
+}
+
+.intro,
+.login-card {
+  min-width: 0;
+}
+
+.login-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, auto) auto;
+  align-content: center;
+  gap: 14px;
+}
+
+.card-heading,
+form,
+.demo,
+.field-shell,
+.password-field,
+.captcha-field {
+  min-width: 0;
+}
+
+.card-heading h2,
+.card-heading p {
+  overflow-wrap: anywhere;
+}
+
+form {
+  gap: 10px;
+}
+
+.captcha-field {
+  align-items: stretch;
+}
+
+.field-shell input,
+.password-field input,
+.captcha-image {
+  min-height: 48px;
+}
+
+.password-field button,
+form > button[type='submit'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.45;
+  text-align: center;
+}
+
+form > button[type='submit'] {
+  width: 100%;
+}
+
+.demo {
+  gap: 8px;
+}
+
+.demo button {
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .login-card {
+    gap: 12px;
+  }
+
+  .captcha-field {
+    grid-template-columns: minmax(0, 1fr) minmax(112px, 124px);
+  }
 }

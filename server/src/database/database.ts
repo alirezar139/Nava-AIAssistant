@@ -113,28 +113,7 @@ export interface ExternalServiceRecord {
 export interface TroubleshootingTreeNodeRecord {
   id: string;
   text: string;
-  shape?:
-    | 'process'
-    | 'decision'
-    | 'terminator'
-    | 'data'
-    | 'document'
-    | 'subprocess'
-    | 'database'
-    | 'manual-input'
-    | 'connector'
-    | 'note'
-    | 'external-system'
-    | 'erd-entity'
-    | 'erd-weak-entity'
-    | 'erd-relationship'
-    | 'erd-identifying-relationship'
-    | 'erd-attribute'
-    | 'erd-multivalued-attribute'
-    | 'erd-table'
-    | 'erd-lookup-table'
-    | 'erd-associative-entity'
-    | 'erd-subtype';
+  shape?: string;
   x?: number | null;
   y?: number | null;
 }
