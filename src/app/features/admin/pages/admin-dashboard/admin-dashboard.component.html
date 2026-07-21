@@ -46,7 +46,7 @@
             <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
           </svg>
         </div>
-        <span>FAQ فعال</span><strong>{{ faqs.length.toLocaleString('fa-IR') }}</strong
+        <span>FAQ فعال</span><strong>{{ formatCount(faqs.length) }}</strong
         ><small>پرسش و پاسخ ثبت‌شده</small>
       </article>
       <article>
@@ -57,7 +57,7 @@
           </svg>
         </div>
         <span>درخواست کاربران</span
-        ><strong>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '۰' }}</strong
+        ><strong>{{ formatCount(conversationsLoaded ? conversations.length : 0) }}</strong
         ><small>گفت‌وگوی ثبت‌شده</small>
       </article>
       <article>
@@ -68,14 +68,36 @@
             <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.5 6 4"></path>
           </svg>
         </div>
-        <span>کاربران درگیر</span
-        ><strong>{{ conversationsLoaded ? uniqueUserCount.toLocaleString('fa-IR') : '۰' }}</strong
+        <span>کاربران درگیر</span><strong>{{ formatCount(conversationsLoaded ? uniqueUserCount : 0) }}</strong
         ><small>کاربر دارای درخواست</small>
       </article>
     </section>
 
-    <div class="admin-workspace">
-      <aside class="admin-menu" aria-label="منوی پنل مدیریت">
+    <div
+      class="admin-workspace"
+      [class.faq-workspace]="activeTab === 'faqs'"
+      [class.admin-workspace-menu-collapsed]="adminMenuCollapsed"
+    >
+      <aside
+        class="admin-menu"
+        [class.collapsed]="adminMenuCollapsed"
+        aria-label="منوی پنل مدیریت"
+        (mouseleave)="collapseAdminMenu()"
+      >
+        <button
+          type="button"
+          class="admin-menu-toggle"
+          [attr.aria-expanded]="!adminMenuCollapsed"
+          [attr.aria-label]="adminMenuCollapsed ? 'باز کردن منوی مدیریت' : 'جمع کردن منوی مدیریت'"
+          [attr.title]="adminMenuCollapsed ? 'باز کردن منوی مدیریت' : 'جمع کردن منوی مدیریت'"
+          (click)="toggleAdminMenu()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 5h16M4 12h16M4 19h16"></path>
+            <path [attr.d]="adminMenuCollapsed ? 'M9 8l4 4-4 4' : 'M15 8l-4 4 4 4'"></path>
+          </svg>
+          <span>{{ adminMenuCollapsed ? 'باز کردن منو' : 'جمع کردن منو' }}</span>
+        </button>
         <div class="admin-menu-heading">
           <span>مرکز کنترل</span>
           <strong>پنل مدیریت سامانه</strong>
@@ -91,6 +113,8 @@
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'faqs'"
+            title="مدیریت FAQ"
+            aria-label="مدیریت FAQ"
             [class.active]="activeTab === 'faqs'"
             (click)="setActiveTab('faqs')"
           >
@@ -103,12 +127,14 @@
               <b>مدیریت FAQ</b>
               <small>افزودن و ویرایش پاسخ‌های پایگاه دانش</small>
             </span>
-            <em>{{ faqs.length.toLocaleString('fa-IR') }}</em>
+            <em>{{ formatCount(faqs.length) }}</em>
           </button>
           <button
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'reports'"
+            title="گزارش کاربران"
+            aria-label="گزارش کاربران"
             [class.active]="activeTab === 'reports'"
             (click)="setActiveTab('reports')"
           >
@@ -122,12 +148,14 @@
               <b>گزارش کاربران</b>
               <small>بررسی گفت‌وگوها و مسائل ثبت‌شده</small>
             </span>
-            <em>{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '۰' }}</em>
+            <em>{{ formatCount(conversationsLoaded ? conversations.length : 0) }}</em>
           </button>
           <button
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'performance'"
+            title="ارزیابی عملکرد"
+            aria-label="ارزیابی عملکرد"
             [class.active]="activeTab === 'performance'"
             (click)="setActiveTab('performance')"
           >
@@ -143,13 +171,15 @@
               <b>ارزیابی عملکرد</b>
               <small>پایش کیفیت پاسخ‌گویی و ثبت تیکت</small>
             </span>
-            <em>{{ conversationsLoaded ? formatPercent(faqCoverageRate) : '۰٪' }}</em>
+            <em>{{ formatPercent(conversationsLoaded ? faqCoverageRate : 0) }}</em>
           </button>
           <span class="menu-group-label">راهبری کاربر</span>
           <button
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'tree'"
+            title="مدیریت درختواره"
+            aria-label="مدیریت درختواره"
             [class.active]="activeTab === 'tree'"
             (click)="setActiveTab('tree')"
           >
@@ -166,7 +196,7 @@
               <b>مدیریت درختواره</b>
               <small>مدیریت مسیرهای عیب‌یابی و راهنمای کاربر</small>
             </span>
-            <em>{{ treeLoaded ? treeNodeCount.toLocaleString('fa-IR') : '۰' }}</em>
+            <em>{{ formatCount(treeLoaded ? treeNodeCount : 0) }}</em>
           </button>
           <div class="admin-tree-submenu" *ngIf="activeTab === 'tree'">
             <div class="admin-tree-submenu-head">
@@ -177,6 +207,8 @@
             <button
               type="button"
               *ngFor="let view of treeManagementViews; let viewIndex = index"
+              [attr.title]="view.label"
+              [attr.aria-label]="view.label"
               [class.active]="activeTab === 'tree' && treeManagementView === view.id"
               (click)="openTreeManagementView(view.id)"
             >
@@ -192,6 +224,8 @@
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'settings'"
+            title="پیکربندی تیکت سهند"
+            aria-label="پیکربندی تیکت سهند"
             [class.active]="activeTab === 'settings'"
             (click)="setActiveTab('settings')"
           >
@@ -212,6 +246,8 @@
             type="button"
             role="tab"
             [attr.aria-selected]="activeTab === 'services'"
+            title="مدیریت سرویس‌ها"
+            aria-label="مدیریت سرویس‌ها"
             [class.active]="activeTab === 'services'"
             (click)="setActiveTab('services')"
           >
@@ -225,7 +261,7 @@
               <b>مدیریت سرویس‌ها</b>
               <small>تعریف سرویس‌های قابل استفاده در سامانه</small>
             </span>
-            <em>{{ externalServicesLoaded ? activeServiceCount.toLocaleString('fa-IR') : '۰' }}</em>
+            <em>{{ formatCount(externalServicesLoaded ? activeServiceCount : 0) }}</em>
           </button>
         </nav>
       </aside>
@@ -295,7 +331,7 @@
                 <span>پایگاه دانش</span>
                 <h2>فهرست FAQها</h2>
               </div>
-              <small>{{ faqs.length.toLocaleString('fa-IR') }} مورد</small>
+              <small>{{ formatCount(faqs.length) }} مورد</small>
             </div>
             <div class="table-tools">
               <label>
@@ -323,7 +359,7 @@
                   <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
                 </select>
               </label>
-              <span class="result-count">{{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه</span>
+              <span class="result-count">{{ formatCount(filteredFaqs.length) }} نتیجه</span>
             </div>
             <div class="selection-toolbar" *ngIf="faqs.length">
               <label class="select-all">
@@ -335,7 +371,7 @@
                 />
                 انتخاب همه نتایج فعلی
               </label>
-              <span *ngIf="selectedCount">{{ selectedCount.toLocaleString('fa-IR') }} مورد انتخاب شده</span>
+              <span *ngIf="selectedCount">{{ formatCount(selectedCount) }} مورد انتخاب شده</span>
               <button type="button" class="ghost" [disabled]="!selectedCount" (click)="clearSelection()">
                 پاک‌کردن انتخاب
               </button>
@@ -403,15 +439,14 @@
             </div>
             <div class="pagination-bar" *ngIf="filteredFaqs.length">
               <div class="pagination-summary">
-                نمایش {{ paginationStart.toLocaleString('fa-IR') }} تا
-                {{ paginationEnd.toLocaleString('fa-IR') }} از
-                {{ filteredFaqs.length.toLocaleString('fa-IR') }} نتیجه
+                نمایش {{ formatCount(paginationStart) }} تا {{ formatCount(paginationEnd) }} از
+                {{ formatCount(filteredFaqs.length) }} نتیجه
               </div>
               <label class="page-size">
                 تعداد در صفحه
                 <select [ngModel]="pageSize" (ngModelChange)="setPageSize($event)">
                   <option *ngFor="let option of pageSizeOptions" [ngValue]="option">
-                    {{ option.toLocaleString('fa-IR') }}
+                    {{ formatCount(option) }}
                   </option>
                 </select>
               </label>
@@ -424,10 +459,7 @@
                 >
                   قبلی
                 </button>
-                <span
-                  >صفحه {{ currentPage.toLocaleString('fa-IR') }} از
-                  {{ totalPages.toLocaleString('fa-IR') }}</span
-                >
+                <span>صفحه {{ formatCount(currentPage) }} از {{ formatCount(totalPages) }}</span>
                 <button
                   type="button"
                   class="ghost"
@@ -447,9 +479,7 @@
               <span>نظارت پشتیبانی</span>
               <h2>مشکلات و پاسخ‌های کاربران</h2>
             </div>
-            <small
-              >{{ conversationsLoaded ? conversations.length.toLocaleString('fa-IR') : '-' }} گفتگو</small
-            >
+            <small>{{ formatCount(conversationsLoaded ? conversations.length : 0) }} گفتگو</small>
           </div>
           <div class="table-tools reports-search" *ngIf="conversationsLoaded && conversations.length">
             <label>
@@ -466,7 +496,7 @@
                 </button>
               </div>
             </label>
-            <span class="result-count">{{ filteredConversations.length.toLocaleString('fa-IR') }} نتیجه</span>
+            <span class="result-count">{{ formatCount(filteredConversations.length) }} نتیجه</span>
           </div>
           <div class="empty" *ngIf="conversationsLoading">در حال دریافت گزارش‌ها...</div>
           <div class="empty" *ngIf="conversationsLoaded && !conversations.length">
@@ -499,15 +529,14 @@
             *ngIf="conversationsLoaded && filteredConversations.length"
           >
             <div class="pagination-summary">
-              نمایش {{ reportPaginationStart.toLocaleString('fa-IR') }} تا
-              {{ reportPaginationEnd.toLocaleString('fa-IR') }} از
-              {{ filteredConversations.length.toLocaleString('fa-IR') }} گزارش
+              نمایش {{ formatCount(reportPaginationStart) }} تا {{ formatCount(reportPaginationEnd) }} از
+              {{ formatCount(filteredConversations.length) }} گزارش
             </div>
             <label class="page-size">
               تعداد در صفحه
               <select [ngModel]="reportPageSize" (ngModelChange)="setReportPageSize($event)">
                 <option *ngFor="let option of reportPageSizeOptions" [ngValue]="option">
-                  {{ option.toLocaleString('fa-IR') }}
+                  {{ formatCount(option) }}
                 </option>
               </select>
             </label>
@@ -520,10 +549,7 @@
               >
                 صفحه قبل
               </button>
-              <span
-                >صفحه {{ reportActivePage.toLocaleString('fa-IR') }} از
-                {{ reportTotalPages.toLocaleString('fa-IR') }}</span
-              >
+              <span>صفحه {{ formatCount(reportActivePage) }} از {{ formatCount(reportTotalPages) }}</span>
               <button
                 type="button"
                 class="ghost"
@@ -573,7 +599,7 @@
                   <article *ngFor="let step of supportFunnel">
                     <div>
                       <strong>{{ step.label }}</strong>
-                      <span>{{ step.count.toLocaleString('fa-IR') }}</span>
+                      <span>{{ formatCount(step.count) }}</span>
                     </div>
                     <b><i [style.width.%]="step.percent"></i></b>
                     <small>{{ formatPercent(step.percent) }} از مبنای ارزیابی</small>
@@ -596,8 +622,8 @@
                       <b [style.height.%]="point.diagnosticPercent"></b>
                     </div>
                     <small>
-                      {{ point.conversations.toLocaleString('fa-IR') }} /
-                      {{ point.diagnostics.toLocaleString('fa-IR') }}
+                      {{ formatCount(point.conversations) }} /
+                      {{ formatCount(point.diagnostics) }}
                     </small>
                   </article>
                 </div>
@@ -619,7 +645,7 @@
                   <article *ngFor="let item of faqCategoryShares">
                     <div>
                       <strong>{{ item.label }}</strong>
-                      <span>{{ item.count.toLocaleString('fa-IR') }}</span>
+                      <span>{{ formatCount(item.count) }}</span>
                     </div>
                     <b><i [style.width.%]="item.percent"></i></b>
                   </article>
@@ -639,13 +665,13 @@
                 <ng-container *ngIf="ratedDiagnosticCases.length">
                   <div class="rating-overview">
                     <strong>{{ formatRating(averageSupportRating) }}</strong>
-                    <span> میانگین از {{ ratedDiagnosticCases.length.toLocaleString('fa-IR') }} امتیاز </span>
+                    <span> میانگین از {{ formatCount(ratedDiagnosticCases.length) }} امتیاز </span>
                   </div>
                   <div class="rating-distribution">
                     <article *ngFor="let item of ratingDistribution">
                       <span>{{ item.label }}</span>
                       <b><i [style.width.%]="item.percent"></i></b>
-                      <em>{{ item.count.toLocaleString('fa-IR') }}</em>
+                      <em>{{ formatCount(item.count) }}</em>
                     </article>
                   </div>
                   <div class="latest-ratings" *ngIf="latestRatedDiagnostics.length">
@@ -709,11 +735,11 @@
             <div class="tree-import-strip" *ngIf="treeManagementView === 'overview'">
               <article>
                 <span>نودها</span>
-                <b>{{ treeNodeCount.toLocaleString('fa-IR') }}</b>
+                <b>{{ formatCount(treeNodeCount) }}</b>
               </article>
               <article>
                 <span>ارتباط‌ها</span>
-                <b>{{ treeEdgeCount.toLocaleString('fa-IR') }}</b>
+                <b>{{ formatCount(treeEdgeCount) }}</b>
               </article>
               <article>
                 <span>نود شروع</span>
@@ -745,7 +771,7 @@
               <section class="tree-visio-start" aria-label="ایجاد درختواره">
                 <aside class="tree-visio-rail" aria-label="مسیرهای ایجاد">
                   <strong>درختواره</strong>
-                  <button type="button" class="active">
+                  <button type="button">
                     <span></span>
                     خانه
                   </button>
@@ -802,8 +828,8 @@
                     </div>
                     <article>
                       <span>{{ treeImportSource || 'نسخه فعال سامانه' }}</span>
-                      <b>{{ treeNodeCount.toLocaleString('fa-IR') }} نود</b>
-                      <small>{{ treeEdgeCount.toLocaleString('fa-IR') }} ارتباط</small>
+                      <b>{{ formatCount(treeNodeCount) }} نود</b>
+                      <small>{{ formatCount(treeEdgeCount) }} ارتباط</small>
                     </article>
                     <button
                       type="button"
@@ -1012,8 +1038,8 @@
                   در این محیط می‌توانید نودها را پیمایش کنید، مسیرها را اصلاح کنید و ارتباط‌های جدید بسازید.
                 </p>
                 <div>
-                  <b>{{ treeNodeCount.toLocaleString('fa-IR') }} نود</b>
-                  <b>{{ treeEdgeCount.toLocaleString('fa-IR') }} ارتباط</b>
+                  <b>{{ formatCount(treeNodeCount) }} نود</b>
+                  <b>{{ formatCount(treeEdgeCount) }} ارتباط</b>
                   <b>پروژه: {{ treeProjectLabel }}</b>
                 </div>
               </div>
@@ -1079,9 +1105,9 @@
               class="tree-preview-note"
               *ngIf="treePreviewTruncatedCount && treeManagementView === 'overview'"
             >
-              برای حفظ سرعت، فقط {{ treePreviewNodes.length.toLocaleString('fa-IR') }} نود در پیش‌نمایش نمایش
-              داده می‌شود. {{ treePreviewTruncatedCount.toLocaleString('fa-IR') }} نود دیگر همچنان در فهرست و
-              نسخه ذخیره‌شده وجود دارد.
+              برای حفظ سرعت، فقط {{ formatCount(treePreviewNodes.length) }} نود در پیش‌نمایش نمایش داده
+              می‌شود. {{ formatCount(treePreviewTruncatedCount) }} نود دیگر همچنان در فهرست و نسخه ذخیره‌شده
+              وجود دارد.
             </div>
           </section>
 
@@ -1102,7 +1128,7 @@
                   <span>فضای کاری درختواره</span>
                   <h2>مشاهده، ویرایش و انتشار مسیرهای پشتیبانی</h2>
                   <small>
-                    پروژه {{ treeProjectLabel }} · {{ treeNodeCount.toLocaleString('fa-IR') }} نود ·
+                    پروژه {{ treeProjectLabel }} · {{ formatCount(treeNodeCount) }} نود ·
                     {{ treeDirty ? 'تغییرات هنوز ذخیره نشده‌اند' : 'نسخه فعلی ذخیره شده است' }}
                   </small>
                 </div>
@@ -1279,13 +1305,12 @@
                     </div>
                     <div class="tree-pagination-summary">
                       <span>
-                        {{ treePageStart.toLocaleString('fa-IR') }} تا
-                        {{ treePageEnd.toLocaleString('fa-IR') }} از
-                        {{ filteredTreeNodes.length.toLocaleString('fa-IR') }} نود
+                        {{ formatCount(treePageStart) }} تا {{ formatCount(treePageEnd) }} از
+                        {{ formatCount(filteredTreeNodes.length) }} نود
                       </span>
                       <select [ngModel]="treePageSize" (ngModelChange)="setTreePageSize($event)">
                         <option *ngFor="let size of treePageSizeOptions" [ngValue]="size">
-                          {{ size.toLocaleString('fa-IR') }} نود
+                          {{ formatCount(size) }} نود
                         </option>
                       </select>
                     </div>
@@ -1313,8 +1338,8 @@
                         صفحه قبل
                       </button>
                       <span>
-                        صفحه {{ treeCurrentPage.toLocaleString('fa-IR') }} از
-                        {{ treeTotalPages.toLocaleString('fa-IR') }}
+                        صفحه {{ formatCount(treeCurrentPage) }} از
+                        {{ formatCount(treeTotalPages) }}
                       </span>
                       <button
                         type="button"
@@ -1339,35 +1364,39 @@
                       <div class="tree-tool-group" role="group" aria-label="ابزار مدل‌سازی">
                         <button
                           type="button"
+                          title="انتخاب و جابه‌جایی"
+                          aria-label="انتخاب و جابه‌جایی"
                           [class.active]="treeCanvasTool === 'select'"
                           (click)="setTreeCanvasTool('select')"
                         >
                           <span class="tool-icon" aria-hidden="true">⌖</span>
-                          انتخاب و جابه‌جایی
                         </button>
                         <button
                           type="button"
+                          title="پیمایش"
+                          aria-label="پیمایش"
                           [class.active]="treeCanvasTool === 'pan'"
                           (click)="setTreeCanvasTool('pan')"
                         >
-                          <span class="tool-icon" aria-hidden="true">✋</span>
-                          پیمایش
+                          <span class="tool-icon" aria-hidden="true">↕</span>
                         </button>
                         <button
                           type="button"
+                          title="افزودن نود"
+                          aria-label="افزودن نود"
                           [class.active]="treeCanvasTool === 'add-node'"
                           (click)="setTreeCanvasTool('add-node')"
                         >
                           <span class="tool-icon" aria-hidden="true">+</span>
-                          افزودن نود
                         </button>
                         <button
                           type="button"
+                          title="اتصال نودها"
+                          aria-label="اتصال نودها"
                           [class.active]="treeCanvasTool === 'connect'"
                           (click)="setTreeCanvasTool('connect')"
                         >
-                          <span class="tool-icon" aria-hidden="true">⛓</span>
-                          اتصال نودها
+                          <span class="tool-icon" aria-hidden="true">⟷</span>
                         </button>
                       </div>
                       <input [(ngModel)]="treeDraftNodeText" placeholder="عنوان نود جدید..." />
@@ -1379,40 +1408,44 @@
                         <button
                           type="button"
                           class="ghost"
+                          title="افزودن فرزند"
+                          aria-label="افزودن فرزند"
                           [disabled]="!selectedTreeNode"
                           (click)="addDraftTreeChildToSelected()"
                         >
                           <span class="tool-icon" aria-hidden="true">↳</span>
-                          فرزند
                         </button>
                         <button
                           type="button"
                           class="ghost"
+                          title="کپی نود"
+                          aria-label="کپی نود"
                           [disabled]="!selectedTreeNode"
                           (click)="duplicateSelectedTreeNode()"
                         >
                           <span class="tool-icon" aria-hidden="true">⧉</span>
-                          کپی
                         </button>
                         <button
                           type="button"
                           class="ghost"
+                          title="تنظیم به عنوان شروع"
+                          aria-label="تنظیم به عنوان شروع"
                           [disabled]="
                             !selectedTreeNode || selectedTreeNode.id === troubleshootingTree.startNodeId
                           "
                           (click)="setSelectedAsTreeStart()"
                         >
                           <span class="tool-icon" aria-hidden="true">★</span>
-                          شروع
                         </button>
                         <button
                           type="button"
                           class="danger"
+                          title="حذف نود"
+                          aria-label="حذف نود"
                           [disabled]="!selectedTreeNode"
                           (click)="deleteSelectedTreeNode()"
                         >
                           <span class="tool-icon" aria-hidden="true">×</span>
-                          حذف
                         </button>
                       </div>
                       <div
@@ -1420,31 +1453,43 @@
                         role="group"
                         aria-label="کنترل نمایش"
                       >
-                        <button type="button" class="ghost" (click)="useReadableTreeLayout()">
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="نمای خوانا"
+                          aria-label="نمای خوانا"
+                          (click)="useReadableTreeLayout()"
+                        >
                           <span class="tool-icon" aria-hidden="true">◎</span>
-                          نمای خوانا
-                        </button>
-                        <button type="button" class="ghost" (click)="useFreeTreeLayout()">
-                          <span class="tool-icon" aria-hidden="true">↔</span>
-                          آزاد
                         </button>
                         <button
                           type="button"
                           class="ghost"
+                          title="چیدمان آزاد"
+                          aria-label="چیدمان آزاد"
+                          (click)="useFreeTreeLayout()"
+                        >
+                          <span class="tool-icon" aria-hidden="true">↔</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="نمایش شبکه"
+                          aria-label="نمایش شبکه"
                           [class.active]="treeShowGrid"
                           (click)="toggleTreeGrid()"
                         >
                           <span class="tool-icon" aria-hidden="true">#</span>
-                          Grid
                         </button>
                         <button
                           type="button"
                           class="ghost"
+                          title="نمایش برچسب ارتباط‌ها"
+                          aria-label="نمایش برچسب ارتباط‌ها"
                           [class.active]="treeShowEdgeLabels"
                           (click)="toggleTreeEdgeLabels()"
                         >
                           <span class="tool-icon" aria-hidden="true">Aa</span>
-                          برچسب
                         </button>
                       </div>
                       <span *ngIf="treeCanvasTool === 'connect' && treeConnectionSourceId">
@@ -1452,39 +1497,70 @@
                       </span>
                     </div>
                     <div class="tree-map-controls" aria-label="پیمایش و بزرگ‌نمایی">
-                      <button type="button" class="ghost" (click)="selectAdjacentTreeNode(-1)">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="نود قبلی"
+                        aria-label="نود قبلی"
+                        (click)="selectAdjacentTreeNode(-1)"
+                      >
                         <span class="tool-icon" aria-hidden="true">‹</span>
-                        نود قبلی
                       </button>
                       <button
                         type="button"
                         class="ghost"
+                        title="تمرکز روی نود"
+                        aria-label="تمرکز روی نود"
                         (click)="centerSelectedTreeNode()"
                         [disabled]="!selectedTreeNode"
                       >
                         <span class="tool-icon" aria-hidden="true">⊙</span>
-                        تمرکز روی نود
                       </button>
-                      <button type="button" class="ghost" (click)="selectAdjacentTreeNode(1)">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="نود بعدی"
+                        aria-label="نود بعدی"
+                        (click)="selectAdjacentTreeNode(1)"
+                      >
                         <span class="tool-icon" aria-hidden="true">›</span>
-                        نود بعدی
                       </button>
                       <span>{{ treeZoomPercent }}</span>
-                      <button type="button" class="ghost" (click)="zoomTree(-0.1)">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="کوچک‌تر"
+                        aria-label="کوچک‌تر"
+                        (click)="zoomTree(-0.1)"
+                      >
                         <span class="tool-icon" aria-hidden="true">−</span>
-                        کوچک‌تر
                       </button>
-                      <button type="button" class="ghost" (click)="fitTreeToViewport()">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="نمای کلی"
+                        aria-label="نمای کلی"
+                        (click)="fitTreeToViewport()"
+                      >
                         <span class="tool-icon" aria-hidden="true">□</span>
-                        نمای کلی
                       </button>
-                      <button type="button" class="ghost" (click)="resetTreeZoom()">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="اندازه اصلی"
+                        aria-label="اندازه اصلی"
+                        (click)="resetTreeZoom()"
+                      >
                         <span class="tool-icon" aria-hidden="true">1:1</span>
-                        اندازه اصلی
                       </button>
-                      <button type="button" class="ghost" (click)="zoomTree(0.1)">
+                      <button
+                        type="button"
+                        class="ghost"
+                        title="بزرگ‌تر"
+                        aria-label="بزرگ‌تر"
+                        (click)="zoomTree(0.1)"
+                      >
                         <span class="tool-icon" aria-hidden="true">+</span>
-                        بزرگ‌تر
                       </button>
                     </div>
                     <div class="tree-designer-frame">
@@ -2307,7 +2383,7 @@
                                   </ng-container>
                                   <text y="-7">{{ shortText(node.text, 32) }}</text>
                                   <text y="18" class="node-meta">
-                                    {{ node.id }} · {{ node.outgoingCount.toLocaleString('fa-IR') }}
+                                    {{ node.id }} · {{ formatCount(node.outgoingCount) }}
                                   </text>
                                 </g>
                               </g>
@@ -2334,8 +2410,8 @@
                       <strong>مطالعه نود انتخابی</strong>
                       <p>{{ node.text }}</p>
                       <div>
-                        <span>{{ treeIncomingEdges.length.toLocaleString('fa-IR') }} والد</span>
-                        <span>{{ treeOutgoingEdges.length.toLocaleString('fa-IR') }} مسیر خروجی</span>
+                        <span>{{ formatCount(treeIncomingEdges.length) }} والد</span>
+                        <span>{{ formatCount(treeOutgoingEdges.length) }} مسیر خروجی</span>
                         <span *ngIf="node.id === troubleshootingTree.startNodeId">نود شروع</span>
                       </div>
                     </div>
@@ -2622,12 +2698,7 @@
                 <span>سرویس‌های تعریف‌شده</span>
                 <h2>بخش‌های قابل استفاده سامانه</h2>
               </div>
-              <small
-                >{{
-                  externalServicesLoaded ? externalServices.length.toLocaleString('fa-IR') : '-'
-                }}
-                سرویس</small
-              >
+              <small>{{ formatCount(externalServicesLoaded ? externalServices.length : 0) }} سرویس</small>
             </div>
             <div class="empty" *ngIf="externalServicesLoading">در حال دریافت سرویس‌ها...</div>
             <div class="empty" *ngIf="externalServicesLoaded && !externalServices.length">
@@ -2668,15 +2739,14 @@
               *ngIf="externalServicesLoaded && externalServices.length"
             >
               <div class="pagination-summary">
-                نمایش {{ servicePaginationStart.toLocaleString('fa-IR') }} تا
-                {{ servicePaginationEnd.toLocaleString('fa-IR') }} از
-                {{ externalServices.length.toLocaleString('fa-IR') }} سرویس
+                نمایش {{ formatCount(servicePaginationStart) }} تا {{ formatCount(servicePaginationEnd) }} از
+                {{ formatCount(externalServices.length) }} سرویس
               </div>
               <label class="page-size">
                 تعداد در صفحه
                 <select [ngModel]="servicePageSize" (ngModelChange)="setServicePageSize($event)">
                   <option *ngFor="let option of servicePageSizeOptions" [ngValue]="option">
-                    {{ option.toLocaleString('fa-IR') }}
+                    {{ formatCount(option) }}
                   </option>
                 </select>
               </label>
@@ -2689,10 +2759,7 @@
                 >
                   صفحه قبل
                 </button>
-                <span
-                  >صفحه {{ serviceActivePage.toLocaleString('fa-IR') }} از
-                  {{ serviceTotalPages.toLocaleString('fa-IR') }}</span
-                >
+                <span>صفحه {{ formatCount(serviceActivePage) }} از {{ formatCount(serviceTotalPages) }}</span>
                 <button
                   type="button"
                   class="ghost"
@@ -2710,7 +2777,7 @@
             >
               <strong>{{ serviceTestResult.ok ? 'آخرین تست موفق بود' : 'آخرین تست ناموفق بود' }}</strong>
               <span>کد پاسخ: {{ serviceTestResult.status || '-' }}</span>
-              <span>زمان اجرا: {{ serviceTestResult.durationMs.toLocaleString('fa-IR') }} میلی‌ثانیه</span>
+              <span>زمان اجرا: {{ formatCount(serviceTestResult.durationMs) }} میلی‌ثانیه</span>
               <pre *ngIf="serviceTestResult.bodyPreview || serviceTestResult.errorMessage">{{
                 serviceTestResult.bodyPreview || serviceTestResult.errorMessage
               }}</pre>

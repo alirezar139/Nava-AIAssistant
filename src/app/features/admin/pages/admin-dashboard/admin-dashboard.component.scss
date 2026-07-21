@@ -305,7 +305,7 @@ textarea:focus {
 .service-config-form input[dir='ltr'] {
   direction: ltr;
   text-align: left;
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 12px;
   line-height: 1.8;
 }
@@ -3440,7 +3440,7 @@ tbody tr.selected::after {
   border-radius: 12px;
   color: var(--color-body);
   background: var(--surface);
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 0.72rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -5387,7 +5387,7 @@ tbody tr.selected::after {
 .tree-node-list span {
   color: var(--color-subtle);
   direction: ltr;
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 0.72rem;
 }
 
@@ -5577,7 +5577,7 @@ tbody tr.selected::after {
 .tree-ruler-vertical {
   color: #e4e7e5;
   background: #626563;
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 0.68rem;
   user-select: none;
 }
@@ -5960,7 +5960,7 @@ tbody tr.selected::after {
 
 .tree-edge-editor span {
   color: var(--color-subtle);
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 0.7rem;
 }
 
@@ -6093,7 +6093,7 @@ tbody tr.selected::after {
   direction: ltr;
   color: var(--color-body);
   background: var(--surface);
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-family-base);
   font-size: 0.76rem;
   line-height: 1.7;
   white-space: pre-wrap;
@@ -10907,4 +10907,5022 @@ td b {
 
 .service-grid {
   align-items: stretch;
+}
+
+/* Balanced FAQ management workspace */
+@media (min-width: 1261px) {
+  .admin-workspace.faq-workspace {
+    grid-template-columns: minmax(330px, 1fr) minmax(0, 2fr);
+    align-items: stretch;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu {
+    height: 100%;
+    min-height: clamp(650px, calc(100vh - 170px), 780px);
+    align-self: stretch;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .admin-workspace.faq-workspace .admin-menu-list {
+    min-height: 0;
+    align-content: start;
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+
+  .admin-content.faq-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .admin-content.faq-layout > .editor-card,
+  .admin-content.faq-layout > .table-card {
+    min-height: clamp(650px, calc(100vh - 170px), 780px);
+    display: grid;
+    align-content: start;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .admin-content.faq-layout > .editor-card form {
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(118px, 1fr) auto;
+    align-content: start;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    min-height: 118px;
+    height: 100%;
+    max-height: 190px;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    min-height: 0;
+    align-self: stretch;
+    display: grid;
+    overflow: hidden;
+  }
+
+  .admin-content.faq-layout table {
+    height: 100%;
+  }
+}
+
+/* Photoshop-style side toolbars for the full-screen tree/import editor */
+@media (min-width: 1021px) {
+  .tree-modal-body .tree-canvas-card {
+    grid-template-columns: 64px minmax(0, 1fr) 68px;
+    position: relative;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-modeling-toolbar {
+    padding: 10px 8px;
+    gap: 8px;
+    align-items: center;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--surface) 90%, transparent), transparent 72%),
+      color-mix(in srgb, var(--primary-950) 8%, var(--surface-warm));
+    box-shadow:
+      inset 1px 0 0 color-mix(in srgb, #fff 58%, transparent),
+      0 16px 30px color-mix(in srgb, var(--primary-950) 9%, transparent);
+  }
+
+  .tree-modal-body .tree-map-controls::before,
+  .tree-modal-body .tree-modeling-toolbar::before {
+    width: 40px;
+    min-height: 34px;
+    padding: 0;
+    border-radius: 12px;
+    font-size: 0;
+    background:
+      radial-gradient(circle at 35% 28%, color-mix(in srgb, #fff 72%, transparent), transparent 48%),
+      color-mix(in srgb, var(--color-link) 12%, var(--surface));
+  }
+
+  .tree-modal-body .tree-map-controls::before {
+    content: '⌕';
+    color: var(--color-link);
+    font-size: 1rem;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar::before {
+    content: '✎';
+    color: var(--color-link);
+    font-size: 1rem;
+  }
+
+  .tree-modal-body .tree-tool-group {
+    width: auto;
+    padding: 0;
+    gap: 7px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .tree-modal-body .tree-tool-group::before {
+    content: none;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    border-radius: 12px;
+    font-size: 0;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-wrap: normal;
+    background:
+      radial-gradient(circle at 35% 25%, color-mix(in srgb, #fff 64%, transparent), transparent 48%),
+      color-mix(in srgb, var(--surface) 88%, var(--color-link));
+    box-shadow:
+      0 8px 18px color-mix(in srgb, var(--primary-950) 7%, transparent),
+      inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent);
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button {
+    flex: 0 0 42px;
+  }
+
+  .tree-modal-body .tree-tool-group button:hover:not(:disabled),
+  .tree-modal-body .tree-tool-group button.active,
+  .tree-modal-body .tree-map-controls button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--color-link), var(--primary-950));
+  }
+
+  .tree-modal-body .tree-tool-group button:disabled,
+  .tree-modal-body .tree-map-controls button:disabled {
+    opacity: 0.46;
+    filter: saturate(0.7);
+  }
+
+  .tree-modal-body .tree-map-controls span {
+    width: 42px;
+    min-width: 42px;
+    min-height: 30px;
+    padding: 4px 2px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.72rem;
+    line-height: 1;
+    white-space: nowrap;
+    border-style: solid;
+    background: color-mix(in srgb, var(--surface) 84%, transparent);
+  }
+
+  .tree-modal-body .tool-icon {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: inherit;
+    color: var(--color-link);
+    background: transparent;
+    font-size: 1rem;
+    box-shadow: none;
+  }
+
+  .tree-modal-body .tree-tool-group button:hover:not(:disabled) .tool-icon,
+  .tree-modal-body .tree-tool-group button.active .tool-icon,
+  .tree-modal-body .tree-map-controls button:hover:not(:disabled) .tool-icon {
+    color: #fff;
+    background: transparent;
+  }
+
+  .tree-modal-body .tree-tool-group .danger .tool-icon {
+    color: var(--danger);
+  }
+
+  .tree-modal-body .tree-tool-group .danger:hover:not(:disabled) .tool-icon {
+    color: #fff;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar input {
+    position: absolute;
+    z-index: 5;
+    top: 12px;
+    right: 82px;
+    width: min(340px, calc(100% - 170px));
+    max-width: none;
+    min-height: 38px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    box-shadow:
+      0 12px 28px color-mix(in srgb, var(--primary-950) 7%, transparent),
+      inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent);
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > span:not(.tool-icon) {
+    position: absolute;
+    z-index: 5;
+    top: 58px;
+    right: 82px;
+    width: min(340px, calc(100% - 170px));
+    min-height: 34px;
+    justify-content: start;
+    text-align: start;
+    border-radius: 14px;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--primary-950) 6%, transparent);
+  }
+}
+
+:host-context([data-theme='dark']) .tree-modal-body .tree-map-controls,
+:host-context([data-theme='dark']) .tree-modal-body .tree-modeling-toolbar {
+  background: linear-gradient(180deg, rgba(24, 82, 67, 0.2), transparent 76%), rgba(7, 31, 25, 0.88);
+}
+
+:host-context([data-theme='dark']) .tree-modal-body .tree-tool-group button,
+:host-context([data-theme='dark']) .tree-modal-body .tree-map-controls button,
+:host-context([data-theme='dark']) .tree-modal-body .tree-map-controls span {
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.12), transparent 50%), rgba(18, 63, 54, 0.82);
+}
+
+/* Final compact designer rails: icon-only, small, and stable */
+@media (min-width: 1021px) {
+  .tree-canvas-card {
+    grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+  }
+
+  .tree-map-controls,
+  .tree-modeling-toolbar {
+    width: 56px;
+    padding: 8px !important;
+    gap: 7px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .tree-map-controls::before,
+  .tree-modeling-toolbar::before {
+    width: 36px !important;
+    min-height: 28px !important;
+    padding: 0 !important;
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
+  }
+
+  .tree-tool-group {
+    width: 40px !important;
+    padding: 0 !important;
+    gap: 6px !important;
+    display: grid !important;
+    grid-template-columns: 40px !important;
+    justify-content: center !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .tree-tool-group::before {
+    content: none !important;
+  }
+
+  .tree-tool-group button,
+  .tree-map-controls button {
+    inline-size: 38px !important;
+    block-size: 38px !important;
+    min-inline-size: 38px !important;
+    min-block-size: 38px !important;
+    max-inline-size: 38px !important;
+    padding: 0 !important;
+    flex: 0 0 38px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    border-radius: 11px !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .tree-map-controls > span {
+    inline-size: 38px !important;
+    min-inline-size: 38px !important;
+    max-inline-size: 38px !important;
+    min-block-size: 28px !important;
+    padding: 0 2px !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.66rem !important;
+    line-height: 1 !important;
+  }
+
+  .tree-tool-group button .tool-icon,
+  .tree-map-controls button .tool-icon {
+    inline-size: 100% !important;
+    block-size: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
+  }
+
+  .tree-modeling-toolbar > input {
+    right: 68px !important;
+    width: min(320px, calc(100% - 136px)) !important;
+  }
+
+  .tree-modeling-toolbar > span:not(.tool-icon) {
+    right: 68px !important;
+    width: min(320px, calc(100% - 136px)) !important;
+  }
+}
+
+/* Collapsible admin navigation */
+.admin-menu-toggle {
+  min-height: 40px;
+  padding: 8px 12px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 15px;
+  color: var(--color-heading);
+  background:
+    radial-gradient(circle at 22% 12%, color-mix(in srgb, #fff 58%, transparent), transparent 42%),
+    color-mix(in srgb, var(--surface) 84%, transparent);
+  font-size: 0.76rem;
+  font-weight: 950;
+  line-height: 1.4;
+  box-shadow:
+    0 12px 26px color-mix(in srgb, var(--primary-950) 7%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent);
+}
+
+.admin-menu-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-menu-toggle:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-link) 28%, var(--border));
+  background: color-mix(in srgb, var(--color-link) 10%, var(--surface));
+}
+
+.admin-workspace.admin-workspace-menu-collapsed,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: 76px minmax(0, 1fr);
+}
+
+.admin-menu.collapsed {
+  width: 76px;
+  max-width: 76px;
+  padding: 8px;
+  gap: 8px;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  width: 52px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.admin-menu.collapsed .admin-menu-toggle span,
+.admin-menu.collapsed .admin-menu-heading,
+.admin-menu.collapsed .admin-menu-status,
+.admin-menu.collapsed .menu-group-label,
+.admin-menu.collapsed .menu-copy,
+.admin-menu.collapsed .admin-tree-submenu {
+  display: none;
+}
+
+.admin-menu.collapsed .admin-menu-list {
+  padding: 8px;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  align-content: start;
+  justify-items: center;
+  border-radius: 20px;
+}
+
+.admin-menu.collapsed .admin-menu-list > button {
+  width: 52px;
+  min-height: 52px;
+  padding: 6px;
+  grid-template-columns: 1fr !important;
+  justify-items: center;
+  overflow: visible;
+  border-radius: 16px;
+}
+
+.admin-menu.collapsed .admin-menu-list > button::before {
+  inset-block: auto 4px;
+  inset-inline: 12px;
+  width: auto;
+  height: 3px;
+}
+
+.admin-menu.collapsed .menu-icon {
+  width: 38px;
+  height: 38px;
+}
+
+.admin-menu.collapsed .admin-menu-list em {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: -4px;
+  inset-inline-start: -5px;
+  inline-size: auto;
+  min-inline-size: 18px;
+  max-inline-size: 42px;
+  block-size: 18px;
+  min-block-size: 18px;
+  padding: 0 4px;
+  font-size: 0.56rem;
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--primary-950) 12%, transparent);
+}
+
+.admin-workspace.admin-workspace-menu-collapsed,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+
+.admin-menu.collapsed {
+  width: 56px;
+  max-width: 56px;
+  padding: 0;
+  align-self: start;
+  justify-items: center;
+  background: transparent;
+  box-shadow: none;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  position: sticky;
+  top: 82px;
+  z-index: 5;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border-radius: 16px;
+}
+
+.admin-menu.collapsed .admin-menu-list {
+  display: none;
+}
+
+@media (max-width: 1040px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-menu,
+  .admin-menu.collapsed {
+    position: static;
+    width: 100%;
+    max-width: none;
+  }
+
+  .admin-menu.collapsed {
+    width: max-content;
+    max-width: max-content;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-menu,
+  .admin-menu.collapsed {
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-areas: 'toggle nav';
+    gap: 8px;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  .admin-menu.collapsed {
+    width: max-content;
+    max-width: max-content;
+    grid-template-columns: 46px;
+    grid-template-areas: 'toggle';
+  }
+
+  .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    grid-area: toggle;
+    width: 46px;
+    min-height: 46px;
+    padding: 0;
+    align-self: start;
+  }
+
+  .admin-menu-toggle span,
+  .admin-menu-heading,
+  .admin-menu-status,
+  .menu-group-label,
+  .menu-copy,
+  .admin-tree-submenu {
+    display: none !important;
+  }
+
+  .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list {
+    grid-area: nav;
+    min-width: 0;
+    padding: 6px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 50px;
+    grid-template-columns: none !important;
+    gap: 8px;
+    justify-content: start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 18px;
+    scrollbar-gutter: stable;
+    scroll-snap-type: x proximity;
+  }
+
+  .admin-menu.collapsed .admin-menu-list {
+    display: none !important;
+  }
+
+  .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button {
+    width: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    padding: 4px;
+    grid-template-columns: 1fr !important;
+    justify-items: center;
+    overflow: visible;
+    border-radius: 15px;
+    scroll-snap-align: center;
+  }
+
+  .admin-menu-list > button::before,
+  .admin-menu.collapsed .admin-menu-list > button::before {
+    inset-block: auto 3px;
+    inset-inline: 11px;
+    width: auto;
+    height: 3px;
+  }
+
+  .menu-icon,
+  .admin-menu.collapsed .menu-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .admin-menu-list em,
+  .admin-menu.collapsed .admin-menu-list em {
+    position: absolute;
+    z-index: 2;
+    inset-block-start: -4px;
+    inset-inline-start: -4px;
+    inline-size: auto;
+    min-inline-size: 18px;
+    max-inline-size: 40px;
+    block-size: 18px;
+    min-block-size: 18px;
+    padding: 0 4px;
+    display: inline-grid;
+    font-size: 0.55rem;
+  }
+}
+
+/* Final admin shell stabilization: lighter effects, aligned FAQ columns and a real collapsible menu */
+.admin-workspace {
+  align-items: start;
+}
+
+.admin-menu {
+  contain: layout paint;
+  transition:
+    width 0.22s ease,
+    max-width 0.22s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.admin-menu:not(.collapsed) {
+  width: min(340px, 100%);
+  max-width: 340px;
+  min-height: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  gap: 10px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-link) 22%, var(--border));
+  border-radius: 24px;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--surface) 92%, transparent),
+      color-mix(in srgb, var(--surface-warm) 74%, transparent)
+    ),
+    var(--surface);
+  box-shadow:
+    0 20px 44px color-mix(in srgb, var(--primary-950) 12%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-toggle {
+  width: 100%;
+  min-height: 40px;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-heading {
+  min-height: 86px;
+  padding: 16px;
+  display: grid;
+  align-content: center;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 36%
+    ),
+    color-mix(in srgb, var(--surface) 86%, transparent);
+  box-shadow: inset 1px 1px 0 color-mix(in srgb, #fff 66%, transparent);
+}
+
+.admin-menu:not(.collapsed) .admin-menu-heading strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-status {
+  min-height: 44px;
+  padding: 8px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  box-shadow: none;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-status span,
+.admin-menu:not(.collapsed) .admin-menu-status b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list {
+  min-height: 0;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  align-content: start;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--color-link) 12%, transparent);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  scrollbar-gutter: stable;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list > button {
+  min-height: 72px;
+  padding: 10px 12px;
+  grid-template-columns: 46px minmax(0, 1fr) minmax(36px, auto);
+  gap: 10px;
+  align-items: center;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 90%, transparent),
+      color-mix(in srgb, var(--surface-muted) 76%, transparent)
+    ),
+    var(--surface);
+  box-shadow:
+    0 10px 22px color-mix(in srgb, var(--primary-950) 6%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent);
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list > button.active {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-link) 20%, var(--surface)),
+      color-mix(in srgb, var(--surface) 84%, transparent)
+    ),
+    var(--surface);
+  box-shadow:
+    0 14px 28px color-mix(in srgb, var(--color-link) 14%, transparent),
+    inset 3px 0 0 var(--color-accent);
+}
+
+.admin-menu:not(.collapsed) .menu-copy {
+  min-width: 0;
+}
+
+.admin-menu:not(.collapsed) .menu-copy b,
+.admin-menu:not(.collapsed) .menu-copy small {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-menu:not(.collapsed) .menu-copy b {
+  white-space: nowrap;
+}
+
+.admin-menu:not(.collapsed) .menu-copy small {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list em {
+  justify-self: start;
+  min-width: 42px;
+  max-width: 58px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.admin-menu.collapsed {
+  width: 56px;
+  max-width: 56px;
+  min-height: 0;
+  padding: 0;
+  align-self: start;
+  justify-items: center;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  position: sticky;
+  top: 82px;
+  z-index: 5;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border-radius: 16px;
+}
+
+.admin-menu.collapsed .admin-menu-list,
+.admin-menu.collapsed .admin-menu-heading,
+.admin-menu.collapsed .admin-menu-status,
+.admin-menu.collapsed .menu-group-label,
+.admin-menu.collapsed .menu-copy,
+.admin-menu.collapsed .admin-tree-submenu,
+.admin-menu.collapsed .admin-menu-toggle span {
+  display: none;
+}
+
+.admin-workspace.admin-workspace-menu-collapsed,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+
+@media (min-width: 1261px) {
+  .admin-workspace.faq-workspace {
+    grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed),
+  .admin-content.faq-layout > .editor-card,
+  .admin-content.faq-layout > .table-card {
+    height: clamp(640px, calc(100vh - 170px), 760px);
+    min-height: 0;
+  }
+
+  .admin-content.faq-layout {
+    grid-template-columns: repeat(2, minmax(410px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .admin-content.faq-layout > .editor-card,
+  .admin-content.faq-layout > .table-card {
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--surface) 90%, transparent),
+        color-mix(in srgb, var(--surface-warm) 68%, transparent)
+      ),
+      var(--surface);
+    box-shadow:
+      0 18px 40px color-mix(in srgb, var(--primary-950) 10%, transparent),
+      inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    contain: layout paint;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .admin-content.faq-layout > .editor-card form {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto auto minmax(130px, 1fr) auto;
+    align-content: start;
+  }
+
+  .admin-content.faq-layout > .editor-card .wide,
+  .admin-content.faq-layout > .editor-card .actions {
+    grid-column: 1 / -1;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    height: 100%;
+    min-height: 130px;
+    max-height: none;
+    resize: vertical;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    align-content: stretch;
+  }
+
+  .admin-content.faq-layout .section-title {
+    min-height: 74px;
+  }
+
+  .admin-content.faq-layout .table-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(160px, 0.5fr) auto;
+    align-items: end;
+  }
+
+  .admin-content.faq-layout .bulk-actions {
+    min-height: 54px;
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    min-height: 0;
+    overflow: auto;
+    border-radius: 20px;
+    scrollbar-gutter: stable both-edges;
+  }
+
+  .admin-content.faq-layout table {
+    width: 100%;
+    min-width: 760px;
+    height: auto;
+    table-layout: fixed;
+  }
+
+  .admin-content.faq-layout th,
+  .admin-content.faq-layout td {
+    vertical-align: middle;
+  }
+
+  .admin-content.faq-layout td b {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .admin-content.faq-layout .select-col {
+    width: 48px;
+  }
+
+  .admin-content.faq-layout .actions-cell {
+    width: 82px;
+    text-align: center;
+  }
+
+  .admin-content.faq-layout .pagination-bar {
+    min-height: 64px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 10px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .admin-content.faq-layout .pagination-summary,
+  .admin-content.faq-layout .page-size,
+  .admin-content.faq-layout .pagination-actions,
+  .admin-content.faq-layout .pagination-actions span {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .admin-content.faq-layout .pagination-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-content.faq-layout .pagination-actions {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1260px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-menu:not(.collapsed),
+  .admin-menu.collapsed {
+    position: static;
+    width: 100%;
+    max-width: none;
+  }
+
+  .admin-menu.collapsed {
+    width: max-content;
+    max-width: max-content;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle {
+    position: static;
+  }
+
+  .admin-content.faq-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    overflow: auto;
+  }
+
+  .admin-content.faq-layout table {
+    min-width: 720px;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-menu:not(.collapsed),
+  .admin-menu.collapsed {
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .admin-menu:not(.collapsed) {
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 'toggle nav';
+  }
+
+  .admin-menu:not(.collapsed) .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    grid-area: toggle;
+    width: 46px;
+    min-height: 46px;
+  }
+
+  .admin-menu:not(.collapsed) .admin-menu-heading,
+  .admin-menu:not(.collapsed) .admin-menu-status,
+  .admin-menu:not(.collapsed) .menu-group-label,
+  .admin-menu:not(.collapsed) .menu-copy,
+  .admin-menu:not(.collapsed) .admin-tree-submenu,
+  .admin-menu:not(.collapsed) .admin-menu-toggle span {
+    display: none;
+  }
+
+  .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-area: nav;
+    min-width: 0;
+    padding: 6px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 50px;
+    grid-template-columns: none;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+  }
+
+  .admin-menu:not(.collapsed) .admin-menu-list > button {
+    width: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    padding: 4px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    scroll-snap-align: center;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .bulk-actions,
+  .admin-content.faq-layout .pagination-bar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-content.faq-layout .pagination-actions {
+    justify-content: stretch;
+  }
+}
+
+/* UI repair pass: stable sizing, IRANSans inheritance, compact menus and tree designer */
+:host {
+  font-family: var(--font-family-base);
+  --admin-shell-height: clamp(640px, calc(100vh - 172px), 780px);
+  --admin-card-radius: 22px;
+  --admin-card-shadow: 0 16px 34px color-mix(in srgb, var(--primary-950) 9%, transparent);
+  --admin-soft-border: color-mix(in srgb, var(--color-link) 18%, var(--border));
+}
+
+:host button,
+:host input,
+:host textarea,
+:host select {
+  font-family: var(--font-family-base);
+}
+
+.admin-dashboard,
+.admin-workspace,
+.admin-content,
+.tree-modal-shell,
+.tree-visio-start {
+  min-width: 0;
+}
+
+.admin-workspace {
+  gap: clamp(14px, 1.35vw, 22px);
+}
+
+.admin-menu:not(.collapsed) {
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  align-self: start;
+  gap: 10px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: var(--admin-shell-height);
+  padding: 12px !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  border-color: var(--admin-soft-border) !important;
+  background:
+    radial-gradient(
+      circle at 98% 0,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 13rem
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--surface) 95%, transparent),
+      color-mix(in srgb, var(--surface-soft) 82%, transparent)
+    ) !important;
+  box-shadow:
+    var(--admin-card-shadow),
+    inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-toggle {
+  min-height: 42px !important;
+  border-radius: 16px !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-heading {
+  min-height: 88px !important;
+  padding: 14px 16px !important;
+  display: grid !important;
+  align-content: center !important;
+  border-radius: 20px !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-status {
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  align-self: start !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  border-radius: 18px !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-link) 10%, transparent) !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-status::before {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list {
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 8px !important;
+  gap: 8px !important;
+  align-content: start !important;
+  overflow: auto !important;
+  border-radius: 20px !important;
+  scrollbar-gutter: stable;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list > button {
+  min-height: 66px !important;
+  padding: 9px 11px !important;
+  grid-template-columns: 42px minmax(0, 1fr) 46px !important;
+  gap: 10px !important;
+  border-radius: 16px !important;
+}
+
+.admin-menu:not(.collapsed) .menu-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 13px !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list em {
+  width: 44px !important;
+  min-width: 44px !important;
+  max-width: 44px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 4px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  justify-self: start !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 0.72rem !important;
+}
+
+.admin-menu.collapsed {
+  width: 54px !important;
+  max-width: 54px !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  width: 48px !important;
+  min-height: 48px !important;
+  box-shadow:
+    0 14px 28px color-mix(in srgb, var(--primary-950) 12%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent) !important;
+}
+
+.admin-workspace.admin-workspace-menu-collapsed,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: 54px minmax(0, 1fr) !important;
+}
+
+@media (min-width: 1280px) {
+  .admin-workspace.faq-workspace {
+    grid-template-columns: minmax(300px, 332px) minmax(0, 1fr) !important;
+    align-items: start !important;
+  }
+
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: 54px minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout {
+    height: var(--admin-shell-height);
+    grid-template-columns: minmax(430px, 1.06fr) minmax(390px, 0.94fr) !important;
+    gap: 18px !important;
+    align-items: stretch !important;
+    overflow: hidden;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    border-radius: var(--admin-card-radius) !important;
+    box-shadow:
+      var(--admin-card-shadow),
+      inset 1px 1px 0 color-mix(in srgb, #fff 72%, transparent) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .editor-card form {
+    min-height: 0 !important;
+    height: 100% !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto minmax(170px, 1fr) auto !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    min-height: 170px !important;
+    height: 100% !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    display: grid !important;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+  }
+
+  .admin-content.faq-layout .table-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 0.52fr) auto !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout .bulk-actions {
+    min-height: 54px !important;
+    grid-template-columns: auto auto minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    min-height: 0 !important;
+    overflow: auto !important;
+    border-radius: 18px !important;
+    scrollbar-gutter: stable both-edges;
+  }
+
+  .admin-content.faq-layout table {
+    min-width: 680px !important;
+    table-layout: fixed !important;
+  }
+
+  .admin-content.faq-layout th,
+  .admin-content.faq-layout td {
+    padding: 10px 12px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout th:first-child,
+  .admin-content.faq-layout td.select-col {
+    width: 48px !important;
+  }
+
+  .admin-content.faq-layout th:last-child,
+  .admin-content.faq-layout td.actions-cell {
+    width: 78px !important;
+  }
+
+  .admin-content.faq-layout .pagination-bar {
+    min-height: 104px !important;
+    padding: 10px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(156px, auto) !important;
+    grid-template-areas:
+      'summary size'
+      'actions actions' !important;
+    gap: 8px 10px !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout .pagination-summary {
+    grid-area: summary;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-content.faq-layout .page-size {
+    grid-area: size;
+    min-width: 0;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .admin-content.faq-layout .pagination-actions {
+    grid-area: actions;
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: minmax(82px, 1fr) auto minmax(82px, 1fr);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .admin-content.faq-layout .pagination-actions button {
+    min-width: 0;
+  }
+
+  .admin-content.faq-layout .pagination-actions span {
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 1279px) {
+  .admin-content.faq-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout .pagination-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Tree builder: polished start surface */
+.tree-create-panel.tree-create-console {
+  min-height: min(760px, calc(100vh - 168px)) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 26px !important;
+  box-shadow:
+    0 22px 52px color-mix(in srgb, var(--primary-950) 10%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 74%, transparent) !important;
+}
+
+.tree-visio-start {
+  min-height: min(760px, calc(100vh - 168px)) !important;
+  display: grid !important;
+  grid-template-columns: 104px minmax(0, 1fr) minmax(310px, 360px) !important;
+  grid-template-areas: 'rail main detail' !important;
+  gap: 0 !important;
+  align-items: stretch !important;
+  direction: ltr;
+}
+
+.tree-visio-start > * {
+  direction: rtl;
+}
+
+.tree-visio-rail {
+  grid-area: rail !important;
+  min-height: 0 !important;
+  padding: 18px 10px !important;
+  display: grid !important;
+  grid-template-rows: auto repeat(3, 76px) minmax(0, 1fr) !important;
+  gap: 8px !important;
+  background:
+    radial-gradient(
+      circle at 12% 0,
+      color-mix(in srgb, var(--color-link) 18%, transparent),
+      transparent 9rem
+    ),
+    linear-gradient(180deg, var(--primary-900), var(--primary-950)) !important;
+}
+
+.tree-visio-rail strong {
+  padding: 0 4px 10px !important;
+  text-align: center !important;
+  color: #fff !important;
+  font-size: 0.98rem !important;
+}
+
+.tree-visio-rail button {
+  min-height: 76px !important;
+  padding: 8px 5px !important;
+  border-radius: 18px !important;
+  color: color-mix(in srgb, #fff 74%, transparent) !important;
+  background: color-mix(in srgb, #fff 5%, transparent) !important;
+  box-shadow: inset 1px 1px 0 color-mix(in srgb, #fff 12%, transparent) !important;
+  line-height: 1.45 !important;
+}
+
+.tree-visio-rail button.active,
+.tree-visio-rail button:hover {
+  color: #fff !important;
+  background:
+    radial-gradient(circle at 24% 16%, color-mix(in srgb, #fff 20%, transparent), transparent 48%),
+    linear-gradient(
+      135deg,
+      var(--primary-700),
+      color-mix(in srgb, var(--primary-800) 70%, var(--primary-950))
+    ) !important;
+}
+
+.tree-visio-main {
+  grid-area: main !important;
+  min-height: 0 !important;
+  padding: clamp(18px, 2vw, 28px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 18px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-heading {
+  min-height: 72px !important;
+  padding: 0 0 14px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  align-items: end !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 14%, transparent) !important;
+}
+
+.tree-visio-heading h3 {
+  max-width: none !important;
+  font-size: clamp(1.65rem, 2.2vw, 2.45rem) !important;
+  line-height: 1.38 !important;
+}
+
+.tree-visio-gallery {
+  min-height: 0 !important;
+  padding: 2px 2px 10px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(140px, 1fr)) !important;
+  grid-auto-rows: minmax(146px, 1fr) !important;
+  gap: 12px !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.tree-visio-template {
+  min-width: 0 !important;
+  min-height: 146px !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-rows: 58px auto minmax(0, 1fr) !important;
+  justify-items: center !important;
+  align-content: start !important;
+  border-radius: 18px !important;
+}
+
+.tree-visio-template b,
+.tree-visio-template small {
+  max-width: 100%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.tree-visio-recent {
+  min-height: 96px !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    'tabs action'
+    'meta action' !important;
+  gap: 8px 12px !important;
+  align-items: center !important;
+}
+
+.tree-visio-detail {
+  grid-area: detail !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: clamp(18px, 2vw, 26px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, auto) auto auto auto !important;
+  gap: 13px !important;
+  align-content: center !important;
+  border-radius: 0 !important;
+  border-block: 0 !important;
+  border-inline-end: 0 !important;
+  background:
+    radial-gradient(
+      circle at 60% 5%,
+      color-mix(in srgb, var(--color-link) 12%, transparent),
+      transparent 14rem
+    ),
+    color-mix(in srgb, var(--surface) 86%, transparent) !important;
+}
+
+.tree-visio-preview {
+  width: min(210px, 100%) !important;
+  aspect-ratio: 1 !important;
+}
+
+.tree-visio-detail-copy h3 {
+  font-size: clamp(1.35rem, 1.7vw, 1.9rem) !important;
+}
+
+@media (max-width: 1180px) {
+  .tree-visio-start {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'rail'
+      'main'
+      'detail' !important;
+  }
+
+  .tree-visio-rail {
+    grid-template-columns: auto repeat(3, minmax(72px, 1fr)) !important;
+    grid-template-rows: none !important;
+  }
+
+  .tree-visio-detail {
+    border: 0 !important;
+  }
+}
+
+/* Tree workspace: centered canvas with slim left/right tool rails */
+.tree-modal-backdrop {
+  padding: 12px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.tree-modal-shell {
+  width: calc(100vw - 24px) !important;
+  height: calc(100dvh - 24px) !important;
+  max-height: calc(100dvh - 24px) !important;
+  min-height: 0 !important;
+  border-radius: 22px !important;
+}
+
+.tree-modal-header {
+  min-height: 78px !important;
+  padding: 12px 16px !important;
+  grid-template-columns: minmax(240px, 0.42fr) minmax(0, 1fr) !important;
+  gap: 12px !important;
+}
+
+.tree-modal-header h2 {
+  font-size: clamp(1rem, 1.35vw, 1.55rem) !important;
+  line-height: 1.45 !important;
+}
+
+.tree-modal-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(108px, auto)) !important;
+  gap: 7px !important;
+  justify-content: end !important;
+  align-items: center !important;
+}
+
+.tree-modal-actions button,
+.tree-modal-actions label,
+.tree-modal-actions .tree-mode-switch {
+  min-height: 36px !important;
+  border-radius: 12px !important;
+}
+
+.tree-modal-actions .close {
+  width: 38px !important;
+  min-width: 38px !important;
+}
+
+.tree-modal-body {
+  padding: 8px !important;
+}
+
+@media (min-width: 1181px) {
+  .tree-modal-body .tree-workbench {
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: clamp(270px, 18vw, 340px) minmax(0, 1fr) clamp(270px, 18vw, 340px) !important;
+    grid-template-areas: 'browser canvas editor' !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+    direction: ltr;
+  }
+
+  .tree-modal-body .tree-workbench > * {
+    direction: rtl;
+  }
+
+  .tree-modal-body .tree-node-browser,
+  .tree-modal-body .tree-editor-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    border-radius: 20px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .tree-modal-body .tree-node-browser {
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 0.9fr) auto auto auto minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+  }
+
+  .tree-modal-body .tree-editor-panel {
+    display: grid !important;
+    grid-auto-rows: max-content !important;
+    gap: 10px !important;
+    align-content: start !important;
+    overflow: auto !important;
+    scrollbar-gutter: stable;
+  }
+
+  .tree-shapes-library,
+  .tree-node-list {
+    min-height: 0 !important;
+    overflow: auto !important;
+    scrollbar-gutter: stable;
+  }
+
+  .shape-stencil-list {
+    max-height: 92px !important;
+  }
+
+  .shape-palette-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .shape-palette-grid button {
+    min-height: 56px !important;
+    padding: 8px !important;
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+  }
+
+  .tree-modal-body .tree-canvas-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 58px minmax(0, 1fr) 62px !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    grid-template-areas: 'view canvas tools' !important;
+    overflow: hidden !important;
+    border-radius: 20px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .tree-canvas-card > .section-title {
+    display: none !important;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-modeling-toolbar {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 8px 6px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-rows: min-content !important;
+    gap: 8px !important;
+    align-content: start !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 0 !important;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--surface) 88%, transparent),
+        color-mix(in srgb, var(--surface-soft) 72%, transparent)
+      ),
+      var(--surface) !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-link) 10%, transparent) !important;
+    scrollbar-gutter: stable;
+  }
+
+  .tree-modal-body .tree-map-controls {
+    grid-area: view !important;
+    border-radius: 20px 0 0 20px !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar {
+    grid-area: tools !important;
+    border-radius: 0 20px 20px 0 !important;
+  }
+
+  .tree-modal-body .tree-tool-group {
+    width: 100% !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 7px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button,
+  .tree-modal-body .tree-map-controls > span {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 13px !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button {
+    background:
+      radial-gradient(circle at 30% 18%, color-mix(in srgb, #fff 62%, transparent), transparent 48%),
+      color-mix(in srgb, var(--surface) 88%, var(--color-link)) !important;
+    box-shadow:
+      0 8px 16px color-mix(in srgb, var(--primary-950) 8%, transparent),
+      inset 1px 1px 0 color-mix(in srgb, #fff 70%, transparent) !important;
+  }
+
+  .tree-modal-body .tree-tool-group button.active,
+  .tree-modal-body .tree-tool-group button:hover:not(:disabled),
+  .tree-modal-body .tree-map-controls button:hover:not(:disabled) {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--color-link), var(--primary-950)) !important;
+  }
+
+  .tree-modal-body .tool-icon {
+    width: 100% !important;
+    height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    color: currentColor !important;
+    font-size: 1rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .tree-modal-body .tree-map-controls > span {
+    color: var(--color-heading) !important;
+    font-size: 0.7rem !important;
+    font-weight: 950 !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    border-radius: 13px !important;
+    color: transparent !important;
+    text-indent: -999px !important;
+    caret-color: transparent !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus {
+    position: absolute !important;
+    z-index: 20 !important;
+    top: 12px !important;
+    right: 76px !important;
+    width: min(360px, calc(100% - 152px)) !important;
+    color: var(--color-body) !important;
+    text-indent: 0 !important;
+    caret-color: var(--color-link) !important;
+    padding: 8px 12px !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > span:not(.tool-icon) {
+    width: 44px !important;
+    min-width: 44px !important;
+    min-height: 34px !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.62rem !important;
+  }
+
+  .tree-modal-body .tree-designer-frame {
+    grid-area: canvas !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .tree-page-stage {
+    padding: 18px 18px 36px !important;
+  }
+
+  .tree-page-sheet {
+    min-width: 100% !important;
+    min-height: 100% !important;
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .tree-modal-shell {
+    overflow: auto !important;
+  }
+
+  .tree-modal-header {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .tree-modal-body .tree-workbench {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'canvas'
+      'browser'
+      'editor' !important;
+  }
+
+  .tree-modal-body .tree-canvas-card {
+    min-height: 560px !important;
+  }
+}
+
+/* Final layout normalization: admin FAQ, navigation and tree builder */
+:host {
+  --admin-page-max: 1560px;
+  --admin-panel-height: clamp(650px, calc(100vh - 150px), 820px);
+  --admin-gap: clamp(14px, 1.2vw, 20px);
+  --admin-blue: #233f86;
+  --admin-blue-2: #0d6d92;
+  --admin-line: color-mix(in srgb, var(--color-link) 24%, #cfe0dd);
+}
+
+.admin-dashboard,
+.admin-dashboard *:not(svg):not(path) {
+  font-family: var(--font-family-base) !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-workspace {
+  width: min(100%, var(--admin-page-max)) !important;
+  margin-inline: auto !important;
+  gap: var(--admin-gap) !important;
+  align-items: start !important;
+}
+
+.admin-workspace.faq-workspace,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: 58px minmax(0, 1fr) !important;
+}
+
+.admin-workspace:not(.admin-workspace-menu-collapsed),
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: clamp(300px, 22vw, 348px) minmax(0, 1fr) !important;
+}
+
+.admin-menu {
+  position: sticky !important;
+  top: 86px !important;
+  z-index: 4 !important;
+  align-self: start !important;
+}
+
+.admin-menu.collapsed {
+  width: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  padding: 7px !important;
+  border-radius: 20px !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.admin-menu:not(.collapsed) {
+  width: clamp(300px, 22vw, 348px) !important;
+  max-height: calc(100vh - 112px) !important;
+  min-height: 0 !important;
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 95% 8%, rgba(23, 100, 84, 0.14), transparent 170px),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.93), rgba(238, 248, 244, 0.82)) !important;
+  box-shadow:
+    0 18px 46px rgba(18, 59, 52, 0.12),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.82) !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-toggle,
+.admin-menu:not(.collapsed) .admin-menu-heading,
+.admin-menu:not(.collapsed) .admin-menu-status,
+.admin-menu:not(.collapsed) .admin-menu-list {
+  flex: 0 0 auto !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-heading {
+  min-height: 86px !important;
+  padding: 14px 16px !important;
+  border-radius: 18px !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-status {
+  min-height: 44px !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: min(560px, calc(100vh - 320px)) !important;
+  padding: 8px !important;
+  display: grid !important;
+  gap: 8px !important;
+  align-content: start !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list > button {
+  min-height: 66px !important;
+  padding: 10px 12px !important;
+  grid-template-columns: 42px minmax(0, 1fr) 46px !important;
+  gap: 10px !important;
+  border-radius: 17px !important;
+}
+
+.admin-menu:not(.collapsed) .menu-copy b,
+.admin-menu:not(.collapsed) .menu-copy small {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list em {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 30px !important;
+  justify-self: start !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  font-size: 0.74rem !important;
+}
+
+.admin-content.faq-layout {
+  min-width: 0 !important;
+  height: var(--admin-panel-height) !important;
+  display: grid !important;
+  grid-template-columns: minmax(520px, 1.05fr) minmax(460px, 0.95fr) !important;
+  gap: var(--admin-gap) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout > .table-card,
+.admin-content.faq-layout > .editor-card {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: var(--admin-panel-height) !important;
+  padding: clamp(18px, 1.6vw, 24px) !important;
+  border: 1px solid var(--admin-line) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 18% 0, rgba(39, 135, 112, 0.1), transparent 190px),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(241, 249, 245, 0.76) 66%,
+      rgba(255, 246, 226, 0.7)
+    ) !important;
+  box-shadow:
+    0 18px 42px rgba(18, 59, 52, 0.11),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.88) !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout > .table-card {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+}
+
+.admin-content.faq-layout > .editor-card {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.admin-content.faq-layout .section-title {
+  min-height: 82px !important;
+  margin: 0 0 12px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.admin-content.faq-layout .section-title h2 {
+  font-size: clamp(1.55rem, 1.9vw, 2.15rem) !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+
+.admin-content.faq-layout .section-title .import {
+  min-height: 44px !important;
+  max-width: 180px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout .table-tools {
+  min-height: 78px !important;
+  margin: 0 0 10px !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 0.42fr) 96px !important;
+  gap: 10px !important;
+  align-items: end !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, transparent) !important;
+  border-radius: 18px !important;
+}
+
+.admin-content.faq-layout .table-tools label,
+.admin-content.faq-layout .table-tools .search-field {
+  min-width: 0 !important;
+}
+
+.admin-content.faq-layout .result-count {
+  min-width: 86px !important;
+  height: 44px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout .selection-toolbar {
+  min-height: 58px !important;
+  margin: 0 0 10px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(170px, 1fr) auto auto auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, transparent) !important;
+  border-radius: 18px !important;
+}
+
+.admin-content.faq-layout .selection-toolbar .select-all {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.admin-content.faq-layout .table-wrap {
+  min-height: 0 !important;
+  overflow: auto !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 20%, transparent) !important;
+  border-radius: 18px !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.admin-content.faq-layout table {
+  width: 100% !important;
+  min-width: 620px !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+}
+
+.admin-content.faq-layout .select-col-width {
+  width: 46px !important;
+}
+
+.admin-content.faq-layout .error-col-width {
+  width: auto !important;
+}
+
+.admin-content.faq-layout .category-col-width {
+  width: 122px !important;
+}
+
+.admin-content.faq-layout .date-col-width {
+  width: 128px !important;
+}
+
+.admin-content.faq-layout .actions-col-width {
+  width: 62px !important;
+}
+
+.admin-content.faq-layout th,
+.admin-content.faq-layout td {
+  height: 64px !important;
+  padding: 10px 12px !important;
+  vertical-align: middle !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout td b {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.65 !important;
+}
+
+.admin-content.faq-layout .pagination-bar {
+  min-height: 74px !important;
+  margin: 12px 0 0 !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 15%, transparent) !important;
+  border-radius: 18px !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout .pagination-summary,
+.admin-content.faq-layout .page-size,
+.admin-content.faq-layout .pagination-actions {
+  min-width: max-content !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout .pagination-actions {
+  margin-inline-start: auto !important;
+}
+
+.admin-content.faq-layout > .editor-card form {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: min-content !important;
+  gap: 10px !important;
+}
+
+.admin-content.faq-layout > .editor-card .wide {
+  grid-column: auto !important;
+}
+
+.admin-content.faq-layout > .editor-card label {
+  min-width: 0 !important;
+}
+
+.admin-content.faq-layout > .editor-card input,
+.admin-content.faq-layout > .editor-card textarea,
+.admin-content.faq-layout > .editor-card select {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 14px !important;
+}
+
+.admin-content.faq-layout > .editor-card textarea {
+  min-height: 170px !important;
+  max-height: 280px !important;
+  resize: vertical !important;
+}
+
+.admin-content.faq-layout > .editor-card .actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.admin-content.faq-layout > .editor-card .actions button {
+  width: min(170px, 100%) !important;
+  min-height: 48px !important;
+  border-radius: 14px !important;
+}
+
+.tree-manager-card {
+  overflow: visible !important;
+}
+
+.tree-create-panel.tree-create-console {
+  min-height: clamp(660px, calc(100vh - 190px), 780px) !important;
+  height: clamp(660px, calc(100vh - 190px), 780px) !important;
+  padding: 0 !important;
+  border-radius: 26px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-start {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: 112px minmax(0, 1fr) minmax(330px, 370px) !important;
+  grid-template-areas: 'rail main detail' !important;
+  gap: 0 !important;
+  align-items: stretch !important;
+  direction: ltr !important;
+}
+
+.tree-visio-start > * {
+  min-width: 0 !important;
+  direction: rtl !important;
+}
+
+.tree-visio-rail {
+  grid-area: rail !important;
+  min-height: 0 !important;
+  padding: 18px 10px !important;
+  display: grid !important;
+  grid-template-rows: auto 78px 78px 78px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  background:
+    radial-gradient(circle at 20% 0, rgba(255, 255, 255, 0.12), transparent 120px),
+    linear-gradient(180deg, #183d78, #132a5c 60%, #0e244d) !important;
+}
+
+.tree-visio-rail strong {
+  min-height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #fff !important;
+  font-size: 1rem !important;
+}
+
+.tree-visio-rail button {
+  min-height: 78px !important;
+  display: grid !important;
+  place-items: center !important;
+  gap: 5px !important;
+  padding: 8px !important;
+  border-radius: 18px !important;
+  color: rgba(255, 255, 255, 0.78) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.tree-visio-rail button span {
+  width: 30px !important;
+  height: 30px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 11px !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+
+.tree-visio-rail button.active,
+.tree-visio-rail button:hover {
+  color: #fff !important;
+  background: linear-gradient(135deg, #466fca, #203c8b) !important;
+  box-shadow: 0 12px 26px rgba(19, 42, 92, 0.28) !important;
+}
+
+.tree-visio-main {
+  grid-area: main !important;
+  min-height: 0 !important;
+  padding: clamp(20px, 2.1vw, 30px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-heading {
+  min-height: 78px !important;
+  padding: 14px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 15%, transparent) !important;
+  border-radius: 18px !important;
+  background:
+    radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.62), transparent 120px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(255, 247, 229, 0.76)) !important;
+}
+
+.tree-visio-heading h3 {
+  margin: 0 !important;
+  max-width: 100% !important;
+  font-size: clamp(1.55rem, 2.15vw, 2.45rem) !important;
+  line-height: 1.35 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.tree-visio-heading span {
+  width: 64px !important;
+  min-width: 64px !important;
+  height: 58px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 20px !important;
+  background: color-mix(in srgb, var(--accent-100) 76%, #fff) !important;
+  color: var(--admin-blue) !important;
+  font-weight: 900 !important;
+}
+
+.tree-visio-gallery {
+  min-height: 0 !important;
+  padding: 2px 4px 12px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
+  grid-auto-rows: minmax(142px, 1fr) !important;
+  gap: 14px !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.tree-visio-template {
+  min-width: 0 !important;
+  min-height: 142px !important;
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-rows: 58px auto auto !important;
+  justify-items: center !important;
+  align-content: center !important;
+  gap: 8px !important;
+  border-radius: 18px !important;
+  color: var(--admin-blue) !important;
+  background:
+    radial-gradient(circle at 24% 0, rgba(255, 255, 255, 0.5), transparent 80px),
+    linear-gradient(145deg, #4974cf, #1c347c) !important;
+  box-shadow: 0 14px 28px rgba(28, 52, 124, 0.16) !important;
+}
+
+.tree-visio-template i {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 16px !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.tree-visio-template b,
+.tree-visio-template small {
+  max-width: 100% !important;
+  color: rgba(255, 255, 255, 0.94) !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  text-overflow: ellipsis !important;
+}
+
+.tree-visio-template small {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.tree-visio-recent {
+  min-height: 104px !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    'tabs action'
+    'meta action' !important;
+  gap: 8px 14px !important;
+  align-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, transparent) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.56) !important;
+}
+
+.tree-visio-detail {
+  grid-area: detail !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: clamp(20px, 2.1vw, 30px) !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto !important;
+  gap: 14px !important;
+  align-content: center !important;
+  border: 0 !important;
+  border-inline-start: 1px solid color-mix(in srgb, var(--color-link) 18%, transparent) !important;
+  border-radius: 0 !important;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(35, 63, 134, 0.1), transparent 180px), rgba(255, 255, 255, 0.68) !important;
+}
+
+.tree-visio-preview {
+  width: min(220px, 100%) !important;
+  aspect-ratio: 1 !important;
+  margin-inline: auto !important;
+}
+
+.tree-visio-detail-copy h3 {
+  font-size: clamp(1.35rem, 1.6vw, 1.85rem) !important;
+  line-height: 1.45 !important;
+}
+
+.tree-visio-detail-copy p {
+  font-size: 0.95rem !important;
+  line-height: 1.9 !important;
+}
+
+.tree-visio-unit,
+.tree-visio-create {
+  min-height: 54px !important;
+  border-radius: 16px !important;
+}
+
+@media (max-width: 1180px) {
+  .admin-content.faq-layout {
+    height: auto !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    min-height: 660px !important;
+  }
+}
+
+@media (max-width: 1240px) {
+  .tree-create-panel.tree-create-console {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .tree-visio-start {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'rail'
+      'main'
+      'detail' !important;
+  }
+
+  .tree-visio-rail {
+    grid-template-columns: auto repeat(3, minmax(74px, 1fr)) !important;
+    grid-template-rows: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-menu {
+    position: fixed !important;
+    inset-block-start: auto !important;
+    inset-block-end: 16px !important;
+    inset-inline-end: 16px !important;
+  }
+
+  .admin-menu.collapsed {
+    width: 56px !important;
+  }
+
+  .admin-menu:not(.collapsed) {
+    width: min(340px, calc(100vw - 32px)) !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout .pagination-summary,
+  .admin-content.faq-layout .page-size,
+  .admin-content.faq-layout .pagination-actions {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .tree-visio-gallery {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Product polish pass: stable admin layout, compact menu and tree builder */
+.admin-shell main {
+  width: min(100%, var(--admin-page-max, 1560px)) !important;
+  max-width: var(--admin-page-max, 1560px) !important;
+  overflow-x: hidden !important;
+}
+
+.welcome,
+.stats,
+.admin-workspace,
+.admin-content,
+.editor-card,
+.table-card,
+.performance-dashboard,
+.tree-manager-card {
+  min-width: 0 !important;
+}
+
+.welcome {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 18px !important;
+  align-items: end !important;
+}
+
+.stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(12px, 1vw, 18px) !important;
+}
+
+.stats article {
+  position: relative !important;
+  min-height: 112px !important;
+  padding: 22px 22px 18px !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+}
+
+.stats strong {
+  align-self: end !important;
+  color: var(--admin-blue, var(--color-link)) !important;
+  font-size: clamp(2rem, 3.4vw, 3.15rem) !important;
+  line-height: 1 !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+}
+
+.stats article > span,
+.stats article > small {
+  max-width: calc(100% - 70px) !important;
+  padding-right: 0 !important;
+}
+
+.admin-workspace {
+  direction: ltr !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 64px !important;
+  gap: clamp(14px, 1.2vw, 20px) !important;
+  align-items: start !important;
+}
+
+.admin-workspace:not(.admin-workspace-menu-collapsed),
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 20vw, 340px) !important;
+}
+
+.admin-workspace > .admin-content {
+  grid-column: 1 !important;
+  direction: rtl !important;
+}
+
+.admin-workspace > .admin-menu {
+  grid-column: 2 !important;
+  direction: rtl !important;
+}
+
+.admin-menu {
+  position: sticky !important;
+  top: 16px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-height: calc(100dvh - 116px) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+}
+
+.admin-menu-toggle {
+  min-height: 46px !important;
+  width: 100% !important;
+  display: inline-grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 16px !important;
+}
+
+.admin-menu-toggle svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.admin-menu-list {
+  min-height: 0 !important;
+  overflow: auto !important;
+  align-content: start !important;
+  scrollbar-gutter: stable !important;
+}
+
+.admin-menu-list > button {
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 68px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(34px, auto) !important;
+  gap: 10px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.admin-menu-list .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+}
+
+.admin-menu-list .menu-copy {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 3px !important;
+}
+
+.admin-menu-list .menu-copy b,
+.admin-menu-list .menu-copy small {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.admin-menu-list em {
+  min-width: 34px !important;
+  max-width: 48px !important;
+  height: 32px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  justify-self: start !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  font-size: 0.75rem !important;
+}
+
+.admin-menu.collapsed {
+  padding: 8px !important;
+  width: 64px !important;
+  border-radius: 20px !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle span,
+.admin-menu.collapsed .admin-menu-heading,
+.admin-menu.collapsed .admin-menu-status,
+.admin-menu.collapsed .menu-group-label,
+.admin-menu.collapsed .menu-copy,
+.admin-menu.collapsed .admin-tree-submenu {
+  display: none !important;
+}
+
+.admin-menu.collapsed .admin-menu-list {
+  display: grid !important;
+  gap: 8px !important;
+  overflow: visible !important;
+}
+
+.admin-menu.collapsed .admin-menu-list > button {
+  width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  overflow: visible !important;
+}
+
+.admin-menu.collapsed .admin-menu-list .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.admin-menu.collapsed .admin-menu-list em {
+  position: absolute !important;
+  inset-block-start: -6px !important;
+  inset-inline-start: -7px !important;
+  min-width: 22px !important;
+  max-width: 32px !important;
+  height: 22px !important;
+  padding: 0 5px !important;
+  font-size: 0.62rem !important;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary-950) 14%, transparent) !important;
+}
+
+.admin-content {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.admin-content:not(.faq-layout):not(.tree-layout) {
+  max-height: var(--admin-panel-height, 820px) !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable !important;
+}
+
+.admin-content.faq-layout {
+  direction: ltr !important;
+  grid-template-columns: minmax(560px, 1.18fr) minmax(410px, 0.82fr) !important;
+  gap: clamp(14px, 1.2vw, 18px) !important;
+}
+
+.admin-content.faq-layout > .table-card {
+  grid-column: 1 !important;
+  direction: rtl !important;
+}
+
+.admin-content.faq-layout > .editor-card {
+  grid-column: 2 !important;
+  direction: rtl !important;
+}
+
+.admin-content.faq-layout .table-tools,
+.admin-content.faq-layout .selection-toolbar,
+.admin-content.faq-layout .pagination-bar {
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout .selection-toolbar {
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+}
+
+.admin-content.faq-layout .pagination-bar {
+  min-height: 70px !important;
+}
+
+.admin-content.faq-layout .pagination-actions button,
+.admin-content.faq-layout .pagination-actions span,
+.admin-content.faq-layout .page-size select {
+  min-height: 40px !important;
+  white-space: nowrap !important;
+}
+
+.reports {
+  content-visibility: auto;
+  contain-intrinsic-size: 160px;
+}
+
+.reports .question,
+.reports .answer {
+  overflow-wrap: anywhere !important;
+}
+
+.compact-pagination,
+.pagination-bar {
+  align-items: center !important;
+}
+
+.performance-panel,
+.service-list-card,
+.service-config-card,
+.service-catalog-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 260px;
+}
+
+.tree-create-panel.tree-create-console > .tree-create-primary,
+.tree-create-panel.tree-create-console > .tree-create-methods,
+.tree-create-panel.tree-create-console > .tree-create-guide {
+  display: none !important;
+}
+
+.tree-create-panel.tree-create-console {
+  background:
+    radial-gradient(
+      circle at 18% 0,
+      color-mix(in srgb, var(--color-link) 9%, transparent),
+      transparent 260px
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 96%, transparent),
+      color-mix(in srgb, var(--surface-warm) 78%, transparent)
+    ) !important;
+}
+
+.tree-visio-start {
+  direction: ltr !important;
+  grid-template-columns: 104px minmax(0, 1fr) minmax(320px, 360px) !important;
+}
+
+.tree-visio-rail,
+.tree-visio-main,
+.tree-visio-detail {
+  direction: rtl !important;
+}
+
+.tree-visio-heading h3 {
+  font-size: clamp(1.35rem, 2vw, 2.05rem) !important;
+}
+
+.tree-visio-gallery {
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.tree-visio-template {
+  border: 1px solid color-mix(in srgb, #fff 30%, var(--admin-blue)) !important;
+}
+
+.tree-visio-template b,
+.tree-visio-template small {
+  display: block !important;
+  line-height: 1.45 !important;
+}
+
+.tree-visio-detail {
+  min-width: 0 !important;
+}
+
+.tree-modal-shell {
+  overflow: hidden !important;
+}
+
+.tree-modal-body {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (min-width: 1181px) {
+  .tree-modal-body .tree-workbench {
+    grid-template-columns: clamp(282px, 18vw, 338px) minmax(0, 1fr) clamp(286px, 18vw, 340px) !important;
+    gap: 10px !important;
+  }
+
+  .tree-modal-body .tree-canvas-card {
+    grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+    grid-template-areas: 'view canvas tools' !important;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-modeling-toolbar {
+    width: 56px !important;
+    padding: 8px 6px !important;
+    justify-items: center !important;
+  }
+
+  .tree-modal-body .tree-map-controls button,
+  .tree-modal-body .tree-modeling-toolbar button,
+  .tree-modal-body .tree-map-controls > span {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 12px !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-body .tree-map-controls > span {
+    font-size: 0.64rem !important;
+    direction: ltr !important;
+  }
+
+  .tree-modal-body .tool-icon {
+    width: 100% !important;
+    height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.96rem !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus {
+    width: min(380px, calc(100% - 160px)) !important;
+    min-width: 240px !important;
+  }
+
+  .tree-designer-frame,
+  .tree-page-stage {
+    min-height: 0 !important;
+    overscroll-behavior: contain !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .admin-workspace,
+  .admin-workspace:not(.admin-workspace-menu-collapsed),
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-workspace > .admin-menu {
+    position: fixed !important;
+    z-index: 30 !important;
+    inset-block-start: 88px !important;
+    inset-inline-end: 14px !important;
+    width: min(340px, calc(100vw - 28px)) !important;
+  }
+
+  .admin-menu.collapsed {
+    width: 58px !important;
+  }
+
+  .admin-content.faq-layout {
+    direction: rtl !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    grid-column: auto !important;
+  }
+
+  .tree-visio-start {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .welcome,
+  .stats {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .stats article {
+    min-height: 96px !important;
+  }
+
+  .admin-shell main {
+    padding-inline: 12px !important;
+  }
+}
+
+/* UX consolidation pass: one predictable layer for dashboard, menu and tree workspace */
+:host {
+  --admin-page-max: 1540px;
+  --admin-gap: clamp(14px, 1.35vw, 22px);
+  --admin-card-radius: 24px;
+  --admin-control-radius: 16px;
+  --admin-soft-shadow: 0 20px 46px color-mix(in srgb, var(--primary-950) 9%, transparent);
+  --admin-hairline: color-mix(in srgb, var(--color-link) 18%, var(--border));
+}
+
+.admin-shell {
+  overflow-x: hidden !important;
+}
+
+.admin-shell main {
+  width: min(100%, var(--admin-page-max)) !important;
+  max-width: var(--admin-page-max) !important;
+  padding-inline: clamp(14px, 2vw, 28px) !important;
+  overflow: clip !important;
+}
+
+.welcome,
+.stats,
+.admin-workspace,
+.admin-content,
+.editor-card,
+.table-card,
+.service-config-card,
+.service-catalog-card,
+.service-list-card,
+.performance-dashboard,
+.tree-manager-card,
+.tree-create-panel,
+.tree-modal-shell,
+.tree-workbench,
+.tree-canvas-card {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.welcome {
+  min-height: 168px !important;
+  padding: clamp(24px, 3vw, 42px) !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: end !important;
+  gap: var(--admin-gap) !important;
+  overflow: hidden !important;
+}
+
+.welcome h1,
+.welcome p {
+  max-width: min(760px, 100%) !important;
+}
+
+.stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--admin-gap) !important;
+  align-items: stretch !important;
+}
+
+.stats article {
+  min-height: 116px !important;
+  padding: 22px clamp(18px, 1.6vw, 28px) !important;
+  grid-template-columns: 56px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+}
+
+.stats article > span,
+.stats article > small {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.stats strong {
+  justify-self: end !important;
+  min-width: 56px !important;
+  max-width: 110px !important;
+  color: var(--admin-blue, var(--color-link)) !important;
+  font-size: clamp(2rem, 3.2vw, 3rem) !important;
+  line-height: 0.95 !important;
+  text-align: end !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace,
+.admin-workspace.faq-workspace {
+  direction: ltr !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 66px !important;
+  gap: var(--admin-gap) !important;
+  align-items: start !important;
+  overflow: visible !important;
+}
+
+.admin-workspace:not(.admin-workspace-menu-collapsed),
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: minmax(0, 1fr) clamp(304px, 20vw, 328px) !important;
+}
+
+.admin-workspace > .admin-content {
+  grid-column: 1 !important;
+  direction: rtl !important;
+}
+
+.admin-workspace > .admin-menu {
+  grid-column: 2 !important;
+  direction: rtl !important;
+}
+
+.admin-menu {
+  position: sticky !important;
+  top: 14px !important;
+  width: 100% !important;
+  max-height: calc(100dvh - 112px) !important;
+  padding: 10px !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--admin-hairline) !important;
+  border-radius: var(--admin-card-radius) !important;
+  background:
+    radial-gradient(
+      circle at 12% 0,
+      color-mix(in srgb, var(--color-link) 9%, transparent),
+      transparent 150px
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--surface) 88%, transparent),
+      color-mix(in srgb, var(--surface-cool) 72%, transparent)
+    ) !important;
+  box-shadow:
+    var(--admin-soft-shadow),
+    inset 1px 1px 0 color-mix(in srgb, #fff 68%, transparent) !important;
+  contain: layout paint style !important;
+}
+
+.admin-menu-toggle {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  display: grid !important;
+  grid-template-columns: 24px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-items: center !important;
+  border-radius: 16px !important;
+  color: var(--color-heading) !important;
+  background: color-mix(in srgb, var(--surface) 86%, transparent) !important;
+}
+
+.admin-menu-toggle span {
+  justify-self: start !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.admin-menu-heading,
+.admin-menu-status {
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 16px !important;
+  border-radius: 20px !important;
+}
+
+.admin-menu-heading strong,
+.admin-menu-heading small,
+.admin-menu-status span,
+.admin-menu-status b {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.admin-menu-heading small {
+  white-space: normal !important;
+  line-height: 1.75 !important;
+}
+
+.admin-menu-status {
+  min-height: 52px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 12px !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.admin-menu-status::after {
+  content: '' !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 999px !important;
+  background: #35cf96 !important;
+  box-shadow: 0 0 0 5px color-mix(in srgb, #35cf96 14%, transparent) !important;
+}
+
+.admin-menu-list {
+  min-height: 0 !important;
+  padding: 2px 2px 4px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 9px !important;
+  align-content: start !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable !important;
+}
+
+.admin-menu-list > button {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 66px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) 42px !important;
+  gap: 10px !important;
+  align-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--surface) 82%, transparent) !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary-950) 5%, transparent) !important;
+  overflow: hidden !important;
+}
+
+.admin-menu-list > button.active {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 13%, transparent), transparent 64%),
+    color-mix(in srgb, var(--surface-cool) 86%, var(--surface)) !important;
+}
+
+.admin-menu-list .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+}
+
+.admin-menu-list .menu-copy {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 2px !important;
+}
+
+.admin-menu-list .menu-copy b,
+.admin-menu-list .menu-copy small {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.admin-menu-list .menu-copy b {
+  white-space: nowrap !important;
+}
+
+.admin-menu-list .menu-copy small {
+  line-height: 1.65 !important;
+}
+
+.admin-menu-list em {
+  min-width: 36px !important;
+  max-width: 42px !important;
+  height: 32px !important;
+  padding: 0 6px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  justify-self: end !important;
+  border-radius: 999px !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  font-size: 0.74rem !important;
+}
+
+.admin-menu.collapsed {
+  width: 66px !important;
+  min-width: 66px !important;
+  padding: 8px !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  border-radius: 20px !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle {
+  width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+}
+
+.admin-menu.collapsed .admin-menu-toggle span,
+.admin-menu.collapsed .admin-menu-heading,
+.admin-menu.collapsed .admin-menu-status,
+.admin-menu.collapsed .menu-group-label,
+.admin-menu.collapsed .menu-copy,
+.admin-menu.collapsed .admin-tree-submenu {
+  display: none !important;
+}
+
+.admin-menu.collapsed .admin-menu-list {
+  gap: 8px !important;
+  overflow: visible !important;
+}
+
+.admin-menu.collapsed .admin-menu-list > button {
+  width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  overflow: visible !important;
+}
+
+.admin-menu.collapsed .admin-menu-list .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.admin-menu.collapsed .admin-menu-list em {
+  position: absolute !important;
+  inset-block-start: -7px !important;
+  inset-inline-start: -7px !important;
+  min-width: 22px !important;
+  max-width: 34px !important;
+  height: 22px !important;
+  padding: 0 5px !important;
+  font-size: 0.62rem !important;
+}
+
+.admin-content.faq-layout {
+  direction: ltr !important;
+  display: grid !important;
+  grid-template-columns: minmax(600px, 1.12fr) minmax(400px, 0.88fr) !important;
+  gap: var(--admin-gap) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout > .table-card,
+.admin-content.faq-layout > .editor-card {
+  direction: rtl !important;
+  min-height: min(760px, calc(100dvh - 245px)) !important;
+  max-height: min(820px, calc(100dvh - 210px)) !important;
+  padding: clamp(20px, 1.8vw, 30px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+  border-radius: var(--admin-card-radius) !important;
+}
+
+.admin-content.faq-layout > .table-card {
+  grid-column: 1 !important;
+}
+
+.admin-content.faq-layout > .editor-card {
+  grid-column: 2 !important;
+}
+
+.admin-content.faq-layout .section-title {
+  min-height: 58px !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+.admin-content.faq-layout .table-tools,
+.admin-content.faq-layout .selection-toolbar,
+.admin-content.faq-layout .pagination-bar {
+  flex: 0 0 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border-radius: 18px !important;
+}
+
+.admin-content.faq-layout .table-tools {
+  display: grid !important;
+  grid-template-columns: minmax(240px, 1fr) minmax(190px, 0.54fr) auto !important;
+  gap: 12px !important;
+  align-items: end !important;
+}
+
+.admin-content.faq-layout .selection-toolbar {
+  min-height: 58px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+.admin-content.faq-layout .table-wrap {
+  flex: 1 1 auto !important;
+  min-height: 360px !important;
+  overflow: auto !important;
+  border-radius: 18px !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.admin-content.faq-layout table {
+  min-width: 720px !important;
+  table-layout: fixed !important;
+}
+
+.admin-content.faq-layout th,
+.admin-content.faq-layout td {
+  height: 74px !important;
+  padding-block: 12px !important;
+  vertical-align: middle !important;
+}
+
+.admin-content.faq-layout td b {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  line-height: 1.65 !important;
+}
+
+.admin-content.faq-layout .pagination-bar {
+  min-height: 64px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+.admin-content.faq-layout .pagination-summary,
+.admin-content.faq-layout .page-size,
+.admin-content.faq-layout .pagination-actions {
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .editor-card form {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: max-content !important;
+  gap: 13px !important;
+  align-content: start !important;
+}
+
+.admin-content.faq-layout > .editor-card .wide,
+.admin-content.faq-layout > .editor-card .actions {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-content.faq-layout > .editor-card textarea {
+  min-height: 124px !important;
+  resize: vertical !important;
+}
+
+.admin-content.faq-layout > .editor-card .actions {
+  margin-top: auto !important;
+}
+
+.reports,
+.conversation-list,
+.service-grid,
+.performance-grid {
+  content-visibility: auto !important;
+  contain-intrinsic-size: 360px !important;
+}
+
+.tree-create-panel.tree-create-console > .tree-create-primary,
+.tree-create-panel.tree-create-console > .tree-create-methods,
+.tree-create-panel.tree-create-console > .tree-create-guide {
+  display: none !important;
+}
+
+.tree-create-panel.tree-create-console {
+  min-height: clamp(560px, 66dvh, 720px) !important;
+  padding: clamp(14px, 1.5vw, 22px) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--admin-hairline) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(
+      circle at 85% 18%,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 260px
+    ),
+    radial-gradient(
+      circle at 12% 92%,
+      color-mix(in srgb, var(--accent-600) 8%, transparent),
+      transparent 230px
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 92%, transparent),
+      color-mix(in srgb, var(--surface-warm) 64%, transparent)
+    ) !important;
+}
+
+.tree-visio-start {
+  height: 100% !important;
+  min-height: 0 !important;
+  direction: ltr !important;
+  display: grid !important;
+  grid-template-columns: 108px minmax(0, 1fr) minmax(300px, 350px) !important;
+  grid-template-areas: 'rail main detail' !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+}
+
+.tree-visio-rail,
+.tree-visio-main,
+.tree-visio-detail {
+  min-height: 0 !important;
+  direction: rtl !important;
+  border-radius: 24px !important;
+}
+
+.tree-visio-rail {
+  grid-area: rail !important;
+  padding: 16px 10px !important;
+  display: grid !important;
+  grid-template-rows: auto repeat(3, 94px) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  background: linear-gradient(180deg, var(--primary-900), var(--primary-950)) !important;
+  color: #fff !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-rail button {
+  min-width: 0 !important;
+  min-height: 94px !important;
+  padding: 10px 6px !important;
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 8px !important;
+  border-radius: 18px !important;
+  line-height: 1.55 !important;
+}
+
+.tree-visio-main {
+  grid-area: main !important;
+  padding: clamp(18px, 1.8vw, 28px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-heading {
+  min-height: 86px !important;
+  padding-bottom: 14px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  align-items: start !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 14%, transparent) !important;
+}
+
+.tree-visio-heading h3 {
+  max-width: 16ch !important;
+  margin: 0 !important;
+  font-size: clamp(1.55rem, 2.4vw, 2.45rem) !important;
+  line-height: 1.22 !important;
+  overflow-wrap: normal !important;
+  text-wrap: balance !important;
+}
+
+.tree-visio-gallery {
+  min-height: 0 !important;
+  padding: 2px 2px 8px !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  grid-auto-rows: minmax(148px, 1fr) !important;
+  gap: 12px !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.tree-visio-template {
+  min-width: 0 !important;
+  min-height: 148px !important;
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-rows: 64px auto auto !important;
+  place-items: center !important;
+  text-align: center !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-template b,
+.tree-visio-template small {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.tree-visio-recent {
+  min-height: 112px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.tree-visio-detail {
+  grid-area: detail !important;
+  padding: clamp(18px, 1.6vw, 26px) !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(150px, 0.7fr) minmax(0, auto) auto auto auto !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+}
+
+.tree-visio-preview {
+  width: min(100%, 240px) !important;
+  aspect-ratio: 1.08 !important;
+  justify-self: center !important;
+}
+
+.tree-modal-shell {
+  width: min(98vw, 1840px) !important;
+  height: min(94dvh, 990px) !important;
+  max-height: 94dvh !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+.tree-modal-body {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (min-width: 1181px) {
+  .tree-modal-body .tree-workbench {
+    height: 100% !important;
+    min-height: 0 !important;
+    direction: ltr !important;
+    display: grid !important;
+    grid-template-columns: clamp(276px, 17vw, 328px) minmax(0, 1fr) clamp(276px, 17vw, 328px) !important;
+    grid-template-areas: 'browser canvas editor' !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-body .tree-node-browser {
+    grid-area: browser !important;
+  }
+
+  .tree-modal-body .tree-editor-panel {
+    grid-area: editor !important;
+  }
+
+  .tree-modal-body .tree-node-browser,
+  .tree-modal-body .tree-editor-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 10px !important;
+    overflow: auto !important;
+    direction: rtl !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-modal-body .tree-canvas-card {
+    grid-area: canvas !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: 54px minmax(0, 1fr) 54px !important;
+    grid-template-areas: 'view canvas tools' !important;
+    overflow: hidden !important;
+    border-radius: 24px !important;
+  }
+
+  .tree-modal-body .tree-canvas-card > .section-title {
+    display: none !important;
+  }
+
+  .tree-modal-body .tree-map-controls {
+    grid-area: view !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar {
+    grid-area: tools !important;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-modeling-toolbar {
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 100% !important;
+    padding: 8px 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 7px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border-radius: 0 !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-modal-body .tree-tool-group {
+    width: 42px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  .tree-modal-body .tree-map-controls button,
+  .tree-modal-body .tree-modeling-toolbar button,
+  .tree-modal-body .tree-map-controls > span {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 13px !important;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-body .tree-map-controls > span {
+    font-size: 0.64rem !important;
+    direction: ltr !important;
+  }
+
+  .tree-modal-body .tool-icon {
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.92rem !important;
+    line-height: 1 !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    opacity: 0.88 !important;
+    text-indent: 100vw !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus {
+    position: absolute !important;
+    inset-block-start: 78px !important;
+    inset-inline-end: 72px !important;
+    z-index: 4 !important;
+    width: min(390px, 36vw) !important;
+    min-width: 260px !important;
+    padding-inline: 14px !important;
+    text-indent: 0 !important;
+    opacity: 1 !important;
+    box-shadow: 0 18px 34px color-mix(in srgb, var(--primary-950) 14%, transparent) !important;
+  }
+
+  .tree-modal-body .tree-designer-frame {
+    grid-area: canvas !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    border-radius: 0 !important;
+    overscroll-behavior: contain !important;
+    cursor: grab !important;
+  }
+
+  .tree-modal-body .tree-designer-frame.model-panning {
+    cursor: grabbing !important;
+  }
+
+  .tree-modal-body .tree-page-stage {
+    min-width: 1400px !important;
+    min-height: 900px !important;
+  }
+
+  .shape-stencil-list,
+  .shape-palette-grid,
+  .tree-node-list {
+    scrollbar-gutter: stable !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .admin-workspace,
+  .admin-workspace:not(.admin-workspace-menu-collapsed),
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-workspace > .admin-menu {
+    position: fixed !important;
+    z-index: 40 !important;
+    inset-block-start: 82px !important;
+    inset-inline-end: 12px !important;
+    width: min(326px, calc(100vw - 24px)) !important;
+    max-height: calc(100dvh - 106px) !important;
+  }
+
+  .admin-workspace > .admin-menu.collapsed {
+    width: 64px !important;
+  }
+
+  .admin-content.faq-layout {
+    direction: rtl !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    grid-column: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+
+  .tree-visio-start {
+    grid-template-columns: 88px minmax(0, 1fr) !important;
+    grid-template-areas:
+      'rail main'
+      'rail detail' !important;
+  }
+
+  .tree-visio-detail {
+    min-height: 280px !important;
+  }
+
+  .tree-modal-shell {
+    width: min(100vw - 18px, 980px) !important;
+    height: calc(100dvh - 18px) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-shell main {
+    padding-inline: 10px !important;
+  }
+
+  .welcome,
+  .stats,
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar,
+  .admin-content.faq-layout > .editor-card form {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .stats article {
+    min-height: 104px !important;
+  }
+
+  .tree-visio-start {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'rail'
+      'main'
+      'detail' !important;
+  }
+
+  .tree-visio-rail {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: auto minmax(76px, auto) !important;
+  }
+
+  .tree-visio-rail strong {
+    grid-column: 1 / -1 !important;
+  }
+
+  .tree-visio-rail button {
+    min-height: 76px !important;
+  }
+}
+
+/* Hard grid ordering fixes for older high-specificity rules */
+.admin-workspace.admin-workspace-menu-collapsed,
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: minmax(0, 1fr) 66px !important;
+}
+
+.admin-workspace:not(.admin-workspace-menu-collapsed),
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: minmax(0, 1fr) clamp(304px, 20vw, 328px) !important;
+}
+
+.admin-workspace > .admin-content,
+.admin-workspace.faq-workspace > .admin-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout {
+  direction: ltr !important;
+  grid-auto-flow: column !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout > .table-card,
+.admin-workspace.faq-workspace > .admin-content.faq-layout > .editor-card {
+  grid-row: 1 !important;
+}
+
+.admin-workspace > .admin-menu,
+.admin-workspace.faq-workspace > .admin-menu {
+  width: 100% !important;
+  max-width: 100% !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+}
+
+/* Compact dashboard rhythm: keep the first viewport useful instead of scroll-heavy. */
+.admin-shell main {
+  padding: 18px 28px 32px !important;
+}
+
+.welcome {
+  min-height: 128px !important;
+  height: 128px !important;
+  padding: 24px 36px !important;
+  align-items: center !important;
+  gap: 24px !important;
+}
+
+.welcome h1 {
+  font-size: clamp(2.2rem, 3vw, 3.2rem) !important;
+  line-height: 1.12 !important;
+}
+
+.welcome p {
+  max-width: 760px !important;
+  margin-top: 6px !important;
+  line-height: 1.8 !important;
+}
+
+.welcome .refresh {
+  min-height: 48px !important;
+  padding: 0 22px !important;
+  white-space: nowrap !important;
+}
+
+.stats {
+  width: min(100% - 52px, calc(var(--admin-page-max, 1540px) - 84px)) !important;
+  margin: -14px auto 16px !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+}
+
+.stats article {
+  min-height: 112px !important;
+  height: 112px !important;
+  padding: 16px 22px !important;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(56px, auto) !important;
+  grid-template-rows: 1fr 1fr !important;
+  column-gap: 14px !important;
+  row-gap: 2px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.stats .stat-icon {
+  width: 52px !important;
+  height: 52px !important;
+  grid-row: 1 / 3 !important;
+}
+
+.stats span {
+  align-self: end !important;
+  white-space: nowrap !important;
+}
+
+.stats small {
+  align-self: start !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.stats strong {
+  grid-row: 1 / 3 !important;
+  align-self: center !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  font-size: clamp(1.9rem, 2.6vw, 2.6rem) !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout {
+  height: clamp(640px, calc(100dvh - 360px), 820px) !important;
+  min-height: 0 !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu {
+  height: clamp(640px, calc(100dvh - 360px), 820px) !important;
+  max-height: clamp(640px, calc(100dvh - 360px), 820px) !important;
+}
+
+.admin-content.faq-layout > .table-card,
+.admin-content.faq-layout > .editor-card {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.admin-workspace > .admin-content:not(.tree-layout) {
+  max-height: clamp(640px, calc(100dvh - 360px), 820px) !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.admin-workspace > .admin-content:not(.tree-layout):not(.faq-layout) {
+  height: auto !important;
+}
+
+.admin-workspace > .admin-menu:not(.collapsed) {
+  max-height: clamp(640px, calc(100dvh - 360px), 820px) !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.admin-menu.collapsed .admin-menu-list button em {
+  display: none !important;
+}
+
+.admin-menu.collapsed .admin-menu-list button {
+  overflow: visible !important;
+}
+
+@media (max-width: 760px) {
+  .admin-shell main {
+    padding: 12px 10px 18px !important;
+  }
+
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    width: calc(100vw - 20px) !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  .admin-workspace > .admin-content,
+  .admin-workspace.faq-workspace > .admin-content {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .admin-workspace > .admin-content:not(.tree-layout) {
+    max-height: calc(100dvh - 206px) !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu {
+    position: fixed !important;
+    inset-block-start: 74px !important;
+    inset-inline: 10px !important;
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - 92px) !important;
+    z-index: 60 !important;
+  }
+
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    left: auto !important;
+    right: 10px !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: 10px !important;
+    width: 58px !important;
+    max-width: 58px !important;
+    padding: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    grid-template-areas: none !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-list button {
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .admin-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 44px !important;
+    max-width: 44px !important;
+    min-width: 44px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: 44px !important;
+    grid-auto-flow: row !important;
+    grid-auto-columns: 44px !important;
+    grid-auto-rows: 44px !important;
+    grid-area: auto !important;
+    flex: 0 1 auto !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    margin: 0 !important;
+    padding: 0 !important;
+    grid-template-columns: 44px !important;
+    transform: none !important;
+    inset: auto !important;
+  }
+
+  .admin-workspace > .admin-menu.collapsed .admin-menu-list .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list .menu-icon {
+    width: 42px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+}
+
+/* Stable numeric rendering across menu, reports and dashboards. */
+.stats strong,
+.admin-menu-list em,
+.result-count,
+.pagination-summary,
+.pagination-actions span,
+.page-size select,
+.report-meta,
+.report-rating,
+.rating-overview strong,
+.rating-distribution em,
+.rating-distribution span,
+.latest-ratings b,
+.latest-ratings small,
+.performance-steps span,
+.chart-bars small,
+.share-list span,
+.service-test-result span {
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+.admin-menu-list em,
+.result-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  min-inline-size: 42px !important;
+  max-inline-size: 64px !important;
+  min-height: 34px !important;
+  padding-inline: 10px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.admin-menu:not(.collapsed) .admin-menu-list em {
+  place-self: center start !important;
+}
+
+.admin-menu.collapsed .admin-menu-list > button {
+  position: relative !important;
+}
+
+.admin-menu.collapsed .admin-menu-list button em {
+  position: absolute !important;
+  top: -7px !important;
+  right: -5px !important;
+  left: auto !important;
+  display: inline-flex !important;
+  min-inline-size: 22px !important;
+  max-inline-size: 34px !important;
+  min-height: 22px !important;
+  height: 22px !important;
+  padding: 0 5px !important;
+  border-radius: 999px !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+  color: var(--color-link) !important;
+  background: color-mix(in srgb, var(--surface-cool) 94%, #fff) !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 34%, transparent) !important;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--color-link) 16%, transparent) !important;
+  z-index: 3 !important;
+}
+
+.report-meta,
+.report-rating,
+.pagination-summary,
+.pagination-actions span {
+  min-width: max-content !important;
+}
+
+.rating-distribution em,
+.rating-distribution span,
+.performance-steps span,
+.share-list span {
+  min-inline-size: 34px !important;
+  text-align: center !important;
+}
+
+@media (max-width: 760px) {
+  .admin-menu.collapsed .admin-menu-list button em {
+    right: -4px !important;
+    top: -6px !important;
+    max-inline-size: 32px !important;
+  }
+
+  .result-count,
+  .pagination-summary,
+  .pagination-actions span {
+    min-inline-size: 0 !important;
+    max-inline-size: 100% !important;
+  }
+}
+
+/* Compact the shape library column in the full-screen tree editor. */
+@media (min-width: 1181px) {
+  .tree-modal-body .tree-workbench {
+    grid-template-columns: clamp(218px, 13.5vw, 258px) minmax(0, 1fr) clamp(270px, 16vw, 318px) !important;
+  }
+
+  .tree-modal-body .tree-node-browser {
+    padding: 8px !important;
+    gap: 7px !important;
+  }
+
+  .tree-modal-body .tree-node-browser > .section-title h3 {
+    font-size: clamp(1.05rem, 1.05vw, 1.28rem) !important;
+  }
+
+  .tree-modal-body .tree-shapes-library {
+    padding: 8px !important;
+    gap: 7px !important;
+    border-radius: 14px !important;
+  }
+
+  .tree-modal-body .shape-stencil-list {
+    max-height: 86px !important;
+    gap: 4px !important;
+  }
+
+  .tree-modal-body .shape-stencil-list button {
+    min-height: 30px !important;
+    padding: 4px 8px !important;
+  }
+
+  .tree-modal-body .shape-standard-note {
+    padding: 6px 8px !important;
+    font-size: 0.62rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .tree-modal-body .shape-palette-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .tree-modal-body .shape-palette-grid button {
+    min-height: 48px !important;
+    padding: 6px 7px !important;
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+  }
+
+  .tree-modal-body .shape-preview {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  .tree-modal-body .shape-preview.decision,
+  .tree-modal-body .shape-preview.diamond,
+  .tree-modal-body .shape-preview.bpmn-gateway-exclusive,
+  .tree-modal-body .shape-preview.bpmn-gateway-parallel,
+  .tree-modal-body .shape-preview.bpmn-gateway-inclusive,
+  .tree-modal-body .shape-preview.bpmn-gateway-complex,
+  .tree-modal-body .shape-preview.db-relationship,
+  .tree-modal-body .shape-preview.valve,
+  .tree-modal-body .shape-preview.control-valve,
+  .tree-modal-body .shape-preview.safety-valve,
+  .tree-modal-body .shape-preview.relief-valve,
+  .tree-modal-body .shape-preview.erd-relationship,
+  .tree-modal-body .shape-preview.erd-identifying-relationship {
+    transform: rotate(45deg) scale(0.9);
+  }
+
+  .tree-modal-body .shape-palette-grid b {
+    font-size: 0.68rem !important;
+  }
+
+  .tree-modal-body .shape-apply {
+    min-height: 34px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Keep the collapsed admin menu clean: icon-only, no overlapping numeric bubbles. */
+.admin-menu.collapsed .admin-menu-list em {
+  display: none !important;
+}
+
+.admin-menu.collapsed .admin-menu-list > button {
+  overflow: hidden !important;
+}
+
+/* Tree creation rail should react to hover/focus, not keep Home permanently active. */
+.tree-visio-rail button {
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease !important;
+}
+
+.tree-visio-rail button.active:not(:hover):not(:focus-visible) {
+  color: rgba(255, 255, 255, 0.78) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+
+.tree-visio-rail button:hover,
+.tree-visio-rail button:focus-visible {
+  color: #fff !important;
+  background: linear-gradient(135deg, #466fca, #203c8b) !important;
+  box-shadow: 0 12px 26px rgba(19, 42, 92, 0.28) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Persian typography pass: prevent large tree headings from clipping. */
+:host {
+  font-family: var(--font-family-base) !important;
+}
+
+.admin-dashboard,
+.admin-dashboard button,
+.admin-dashboard input,
+.admin-dashboard textarea,
+.admin-dashboard select {
+  font-family: var(--font-family-base) !important;
+}
+
+.tree-create-panel.tree-create-console .tree-visio-heading {
+  min-height: 132px !important;
+  align-items: start !important;
+  overflow: visible !important;
+  padding-block: 14px !important;
+}
+
+.tree-create-panel.tree-create-console .tree-visio-heading h3 {
+  max-width: 18ch !important;
+  display: block !important;
+  overflow: visible !important;
+  font-family: var(--font-family-base) !important;
+  font-size: clamp(1.55rem, 2.05vw, 2.25rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.52 !important;
+  letter-spacing: 0 !important;
+  padding-block: 2px 8px !important;
+  margin-block: 0 !important;
+  text-wrap: balance !important;
+  overflow-wrap: normal !important;
+}
+
+.tree-create-panel.tree-create-console .tree-visio-detail-copy h3,
+.tree-create-panel.tree-create-console .tree-create-title h2,
+.tree-create-panel.tree-create-console .tree-create-title h3 {
+  overflow: visible !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Hard stop for the tree creation title overlap shown in the start-template screen. */
+.admin-dashboard .tree-create-panel.tree-create-console .tree-visio-main {
+  grid-template-rows: minmax(148px, max-content) minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+}
+
+.admin-dashboard .tree-create-panel.tree-create-console .tree-visio-heading {
+  min-height: 148px !important;
+  height: auto !important;
+  padding: 18px 18px 20px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 72px !important;
+  align-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  overflow: hidden !important;
+}
+
+.admin-dashboard .tree-create-panel.tree-create-console .tree-visio-heading h3 {
+  max-width: 14ch !important;
+  min-height: 0 !important;
+  font-size: clamp(1.25rem, 1.65vw, 1.78rem) !important;
+  line-height: 1.65 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.admin-dashboard .tree-create-panel.tree-create-console .tree-visio-heading span {
+  width: 72px !important;
+  min-width: 72px !important;
+  height: 58px !important;
+  place-self: center !important;
+  white-space: normal !important;
+  line-height: 1.45 !important;
+}
+
+.admin-dashboard .tree-create-panel.tree-create-console .tree-visio-gallery {
+  margin-top: 0 !important;
+  position: relative !important;
+  z-index: 0 !important;
+}
+
+/* Final designer toolbar alignment: keep tools clear of the rulers. */
+@media (min-width: 1021px) {
+  .tree-modal-body .tree-canvas-card {
+    isolation: isolate !important;
+    grid-template-columns: 72px minmax(0, 1fr) 72px !important;
+    grid-template-areas: 'view canvas tools' !important;
+    gap: 0 !important;
+    background: #676d6b !important;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-modeling-toolbar {
+    position: relative !important;
+    z-index: 5 !important;
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 100% !important;
+    padding: 12px 9px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border-radius: 0 !important;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, #fff 82%, transparent), transparent 150px),
+      color-mix(in srgb, var(--surface) 92%, #dfe8e5) !important;
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--color-link) 16%, transparent),
+      0 0 0 1px rgba(255, 255, 255, 0.32) !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-modal-body .tree-map-controls {
+    grid-area: view !important;
+    border-inline-end: 1px solid rgba(24, 63, 58, 0.22) !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar {
+    grid-area: tools !important;
+    border-inline-start: 1px solid rgba(24, 63, 58, 0.22) !important;
+  }
+
+  .tree-modal-body .tree-designer-frame {
+    position: relative !important;
+    z-index: 1 !important;
+    grid-area: canvas !important;
+    min-width: 0 !important;
+    overflow: auto !important;
+    border-inline: 1px solid rgba(0, 0, 0, 0.22) !important;
+    background: #686d6b !important;
+  }
+
+  .tree-modal-body .tree-ruler-corner,
+  .tree-modal-body .tree-ruler-horizontal,
+  .tree-modal-body .tree-ruler-vertical {
+    position: sticky !important;
+    z-index: 3 !important;
+  }
+
+  .tree-modal-body .tree-ruler-corner {
+    inset-block-start: 0 !important;
+    inset-inline-start: 0 !important;
+  }
+
+  .tree-modal-body .tree-ruler-horizontal {
+    inset-block-start: 0 !important;
+  }
+
+  .tree-modal-body .tree-ruler-vertical {
+    inset-inline-start: 0 !important;
+  }
+
+  .tree-modal-body .tree-tool-group {
+    width: 50px !important;
+    min-width: 50px !important;
+    display: grid !important;
+    grid-template-columns: 50px !important;
+    gap: 8px !important;
+    place-items: center !important;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button,
+  .tree-modal-body .tree-map-controls > span,
+  .tree-modal-body .tree-modeling-toolbar > input {
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 46px !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  .tree-modal-body .tree-map-controls > span {
+    direction: ltr !important;
+    font-size: 0.68rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: var(--color-heading) !important;
+    background: color-mix(in srgb, var(--surface) 86%, #eef5f2) !important;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button {
+    color: var(--color-link) !important;
+    background:
+      radial-gradient(circle at 34% 22%, color-mix(in srgb, #fff 78%, transparent), transparent 48%),
+      color-mix(in srgb, var(--surface) 88%, #eaf2ef) !important;
+    border: 1px solid color-mix(in srgb, var(--color-link) 30%, transparent) !important;
+    box-shadow:
+      0 8px 18px rgba(18, 54, 48, 0.1),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.82) !important;
+  }
+
+  .tree-modal-body .tree-tool-group button.active,
+  .tree-modal-body .tree-map-controls button.active,
+  .tree-modal-body .tree-tool-group button:hover:not(:disabled),
+  .tree-modal-body .tree-map-controls button:hover:not(:disabled) {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--color-link), var(--primary-900)) !important;
+    border-color: color-mix(in srgb, var(--color-link) 66%, #fff) !important;
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--color-link) 26%, transparent) !important;
+  }
+
+  .tree-modal-body .tree-tool-group button:disabled,
+  .tree-modal-body .tree-map-controls button:disabled {
+    opacity: 0.48 !important;
+    color: color-mix(in srgb, var(--color-subtle) 65%, transparent) !important;
+    background: color-mix(in srgb, var(--surface) 76%, #eef2ef) !important;
+    box-shadow: none !important;
+  }
+
+  .tree-modal-body .tree-tool-group button .tool-icon,
+  .tree-modal-body .tree-map-controls button .tool-icon {
+    width: 100% !important;
+    height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.98rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: currentColor !important;
+  }
+
+  .tree-modal-body .tree-tool-group button[title='نمایش برچسب ارتباط‌ها'] .tool-icon {
+    font-size: 0.76rem !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input {
+    color: transparent !important;
+    caret-color: transparent !important;
+    text-indent: 0 !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input::placeholder {
+    color: transparent !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus {
+    position: absolute !important;
+    inset-block-start: 12px !important;
+    inset-inline-end: 86px !important;
+    z-index: 8 !important;
+    width: min(380px, 36vw) !important;
+    max-width: min(380px, 36vw) !important;
+    min-width: 260px !important;
+    height: 44px !important;
+    padding: 0 14px !important;
+    color: var(--color-heading) !important;
+    caret-color: var(--color-link) !important;
+    text-indent: 0 !important;
+    background: var(--surface) !important;
+    box-shadow: 0 18px 36px color-mix(in srgb, var(--primary-950) 18%, transparent) !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus::placeholder {
+    color: color-mix(in srgb, var(--color-subtle) 76%, transparent) !important;
+  }
+}
+
+:host-context([data-theme='dark']) .tree-modal-body .tree-map-controls,
+:host-context([data-theme='dark']) .tree-modal-body .tree-modeling-toolbar {
+  background:
+    linear-gradient(180deg, rgba(78, 169, 184, 0.16), transparent 160px), rgba(9, 36, 30, 0.94) !important;
+}
+
+/* Final FAQ workspace pass: stable columns, compact icon rail, and readable data table. */
+@media (min-width: 1181px) {
+  .admin-shell main {
+    padding: 18px clamp(24px, 3vw, 44px) 28px !important;
+  }
+
+  .welcome {
+    width: min(100%, var(--admin-page-max, 1540px)) !important;
+    min-height: 118px !important;
+    height: 118px !important;
+    margin-inline: auto !important;
+    padding: 22px 34px !important;
+    border-radius: 26px !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .welcome h1 {
+    font-size: clamp(2.1rem, 2.55vw, 3rem) !important;
+    line-height: 1.22 !important;
+    margin: 0 !important;
+    max-width: 18ch !important;
+  }
+
+  .welcome p {
+    margin-top: 8px !important;
+  }
+
+  .stats {
+    width: min(100%, calc(var(--admin-page-max, 1540px) - 42px)) !important;
+    margin: -10px auto 14px !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+  }
+
+  .stats article {
+    min-height: 104px !important;
+    height: 104px !important;
+    padding: 14px 22px !important;
+    grid-template-columns: 56px minmax(0, 1fr) minmax(54px, auto) !important;
+    align-items: center !important;
+    gap: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .stats .stat-icon {
+    width: 54px !important;
+    height: 54px !important;
+    place-self: center !important;
+  }
+
+  .stats article > span,
+  .stats article > small {
+    text-align: start !important;
+    justify-self: stretch !important;
+    min-width: 0 !important;
+  }
+
+  .stats article > span {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .stats article > small {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .stats strong {
+    place-self: center start !important;
+    min-width: 54px !important;
+    font-size: clamp(1.8rem, 2.35vw, 2.7rem) !important;
+    line-height: 1 !important;
+    text-align: start !important;
+  }
+
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    width: min(100%, calc(var(--admin-page-max, 1540px) - 22px)) !important;
+    min-height: 0 !important;
+    height: min(690px, calc(100dvh - 304px)) !important;
+    margin-inline: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 78px !important;
+    gap: 18px !important;
+    align-items: stretch !important;
+    direction: ltr !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-column: 1 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(500px, 1.12fr) minmax(420px, 0.88fr) !important;
+    gap: 18px !important;
+    overflow: visible !important;
+    direction: ltr !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    padding: 26px !important;
+    border-radius: 24px !important;
+    direction: rtl !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    grid-column: 1 !important;
+    display: grid !important;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    grid-column: 2 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .editor-card form {
+    min-height: 0 !important;
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: auto auto minmax(170px, 1fr) auto !important;
+    gap: 14px 16px !important;
+    align-content: stretch !important;
+  }
+
+  .admin-content.faq-layout > .editor-card .wide,
+  .admin-content.faq-layout > .editor-card .actions {
+    grid-column: 1 / -1 !important;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    min-height: 150px !important;
+    height: 100% !important;
+    max-height: none !important;
+    resize: vertical !important;
+  }
+
+  .admin-content.faq-layout > .editor-card .actions {
+    align-self: end !important;
+  }
+
+  .admin-content.faq-layout > .editor-card .actions button {
+    min-width: 176px !important;
+    height: 56px !important;
+    border-radius: 15px !important;
+  }
+
+  .admin-content.faq-layout .section-title {
+    min-height: 72px !important;
+    margin-bottom: 18px !important;
+    align-items: start !important;
+  }
+
+  .admin-content.faq-layout .section-title h2 {
+    font-size: clamp(1.55rem, 1.9vw, 2.25rem) !important;
+    line-height: 1.25 !important;
+  }
+
+  .admin-content.faq-layout .section-title .import {
+    min-width: 170px !important;
+    height: 54px !important;
+  }
+
+  .admin-content.faq-layout .table-tools {
+    grid-template-columns: minmax(0, 1.35fr) minmax(180px, 0.8fr) 110px !important;
+    gap: 12px !important;
+    align-items: end !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-content.faq-layout .table-tools label,
+  .admin-content.faq-layout .table-tools .search-field {
+    min-width: 0 !important;
+  }
+
+  .admin-content.faq-layout .selection-toolbar {
+    min-height: 58px !important;
+    grid-template-columns: minmax(0, 1fr) auto auto auto !important;
+    gap: 12px !important;
+    align-items: center !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    border-radius: 20px !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .admin-content.faq-layout table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+  }
+
+  .admin-content.faq-layout .select-col-width {
+    width: 48px !important;
+  }
+
+  .admin-content.faq-layout .error-col-width {
+    width: auto !important;
+  }
+
+  .admin-content.faq-layout .category-col-width {
+    width: 110px !important;
+  }
+
+  .admin-content.faq-layout .date-col-width {
+    width: 142px !important;
+  }
+
+  .admin-content.faq-layout .actions-col-width {
+    width: 72px !important;
+  }
+
+  .admin-content.faq-layout th,
+  .admin-content.faq-layout td {
+    height: 66px !important;
+    padding: 10px 12px !important;
+    vertical-align: middle !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout td b {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    line-height: 1.55 !important;
+  }
+
+  .admin-content.faq-layout .actions-cell {
+    text-align: center !important;
+  }
+
+  .admin-content.faq-layout .details-trigger {
+    width: 46px !important;
+    height: 46px !important;
+    margin-inline: auto !important;
+  }
+
+  .admin-content.faq-layout .pagination-bar {
+    min-height: 62px !important;
+    margin-top: 14px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto auto !important;
+    gap: 14px !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout .pagination-summary,
+  .admin-content.faq-layout .page-size,
+  .admin-content.faq-layout .pagination-actions {
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    grid-column: 2 !important;
+    width: 78px !important;
+    min-width: 78px !important;
+    max-width: 78px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 10px !important;
+    border-radius: 26px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.78), transparent 160px),
+      color-mix(in srgb, var(--surface) 82%, #d9f0ed) !important;
+    box-shadow:
+      0 22px 46px color-mix(in srgb, var(--primary-950) 12%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--color-link) 18%, transparent) !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle {
+    position: static !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 52px !important;
+    gap: 10px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: 52px !important;
+    place-items: center !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list .menu-icon {
+    width: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list em {
+    position: absolute !important;
+    inset-block-start: -6px !important;
+    inset-inline-start: -6px !important;
+    min-width: 22px !important;
+    height: 22px !important;
+    padding: 0 6px !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0.66rem !important;
+    line-height: 1 !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, var(--surface) 94%, #dff1f4) !important;
+    border: 1px solid color-mix(in srgb, var(--color-link) 25%, transparent) !important;
+    box-shadow: 0 8px 16px rgba(18, 54, 48, 0.1) !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed),
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+:host-context([data-theme='dark']) .admin-workspace.faq-workspace > .admin-menu,
+:host-context([data-theme='dark']) .admin-workspace.faq-workspace > .admin-menu.collapsed {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(42, 157, 178, 0.2), transparent 150px), rgba(8, 42, 35, 0.86) !important;
+  box-shadow:
+    0 22px 46px rgba(0, 0, 0, 0.32),
+    inset 0 0 0 1px rgba(108, 202, 193, 0.16) !important;
 }

@@ -21,7 +21,7 @@
   height: 100dvh;
   overflow: hidden;
   color: var(--assistant-ink);
-  font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-feature-settings: 'ss01';
 }
 
@@ -1215,7 +1215,7 @@ main.assistant-layout {
   flex: 1 1 auto;
   margin: 0;
   color: #172b4d;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1.55rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -1229,7 +1229,7 @@ main.assistant-layout {
 .sahand-editor-footer button {
   border: 0;
   border-radius: 4px;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
 }
 
 .configure-fields {
@@ -1263,7 +1263,7 @@ main.assistant-layout {
 .sahand-required {
   margin: 0 0 22px;
   color: #42526e;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: 0.94rem;
 }
 
@@ -1288,7 +1288,7 @@ main.assistant-layout {
   align-items: center;
   justify-content: flex-end;
   color: #5e6c84;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.4;
@@ -1307,7 +1307,7 @@ main.assistant-layout {
   border-radius: 3px;
   color: #172b4d;
   background: #f4f5f7;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
 }
 
 .sahand-modal input {
@@ -1476,7 +1476,7 @@ main.assistant-layout {
   border-style: dashed;
   color: #091e42;
   background: #fff;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: 1rem;
 }
 
@@ -1656,7 +1656,7 @@ main.assistant-layout {
   align-items: center;
   gap: 5px;
   color: #172b4d;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-base);
 }
 
 .create-button {

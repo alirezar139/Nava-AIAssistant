@@ -1,5 +1,28 @@
+@font-face {
+  font-family: 'IRANSansLocal';
+  src:
+    url('/assets/fonts/IRANSans.ttf') format('truetype'),
+    local('IRANSansX'),
+    local('IRANSansXFaNum'),
+    local('IRANSans'),
+    local('IRANSansWeb'),
+    local('IRANSansWebFaNum'),
+    local('IRANSansWeb(FaNum)'),
+    local('Iran Sans'),
+    local('IranSans');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+  --font-family-base:
+    'IRANSansLocal', 'IRANSansX', 'IRANSansXFaNum', 'IRANSans', 'IRANSansWeb', 'IRANSansWebFaNum',
+    'Iran Sans', 'IranSans', 'Vazirmatn', 'Vazir', 'Segoe UI', Tahoma, Arial, sans-serif;
+  --font-family-numeric:
+    'IRANSansLocal', 'IRANSansXFaNum', 'IRANSansWebFaNum', 'IRANSansX', 'IRANSans', 'Segoe UI', Tahoma, Arial,
+    sans-serif;
+  font-family: var(--font-family-base);
   color: #18322e;
   background: #f4f6f3;
   font-synthesis: none;
@@ -362,6 +385,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-family-base);
   color: var(--color-body);
   background:
     radial-gradient(
@@ -397,11 +421,25 @@ button,
 input,
 textarea,
 select {
+  font-family: var(--font-family-base);
+  font-weight: 500;
   transition:
     color 0.28s ease,
     background-color 0.28s ease,
     border-color 0.28s ease;
 }
+
+html,
+body,
+app-root,
+:where(app-root *) {
+  font-family: var(--font-family-base) !important;
+}
+
+:where(app-root *::before, app-root *::after) {
+  font-family: inherit;
+}
+
 button,
 input,
 textarea,
@@ -473,4 +511,72 @@ button:disabled {
   transition-duration: 0.01ms !important;
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
+}
+
+/* Product-wide layout guardrails */
+html,
+body {
+  overflow-x: hidden;
+}
+
+:where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  small,
+  strong,
+  b,
+  em,
+  label,
+  button,
+  a,
+  td,
+  th,
+  input,
+  textarea,
+  select
+) {
+  font-family: var(--font-family-base);
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  font-weight: 800;
+  line-height: 1.45;
+  overflow: visible;
+  text-wrap: balance;
+}
+
+:where(p, li, label, input, textarea, select, button) {
+  line-height: 1.75;
+}
+
+:where(.stats strong, .admin-menu-list em, .result-count, .pagination-summary, .report-meta, .report-rating) {
+  font-family: var(--font-family-numeric);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+:where(h1, h2, h3, h4, p, span, small, strong, b, em, label, button, a, td, th, input, textarea, select) {
+  min-width: 0;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+:where(button, input, textarea, select) {
+  line-height: 1.55;
+}
+
+:where(button) {
+  text-align: center;
+}
+
+:where(img, svg, canvas, video) {
+  max-width: 100%;
 }

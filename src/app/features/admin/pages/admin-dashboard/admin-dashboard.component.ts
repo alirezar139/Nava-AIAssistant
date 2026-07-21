@@ -143,6 +143,7 @@ export class AdminDashboardComponent implements OnInit {
   externalServices: ExternalServiceRecord[] = [];
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
+  adminMenuCollapsed = true;
   editingId: number | null = null;
   editingServiceId: number | null = null;
   detailFaq: FaqRecord | null = null;
@@ -773,7 +774,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get treeZoomPercent(): string {
-    return `${Math.round(this.treeZoom * 100).toLocaleString('fa-IR')}٪`;
+    return `${this.formatCount(Math.round(this.treeZoom * 100))}٪`;
   }
 
   get filteredTreeNodes(): TroubleshootingTreeNode[] {
@@ -1049,7 +1050,7 @@ export class AdminDashboardComponent implements OnInit {
 
   get ratingDistribution(): PerformanceShareItem[] {
     const counts = [5, 4, 3, 2, 1].map((score) => ({
-      label: `${score.toLocaleString('fa-IR')} ستاره`,
+      label: `${this.formatCount(score)} ستاره`,
       count: this.ratedDiagnosticCases.filter((item) => item.rating === score).length
     }));
     const maxCount = Math.max(1, ...counts.map((item) => item.count));
@@ -1069,20 +1070,20 @@ export class AdminDashboardComponent implements OnInit {
     return [
       {
         label: 'کل گفت‌وگوها',
-        value: this.conversations.length.toLocaleString('fa-IR'),
-        hint: `${this.uniqueUserCount.toLocaleString('fa-IR')} کاربر درگیر`,
+        value: this.formatCount(this.conversations.length),
+        hint: `${this.formatCount(this.uniqueUserCount)} کاربر درگیر`,
         tone: 'primary'
       },
       {
         label: 'پوشش FAQ',
         value: this.formatPercent(this.faqCoverageRate),
-        hint: `${this.matchedConversationCount.toLocaleString('fa-IR')} پاسخ از FAQ`,
+        hint: `${this.formatCount(this.matchedConversationCount)} پاسخ از FAQ`,
         tone: this.faqCoverageRate >= 70 ? 'success' : this.faqCoverageRate >= 40 ? 'warning' : 'danger'
       },
       {
         label: 'پرونده‌های پشتیبانی',
-        value: this.diagnosticCases.length.toLocaleString('fa-IR'),
-        hint: `${this.formatPercent(this.ticketCreationRate)} تبدیل، ${this.highSeverityCount.toLocaleString('fa-IR')} مورد با اهمیت بالا`,
+        value: this.formatCount(this.diagnosticCases.length),
+        hint: `${this.formatPercent(this.ticketCreationRate)} تبدیل، ${this.formatCount(this.highSeverityCount)} مورد با اهمیت بالا`,
         tone: this.highSeverityCount ? 'warning' : 'neutral'
       },
       {
@@ -1090,7 +1091,7 @@ export class AdminDashboardComponent implements OnInit {
         value: this.externalTicketAttemptCount
           ? this.formatPercent(this.externalTicketSuccessRate)
           : 'بدون ارسال',
-        hint: `${this.externalTicketSubmittedCount.toLocaleString('fa-IR')} موفق، ${this.externalTicketFailedCount.toLocaleString('fa-IR')} ناموفق`,
+        hint: `${this.formatCount(this.externalTicketSubmittedCount)} موفق، ${this.formatCount(this.externalTicketFailedCount)} ناموفق`,
         tone: this.externalTicketFailedCount
           ? 'danger'
           : this.externalTicketSubmittedCount
@@ -1099,14 +1100,14 @@ export class AdminDashboardComponent implements OnInit {
       },
       {
         label: 'سرویس‌های فعال',
-        value: this.activeServiceCount.toLocaleString('fa-IR'),
-        hint: `از ${this.externalServices.length.toLocaleString('fa-IR')} سرویس تعریف‌شده`,
+        value: this.formatCount(this.activeServiceCount),
+        hint: `از ${this.formatCount(this.externalServices.length)} سرویس تعریف‌شده`,
         tone: this.activeServiceCount ? 'success' : 'warning'
       },
       {
         label: 'دسته‌های دانش',
-        value: this.knowledgeCategoryCount.toLocaleString('fa-IR'),
-        hint: `${this.faqs.length.toLocaleString('fa-IR')} FAQ ثبت‌شده`,
+        value: this.formatCount(this.knowledgeCategoryCount),
+        hint: `${this.formatCount(this.faqs.length)} FAQ ثبت‌شده`,
         tone: this.knowledgeCategoryCount ? 'primary' : 'warning'
       },
       {
@@ -1114,7 +1115,7 @@ export class AdminDashboardComponent implements OnInit {
         value: this.ratedDiagnosticCases.length
           ? this.formatRating(this.averageSupportRating)
           : 'بدون امتیاز',
-        hint: `${this.ratedDiagnosticCases.length.toLocaleString('fa-IR')} ارزیابی ثبت‌شده`,
+        hint: `${this.formatCount(this.ratedDiagnosticCases.length)} ارزیابی ثبت‌شده`,
         tone: this.ratedDiagnosticCases.length
           ? this.averageSupportRating >= 4
             ? 'success'
@@ -1341,10 +1342,10 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (this.pendingConfirmation?.type === 'bulk-delete') {
       const count = this.pendingConfirmation.ids.length;
-      return `${count.toLocaleString('fa-IR')} FAQ انتخاب‌شده برای همیشه حذف شوند؟`;
+      return `${this.formatCount(count)} FAQ انتخاب‌شده برای همیشه حذف شوند؟`;
     }
     const count = this.pendingConfirmation?.payload.length ?? 0;
-    return `${count.toLocaleString('fa-IR')} ردیف جایگزین FAQهای فعلی شوند؟`;
+    return `${this.formatCount(count)} ردیف جایگزین FAQهای فعلی شوند؟`;
   }
 
   constructor(
@@ -1366,8 +1367,23 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   setActiveTab(tab: AdminTab): void {
-    this.activeTab = tab;
-    this.loadActiveTabData();
+    if (this.activeTab !== tab) {
+      this.activeTab = tab;
+      this.loadActiveTabData();
+    }
+    this.collapseAdminMenu();
+  }
+
+  toggleAdminMenu(): void {
+    this.adminMenuCollapsed = !this.adminMenuCollapsed;
+    this.changeDetector.markForCheck();
+  }
+
+  collapseAdminMenu(): void {
+    if (!this.adminMenuCollapsed) {
+      this.adminMenuCollapsed = true;
+      this.changeDetector.markForCheck();
+    }
   }
 
   setTreeManagementView(view: TreeManagementView): void {
@@ -1379,6 +1395,7 @@ export class AdminDashboardComponent implements OnInit {
     const shouldLoadTree = this.activeTab !== 'tree';
     this.treeManagementView = view;
     this.activeTab = 'tree';
+    this.collapseAdminMenu();
     if (shouldLoadTree) {
       this.loadActiveTabData();
       return;
@@ -1613,14 +1630,24 @@ export class AdminDashboardComponent implements OnInit {
     this.reportCurrentPage = 1;
   }
 
-  formatPercent(value: number): string {
-    return `${Math.round(value).toLocaleString('fa-IR')}٪`;
+  formatCount(value: unknown, fallback = '۰'): string {
+    const numericValue = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(numericValue)) return fallback;
+    return Math.max(0, numericValue).toLocaleString('fa-IR');
   }
 
-  formatRating(value: number): string {
-    return `${value.toLocaleString('fa-IR', {
+  formatPercent(value: unknown): string {
+    const numericValue = typeof value === 'number' ? value : Number(value);
+    const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+    return `${Math.round(Math.max(0, safeValue)).toLocaleString('fa-IR')}٪`;
+  }
+
+  formatRating(value: unknown): string {
+    const numericValue = typeof value === 'number' ? value : Number(value);
+    const safeValue = Number.isFinite(numericValue) ? Math.max(0, Math.min(5, numericValue)) : 0;
+    return `${safeValue.toLocaleString('fa-IR', {
       maximumFractionDigits: 1,
-      minimumFractionDigits: value % 1 ? 1 : 0
+      minimumFractionDigits: safeValue % 1 ? 1 : 0
     })} از ۵`;
   }
 
@@ -1881,7 +1908,7 @@ export class AdminDashboardComponent implements OnInit {
       this.treeImportWarnings = result.warnings;
       this.notifications.success(
         'درختواره آماده شد',
-        `${result.tree.nodes.length.toLocaleString('fa-IR')} نود و ${result.tree.edges.length.toLocaleString('fa-IR')} ارتباط از ${result.sourceFormat} خوانده شد.`
+        `${this.formatCount(result.tree.nodes.length)} نود و ${this.formatCount(result.tree.edges.length)} ارتباط از ${result.sourceFormat} خوانده شد.`
       );
       this.changeDetector.markForCheck();
       this.centerSelectedTreeNode();
@@ -2003,7 +2030,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   zoomTree(delta: number): void {
-    this.treeZoom = Math.max(0.5, Math.min(2.4, Number((this.treeZoom + delta).toFixed(2))));
+    this.treeZoom = Math.max(0.2, Math.min(2.4, Number((this.treeZoom + delta).toFixed(2))));
     this.changeDetector.markForCheck();
   }
 
@@ -2070,9 +2097,9 @@ export class AdminDashboardComponent implements OnInit {
   fitTreeToViewport(): void {
     const viewport = this.treeViewport?.nativeElement;
     if (!viewport || !this.treeCanvasWidth || !this.treeCanvasHeight) return;
-    const horizontalZoom = Math.max(0.35, (viewport.clientWidth - 80) / this.treeCanvasWidth);
-    const verticalZoom = Math.max(0.35, (viewport.clientHeight - 80) / this.treeCanvasHeight);
-    this.treeZoom = Math.min(1.35, Math.max(0.35, Number(Math.min(horizontalZoom, verticalZoom).toFixed(2))));
+    const horizontalZoom = Math.max(0.2, (viewport.clientWidth - 80) / this.treeCanvasWidth);
+    const verticalZoom = Math.max(0.2, (viewport.clientHeight - 80) / this.treeCanvasHeight);
+    this.treeZoom = Math.min(1.25, Math.max(0.2, Number(Math.min(horizontalZoom, verticalZoom).toFixed(2))));
     viewport.scrollTo({ left: 0, top: 0, behavior: this.theme.motionEnabled ? 'smooth' : 'auto' });
     this.changeDetector.markForCheck();
   }
@@ -2197,7 +2224,7 @@ export class AdminDashboardComponent implements OnInit {
     node.y = Math.max(0, point.y + this.treePreviewOriginY - this.treeDragState.offsetY);
     this.markTreeDirty();
     const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
-    if (now - this.treeLastDragPreviewAt < 16) return;
+    if (now - this.treeLastDragPreviewAt < 32) return;
     this.treeLastDragPreviewAt = now;
     this.rebuildTreePreview();
     this.changeDetector.markForCheck();
@@ -2538,7 +2565,7 @@ export class AdminDashboardComponent implements OnInit {
           confirmation.ids.forEach((id) => this.selectedFaqIds.delete(id));
           this.notifications.success(
             'FAQها حذف شدند',
-            `${count.toLocaleString('fa-IR')} مورد از پایگاه دانش حذف شد.`
+            `${this.formatCount(count)} مورد از پایگاه دانش حذف شد.`
           );
           this.loadFaqs();
         },
@@ -2552,7 +2579,7 @@ export class AdminDashboardComponent implements OnInit {
         this.selectedFaqIds.clear();
         this.notifications.success(
           'ورود فایل تکمیل شد',
-          `${count.toLocaleString('fa-IR')} FAQ با موفقیت وارد پایگاه دانش شد.`
+          `${this.formatCount(count)} FAQ با موفقیت وارد پایگاه دانش شد.`
         );
         this.loadFaqs();
       },
@@ -2576,9 +2603,8 @@ export class AdminDashboardComponent implements OnInit {
       : shouldNormalizeLayout
         ? this.layoutTree(tree)
         : tree;
-    if (shouldNormalizeLayout) {
-      this.treeManualLayout = false;
-    }
+    const hasReliableCoordinates = normalizedTree.nodes.every((node) => this.getTreeCoordinatePair(node));
+    this.treeManualLayout = hasReliableCoordinates && !shouldNormalizeLayout;
     this.troubleshootingTree = this.cloneTroubleshootingTree(normalizedTree);
 
     const currentSelectionExists = this.treeNodes.some((node) => node.id === this.treeSelectedNodeId);
@@ -2631,10 +2657,10 @@ export class AdminDashboardComponent implements OnInit {
 
     const xs = coordinates.map((point) => point.x);
     const ys = coordinates.map((point) => point.y);
-    const maxAbsoluteCoordinate = Math.max(...xs.map(Math.abs), ...ys.map(Math.abs));
     const horizontalSpread = Math.max(...xs) - Math.min(...xs);
     const verticalSpread = Math.max(...ys) - Math.min(...ys);
-    return maxAbsoluteCoordinate < 1000 && horizontalSpread < 1000 && verticalSpread < 1000;
+    const maxAbsoluteCoordinate = Math.max(...xs.map(Math.abs), ...ys.map(Math.abs));
+    return maxAbsoluteCoordinate <= 1000 && horizontalSpread <= 1000 && verticalSpread <= 1000;
   }
 
   private scaleCompactExternalTreeCoordinates(tree: TroubleshootingTree): TroubleshootingTree {
