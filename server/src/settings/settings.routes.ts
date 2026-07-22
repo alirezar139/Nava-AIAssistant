@@ -11,6 +11,7 @@ const ticketServiceSettingsSchema = z.object({
   url: z.string().trim().max(1000).optional().default(''),
   authorizationHeader: z.string().trim().max(4000).optional().default(''),
   authHeader: z.string().trim().max(4000).optional().default(''),
+  raiseOnBehalfOf: z.string().trim().max(200).optional().default(''),
   serviceDeskId: z.string().trim().max(100).optional().default(''),
   requestTypeId: z.string().trim().max(100).optional().default(''),
   requestTypeMappings: z
@@ -37,6 +38,7 @@ settingsRouter.get('/ticket-service', requireAuth(['admin']), async (_request, r
     url: stored.url || config.sahandTicketUrl,
     authorizationHeader: stored.authorizationHeader || config.sahandAuthorization,
     authHeader: stored.authHeader || config.sahandAuthHeader,
+    raiseOnBehalfOf: stored.raiseOnBehalfOf || config.sahandRaiseOnBehalfOf,
     serviceDeskId: stored.serviceDeskId || config.sahandServiceDeskId,
     requestTypeId: stored.requestTypeId || config.sahandRequestTypeId,
     requestTypeMappings: stored.requestTypeMappings,
@@ -56,6 +58,7 @@ settingsRouter.put('/ticket-service', requireAuth(['admin']), async (request, re
     url: result.data.url,
     authorizationHeader: result.data.authorizationHeader,
     authHeader: result.data.authHeader,
+    raiseOnBehalfOf: result.data.raiseOnBehalfOf,
     serviceDeskId: result.data.serviceDeskId,
     requestTypeId: result.data.requestTypeId,
     requestTypeMappings: result.data.requestTypeMappings,

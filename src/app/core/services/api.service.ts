@@ -57,6 +57,7 @@ export interface TicketServiceSettings {
   url: string;
   authorizationHeader: string;
   authHeader: string;
+  raiseOnBehalfOf: string;
   serviceDeskId: string;
   requestTypeId: string;
   requestTypeMappings: TicketRequestTypeMapping[];
@@ -72,7 +73,13 @@ export interface TicketRequestTypeMapping {
 
 export type TicketServiceSettingsPayload = Pick<
   TicketServiceSettings,
-  'url' | 'authorizationHeader' | 'authHeader' | 'serviceDeskId' | 'requestTypeId' | 'requestTypeMappings'
+  | 'url'
+  | 'authorizationHeader'
+  | 'authHeader'
+  | 'raiseOnBehalfOf'
+  | 'serviceDeskId'
+  | 'requestTypeId'
+  | 'requestTypeMappings'
 >;
 
 @Injectable({ providedIn: 'root' })

@@ -78,12 +78,7 @@
       [class.faq-workspace]="activeTab === 'faqs'"
       [class.admin-workspace-menu-collapsed]="adminMenuCollapsed"
     >
-      <aside
-        class="admin-menu"
-        [class.collapsed]="adminMenuCollapsed"
-        aria-label="منوی پنل مدیریت"
-        (mouseleave)="collapseAdminMenu()"
-      >
+      <aside class="admin-menu" [class.collapsed]="adminMenuCollapsed" aria-label="منوی پنل مدیریت">
         <button
           type="button"
           class="admin-menu-toggle"
@@ -2809,7 +2804,7 @@
                 dir="ltr"
                 [(ngModel)]="ticketServiceForm.url"
                 name="ticketServiceUrl"
-                placeholder="https://sahand.dbaco.ir/rest/servicedeskapi/request"
+                placeholder="https://sahand.bonyanava.ir/rest/servicedeskapi/request"
               />
             </label>
 
@@ -2832,6 +2827,17 @@
                 name="ticketServiceAuth"
                 rows="3"
               ></textarea>
+            </label>
+
+            <label>
+              ثبت به نمایندگی از
+              <input
+                dir="ltr"
+                [(ngModel)]="ticketServiceForm.raiseOnBehalfOf"
+                name="ticketRaiseOnBehalfOf"
+                placeholder="z.malmir"
+              />
+              <small>اگر خالی باشد، نام کاربری واردشده در سامانه برای سهند ارسال می‌شود.</small>
             </label>
 
             <label>

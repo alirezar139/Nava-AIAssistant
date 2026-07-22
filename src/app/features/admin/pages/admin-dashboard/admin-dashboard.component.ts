@@ -143,7 +143,7 @@ export class AdminDashboardComponent implements OnInit {
   externalServices: ExternalServiceRecord[] = [];
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
-  adminMenuCollapsed = true;
+  adminMenuCollapsed = false;
   editingId: number | null = null;
   editingServiceId: number | null = null;
   detailFaq: FaqRecord | null = null;
@@ -3535,6 +3535,7 @@ export class AdminDashboardComponent implements OnInit {
       url: '',
       authorizationHeader: '',
       authHeader: '',
+      raiseOnBehalfOf: '',
       serviceDeskId: '',
       requestTypeId: '',
       requestTypeMappings: []
@@ -3591,6 +3592,7 @@ export class AdminDashboardComponent implements OnInit {
       url: settings.url,
       authorizationHeader: settings.authorizationHeader,
       authHeader: settings.authHeader,
+      raiseOnBehalfOf: settings.raiseOnBehalfOf,
       serviceDeskId: settings.serviceDeskId,
       requestTypeId: settings.requestTypeId,
       requestTypeMappings: settings.requestTypeMappings

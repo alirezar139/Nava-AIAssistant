@@ -72,6 +72,10 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
   const { serviceDeskId, requestTypeId } = await resolveTicketRoute(payload.metadata['treeNodeId'] ?? '');
   const authorization = buildAuthorizationHeader(ticketServiceSettings?.authorizationHeader ?? '');
   const authHeader = ticketServiceSettings?.authHeader.trim() || config.sahandAuthHeader.trim();
+  const raiseOnBehalfOf =
+    ticketServiceSettings?.raiseOnBehalfOf.trim() ||
+    config.sahandRaiseOnBehalfOf.trim() ||
+    payload.requester.username;
 
   if (!ticketUrl || !serviceDeskId || !requestTypeId || !authorization) {
     return { status: 'not_configured', ticketId: null, trackingId: null };
@@ -84,9 +88,7 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
       summary: payload.title,
       description: payload.description
     },
-    ...(config.sahandRaiseOnBehalfOf.trim()
-      ? { raiseOnBehalfOf: config.sahandRaiseOnBehalfOf.trim() }
-      : { raiseOnBehalfOf: payload.requester.username })
+    raiseOnBehalfOf
   };
 
   try {

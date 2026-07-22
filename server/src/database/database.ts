@@ -68,6 +68,7 @@ export interface TicketServiceSettingsRecord {
   url: string;
   authorizationHeader: string;
   authHeader: string;
+  raiseOnBehalfOf: string;
   serviceDeskId: string;
   requestTypeId: string;
   requestTypeMappings: TicketRequestTypeMappingRecord[];
@@ -184,6 +185,7 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
       url: '',
       authorizationHeader: '',
       authHeader: '',
+      raiseOnBehalfOf: '',
       serviceDeskId: '',
       requestTypeId: '',
       requestTypeMappings: [],
@@ -209,6 +211,7 @@ database.data.settings ??= {
     url: '',
     authorizationHeader: '',
     authHeader: '',
+    raiseOnBehalfOf: '',
     serviceDeskId: '',
     requestTypeId: '',
     requestTypeMappings: [],
@@ -219,6 +222,7 @@ database.data.settings.ticketService ??= {
   url: '',
   authorizationHeader: '',
   authHeader: '',
+  raiseOnBehalfOf: '',
   serviceDeskId: '',
   requestTypeId: '',
   requestTypeMappings: [],
@@ -227,6 +231,7 @@ database.data.settings.ticketService ??= {
 database.data.settings.ticketService.url ??= '';
 database.data.settings.ticketService.authorizationHeader ??= '';
 database.data.settings.ticketService.authHeader ??= '';
+database.data.settings.ticketService.raiseOnBehalfOf ??= '';
 database.data.settings.ticketService.serviceDeskId ??= '';
 database.data.settings.ticketService.requestTypeId ??= '';
 database.data.settings.ticketService.requestTypeMappings ??= [];
