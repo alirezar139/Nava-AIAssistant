@@ -1,4 +1,18 @@
 @font-face {
+  font-family: 'BKoodakLocal';
+  src:
+    url('/assets/fonts/BKoodak-Bold.ttf') format('truetype'),
+    local('BKoodak'),
+    local('B Koodak'),
+    local('B Koodak Bold'),
+    local('B Koodak Outline'),
+    local('B Koodak P30download');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'IRANSansLocal';
   src:
     url('/assets/fonts/IRANSans.ttf') format('truetype'),
@@ -17,11 +31,12 @@
 
 :root {
   --font-family-base:
-    'IRANSansLocal', 'IRANSansX', 'IRANSansXFaNum', 'IRANSans', 'IRANSansWeb', 'IRANSansWebFaNum',
-    'Iran Sans', 'IranSans', 'Vazirmatn', 'Vazir', 'Segoe UI', Tahoma, Arial, sans-serif;
+    'BKoodakLocal', 'BKoodak', 'B Koodak', 'B Koodak Bold', 'IRANSansLocal', 'IRANSansX', 'IRANSansXFaNum',
+    'IRANSans', 'IRANSansWeb', 'IRANSansWebFaNum', 'Iran Sans', 'IranSans', 'Vazirmatn', 'Vazir', 'Segoe UI',
+    Tahoma, Arial, sans-serif;
   --font-family-numeric:
-    'IRANSansLocal', 'IRANSansXFaNum', 'IRANSansWebFaNum', 'IRANSansX', 'IRANSans', 'Segoe UI', Tahoma, Arial,
-    sans-serif;
+    'BKoodakLocal', 'BKoodak', 'B Koodak', 'B Koodak Bold', 'IRANSansLocal', 'IRANSansXFaNum',
+    'IRANSansWebFaNum', 'IRANSansX', 'IRANSans', 'Segoe UI', Tahoma, Arial, sans-serif;
   font-family: var(--font-family-base);
   color: #18322e;
   background: #f4f6f3;

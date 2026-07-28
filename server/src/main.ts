@@ -6,6 +6,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { authRouter } from './auth/auth.routes.js';
 import { conversationRouter } from './conversations/conversation.routes.js';
+import { dashboardRouter } from './dashboard/dashboard.routes.js';
 import { diagnosticRouter } from './diagnostics/diagnostic.routes.js';
 import { faqRouter } from './faqs/faq.routes.js';
 import { settingsRouter } from './settings/settings.routes.js';
@@ -39,6 +40,7 @@ app.get('/api/health', async (_request, response) => {
 app.use('/api/auth', authRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/conversations', conversationRouter);
+app.use('/api/dashboard', dashboardRouter);
 app.use('/api/diagnostics', diagnosticRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/services', serviceCatalogRouter);

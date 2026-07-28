@@ -11,7 +11,30 @@ const conversationRatingSchema = z.object({
   rating: z.number().int().min(1).max(5)
 });
 
-conversationRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+const conversationListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().trim().optional()
+});
+
+conversationRouter.get('/', requireAuth(['admin']), async (request, response) => {
+  const query = conversationListQuerySchema.safeParse(request.query);
+  if (!query.success) {
+    sendError(response, 400, 'CONVERSATION_QUERY_INVALID', 'پارامترهای صفحه‌بندی گزارش‌ها معتبر نیستند.');
+    return;
+  }
+
+  if (query.data.page || query.data.pageSize || query.data.search) {
+    response.json(
+      await conversationRepository.listWithUsersPage({
+        page: query.data.page ?? 1,
+        pageSize: query.data.pageSize ?? 10,
+        search: query.data.search
+      })
+    );
+    return;
+  }
+
   response.json(await conversationRepository.listWithUsers());
 });
 

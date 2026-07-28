@@ -57,12 +57,26 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     externalTicketId: null,
     externalTrackingId: null,
     externalTicketStatus: null,
+    similarIssueCount: 1,
+    similarUserCount: 1,
+    duplicateOfDiagnosticId: null,
+    duplicateNotice: '',
     rating: null,
     ratingComment: '',
     ratingSubmittedAt: null,
     createdAt: new Date().toISOString(),
     analyzedAt: null
   };
+
+  const similarCases = await diagnosticRepository.findSimilar(diagnosticCase);
+  const similarUserIds = new Set([diagnosticCase.userId, ...similarCases.map((item) => item.userId)]);
+  diagnosticCase.similarIssueCount = similarCases.length + 1;
+  diagnosticCase.similarUserCount = similarUserIds.size;
+  diagnosticCase.duplicateOfDiagnosticId = similarCases[0]?.id ?? null;
+  if (diagnosticCase.similarIssueCount >= 3 && diagnosticCase.similarUserCount >= 2) {
+    diagnosticCase.duplicateNotice =
+      'تیکت شما به همراه چند مورد مشابه ثبت شده و در حال پیگیری است. مراتب پیگیری خدمت شما اطلاع داده خواهد شد.';
+  }
 
   const ticketResult = await submitSahandTicket({
     title: result.data.title.slice(0, 120),
@@ -139,11 +153,20 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
 
   item.status = severity === 'high' ? 'escalated' : 'analyzed';
   item.severity = severity;
-  item.analysisSummary = 'تحلیل اولیه پرونده با سناریوی اعلام‌شده و شواهد کاربر انجام شد.';
-  item.recommendation =
-    severity === 'high'
-      ? 'پرونده باید همراه با سریال/شناسه و شواهد برای تیم تحلیل داده یا پشتیبانی سطح دو ارسال شود.'
-      : 'ابتدا اعتبار دسترسی، مسیر انجام عملیات و داده ورودی کنترل شود. در صورت تکرار، پرونده به تحلیل داده ارجاع شود.';
+  if (item.duplicateNotice) {
+    item.status = 'escalated';
+    item.analysisSummary = `این مورد با ${item.similarIssueCount ?? 1} گزارش مشابه از ${
+      item.similarUserCount ?? 1
+    } کاربر هم‌پوشانی دارد.`;
+    item.recommendation =
+      'پرونده به عنوان مورد پرتکرار تجمیع شود و نتیجه پیگیری برای کاربران مرتبط اطلاع‌رسانی شود.';
+  } else {
+    item.analysisSummary = 'تحلیل اولیه پرونده با سناریوی اعلام‌شده و شواهد کاربر انجام شد.';
+    item.recommendation =
+      severity === 'high'
+        ? 'پرونده باید همراه با سریال/شناسه و شواهد برای تیم تحلیل داده یا پشتیبانی سطح دو ارسال شود.'
+        : 'ابتدا اعتبار دسترسی، مسیر انجام عملیات و داده ورودی کنترل شود. در صورت تکرار، پرونده به تحلیل داده ارجاع شود.';
+  }
   item.analyzedAt = new Date().toISOString();
 
   await diagnosticRepository.save(item);

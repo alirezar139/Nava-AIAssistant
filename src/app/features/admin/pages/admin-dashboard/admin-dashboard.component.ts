@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -19,9 +20,11 @@ import {
 } from '../../../../core/models/troubleshooting-tree.models';
 import {
   ApiService,
+  DashboardMetricLogRecord,
   ExternalServiceExecutionResult,
   ExternalServiceMethod,
   ExternalServicePayload,
+  ExternalServiceRequestPayload,
   ExternalServiceRecord,
   FaqPayload,
   TicketRequestTypeMapping,
@@ -50,6 +53,7 @@ type TreeManagementView = 'overview' | 'create' | 'files' | 'editor' | 'versions
 type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
 type TreeCanvasTool = 'select' | 'pan' | 'add-node' | 'connect';
+type DeviceViewportMode = 'mobile' | 'tablet' | 'desktop';
 
 interface PerformanceMetric {
   label: string;
@@ -138,12 +142,19 @@ export class AdminDashboardComponent implements OnInit {
   @ViewChild('treeCanvas') treeCanvas?: ElementRef<HTMLDivElement>;
 
   faqs: FaqRecord[] = [];
+  faqTotalCount = 0;
+  faqCategories: string[] = [];
   conversations: ConversationRecord[] = [];
+  conversationTotalCount = 0;
   diagnosticCases: DiagnosticCaseRecord[] = [];
   externalServices: ExternalServiceRecord[] = [];
+  dashboardMetricLogs: DashboardMetricLogRecord[] = [];
+  dashboardMetricLogMap = new Map<DashboardMetricLogRecord['key'], DashboardMetricLogRecord>();
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
   adminMenuCollapsed = false;
+  readonly appVersion = '0.1.0';
+  deviceViewportMode: DeviceViewportMode = 'desktop';
   editingId: number | null = null;
   editingServiceId: number | null = null;
   detailFaq: FaqRecord | null = null;
@@ -151,6 +162,7 @@ export class AdminDashboardComponent implements OnInit {
   editForm: FaqPayload = this.emptyForm();
   serviceForm: ExternalServicePayload = this.emptyExternalServiceForm();
   serviceTestResult: ExternalServiceExecutionResult | null = null;
+  serviceDraftTesting = false;
   serviceTestingId: number | null = null;
   ticketServiceSettings: TicketServiceSettings | null = null;
   ticketServiceForm: TicketServiceSettingsPayload = this.emptyTicketServiceForm();
@@ -162,6 +174,8 @@ export class AdminDashboardComponent implements OnInit {
   diagnosticCasesLoading = false;
   externalServicesLoaded = false;
   externalServicesLoading = false;
+  dashboardMetricsLoaded = false;
+  dashboardMetricsLoading = false;
   ticketServiceSettingsLoaded = false;
   ticketServiceSettingsLoading = false;
   saving = false;
@@ -179,6 +193,7 @@ export class AdminDashboardComponent implements OnInit {
   servicePageSize = 4;
   readonly servicePageSizeOptions = [4, 8, 12, 24];
   readonly serviceMethods: ExternalServiceMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+  readonly serviceBodyPlaceholder = '{ "username": "{{username}}", "fullName": "{{fullName}}" }';
   readonly treeAcceptedFormats =
     '.json,.csv,.tsv,.txt,.dot,.gv,.mmd,.mermaid,.puml,.plantuml,.xml,.drawio,.mdl,.cat,.vsdx';
   pendingConfirmation: PendingConfirmation | null = null;
@@ -996,6 +1011,42 @@ export class AdminDashboardComponent implements OnInit {
     return this.externalServices.filter((service) => service.isActive).length;
   }
 
+  get loggedFaqCount(): number {
+    return this.metricCount('activeFaqs', this.faqTotalCount);
+  }
+
+  get loggedConversationCount(): number {
+    return this.metricCount('userRequests', this.conversationTotalCount);
+  }
+
+  get loggedUniqueUserCount(): number {
+    return this.metricCount('engagedUsers', this.uniqueUserCount);
+  }
+
+  get loggedFaqCoverageRate(): number {
+    return this.metricCount('faqCoverageRate', this.faqCoverageRate);
+  }
+
+  get loggedDiagnosticCaseCount(): number {
+    return this.metricCount('diagnosticCases', this.diagnosticCases.length);
+  }
+
+  get loggedTreeNodeCount(): number {
+    return this.metricCount('treeNodes', this.treeNodeCount);
+  }
+
+  get loggedTreeEdgeCount(): number {
+    return this.metricCount('treeEdges', this.treeEdgeCount);
+  }
+
+  get loggedActiveServiceCount(): number {
+    return this.metricCount('activeServices', this.activeServiceCount);
+  }
+
+  get loggedSahandSubmittedCount(): number {
+    return this.metricCount('sahandSubmitted', this.externalTicketSubmittedCount);
+  }
+
   get matchedConversationCount(): number {
     return this.conversations.filter((item) => item.matchedFaqId !== null).length;
   }
@@ -1070,19 +1121,19 @@ export class AdminDashboardComponent implements OnInit {
     return [
       {
         label: 'کل گفت‌وگوها',
-        value: this.formatCount(this.conversations.length),
-        hint: `${this.formatCount(this.uniqueUserCount)} کاربر درگیر`,
+        value: this.formatCount(this.loggedConversationCount),
+        hint: `${this.formatCount(this.loggedUniqueUserCount)} کاربر درگیر`,
         tone: 'primary'
       },
       {
         label: 'پوشش FAQ',
-        value: this.formatPercent(this.faqCoverageRate),
+        value: this.formatPercent(this.loggedFaqCoverageRate),
         hint: `${this.formatCount(this.matchedConversationCount)} پاسخ از FAQ`,
-        tone: this.faqCoverageRate >= 70 ? 'success' : this.faqCoverageRate >= 40 ? 'warning' : 'danger'
+        tone: this.loggedFaqCoverageRate >= 70 ? 'success' : this.loggedFaqCoverageRate >= 40 ? 'warning' : 'danger'
       },
       {
         label: 'پرونده‌های پشتیبانی',
-        value: this.formatCount(this.diagnosticCases.length),
+        value: this.formatCount(this.loggedDiagnosticCaseCount),
         hint: `${this.formatPercent(this.ticketCreationRate)} تبدیل، ${this.formatCount(this.highSeverityCount)} مورد با اهمیت بالا`,
         tone: this.highSeverityCount ? 'warning' : 'neutral'
       },
@@ -1091,18 +1142,18 @@ export class AdminDashboardComponent implements OnInit {
         value: this.externalTicketAttemptCount
           ? this.formatPercent(this.externalTicketSuccessRate)
           : 'بدون ارسال',
-        hint: `${this.formatCount(this.externalTicketSubmittedCount)} موفق، ${this.formatCount(this.externalTicketFailedCount)} ناموفق`,
+        hint: `${this.formatCount(this.loggedSahandSubmittedCount)} موفق، ${this.formatCount(this.externalTicketFailedCount)} ناموفق`,
         tone: this.externalTicketFailedCount
           ? 'danger'
-          : this.externalTicketSubmittedCount
+          : this.loggedSahandSubmittedCount
             ? 'success'
             : 'neutral'
       },
       {
         label: 'سرویس‌های فعال',
-        value: this.formatCount(this.activeServiceCount),
+        value: this.formatCount(this.loggedActiveServiceCount),
         hint: `از ${this.formatCount(this.externalServices.length)} سرویس تعریف‌شده`,
-        tone: this.activeServiceCount ? 'success' : 'warning'
+        tone: this.loggedActiveServiceCount ? 'success' : 'warning'
       },
       {
         label: 'دسته‌های دانش',
@@ -1221,33 +1272,19 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get categories(): string[] {
-    return [...new Set(this.faqs.map((faq) => faq.category).filter(Boolean))].sort();
+    return this.faqCategories;
   }
 
   get filteredFaqs(): FaqRecord[] {
-    const query = this.searchTerm.trim().toLocaleLowerCase('fa');
-    return this.faqs.filter((faq) => {
-      const matchesCategory = !this.categoryFilter || faq.category === this.categoryFilter;
-      const searchable = `${faq.question} ${faq.answer} ${faq.category} ${faq.keywords}`.toLocaleLowerCase(
-        'fa'
-      );
-      return matchesCategory && (!query || searchable.includes(query));
-    });
+    return this.faqs;
   }
 
   get filteredConversations(): ConversationRecord[] {
-    const query = this.reportSearchTerm.trim().toLocaleLowerCase('fa');
-    if (!query) return this.conversations;
-    return this.conversations.filter((item) =>
-      `${item.userFullName} ${item.username} ${item.question} ${item.answer}`
-        .toLocaleLowerCase('fa')
-        .includes(query)
-    );
+    return this.conversations;
   }
 
   get displayedConversations(): ConversationRecord[] {
-    const start = (this.reportActivePage - 1) * this.reportPageSize;
-    return this.filteredConversations.slice(start, start + this.reportPageSize);
+    return this.conversations;
   }
 
   get reportActivePage(): number {
@@ -1255,15 +1292,15 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get reportTotalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredConversations.length / this.reportPageSize));
+    return Math.max(1, Math.ceil(this.conversationTotalCount / this.reportPageSize));
   }
 
   get reportPaginationStart(): number {
-    return this.filteredConversations.length ? (this.reportActivePage - 1) * this.reportPageSize + 1 : 0;
+    return this.conversationTotalCount ? (this.reportActivePage - 1) * this.reportPageSize + 1 : 0;
   }
 
   get reportPaginationEnd(): number {
-    return Math.min(this.reportActivePage * this.reportPageSize, this.filteredConversations.length);
+    return Math.min(this.reportActivePage * this.reportPageSize, this.conversationTotalCount);
   }
 
   get serviceTotalPages(): number {
@@ -1288,20 +1325,19 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.filteredFaqs.length / this.pageSize));
+    return Math.max(1, Math.ceil(this.faqTotalCount / this.pageSize));
   }
 
   get paginatedFaqs(): FaqRecord[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredFaqs.slice(start, start + this.pageSize);
+    return this.faqs;
   }
 
   get paginationStart(): number {
-    return this.filteredFaqs.length ? (this.currentPage - 1) * this.pageSize + 1 : 0;
+    return this.faqTotalCount ? (this.currentPage - 1) * this.pageSize + 1 : 0;
   }
 
   get paginationEnd(): number {
-    return Math.min(this.currentPage * this.pageSize, this.filteredFaqs.length);
+    return Math.min(this.currentPage * this.pageSize, this.faqTotalCount);
   }
 
   getFaqDescription(faq: FaqRecord): string {
@@ -1317,13 +1353,11 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   get allFilteredSelected(): boolean {
-    return (
-      Boolean(this.filteredFaqs.length) && this.filteredFaqs.every((faq) => this.selectedFaqIds.has(faq.id))
-    );
+    return Boolean(this.faqs.length) && this.faqs.every((faq) => this.selectedFaqIds.has(faq.id));
   }
 
   get someFilteredSelected(): boolean {
-    return this.filteredFaqs.some((faq) => this.selectedFaqIds.has(faq.id));
+    return this.faqs.some((faq) => this.selectedFaqIds.has(faq.id));
   }
 
   get confirmationTitle(): string {
@@ -1363,7 +1397,13 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.updateDeviceViewportMode();
     this.refresh();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.updateDeviceViewportMode();
   }
 
   setActiveTab(tab: AdminTab): void {
@@ -1386,6 +1426,18 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  get deviceViewportLabel(): string {
+    if (this.deviceViewportMode === 'mobile') return 'نمایش موبایل';
+    if (this.deviceViewportMode === 'tablet') return 'نمایش تبلت';
+    return 'نمایش دسکتاپ';
+  }
+
+  get deviceViewportHint(): string {
+    if (this.deviceViewportMode === 'mobile') return 'چیدمان فشرده';
+    if (this.deviceViewportMode === 'tablet') return 'چیدمان میانی';
+    return 'چیدمان کامل';
+  }
+
   setTreeManagementView(view: TreeManagementView): void {
     this.treeManagementView = view;
     this.changeDetector.markForCheck();
@@ -1404,6 +1456,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   refresh(showNotification = false): void {
+    this.loadDashboardMetricLogs(true);
     this.loadFaqs(showNotification, true);
     if (this.activeTab !== 'faqs') {
       this.loadActiveTabData(true);
@@ -1432,8 +1485,38 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  private loadDashboardMetricLogs(force = false): void {
+    if (this.dashboardMetricsLoading || (this.dashboardMetricsLoaded && !force)) return;
+    this.dashboardMetricsLoading = true;
+    this.api.getDashboardMetricLogs().subscribe({
+      next: (logs) => {
+        this.dashboardMetricLogs = [...logs].sort((a, b) => a.order - b.order);
+        this.dashboardMetricLogMap = new Map(
+          this.dashboardMetricLogs.map((metric) => [metric.key, metric])
+        );
+        this.dashboardMetricsLoaded = true;
+        this.dashboardMetricsLoading = false;
+        this.changeDetector.markForCheck();
+      },
+      error: () => {
+        this.dashboardMetricsLoading = false;
+        this.changeDetector.markForCheck();
+      }
+    });
+  }
+
+  private updateDeviceViewportMode(): void {
+    if (typeof window === 'undefined') return;
+    const width = window.innerWidth;
+    const nextMode: DeviceViewportMode = width < 640 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop';
+    if (this.deviceViewportMode !== nextMode) {
+      this.deviceViewportMode = nextMode;
+      this.changeDetector.markForCheck();
+    }
+  }
+
   private loadPerformanceData(force = false): void {
-    this.loadConversations(force);
+    this.loadAllConversationsForMetrics(force);
     this.loadDiagnosticCases(force);
     this.loadExternalServices(force);
   }
@@ -1441,9 +1524,35 @@ export class AdminDashboardComponent implements OnInit {
   private loadConversations(force = false): void {
     if (this.conversationsLoading || (this.conversationsLoaded && !force)) return;
     this.conversationsLoading = true;
+    this.api
+      .getConversationPage({
+        page: this.reportCurrentPage,
+        pageSize: this.reportPageSize,
+        search: this.reportSearchTerm.trim()
+      })
+      .subscribe({
+        next: (result) => {
+          this.conversations = result.items;
+          this.conversationTotalCount = result.total;
+          this.reportCurrentPage = Math.min(this.reportCurrentPage, this.reportTotalPages);
+          this.conversationsLoaded = true;
+          this.conversationsLoading = false;
+          this.changeDetector.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.conversationsLoading = false;
+          this.showError(error, 'دریافت گزارش‌های کاربران ممکن نبود.');
+        }
+      });
+  }
+
+  private loadAllConversationsForMetrics(force = false): void {
+    if (this.conversationsLoading || (this.conversationsLoaded && !force)) return;
+    this.conversationsLoading = true;
     this.api.getConversations().subscribe({
       next: (conversations) => {
         this.conversations = conversations;
+        this.conversationTotalCount = conversations.length;
         this.reportCurrentPage = Math.min(this.reportCurrentPage, this.reportTotalPages);
         this.conversationsLoaded = true;
         this.conversationsLoading = false;
@@ -1534,6 +1643,7 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.resetForm();
         this.notifications.success('FAQ اضافه شد', 'پرسش و پاسخ جدید به پایگاه دانش اضافه شد.');
+        this.loadDashboardMetricLogs(true);
         this.loadFaqs();
       },
       error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
@@ -1592,7 +1702,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   toggleAllFiltered(checked: boolean): void {
-    this.filteredFaqs.forEach((faq) => {
+    this.faqs.forEach((faq) => {
       if (checked) {
         this.selectedFaqIds.add(faq.id);
       } else {
@@ -1613,21 +1723,27 @@ export class AdminDashboardComponent implements OnInit {
 
   onFaqFiltersChanged(): void {
     this.currentPage = 1;
+    this.loadFaqs();
   }
 
   clearFaqSearch(): void {
     this.searchTerm = '';
     this.currentPage = 1;
+    this.loadFaqs();
   }
 
   clearReportSearch(): void {
     this.reportSearchTerm = '';
     this.reportCurrentPage = 1;
+    this.conversationsLoaded = false;
+    this.loadConversations(true);
   }
 
   setReportSearchTerm(value: string): void {
     this.reportSearchTerm = value;
     this.reportCurrentPage = 1;
+    this.conversationsLoaded = false;
+    this.loadConversations(true);
   }
 
   formatCount(value: unknown, fallback = '۰'): string {
@@ -1677,6 +1793,7 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.notifications.success('سرویس ذخیره شد', 'کاتالوگ سرویس‌های سامانه به‌روزرسانی شد.');
         this.resetServiceForm();
+        this.loadDashboardMetricLogs(true);
         this.loadExternalServices(true);
       },
       error: (error: unknown) => this.showError(error, 'ذخیره سرویس انجام نشد.')
@@ -1727,6 +1844,40 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  sendServiceDraftRequest(): void {
+    if (!this.serviceForm.url.trim()) {
+      this.notifications.error('آدرس سرویس خالی است', 'برای ارسال تست، آدرس سرویس را وارد کنید.');
+      return;
+    }
+
+    const payload: ExternalServiceRequestPayload = {
+      method: this.serviceForm.method,
+      url: this.serviceForm.url,
+      authorizationHeader: this.serviceForm.authorizationHeader,
+      authHeader: this.serviceForm.authHeader,
+      headersText: this.serviceForm.headersText,
+      bodyTemplate: this.serviceForm.bodyTemplate
+    };
+
+    this.serviceDraftTesting = true;
+    this.serviceTestResult = null;
+    this.api.testExternalServiceDraft(payload).subscribe({
+      next: (result) => {
+        this.serviceDraftTesting = false;
+        this.serviceTestResult = result;
+        this.notifications.info(
+          result.ok ? 'درخواست موفق بود' : 'درخواست ناموفق بود',
+          result.ok ? `کد پاسخ: ${result.status}` : result.errorMessage || `کد پاسخ: ${result.status}`
+        );
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.serviceDraftTesting = false;
+        this.showError(error, 'ارسال درخواست سرویس انجام نشد.');
+      }
+    });
+  }
+
   saveTicketServiceSettings(): void {
     const requestTypeMappings = this.parseRequestTypeMappings(this.requestTypeMappingsText);
     if (!requestTypeMappings) {
@@ -1758,19 +1909,25 @@ export class AdminDashboardComponent implements OnInit {
   setPageSize(size: number): void {
     this.pageSize = size;
     this.currentPage = 1;
+    this.loadFaqs();
   }
 
   goToPage(page: number): void {
     this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+    this.loadFaqs();
   }
 
   setReportPageSize(size: number): void {
     this.reportPageSize = size;
     this.reportCurrentPage = 1;
+    this.conversationsLoaded = false;
+    this.loadConversations(true);
   }
 
   goToReportPage(page: number): void {
     this.reportCurrentPage = Math.min(Math.max(page, 1), this.reportTotalPages);
+    this.conversationsLoaded = false;
+    this.loadConversations(true);
   }
 
   setServicePageSize(size: number): void {
@@ -2519,6 +2676,7 @@ export class AdminDashboardComponent implements OnInit {
         if (options.closeAfterSave) {
           this.closeTreeWorkspace();
         }
+        this.loadDashboardMetricLogs(true);
         this.changeDetector.markForCheck();
       },
       error: (error: unknown) => this.showError(error, 'ذخیره درختواره انجام نشد.')
@@ -2541,6 +2699,7 @@ export class AdminDashboardComponent implements OnInit {
         next: () => {
           this.selectedFaqIds.delete(confirmation.faq.id);
           this.notifications.success('FAQ حذف شد', 'مورد انتخاب\u200cشده از پایگاه دانش حذف شد.');
+          this.loadDashboardMetricLogs(true);
           this.loadFaqs();
         },
         error: (error: unknown) => this.showError(error, 'حذف FAQ انجام نشد.')
@@ -2552,6 +2711,8 @@ export class AdminDashboardComponent implements OnInit {
       this.api.deleteExternalService(confirmation.service.id).subscribe({
         next: () => {
           this.notifications.success('سرویس حذف شد', 'سرویس انتخاب‌شده از کاتالوگ حذف شد.');
+          this.saving = false;
+          this.loadDashboardMetricLogs(true);
           this.loadExternalServices(true);
         },
         error: (error: unknown) => this.showError(error, 'حذف سرویس انجام نشد.')
@@ -2567,6 +2728,7 @@ export class AdminDashboardComponent implements OnInit {
             'FAQها حذف شدند',
             `${this.formatCount(count)} مورد از پایگاه دانش حذف شد.`
           );
+          this.loadDashboardMetricLogs(true);
           this.loadFaqs();
         },
         error: (error: unknown) => this.showError(error, 'حذف گروهی FAQ انجام نشد.')
@@ -2581,6 +2743,7 @@ export class AdminDashboardComponent implements OnInit {
           'ورود فایل تکمیل شد',
           `${this.formatCount(count)} FAQ با موفقیت وارد پایگاه دانش شد.`
         );
+        this.loadDashboardMetricLogs(true);
         this.loadFaqs();
       },
       error: (error: unknown) => this.showError(error, 'ورود اطلاعات فایل انجام نشد.')
@@ -3507,9 +3670,43 @@ export class AdminDashboardComponent implements OnInit {
     if (useGlobalLoading) {
       this.loading = true;
     }
+    this.api
+      .getFaqPage({
+        page: this.currentPage,
+        pageSize: this.pageSize,
+        search: this.searchTerm.trim(),
+        category: this.categoryFilter
+      })
+      .subscribe({
+        next: (result) => {
+          this.faqs = result.items;
+          this.faqTotalCount = result.total;
+          this.faqCategories = result.categories;
+          const existingIds = new Set(result.items.map((faq) => faq.id));
+          this.selectedFaqIds.forEach((id) => {
+            if (!existingIds.has(id)) this.selectedFaqIds.delete(id);
+          });
+          this.normalizePaginationPage();
+          this.loading = false;
+          this.saving = false;
+          if (showNotification) {
+            this.notifications.info('اطلاعات به‌روز شد', 'آخرین FAQهای پایگاه دانش دریافت شدند.');
+          }
+          this.changeDetector.markForCheck();
+        },
+        error: (error: unknown) => this.showError(error, 'به‌روزرسانی فهرست انجام نشد.')
+      });
+  }
+
+  private loadAllFaqsForLegacyUsage(showNotification = false, useGlobalLoading = false): void {
+    if (useGlobalLoading) {
+      this.loading = true;
+    }
     this.api.getFaqs().subscribe({
       next: (faqs) => {
         this.faqs = faqs;
+        this.faqTotalCount = faqs.length;
+        this.faqCategories = [...new Set(faqs.map((faq) => faq.category).filter(Boolean))].sort();
         const existingIds = new Set(faqs.map((faq) => faq.id));
         this.selectedFaqIds.forEach((id) => {
           if (!existingIds.has(id)) this.selectedFaqIds.delete(id);
@@ -3563,6 +3760,7 @@ export class AdminDashboardComponent implements OnInit {
     this.editingServiceId = null;
     this.serviceForm = this.emptyExternalServiceForm();
     this.serviceTestResult = null;
+    this.serviceDraftTesting = false;
     this.settingsSaving = false;
   }
 
@@ -3606,6 +3804,12 @@ export class AdminDashboardComponent implements OnInit {
 
   private calculateRate(count: number, total: number): number {
     return total > 0 ? Math.min(100, Math.max(0, (count / total) * 100)) : 0;
+  }
+
+  private metricCount(key: DashboardMetricLogRecord['key'], fallback = 0): number {
+    const value = this.dashboardMetricLogMap.get(key)?.value ?? fallback;
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
   }
 
   private getLastDays(count: number): Array<{ key: string; label: string }> {

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "db:arango:init": "tsx src/database/bootstrap-arango.ts",
+    "db:arango:migrate": "tsx src/database/migrate-arango.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js"
   },

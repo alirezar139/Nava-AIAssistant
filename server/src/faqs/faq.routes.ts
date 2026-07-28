@@ -11,9 +11,34 @@ const faqSchema = z.object({
   keywords: z.string().trim().default('')
 });
 
+const faqListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().max(100).optional(),
+  search: z.string().trim().optional(),
+  category: z.string().trim().optional()
+});
+
 export const faqRouter = Router();
 
-faqRouter.get('/', requireAuth(), async (_request, response) => {
+faqRouter.get('/', requireAuth(), async (request, response) => {
+  const query = faqListQuerySchema.safeParse(request.query);
+  if (!query.success) {
+    sendError(response, 400, 'FAQ_QUERY_INVALID', 'پارامترهای صفحه‌بندی FAQ معتبر نیستند.');
+    return;
+  }
+
+  if (query.data.page || query.data.pageSize || query.data.search || query.data.category) {
+    response.json(
+      await faqRepository.listPage({
+        page: query.data.page ?? 1,
+        pageSize: query.data.pageSize ?? 10,
+        search: query.data.search,
+        category: query.data.category
+      })
+    );
+    return;
+  }
+
   response.json(await faqRepository.list());
 });
 

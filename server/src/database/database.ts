@@ -57,6 +57,10 @@ export interface DiagnosticCaseRecord {
   externalTicketId?: string | null;
   externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
+  similarIssueCount?: number;
+  similarUserCount?: number;
+  duplicateOfDiagnosticId?: number | null;
+  duplicateNotice?: string;
   rating?: number | null;
   ratingComment?: string;
   ratingSubmittedAt?: string | null;
@@ -147,6 +151,26 @@ export interface TroubleshootingTreeVersionRecord extends TroubleshootingTreeRec
   activatedAt: string | null;
 }
 
+export type DashboardMetricKey =
+  | 'activeFaqs'
+  | 'userRequests'
+  | 'engagedUsers'
+  | 'faqCoverageRate'
+  | 'diagnosticCases'
+  | 'treeNodes'
+  | 'treeEdges'
+  | 'activeServices'
+  | 'sahandSubmitted';
+
+export interface DashboardMetricLogRecord {
+  key: DashboardMetricKey;
+  label: string;
+  value: number;
+  order: number;
+  source: string;
+  updatedAt: string;
+}
+
 export interface AppSettingsRecord {
   ticketService: TicketServiceSettingsRecord;
 }
@@ -161,6 +185,7 @@ interface DatabaseSchema {
   troubleshootingTree: TroubleshootingTreeRecord | null;
   troubleshootingTrees: Record<string, TroubleshootingTreeRecord>;
   troubleshootingTreeVersions: Record<string, TroubleshootingTreeVersionRecord>;
+  dashboardMetricLogs: DashboardMetricLogRecord[];
   settings: AppSettingsRecord;
 }
 
@@ -180,6 +205,7 @@ export const database = await JSONFilePreset<DatabaseSchema>(resolve(dataDirecto
   troubleshootingTree: null,
   troubleshootingTrees: {},
   troubleshootingTreeVersions: {},
+  dashboardMetricLogs: [],
   settings: {
     ticketService: {
       url: '',
@@ -201,6 +227,7 @@ database.data.externalServices ??= [];
 database.data.troubleshootingTree ??= null;
 database.data.troubleshootingTrees ??= {};
 database.data.troubleshootingTreeVersions ??= {};
+database.data.dashboardMetricLogs ??= [];
 if (database.data.troubleshootingTree && !database.data.troubleshootingTrees['default']) {
   database.data.troubleshootingTrees['default'] = database.data.troubleshootingTree;
 }
@@ -241,6 +268,10 @@ database.data.conversations.forEach((item) => {
   item.ratingSubmittedAt ??= null;
 });
 database.data.diagnosticCases.forEach((item) => {
+  item.similarIssueCount ??= 1;
+  item.similarUserCount ??= 1;
+  item.duplicateOfDiagnosticId ??= null;
+  item.duplicateNotice ??= '';
   item.rating ??= null;
   item.ratingComment ??= '';
   item.ratingSubmittedAt ??= null;

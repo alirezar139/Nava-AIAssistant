@@ -250,12 +250,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     if (this.ticketAutomationState === 'preparing') return 'در حال آماده‌سازی اطلاعات';
     if (this.ticketAutomationState === 'submitting') return 'در حال ارسال به سهند';
     if (this.ticketAutomationState === 'analyzing') return 'ثبت شد؛ تحلیل اولیه در حال انجام است';
+    if (this.ticketAutomationState === 'submitted' && this.diagnosticCase?.duplicateNotice)
+      return 'مورد مشابه در حال پیگیری است';
     if (this.ticketAutomationState === 'submitted') return 'تیکت ثبت و آماده پیگیری است';
     if (this.ticketAutomationState === 'failed') return 'ثبت تیکت انجام نشد';
     return 'در انتظار مسیر پشتیبانی';
   }
 
   get ticketStatusHint(): string {
+    if (this.ticketAutomationState === 'submitted' && this.diagnosticCase?.duplicateNotice)
+      return this.diagnosticCase.duplicateNotice;
     if (this.ticketAutomationState === 'submitted') return this.formatTicketReceiptText();
     if (this.ticketAutomationState === 'failed')
       return this.ticketErrorMessage || 'خطای ثبت تیکت را بررسی کنید.';
@@ -368,9 +372,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
               analyzedCase.externalTicketId,
               analyzedCase.externalTrackingId
             );
+            const submittedText = analyzedCase.duplicateNotice || 'تیکت ثبت شد و تحلیل اولیه انجام شد.';
             this.messages.push({
               role: 'assistant',
-              text: `تیکت ثبت شد و تحلیل اولیه انجام شد.\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${analyzedCase.analysisSummary ?? ''}\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
+              text: `${submittedText}\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${
+                analyzedCase.analysisSummary ?? ''
+              }\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
             });
             this.ticketSubmitting = false;
             this.ratingMessage = '';

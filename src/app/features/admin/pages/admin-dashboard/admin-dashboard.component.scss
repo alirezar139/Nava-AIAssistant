@@ -4,6 +4,1138 @@
   background: #f4f2ec;
   color: #233c37;
 }
+
+/* Operational layout lock: balanced admin dashboard across desktop, tablet, and mobile. */
+.admin-shell main {
+  width: min(100%, 1720px) !important;
+  max-width: 1720px !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(16px, 3vw, 44px) !important;
+}
+
+.welcome,
+.stats,
+.admin-workspace {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+}
+
+.stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(12px, 1.3vw, 20px) !important;
+}
+
+.stats article {
+  min-width: 0 !important;
+  min-height: 112px !important;
+  height: auto !important;
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) auto !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  column-gap: 18px !important;
+  overflow: hidden !important;
+}
+
+.stats .stat-icon {
+  position: static !important;
+  grid-row: 1 / 3 !important;
+  grid-column: 1 !important;
+  width: 58px !important;
+  height: 58px !important;
+}
+
+.stats article > span,
+.stats article > small {
+  padding: 0 !important;
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  text-align: start !important;
+}
+
+.stats article > strong {
+  grid-row: 1 / 3 !important;
+  grid-column: 3 !important;
+  min-width: 56px !important;
+  text-align: start !important;
+  line-height: 1 !important;
+}
+
+.admin-workspace.faq-workspace {
+  display: grid !important;
+  direction: ltr !important;
+  gap: clamp(14px, 1.5vw, 24px) !important;
+  align-items: start !important;
+  overflow: visible !important;
+}
+
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: minmax(0, 1fr) 72px !important;
+}
+
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: minmax(0, 1fr) minmax(286px, 316px) !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout {
+  grid-column: 1 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  display: grid !important;
+  direction: ltr !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr) !important;
+  gap: clamp(14px, 1.5vw, 24px) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu {
+  grid-column: 2 !important;
+  direction: rtl !important;
+  align-self: start !important;
+}
+
+.admin-content.faq-layout > .table-card,
+.admin-content.faq-layout > .editor-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  direction: rtl !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout > .table-card {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(292px, auto) auto !important;
+}
+
+.admin-content.faq-layout > .editor-card {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.admin-content.faq-layout > .editor-card form {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-content: start !important;
+}
+
+.admin-content.faq-layout .section-title,
+.admin-content.faq-layout .table-tools,
+.admin-content.faq-layout .selection-toolbar,
+.admin-content.faq-layout .pagination-bar {
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.admin-content.faq-layout .section-title {
+  min-height: 72px !important;
+  align-items: start !important;
+}
+
+.admin-content.faq-layout .table-tools {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 0.52fr) auto !important;
+  align-items: end !important;
+}
+
+.admin-content.faq-layout .selection-toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto auto !important;
+  align-items: center !important;
+}
+
+.admin-content.faq-layout .table-wrap {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.admin-content.faq-layout table {
+  width: 100% !important;
+  min-width: 640px !important;
+  table-layout: fixed !important;
+}
+
+.admin-content.faq-layout th,
+.admin-content.faq-layout td {
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout td b {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout .pagination-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  padding: 10px 8px !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+  width: 54px !important;
+  min-width: 54px !important;
+  max-width: 54px !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+  display: grid !important;
+  grid-template-columns: 54px !important;
+  gap: 8px !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+  margin: 0 !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed em {
+  display: none !important;
+}
+
+@media (max-width: 1280px) {
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.88fr) !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-heading,
+  .admin-menu.collapsed .admin-menu-status,
+  .admin-menu.collapsed .menu-group-label,
+  .admin-menu.collapsed .menu-copy,
+  .admin-menu.collapsed .admin-tree-submenu {
+    display: none !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, 54px) !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+    margin-inline: auto !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .admin-shell main {
+    padding-inline: 14px !important;
+  }
+
+  .welcome {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 18px !important;
+  }
+
+  .stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats article {
+    min-height: 92px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    order: 1 !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    order: 2 !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar,
+  .admin-content.faq-layout > .editor-card form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout .pagination-actions {
+    justify-content: stretch !important;
+  }
+
+  .admin-content.faq-layout .pagination-actions button,
+  .admin-content.faq-layout .pagination-actions span,
+  .admin-content.faq-layout .page-size select {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-shell header {
+    height: auto !important;
+    min-height: 70px !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-template-columns: repeat(3, 54px) !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .admin-content.faq-layout table {
+    min-width: 560px !important;
+  }
+}
+
+/* Last-mile mobile guard: this must stay after every admin override. */
+@media (max-width: 760px) {
+  .admin-shell,
+  .admin-shell main,
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-content,
+  .admin-content.faq-layout,
+  .table-card,
+  .editor-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    position: static !important;
+    order: -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .admin-menu .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-toggle span {
+    display: inline !important;
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout,
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-content.faq-layout .table-wrap table,
+  .admin-content.faq-layout table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: block !important;
+    border-spacing: 0 10px !important;
+  }
+
+  .admin-content.faq-layout colgroup,
+  .admin-content.faq-layout thead {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .admin-content.faq-layout tbody tr {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) 44px !important;
+    grid-template-areas:
+      'select question action'
+      'select category action';
+    gap: 8px !important;
+    padding: 12px !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-content.faq-layout tbody td {
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(1) {
+    grid-area: select !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) {
+    grid-area: question !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) b {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.75 !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(3) {
+    grid-area: category !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(4) {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(5) {
+    grid-area: action !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* Compact admin dock for tablet and mobile: no empty menu panel, only actionable controls. */
+@media (max-width: 980px) {
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    position: sticky !important;
+    top: 8px !important;
+    z-index: 20 !important;
+    order: -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 8px !important;
+    border-radius: 22px !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 247, 248, 0.76)),
+      radial-gradient(circle at 100% 0%, rgba(69, 141, 151, 0.16), transparent 46%) !important;
+    box-shadow: 0 18px 42px rgba(42, 75, 88, 0.14) !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-toggle span,
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(64px, 1fr)) !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    gap: 10px !important;
+    padding: 2px !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+  }
+
+  .admin-menu .admin-menu-list::-webkit-scrollbar,
+  .admin-menu.collapsed .admin-menu-list::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    flex: unset !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 66px !important;
+    min-height: 66px !important;
+    padding: 0 !important;
+    border-radius: 18px !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon {
+    width: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-template-columns: repeat(2, minmax(72px, 1fr)) !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    height: 70px !important;
+    min-height: 70px !important;
+  }
+}
+
+/* Final responsive repair: prevent vertical menu text and FAQ table overflow on narrow viewports. */
+@media (max-width: 760px) {
+  .admin-shell {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .admin-shell main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    overflow-x: hidden !important;
+  }
+
+  .welcome,
+  .stats,
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-content,
+  .admin-content.faq-layout,
+  .table-card,
+  .editor-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    position: static !important;
+    inset: auto !important;
+    order: -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 10px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu.collapsed .admin-menu-heading,
+  .admin-menu.collapsed .admin-menu-status,
+  .admin-menu.collapsed .menu-group-label,
+  .admin-menu.collapsed .admin-tree-submenu {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-menu .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-toggle span {
+    display: inline !important;
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    padding: 8px 2px 2px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: visible !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+  }
+
+  .admin-menu .menu-copy,
+  .admin-menu em,
+  .admin-menu.collapsed .menu-copy,
+  .admin-menu.collapsed em {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout,
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .admin-content.faq-layout > .editor-card,
+  .admin-content.faq-layout > .table-card {
+    padding: 14px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout .section-title {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout .section-title h2 {
+    font-size: clamp(1.7rem, 8vw, 2.4rem) !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .admin-content.faq-layout .selection-toolbar .select-all {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout .selection-toolbar button,
+  .admin-content.faq-layout .page-size select,
+  .admin-content.faq-layout .pagination-actions button {
+    width: 100% !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-content.faq-layout .table-wrap table,
+  .admin-content.faq-layout table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 10px !important;
+    display: block !important;
+  }
+
+  .admin-content.faq-layout colgroup,
+  .admin-content.faq-layout thead {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout tbody tr {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) 48px !important;
+    grid-template-areas:
+      'select question action'
+      'select category action';
+    gap: 6px 10px !important;
+    align-items: center !important;
+    padding: 12px !important;
+    border: 1px solid rgba(13, 85, 96, 0.28) !important;
+    border-radius: 18px !important;
+    background: rgba(255, 255, 255, 0.86) !important;
+    box-shadow: 0 16px 34px rgba(18, 58, 68, 0.1) !important;
+  }
+
+  .admin-content.faq-layout tbody td {
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+    text-align: right !important;
+  }
+
+  .admin-content.faq-layout tbody td::before {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(1) {
+    grid-area: select !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) {
+    grid-area: question !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) b {
+    display: block !important;
+    max-width: 100% !important;
+    font-size: 0.95rem !important;
+    line-height: 1.75 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(3) {
+    grid-area: category !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(4) {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(5) {
+    grid-area: action !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout .actions-cell .details-trigger {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* Mobile hard lock: no vertical rail and no desktop table overflow on admin FAQ. */
+@media (max-width: 760px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    order: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    grid-column: 1 !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .admin-menu .admin-menu-toggle span,
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .menu-copy,
+  .admin-menu .admin-tree-submenu {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-column: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    flex: 0 0 46px !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon {
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 !important;
+  }
+
+  .admin-menu em,
+  .admin-menu.collapsed em {
+    display: none !important;
+  }
+
+  .admin-workspace > .admin-content,
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    order: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    overflow: visible !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-content.faq-layout table,
+  .admin-content.faq-layout thead,
+  .admin-content.faq-layout tbody,
+  .admin-content.faq-layout tr,
+  .admin-content.faq-layout th,
+  .admin-content.faq-layout td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .admin-content.faq-layout colgroup,
+  .admin-content.faq-layout thead {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody {
+    display: grid !important;
+    gap: 10px !important;
+  }
+
+  .admin-content.faq-layout tbody tr {
+    display: grid !important;
+    grid-template-columns: 38px minmax(0, 1fr) 54px !important;
+    grid-template-areas:
+      'select question action'
+      'select category action' !important;
+    align-items: center !important;
+    min-height: 88px !important;
+    padding: 12px !important;
+    border: 1px solid color-mix(in srgb, var(--border) 74%, transparent) !important;
+    border-radius: 18px !important;
+    background: color-mix(in srgb, var(--surface) 92%, transparent) !important;
+  }
+
+  .admin-content.faq-layout tbody td {
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(1) {
+    grid-area: select !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) {
+    grid-area: question !important;
+    min-width: 0 !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(3) {
+    grid-area: category !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(4) {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(5) {
+    grid-area: action !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout td b {
+    -webkit-line-clamp: 2 !important;
+    line-height: 1.65 !important;
+    text-align: start !important;
+  }
+
+  .admin-content.faq-layout .details-trigger {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
 .admin-shell {
   min-height: 100vh;
 }
@@ -3655,6 +4787,247 @@ tbody tr.selected::after {
   border-radius: 16px;
   color: var(--color-body);
   background: color-mix(in srgb, var(--color-link) 9%, var(--surface));
+}
+
+.service-postman-card {
+  overflow: hidden;
+}
+
+.service-postman-card .service-catalog-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.request-builder-line {
+  min-height: 62px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 132px minmax(260px, 1fr) 132px;
+  gap: 8px;
+  align-items: stretch;
+  border: 1px solid color-mix(in srgb, var(--color-link) 20%, var(--border));
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 8%, transparent), transparent 48%),
+    color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow:
+    inset 0 1px color-mix(in srgb, #fff 70%, transparent),
+    0 18px 42px rgba(25, 68, 84, 0.08);
+}
+
+.request-builder-line select,
+.request-builder-line input,
+.request-builder-line button {
+  min-height: 46px;
+  border-radius: 13px;
+  font-size: 0.86rem;
+  font-weight: 950;
+}
+
+.request-builder-line select {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
+  text-align: center;
+}
+
+.request-builder-line input {
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: inset 0 1px color-mix(in srgb, #fff 68%, transparent);
+}
+
+.request-builder-line .send-request {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #0f8a6b, var(--primary-950));
+  box-shadow: 0 12px 28px rgba(13, 96, 84, 0.18);
+}
+
+.request-builder-line .send-request:disabled {
+  opacity: 0.58;
+  cursor: progress;
+}
+
+.service-builder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.service-builder-panel {
+  min-width: 0;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 14% 0%,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 38%
+    ),
+    color-mix(in srgb, var(--surface) 86%, transparent);
+  box-shadow:
+    inset 0 1px color-mix(in srgb, #fff 66%, transparent),
+    0 16px 34px rgba(21, 62, 72, 0.06);
+}
+
+.service-builder-panel header {
+  height: auto;
+  padding: 0 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border));
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.service-builder-panel header span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--color-link);
+  background: color-mix(in srgb, var(--color-link) 9%, var(--surface));
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.service-builder-panel header strong {
+  color: var(--color-heading);
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.service-builder-panel label {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  color: var(--color-heading);
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.service-builder-panel input,
+.service-builder-panel textarea {
+  width: 100%;
+  border-color: color-mix(in srgb, var(--color-link) 18%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.service-builder-panel textarea {
+  resize: vertical;
+}
+
+.service-builder-panel small {
+  color: var(--color-secondary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1.8;
+}
+
+.service-builder-panel .service-switches {
+  margin-top: 2px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.response-panel {
+  grid-template-rows: auto auto minmax(180px, 1fr);
+}
+
+.response-panel.failed {
+  border-color: color-mix(in srgb, var(--danger) 36%, var(--border));
+}
+
+.response-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.response-meta b,
+.response-meta span {
+  min-height: 32px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.response-meta b.ok {
+  color: #0f6d53;
+  background: color-mix(in srgb, #35c28e 16%, var(--surface));
+}
+
+.response-meta b.fail {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+}
+
+.response-meta span {
+  color: var(--color-heading);
+  background: color-mix(in srgb, var(--color-link) 8%, var(--surface));
+}
+
+.response-empty {
+  min-height: 190px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed color-mix(in srgb, var(--color-link) 20%, var(--border));
+  border-radius: 16px;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  font-weight: 900;
+}
+
+.response-panel pre {
+  min-height: 190px;
+  max-height: 360px;
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border));
+  border-radius: 16px;
+  direction: ltr;
+  color: var(--color-heading);
+  background: color-mix(in srgb, #f8fbfd 90%, var(--surface));
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.76rem;
+  line-height: 1.75;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.service-save-row {
+  padding-top: 2px;
+}
+
+.service-save-row button[type='submit'] {
+  min-width: 150px;
+}
+
+@media (max-width: 960px) {
+  .request-builder-line,
+  .service-builder-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .request-builder-line select,
+  .request-builder-line .send-request {
+    width: 100%;
+  }
 }
 
 .tree-manager-card {
@@ -12141,7 +13514,7 @@ td b {
   }
 }
 
-/* UI repair pass: stable sizing, IRANSans inheritance, compact menus and tree designer */
+/* UI repair pass: stable sizing, font inheritance, compact menus and tree designer */
 :host {
   font-family: var(--font-family-base);
   --admin-shell-height: clamp(640px, calc(100vh - 172px), 780px);
@@ -16359,4 +17732,2992 @@ td b {
     writing-mode: horizontal-tb !important;
     white-space: nowrap !important;
   }
+}
+
+/* Final desktop balance for FAQ management: content-sized panels and a true icon rail. */
+@media (min-width: 1181px) {
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+    grid-template-columns: minmax(0, 1fr) 76px !important;
+  }
+
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    grid-template-columns: minmax(0, 1fr) 316px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: start !important;
+    grid-template-columns: minmax(540px, 1.12fr) minmax(380px, 0.88fr) !important;
+    overflow: visible !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 24px !important;
+    overflow: visible !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    grid-template-rows: auto auto auto auto auto !important;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    align-self: stretch !important;
+  }
+
+  .admin-content.faq-layout > .editor-card form {
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto 150px auto !important;
+    align-content: start !important;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    height: 150px !important;
+    min-height: 150px !important;
+    max-height: 220px !important;
+  }
+
+  .admin-content.faq-layout .section-title {
+    min-height: 58px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar {
+    margin-block: 10px !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .admin-content.faq-layout table {
+    border-collapse: collapse !important;
+  }
+
+  .admin-content.faq-layout thead th {
+    height: 52px !important;
+  }
+
+  .admin-content.faq-layout tbody td {
+    height: 54px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    width: 316px !important;
+    min-width: 316px !important;
+    max-width: 316px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 248px) !important;
+    overflow: hidden auto !important;
+    align-self: start !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    width: 76px !important;
+    min-width: 76px !important;
+    max-width: 76px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 248px) !important;
+    padding: 10px 8px !important;
+    align-self: start !important;
+    overflow: hidden !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    grid-template-columns: 56px !important;
+    gap: 8px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+    width: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list .menu-icon {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list em {
+    display: none !important;
+  }
+
+  .admin-menu-list em {
+    font-variant-numeric: tabular-nums !important;
+    writing-mode: horizontal-tb !important;
+    line-height: 1 !important;
+  }
+}
+
+/* Viewport-safe admin layout override. Keep this block at the end of the file. */
+.admin-shell main {
+  width: min(100%, 1720px) !important;
+  max-width: 1720px !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(14px, 3vw, 44px) !important;
+  box-sizing: border-box !important;
+}
+
+.welcome,
+.stats,
+.admin-workspace {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(12px, 1.4vw, 20px) !important;
+}
+
+.stats article {
+  position: relative !important;
+  min-width: 0 !important;
+  min-height: 104px !important;
+  height: auto !important;
+  padding: 18px 22px !important;
+  display: grid !important;
+  grid-template-columns: 58px minmax(0, 1fr) auto !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  column-gap: 16px !important;
+  overflow: hidden !important;
+}
+
+.stats .stat-icon {
+  position: static !important;
+  grid-column: 1 !important;
+  grid-row: 1 / 3 !important;
+  width: 54px !important;
+  height: 54px !important;
+  place-self: center !important;
+}
+
+.stats article > span,
+.stats article > small {
+  grid-column: 2 !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  text-align: start !important;
+}
+
+.stats article > strong {
+  grid-column: 3 !important;
+  grid-row: 1 / 3 !important;
+  min-width: 54px !important;
+  text-align: start !important;
+  line-height: 1 !important;
+}
+
+.admin-workspace {
+  display: grid !important;
+  align-items: start !important;
+  gap: clamp(14px, 1.5vw, 24px) !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: minmax(0, 1fr) 72px !important;
+}
+
+.admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  grid-template-columns: minmax(0, 1fr) minmax(286px, 316px) !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout {
+  min-width: 0 !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr) !important;
+  gap: clamp(14px, 1.5vw, 24px) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout > .table-card,
+.admin-content.faq-layout > .editor-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.admin-content.faq-layout > .table-card {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(280px, auto) auto !important;
+}
+
+.admin-content.faq-layout > .editor-card {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.admin-content.faq-layout .table-tools {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 0.52fr) auto !important;
+  align-items: end !important;
+}
+
+.admin-content.faq-layout .selection-toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto auto !important;
+  align-items: center !important;
+}
+
+.admin-content.faq-layout .table-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.admin-content.faq-layout table {
+  width: 100% !important;
+  min-width: 640px !important;
+  table-layout: fixed !important;
+}
+
+.admin-content.faq-layout .pagination-bar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.admin-content.faq-layout td b {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  padding: 10px 8px !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+  width: 54px !important;
+  min-width: 54px !important;
+  max-width: 54px !important;
+  display: grid !important;
+  grid-template-columns: 54px !important;
+  gap: 8px !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+.admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+  width: 54px !important;
+  min-width: 54px !important;
+  max-width: 54px !important;
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon {
+  width: 42px !important;
+  height: 42px !important;
+  margin: 0 !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu.collapsed em {
+  display: none !important;
+}
+
+@media (max-width: 1280px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    position: static !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 12px !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-workspace > .admin-content,
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    min-width: 0 !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr) !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-heading,
+  .admin-menu.collapsed .admin-menu-status,
+  .admin-menu.collapsed .menu-group-label,
+  .admin-menu.collapsed .menu-copy,
+  .admin-menu.collapsed .admin-tree-submenu {
+    display: none !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, 54px) !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-toggle {
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .admin-shell main {
+    padding: 14px !important;
+  }
+
+  .welcome {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 18px !important;
+  }
+
+  .stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout > .editor-card {
+    order: 1 !important;
+  }
+
+  .admin-content.faq-layout > .table-card {
+    order: 2 !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar,
+  .admin-content.faq-layout > .editor-card form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout .pagination-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout .pagination-actions button,
+  .admin-content.faq-layout .pagination-actions span,
+  .admin-content.faq-layout .page-size select {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-shell header {
+    height: auto !important;
+    min-height: 70px !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-template-columns: repeat(3, 54px) !important;
+  }
+
+  .admin-content.faq-layout > .table-card,
+  .admin-content.faq-layout > .editor-card {
+    padding: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .admin-content.faq-layout table {
+    min-width: 560px !important;
+  }
+}
+
+/* Last-mile mobile guard: this must stay after every admin override. */
+@media (max-width: 760px) {
+  .admin-shell,
+  .admin-shell main,
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-content,
+  .admin-content.faq-layout,
+  .table-card,
+  .editor-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    position: static !important;
+    order: -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .admin-menu .admin-menu-toggle span,
+  .admin-menu.collapsed .admin-menu-toggle span {
+    display: inline !important;
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout,
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .admin-content.faq-layout .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-content.faq-layout .table-wrap table,
+  .admin-content.faq-layout table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: block !important;
+    border-spacing: 0 10px !important;
+  }
+
+  .admin-content.faq-layout colgroup,
+  .admin-content.faq-layout thead {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .admin-content.faq-layout tbody tr {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) 44px !important;
+    grid-template-areas:
+      'select question action'
+      'select category action';
+    gap: 8px !important;
+    padding: 12px !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-content.faq-layout tbody td {
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    display: block !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(1) {
+    grid-area: select !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) {
+    grid-area: question !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(2) b {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.75 !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(3) {
+    grid-area: category !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(4) {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout tbody td:nth-child(5) {
+    grid-area: action !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-content.faq-layout .table-tools,
+  .admin-content.faq-layout .selection-toolbar,
+  .admin-content.faq-layout .pagination-bar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* Final admin menu tile layout: mobile/tablet menu is a compact icon grid, without a toggle button. */
+@media (max-width: 980px) {
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+    display: block !important;
+    overflow: hidden !important;
+    border-radius: 22px !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(72px, 1fr)) !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon {
+    width: 52px !important;
+    height: 52px !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list {
+    grid-template-columns: repeat(2, minmax(88px, 1fr)) !important;
+  }
+}
+
+/* Absolute final menu stabilization: every menu item keeps one size and one position. */
+@media (max-width: 1280px) {
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    position: static !important;
+    order: -1 !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 12px !important;
+    overflow: hidden !important;
+    border-radius: 22px !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle,
+  .admin-menu:not(.collapsed) .admin-menu-toggle,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu em,
+  .admin-menu.collapsed .menu-copy,
+  .admin-menu.collapsed em,
+  .admin-menu:not(.collapsed) .menu-copy,
+  .admin-menu:not(.collapsed) em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(72px, 1fr)) !important;
+    gap: 12px !important;
+    justify-items: stretch !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+    position: relative !important;
+    inset: auto !important;
+    flex: none !important;
+    transform: none !important;
+    translate: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-list > button::before,
+  .admin-menu .admin-menu-list > button::after,
+  .admin-menu.collapsed .admin-menu-list > button::before,
+  .admin-menu.collapsed .admin-menu-list > button::after,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::before,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::after {
+    display: none !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-menu:not(.collapsed) .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-icon {
+    position: static !important;
+    transform: none !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(3, minmax(82px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(2, minmax(96px, 1fr)) !important;
+  }
+}
+
+/* Final icon-only menu: square buttons, centered grid, no stretched cards. */
+@media (max-width: 1280px) {
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    display: block !important;
+    padding: 12px !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    display: grid !important;
+    grid-template-columns: repeat(6, 76px) !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+    position: relative !important;
+    inset: auto !important;
+    width: 76px !important;
+    min-width: 76px !important;
+    max-width: 76px !important;
+    height: 76px !important;
+    min-height: 76px !important;
+    max-height: 76px !important;
+    aspect-ratio: 1 / 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    text-align: center !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-menu .admin-menu-list > button::before,
+  .admin-menu .admin-menu-list > button::after,
+  .admin-menu.collapsed .admin-menu-list > button::before,
+  .admin-menu.collapsed .admin-menu-list > button::after,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::before,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-menu:not(.collapsed) .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-icon {
+    position: static !important;
+    inset: auto !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    place-self: center !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(3, 76px) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(2, 76px) !important;
+  }
+}
+
+/* Final FAQ table alignment: keep error text vertically stable across one-line and multi-line rows. */
+.admin-content.faq-layout .table-wrap table {
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody tr {
+  height: 74px !important;
+  min-height: 74px !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody td {
+  height: 74px !important;
+  min-height: 74px !important;
+  padding-block: 10px !important;
+  vertical-align: middle !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody td:nth-child(2) {
+  text-align: right !important;
+  vertical-align: middle !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody td:nth-child(2) b {
+  min-height: 48px !important;
+  max-height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: right !important;
+  line-height: 1.65 !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody td:not(:nth-child(2)) {
+  text-align: center !important;
+}
+
+.admin-content.faq-layout .table-wrap tbody .actions-cell {
+  text-align: center !important;
+}
+
+/* Final FAQ editor redesign: balanced fields, stable spacing, and a cleaner submit area. */
+.admin-content.faq-layout > .editor-card {
+  display: grid !important;
+  grid-template-rows: auto 1fr !important;
+  gap: 22px !important;
+  padding: clamp(22px, 3vw, 34px) !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout > .editor-card .section-title {
+  min-height: 88px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 18px !important;
+  margin: 0 !important;
+}
+
+.admin-content.faq-layout > .editor-card .section-title h2 {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.admin-content.faq-layout > .editor-card .section-title .import {
+  align-self: center !important;
+  min-width: 170px !important;
+  height: 54px !important;
+  padding-inline: 18px !important;
+  border-radius: 16px !important;
+}
+
+.admin-content.faq-layout > .editor-card form {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: auto auto minmax(220px, 1fr) auto !important;
+  gap: 18px 20px !important;
+  align-content: start !important;
+}
+
+.admin-content.faq-layout > .editor-card .wide,
+.admin-content.faq-layout > .editor-card .faq-question-field,
+.admin-content.faq-layout > .editor-card .faq-answer-field,
+.admin-content.faq-layout > .editor-card .actions {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-content.faq-layout > .editor-card .faq-category-field,
+.admin-content.faq-layout > .editor-card .faq-keywords-field {
+  grid-column: auto !important;
+}
+
+.admin-content.faq-layout > .editor-card label {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  color: var(--text) !important;
+  font-weight: 800 !important;
+}
+
+.admin-content.faq-layout > .editor-card input,
+.admin-content.faq-layout > .editor-card textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(21, 92, 96, 0.38) !important;
+  background: rgba(255, 255, 255, 0.84) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 14px 28px rgba(30, 62, 72, 0.06) !important;
+}
+
+.admin-content.faq-layout > .editor-card input {
+  height: 56px !important;
+  padding-inline: 18px !important;
+}
+
+.admin-content.faq-layout > .editor-card textarea {
+  height: 100% !important;
+  min-height: 220px !important;
+  max-height: none !important;
+  resize: vertical !important;
+  padding: 18px !important;
+  line-height: 1.8 !important;
+}
+
+.admin-content.faq-layout > .editor-card .actions {
+  min-height: 64px !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+
+.admin-content.faq-layout > .editor-card .actions button[type='submit'] {
+  width: min(100%, 260px) !important;
+  height: 60px !important;
+  border-radius: 18px !important;
+}
+
+.welcome .refresh,
+.welcome .refresh.icon-button {
+  width: auto !important;
+  min-width: 150px !important;
+  max-width: 190px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 0 16px !important;
+  border-radius: 14px !important;
+  font-size: 0.9rem !important;
+  gap: 8px !important;
+  justify-self: start !important;
+}
+
+.welcome .refresh svg,
+.welcome .refresh.icon-button svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+}
+
+@media (max-width: 980px) {
+  .admin-content.faq-layout > .editor-card .section-title,
+  .admin-content.faq-layout > .editor-card form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-content.faq-layout > .editor-card .section-title .import,
+  .admin-content.faq-layout > .editor-card .actions button[type='submit'] {
+    width: 100% !important;
+  }
+
+  .admin-content.faq-layout > .editor-card textarea {
+    min-height: 180px !important;
+  }
+
+  .welcome .refresh,
+  .welcome .refresh.icon-button {
+    width: fit-content !important;
+    min-width: 138px !important;
+    max-width: 170px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding-inline: 14px !important;
+    font-size: 0.84rem !important;
+  }
+}
+
+/* Final mobile tree workspace: keep editing usable instead of squeezing the desktop canvas. */
+@media (max-width: 760px) {
+  .tree-modal-backdrop {
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+
+  .tree-modal-shell {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border-inline: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-header {
+    min-height: 0 !important;
+    max-height: 44dvh !important;
+    padding: 14px 14px 12px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+    overflow: auto !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-modal-header > div:first-child {
+    min-width: 0 !important;
+    display: grid !important;
+    gap: 4px !important;
+  }
+
+  .tree-modal-header h2 {
+    margin: 0 !important;
+    font-size: clamp(1.12rem, 5.2vw, 1.6rem) !important;
+    line-height: 1.45 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .tree-modal-header small {
+    font-size: 0.78rem !important;
+    line-height: 1.75 !important;
+  }
+
+  .tree-modal-actions {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .tree-modal-actions > * {
+    min-width: 0 !important;
+  }
+
+  .tree-modal-actions button,
+  .tree-modal-actions label,
+  .tree-modal-actions .tree-mode-switch,
+  .tree-project-control,
+  .tree-template-control,
+  .tree-download-control {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    border-radius: 16px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    overflow: hidden !important;
+  }
+
+  .tree-modal-actions button,
+  .tree-modal-actions .ghost {
+    color: var(--color-heading) !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    border: 1px solid rgba(45, 91, 104, 0.26) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.78),
+      0 10px 22px rgba(38, 64, 78, 0.08) !important;
+  }
+
+  .tree-modal-actions button:not(.ghost):not(.close):not(:disabled),
+  .tree-modal-actions .final:not(:disabled),
+  .tree-mode-switch button.active:not(:disabled) {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--color-link), var(--primary-900)) !important;
+    border-color: transparent !important;
+  }
+
+  .tree-modal-actions button:disabled,
+  .tree-modal-actions .ghost:disabled {
+    color: rgba(48, 72, 84, 0.48) !important;
+    background: rgba(255, 255, 255, 0.46) !important;
+    border-color: rgba(45, 91, 104, 0.14) !important;
+    box-shadow: none !important;
+  }
+
+  .tree-modal-actions label,
+  .tree-project-control,
+  .tree-template-control,
+  .tree-download-control {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    gap: 1px !important;
+    align-items: center !important;
+    justify-items: stretch !important;
+    text-align: right !important;
+  }
+
+  .tree-modal-actions label span,
+  .tree-project-control,
+  .tree-template-control span,
+  .tree-download-control span {
+    font-size: 0.62rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .tree-project-control input,
+  .tree-template-control select,
+  .tree-download-control select {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 24px !important;
+    padding: 0 4px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 0.82rem !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+  }
+
+  .tree-mode-switch {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    padding: 4px !important;
+  }
+
+  .tree-mode-switch button {
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  .tree-modal-actions .close {
+    position: fixed !important;
+    inset-block-end: 14px !important;
+    inset-inline-end: 14px !important;
+    z-index: 80 !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    max-width: 50px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 18px 34px rgba(24, 41, 64, 0.2) !important;
+  }
+
+  .tree-modal-body {
+    min-height: 0 !important;
+    padding: 10px !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-modal-body .tree-workbench {
+    height: auto !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'canvas'
+      'browser'
+      'editor' !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    direction: rtl !important;
+  }
+
+  .tree-modal-body .tree-canvas-card {
+    grid-area: canvas !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'title'
+      'tools'
+      'view'
+      'canvas' !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 16% 18%, rgba(122, 84, 160, 0.11), transparent 220px),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 247, 244, 0.84)) !important;
+  }
+
+  .tree-canvas-card > .section-title {
+    grid-area: title !important;
+    min-height: 0 !important;
+    display: grid !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+  }
+
+  .tree-canvas-card > .section-title h3 {
+    font-size: 1.05rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .tree-canvas-card > .section-title small {
+    display: none !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar,
+  .tree-modal-body .tree-map-controls {
+    position: static !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 8px !important;
+    border-radius: 20px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+    background: rgba(255, 255, 255, 0.74) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(32, 88, 90, 0.18),
+      0 14px 30px rgba(41, 60, 72, 0.08) !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar {
+    grid-area: tools !important;
+  }
+
+  .tree-modal-body .tree-map-controls {
+    grid-area: view !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .tree-modal-body .tree-tool-group {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input {
+    order: -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 14px !important;
+    color: var(--color-heading) !important;
+    caret-color: var(--color-link) !important;
+    text-indent: 0 !important;
+    opacity: 1 !important;
+    border-radius: 16px !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input::placeholder {
+    color: color-mix(in srgb, var(--color-subtle) 75%, transparent) !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > input:focus {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: 48px !important;
+    padding: 0 14px !important;
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-link) 16%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .tree-modal-body .tree-tool-group button,
+  .tree-modal-body .tree-map-controls button,
+  .tree-modal-body .tree-map-controls > span {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    font-size: 0 !important;
+    transform: none !important;
+    flex: initial !important;
+  }
+
+  .tree-modal-body .tree-map-controls > span {
+    font-size: 0.78rem !important;
+    direction: ltr !important;
+    font-weight: 900 !important;
+  }
+
+  .tree-modal-body .tool-icon {
+    width: 100% !important;
+    height: 100% !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
+  }
+
+  .tree-modal-body .tree-modeling-toolbar > span:not(.tool-icon) {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border-radius: 14px !important;
+    background: rgba(55, 91, 126, 0.09) !important;
+    text-align: center !important;
+    font-size: 0.76rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .tree-modal-body .tree-designer-frame {
+    grid-area: canvas !important;
+    width: 100% !important;
+    height: min(52dvh, 520px) !important;
+    min-height: 360px !important;
+    border-radius: 18px !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
+    background: #686d6b !important;
+    border: 1px solid rgba(24, 63, 58, 0.28) !important;
+  }
+
+  .tree-modal-body .tree-ruler-corner,
+  .tree-modal-body .tree-ruler-horizontal,
+  .tree-modal-body .tree-ruler-vertical {
+    display: none !important;
+  }
+
+  .tree-modal-body .tree-page-stage {
+    min-width: 980px !important;
+    min-height: 680px !important;
+    padding: 12px !important;
+  }
+
+  .tree-modal-body .tree-page-sheet {
+    min-width: 920px !important;
+    min-height: 620px !important;
+  }
+
+  .tree-modal-body .tree-node-browser,
+  .tree-modal-body .tree-editor-panel {
+    grid-area: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 12px !important;
+    border-radius: 22px !important;
+    overflow: visible !important;
+    direction: rtl !important;
+  }
+
+  .tree-modal-body .tree-node-browser {
+    grid-area: browser !important;
+  }
+
+  .tree-modal-body .tree-editor-panel {
+    grid-area: editor !important;
+  }
+
+  .tree-shapes-library {
+    display: grid !important;
+    gap: 10px !important;
+  }
+
+  .shape-stencil-list {
+    max-height: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .shape-stencil-list button {
+    min-height: 60px !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+  }
+
+  .shape-stencil-list b,
+  .shape-stencil-list small {
+    white-space: normal !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+  }
+
+  .shape-palette-grid {
+    max-height: none !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    overflow: visible !important;
+  }
+
+  .shape-palette-grid button {
+    min-height: 74px !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+  }
+
+  .shape-palette-grid small {
+    display: none !important;
+  }
+
+  .shape-apply,
+  .tree-pagination button {
+    width: 100% !important;
+    min-height: 48px !important;
+    border-radius: 16px !important;
+  }
+
+  .tree-node-list {
+    max-height: 320px !important;
+    overflow: auto !important;
+    padding-inline-end: 2px !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .tree-node-list button {
+    min-height: 64px !important;
+    border-radius: 16px !important;
+  }
+
+  .tree-pagination-summary,
+  .tree-pagination {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
+
+  .tree-pagination span {
+    grid-column: 1 / -1 !important;
+    text-align: center !important;
+  }
+
+  .tree-editor-panel label,
+  .tree-edit-box,
+  .tree-edge-editor {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .tree-position-grid,
+  .tree-editor-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .tree-modal-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .tree-modal-body .tree-map-controls,
+  .tree-modal-body .tree-tool-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .shape-stencil-list,
+  .shape-palette-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .tree-modal-body .tree-designer-frame {
+    height: 420px !important;
+    min-height: 420px !important;
+  }
+}
+
+/* Absolute mobile admin dock fix: keep the collapsed menu as a clean icon grid. */
+@media (max-width: 900px) {
+  .admin-workspace,
+  .admin-workspace.faq-workspace,
+  .admin-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+  .admin-workspace:not(.admin-workspace-menu-collapsed),
+  .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    order: -2 !important;
+    z-index: 4 !important;
+    transform: none !important;
+    translate: none !important;
+    width: min(100%, 420px) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 12px !important;
+    display: block !important;
+    border-radius: 26px !important;
+    overflow: visible !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .admin-menu .admin-menu-toggle,
+  .admin-menu.collapsed .admin-menu-toggle,
+  .admin-menu:not(.collapsed) .admin-menu-toggle,
+  .admin-menu .admin-menu-heading,
+  .admin-menu.collapsed .admin-menu-heading,
+  .admin-menu:not(.collapsed) .admin-menu-heading,
+  .admin-menu .admin-menu-status,
+  .admin-menu.collapsed .admin-menu-status,
+  .admin-menu:not(.collapsed) .admin-menu-status,
+  .admin-menu .menu-group-label,
+  .admin-menu.collapsed .menu-group-label,
+  .admin-menu:not(.collapsed) .menu-group-label,
+  .admin-menu .admin-tree-submenu,
+  .admin-menu.collapsed .admin-tree-submenu,
+  .admin-menu:not(.collapsed) .admin-tree-submenu,
+  .admin-menu .menu-copy,
+  .admin-menu.collapsed .menu-copy,
+  .admin-menu:not(.collapsed) .menu-copy,
+  .admin-menu .admin-menu-list em,
+  .admin-menu.collapsed .admin-menu-list em,
+  .admin-menu:not(.collapsed) .admin-menu-list em {
+    display: none !important;
+  }
+
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace > .admin-menu .admin-menu-list,
+  .admin-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 72px) !important;
+    grid-auto-rows: 72px !important;
+    grid-auto-flow: row !important;
+    justify-content: center !important;
+    justify-items: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    direction: rtl !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .admin-menu .admin-menu-list > button,
+  .admin-menu.collapsed .admin-menu-list > button,
+  .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-workspace > .admin-menu .admin-menu-list > button,
+  .admin-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-list > button,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+    flex: none !important;
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    writing-mode: horizontal-tb !important;
+  }
+
+  .admin-menu .admin-menu-list > button::before,
+  .admin-menu .admin-menu-list > button::after,
+  .admin-menu.collapsed .admin-menu-list > button::before,
+  .admin-menu.collapsed .admin-menu-list > button::after,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::before,
+  .admin-menu:not(.collapsed) .admin-menu-list > button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .admin-menu .menu-icon,
+  .admin-menu.collapsed .menu-icon,
+  .admin-menu:not(.collapsed) .menu-icon,
+  .admin-workspace > .admin-menu .menu-icon,
+  .admin-workspace > .admin-menu.collapsed .menu-icon,
+  .admin-workspace > .admin-menu:not(.collapsed) .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed .menu-icon,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-icon {
+    position: static !important;
+    inset: auto !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    place-self: center !important;
+    transform: none !important;
+    translate: none !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .admin-menu .menu-icon svg,
+  .admin-menu.collapsed .menu-icon svg,
+  .admin-menu:not(.collapsed) .menu-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-menu .admin-menu-list,
+  .admin-menu.collapsed .admin-menu-list,
+  .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(2, 72px) !important;
+  }
+}
+
+/* Menu footer: app version and current responsive viewport mode. */
+.admin-menu,
+.admin-menu:not(.collapsed) {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+}
+
+.admin-menu-footer {
+  min-width: 0 !important;
+  padding: 10px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  border-radius: 18px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
+  background:
+    radial-gradient(
+      circle at 100% 0,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      transparent 72px
+    ),
+    color-mix(in srgb, var(--surface) 82%, transparent) !important;
+  box-shadow:
+    0 12px 26px color-mix(in srgb, var(--primary-950) 6%, transparent),
+    inset 1px 1px 0 color-mix(in srgb, #fff 62%, transparent) !important;
+}
+
+.admin-device-indicator {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  gap: 9px !important;
+  align-items: center !important;
+}
+
+.device-icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  color: var(--color-link) !important;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-link) 14%, transparent), transparent 70%),
+    color-mix(in srgb, var(--surface-cool) 84%, transparent) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-link) 20%, transparent) !important;
+}
+
+.device-icon svg {
+  width: 23px !important;
+  height: 23px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.device-copy {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 2px !important;
+}
+
+.device-copy b,
+.device-copy small,
+.admin-version-badge span,
+.admin-version-badge b {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.device-copy b {
+  color: var(--color-heading) !important;
+  font-weight: 900 !important;
+  font-size: 0.84rem !important;
+}
+
+.device-copy small {
+  color: var(--color-subtle) !important;
+  font-weight: 800 !important;
+  font-size: 0.68rem !important;
+}
+
+.admin-version-badge {
+  min-width: 76px !important;
+  padding: 8px 10px !important;
+  display: grid !important;
+  gap: 2px !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, transparent) !important;
+  background: color-mix(in srgb, var(--surface-soft) 86%, transparent) !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+}
+
+.admin-version-badge span {
+  color: var(--color-subtle) !important;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  direction: rtl !important;
+}
+
+.admin-version-badge b {
+  color: var(--color-heading) !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+}
+
+.admin-menu.collapsed {
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+}
+
+.admin-menu.collapsed .admin-menu-footer {
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-menu.collapsed .admin-device-indicator,
+.admin-menu.collapsed .admin-version-badge {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+  background: color-mix(in srgb, var(--surface) 82%, transparent) !important;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--primary-950) 5%, transparent) !important;
+}
+
+.admin-menu.collapsed .device-copy,
+.admin-menu.collapsed .admin-version-badge span {
+  display: none !important;
+}
+
+.admin-menu.collapsed .device-icon {
+  width: 42px !important;
+  height: 42px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-menu.collapsed .admin-version-badge b {
+  font-size: 0.64rem !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 900px) {
+  .admin-workspace > .admin-menu,
+  .admin-workspace > .admin-menu.collapsed,
+  .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-workspace.faq-workspace > .admin-menu,
+  .admin-workspace.faq-workspace > .admin-menu.collapsed,
+  .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    display: grid !important;
+    grid-template-rows: auto auto !important;
+    gap: 12px !important;
+  }
+
+  .admin-menu-footer,
+  .admin-menu.collapsed .admin-menu-footer,
+  .admin-menu:not(.collapsed) .admin-menu-footer {
+    width: 100% !important;
+    padding: 9px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+    border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
+    border-radius: 18px !important;
+    background: color-mix(in srgb, var(--surface) 80%, transparent) !important;
+    box-shadow:
+      0 12px 26px color-mix(in srgb, var(--primary-950) 6%, transparent),
+      inset 1px 1px 0 color-mix(in srgb, #fff 62%, transparent) !important;
+  }
+
+  .admin-menu.collapsed .admin-device-indicator,
+  .admin-menu.collapsed .admin-version-badge {
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+  }
+
+  .admin-menu.collapsed .admin-device-indicator,
+  .admin-menu:not(.collapsed) .admin-device-indicator {
+    grid-template-columns: 38px minmax(0, 1fr) !important;
+    display: grid !important;
+  }
+
+  .admin-menu.collapsed .device-copy,
+  .admin-menu:not(.collapsed) .device-copy,
+  .admin-menu.collapsed .admin-version-badge span,
+  .admin-menu:not(.collapsed) .admin-version-badge span {
+    display: grid !important;
+  }
+
+  .admin-menu.collapsed .device-icon,
+  .admin-menu:not(.collapsed) .device-icon,
+  .device-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 14px !important;
+  }
+
+  .admin-menu.collapsed .admin-version-badge,
+  .admin-menu:not(.collapsed) .admin-version-badge {
+    min-width: 68px !important;
+    padding: 7px 8px !important;
+    border-radius: 14px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-menu-footer,
+  .admin-menu.collapsed .admin-menu-footer,
+  .admin-menu:not(.collapsed) .admin-menu-footer {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-version-badge,
+  .admin-menu.collapsed .admin-version-badge,
+  .admin-menu:not(.collapsed) .admin-version-badge {
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: auto auto !important;
+    justify-content: center !important;
+    column-gap: 8px !important;
+  }
+}
+
+/* Final FAQ editor polish: balanced form, centered actions, consistent copy rhythm. */
+.admin-content.faq-layout > .faq-editor-card {
+  align-self: start !important;
+  min-height: 0 !important;
+  padding: clamp(22px, 2.2vw, 34px) !important;
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  align-content: start !important;
+  gap: clamp(20px, 2vw, 30px) !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card > .section-title {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center !important;
+  align-items: center !important;
+  gap: 14px !important;
+  text-align: center !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card > .section-title > div {
+  display: grid !important;
+  justify-items: center !important;
+  gap: 4px !important;
+  text-align: center !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card > .section-title span {
+  color: var(--color-link) !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card > .section-title h2 {
+  margin: 0 !important;
+  color: var(--color-heading) !important;
+  font-size: clamp(1.9rem, 3vw, 3rem) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .import {
+  justify-self: center !important;
+  min-width: min(250px, 100%) !important;
+  min-height: 54px !important;
+  padding: 0 22px !important;
+  display: inline-grid !important;
+  grid-template-columns: 22px auto !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-radius: 18px !important;
+  font-weight: 900 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card form {
+  width: min(100%, 900px) !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px 24px !important;
+  align-content: start !important;
+  align-items: start !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card form label {
+  min-width: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 8px !important;
+  color: var(--color-heading) !important;
+  font-size: 0.86rem !important;
+  font-weight: 900 !important;
+  line-height: 1.5 !important;
+  text-align: right !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card form label.wide {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card input,
+.admin-content.faq-layout > .faq-editor-card textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  color: var(--color-heading) !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  text-align: right !important;
+  direction: rtl !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 23%, var(--border)) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, transparent), transparent 88%),
+    color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent),
+    0 14px 30px color-mix(in srgb, var(--primary-950) 4%, transparent) !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card input {
+  height: 56px !important;
+  min-height: 56px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card textarea {
+  min-height: 180px !important;
+  max-height: 280px !important;
+  padding: 18px !important;
+  border-radius: 20px !important;
+  resize: vertical !important;
+  line-height: 1.9 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card input::placeholder,
+.admin-content.faq-layout > .faq-editor-card textarea::placeholder {
+  color: color-mix(in srgb, var(--color-subtle) 78%, transparent) !important;
+  font-weight: 800 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .actions.wide {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-top: 4px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .actions.wide button {
+  width: min(100%, 300px) !important;
+  min-width: 220px !important;
+  min-height: 58px !important;
+  margin-inline: auto !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-radius: 19px !important;
+  font-size: 0.94rem !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+
+.admin-content.faq-layout .table-card .section-title h2,
+.admin-content.faq-layout .table-card th,
+.admin-content.faq-layout .table-card td {
+  letter-spacing: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .admin-content.faq-layout > .faq-editor-card {
+    padding: 18px !important;
+    border-radius: 24px !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card form {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card input {
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card textarea {
+    min-height: 150px !important;
+    max-height: 230px !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card .import,
+  .admin-content.faq-layout > .faq-editor-card .actions.wide button {
+    width: min(100%, 280px) !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Final FAQ list polish: readable table, no clipped columns, balanced paging. */
+.admin-content.faq-layout > .faq-list-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  padding: clamp(22px, 2.25vw, 34px) !important;
+  display: grid !important;
+  align-content: start !important;
+  gap: clamp(18px, 1.8vw, 26px) !important;
+  overflow: visible !important;
+}
+
+.admin-content.faq-layout > .faq-list-card > .section-title {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding-block-end: 16px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 16px !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border)) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card > .section-title h2 {
+  margin: 0 !important;
+  font-size: clamp(1.9rem, 3vw, 3.2rem) !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  color: var(--color-heading) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card > .section-title small {
+  min-width: 72px !important;
+  height: 44px !important;
+  padding-inline: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  color: var(--color-link) !important;
+  background: color-mix(in srgb, var(--surface-cool) 82%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-tools {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 18px !important;
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.35fr) minmax(210px, 0.75fr) auto !important;
+  gap: 16px !important;
+  align-items: end !important;
+  overflow: visible !important;
+  border-radius: 24px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-tools label,
+.admin-content.faq-layout > .faq-list-card .table-tools .search-field {
+  min-width: 0 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-tools input,
+.admin-content.faq-layout > .faq-list-card .table-tools select {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 56px !important;
+  border-radius: 18px !important;
+  text-align: right !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .result-count {
+  min-width: 104px !important;
+  height: 56px !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .selection-toolbar {
+  min-width: 0 !important;
+  min-height: 62px !important;
+  margin: 0 !important;
+  padding: 12px 16px !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1fr) auto auto auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+  overflow: visible !important;
+  border-radius: 22px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .selection-toolbar .select-all {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  white-space: normal !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .selection-toolbar button {
+  min-width: 128px !important;
+  height: 46px !important;
+  padding-inline: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 16px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-wrap {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 20%, var(--border)) !important;
+  background: color-mix(in srgb, var(--surface) 86%, transparent) !important;
+  box-shadow:
+    0 18px 40px color-mix(in srgb, var(--primary-950) 6%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent) !important;
+  scrollbar-gutter: auto !important;
+}
+
+.admin-content.faq-layout > .faq-list-card table {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  direction: rtl !important;
+}
+
+.admin-content.faq-layout > .faq-list-card col.select-col-width {
+  width: 58px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card col.error-col-width {
+  width: auto !important;
+}
+
+.admin-content.faq-layout > .faq-list-card col.category-col-width {
+  width: 140px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card col.date-col-width {
+  width: 170px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card col.actions-col-width {
+  width: 76px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card thead th {
+  height: 64px !important;
+  padding: 12px 16px !important;
+  color: #fff !important;
+  font-size: 0.9rem !important;
+  font-weight: 950 !important;
+  line-height: 1.5 !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  background: color-mix(in srgb, var(--color-heading) 88%, var(--color-link)) !important;
+  border: 0 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card thead th.select-col,
+.admin-content.faq-layout > .faq-list-card thead th:last-child {
+  text-align: center !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody tr {
+  min-height: 82px !important;
+  background: color-mix(in srgb, var(--surface) 92%, transparent) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface-cool) 44%, var(--surface)) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody td {
+  height: auto !important;
+  min-height: 82px !important;
+  padding: 16px !important;
+  vertical-align: middle !important;
+  color: var(--color-heading) !important;
+  font-size: 0.9rem !important;
+  font-weight: 850 !important;
+  line-height: 1.85 !important;
+  text-align: right !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  border-color: color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody td.select-col,
+.admin-content.faq-layout > .faq-list-card tbody td.actions-cell {
+  padding-inline: 10px !important;
+  text-align: center !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody td[data-label='پرسش / مسئله'] b {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  color: var(--color-heading) !important;
+  font-size: 0.94rem !important;
+  font-weight: 950 !important;
+  line-height: 1.9 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .tag {
+  max-width: 100% !important;
+  min-width: 74px !important;
+  padding: 8px 12px !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .details-trigger {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  line-height: 1 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .pagination-bar {
+  min-width: 0 !important;
+  min-height: 68px !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(250px, auto) !important;
+  gap: 14px !important;
+  align-items: center !important;
+  overflow: visible !important;
+  border-radius: 22px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .pagination-summary {
+  min-width: 0 !important;
+  color: var(--color-heading) !important;
+  font-weight: 850 !important;
+  white-space: normal !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .page-size {
+  min-width: 0 !important;
+  height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .page-size select {
+  width: 86px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .pagination-actions {
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  white-space: nowrap !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .pagination-actions button {
+  min-width: 70px !important;
+  height: 46px !important;
+  padding-inline: 14px !important;
+  border-radius: 16px !important;
+}
+
+@media (max-width: 980px) {
+  .admin-content.faq-layout > .faq-list-card {
+    padding: 20px !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .table-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(190px, 0.7fr) auto !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card col.category-col-width {
+    width: 118px !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card col.date-col-width {
+    width: 142px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-content.faq-layout > .faq-list-card {
+    padding: 18px !important;
+    gap: 16px !important;
+    border-radius: 26px !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card > .section-title {
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: center !important;
+    text-align: center !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card > .section-title h2 {
+    font-size: clamp(1.65rem, 8vw, 2.35rem) !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .table-tools,
+  .admin-content.faq-layout > .faq-list-card .selection-toolbar,
+  .admin-content.faq-layout > .faq-list-card .pagination-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+    padding: 14px !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .selection-toolbar .select-all,
+  .admin-content.faq-layout > .faq-list-card .selection-toolbar button,
+  .admin-content.faq-layout > .faq-list-card .result-count,
+  .admin-content.faq-layout > .faq-list-card .page-size,
+  .admin-content.faq-layout > .faq-list-card .pagination-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .table-wrap {
+    overflow: visible !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card colgroup,
+  .admin-content.faq-layout > .faq-list-card thead {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card table,
+  .admin-content.faq-layout > .faq-list-card tbody {
+    width: 100% !important;
+    display: grid !important;
+    gap: 12px !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody tr {
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 14px !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    gap: 10px 12px !important;
+    align-items: center !important;
+    border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border)) !important;
+    border-radius: 20px !important;
+    background: color-mix(in srgb, var(--surface) 88%, transparent) !important;
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--primary-950) 5%, transparent) !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td {
+    min-height: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    border: 0 !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td::before {
+    display: none !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td.select-col {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: end !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td[data-label='پرسش / مسئله'] {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td[data-label='دسته‌بندی'] {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: center !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td[data-label='آخرین تغییر'] {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    direction: ltr !important;
+    text-align: left !important;
+    color: var(--color-subtle) !important;
+    font-size: 0.78rem !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody td.actions-cell {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+    justify-self: center !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .pagination-actions {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+  }
+}
+
+/* FAQ page final alignment: equal panels, consistent inner rhythm, no accidental width drift. */
+.admin-workspace.faq-workspace {
+  --faq-panel-height: clamp(780px, calc(100dvh - 230px), 940px);
+  align-items: stretch !important;
+}
+
+.admin-workspace.faq-workspace > .admin-content.faq-layout {
+  height: var(--faq-panel-height) !important;
+  min-height: var(--faq-panel-height) !important;
+  max-height: var(--faq-panel-height) !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: clamp(18px, 1.65vw, 28px) !important;
+  overflow: visible !important;
+}
+
+.admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+  height: var(--faq-panel-height) !important;
+  min-height: var(--faq-panel-height) !important;
+  max-height: var(--faq-panel-height) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card,
+.admin-content.faq-layout > .faq-editor-card {
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.admin-content.faq-layout > .faq-list-card {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card {
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.admin-content.faq-layout > .faq-list-card > .section-title,
+.admin-content.faq-layout > .faq-editor-card > .section-title {
+  min-height: 132px !important;
+  align-content: center !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card > .section-title {
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center !important;
+}
+
+.admin-content.faq-layout > .faq-list-card > .section-title h2,
+.admin-content.faq-layout > .faq-editor-card > .section-title h2 {
+  font-size: clamp(2rem, 2.45vw, 2.85rem) !important;
+  line-height: 1.25 !important;
+  text-wrap: balance !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card form {
+  height: 100% !important;
+  min-height: 0 !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  gap: clamp(16px, 1.45vw, 24px) !important;
+  align-content: stretch !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .faq-question-field {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .faq-category-field {
+  grid-column: 2 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .faq-keywords-field {
+  grid-column: 1 !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .faq-answer-field {
+  grid-column: 1 / -1 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .faq-answer-field textarea {
+  height: 100% !important;
+  min-height: 210px !important;
+  max-height: none !important;
+}
+
+.admin-content.faq-layout > .faq-editor-card .actions.wide {
+  align-self: end !important;
+  padding-block-start: 2px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-tools {
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 0.62fr) 104px !important;
+  padding: 16px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .selection-toolbar {
+  min-height: 58px !important;
+  padding: 10px 16px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .table-wrap {
+  min-height: 0 !important;
+  overflow-x: clip !important;
+  overflow-y: hidden !important;
+}
+
+.admin-content.faq-layout > .faq-list-card table {
+  min-width: 0 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody tr {
+  height: 72px !important;
+  min-height: 72px !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody td {
+  min-height: 72px !important;
+  padding: 12px 14px !important;
+  line-height: 1.65 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card tbody td[data-label='پرسش / مسئله'] b {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+  line-height: 1.75 !important;
+}
+
+.admin-content.faq-layout > .faq-list-card .pagination-bar {
+  min-height: 64px !important;
+  padding: 12px 16px !important;
+}
+
+@media (max-width: 1180px) {
+  .admin-workspace.faq-workspace {
+    --faq-panel-height: auto;
+  }
+
+  .admin-workspace.faq-workspace > .admin-content.faq-layout {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card,
+  .admin-content.faq-layout > .faq-editor-card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-content.faq-layout > .faq-list-card > .section-title,
+  .admin-content.faq-layout > .faq-editor-card > .section-title {
+    min-height: 0 !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card form {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: none !important;
+  }
+
+  .admin-content.faq-layout > .faq-editor-card .faq-category-field,
+  .admin-content.faq-layout > .faq-editor-card .faq-keywords-field {
+    grid-column: 1 !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card .table-wrap {
+    overflow: visible !important;
+  }
+
+  .admin-content.faq-layout > .faq-list-card tbody tr {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Stable numeric slots fed by dashboard_metric_logs. */
+.stats article > strong,
+.admin-menu-list em,
+.result-count,
+.pagination-summary,
+.pagination-pages span,
+.performance-grid strong,
+.performance-card strong,
+.funnel-list article span,
+.trend-grid small,
+.share-list span,
+.rating-distribution em {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: 'tnum' 1, 'lnum' 1 !important;
+  white-space: nowrap !important;
+}
+
+.stats article > strong {
+  inline-size: clamp(76px, 5vw, 108px) !important;
+  min-inline-size: clamp(76px, 5vw, 108px) !important;
+  max-inline-size: clamp(76px, 5vw, 108px) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+
+.admin-menu-list em {
+  inline-size: 52px !important;
+  min-inline-size: 52px !important;
+  max-inline-size: 52px !important;
+  block-size: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 52px !important;
+  overflow: hidden !important;
+}
+
+.admin-menu.collapsed .admin-menu-list em {
+  position: absolute !important;
+  inset-block-start: -7px !important;
+  inset-inline-start: -7px !important;
+  inline-size: 34px !important;
+  min-inline-size: 34px !important;
+  max-inline-size: 34px !important;
+  block-size: 28px !important;
+  flex-basis: 34px !important;
+  font-size: 0.74rem !important;
+  z-index: 2 !important;
 }

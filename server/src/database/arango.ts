@@ -4,14 +4,17 @@ import { Database } from 'arangojs';
 import { CollectionType } from 'arangojs/collections';
 import { config } from '../config/config.js';
 import { database as localDatabase } from './database.js';
+import { runArangoMigrations } from './migrations.js';
 
 export const arangoCollections = {
+  databaseMigrations: 'database_migrations',
   users: 'users',
   projects: 'projects',
   faqs: 'faqs',
   conversations: 'conversations',
   diagnosticCases: 'diagnostic_cases',
   externalServices: 'external_services',
+  dashboardMetricLogs: 'dashboard_metric_logs',
   settings: 'settings',
   troubleshootingTreeVersions: 'troubleshooting_tree_versions',
   troubleshootingNodes: 'troubleshooting_nodes',
@@ -43,12 +46,14 @@ export async function ensureArangoSchema(): Promise<void> {
 
   await ensureArangoDatabaseExists();
   const database = getArangoDatabase();
+  await ensureDocumentCollection(database, arangoCollections.databaseMigrations);
   await ensureDocumentCollection(database, arangoCollections.users);
   await ensureDocumentCollection(database, arangoCollections.projects);
   await ensureDocumentCollection(database, arangoCollections.faqs);
   await ensureDocumentCollection(database, arangoCollections.conversations);
   await ensureDocumentCollection(database, arangoCollections.diagnosticCases);
   await ensureDocumentCollection(database, arangoCollections.externalServices);
+  await ensureDocumentCollection(database, arangoCollections.dashboardMetricLogs);
   await ensureDocumentCollection(database, arangoCollections.settings);
   await ensureDocumentCollection(database, arangoCollections.troubleshootingTreeVersions);
   await ensureDocumentCollection(database, arangoCollections.troubleshootingNodes);
@@ -86,10 +91,22 @@ export async function ensureArangoSchema(): Promise<void> {
     type: 'persistent',
     fields: ['updatedAt']
   });
+  await database.collection(arangoCollections.faqs).ensureIndex({
+    type: 'persistent',
+    fields: ['updatedAt', 'id']
+  });
+  await database.collection(arangoCollections.faqs).ensureIndex({
+    type: 'persistent',
+    fields: ['category', 'updatedAt', 'id']
+  });
   await database.collection(arangoCollections.conversations).ensureIndex({
     type: 'persistent',
     fields: ['id'],
     unique: true
+  });
+  await database.collection(arangoCollections.conversations).ensureIndex({
+    type: 'persistent',
+    fields: ['createdAt', 'id']
   });
   await database.collection(arangoCollections.conversations).ensureIndex({
     type: 'persistent',
@@ -122,6 +139,15 @@ export async function ensureArangoSchema(): Promise<void> {
     fields: ['key'],
     unique: true
   });
+  await database.collection(arangoCollections.dashboardMetricLogs).ensureIndex({
+    type: 'persistent',
+    fields: ['key'],
+    unique: true
+  });
+  await database.collection(arangoCollections.dashboardMetricLogs).ensureIndex({
+    type: 'persistent',
+    fields: ['order']
+  });
   await database.collection(arangoCollections.troubleshootingTreeVersions).ensureIndex({
     type: 'persistent',
     fields: ['projectKey', 'mode'],
@@ -150,6 +176,7 @@ export async function ensureArangoSchema(): Promise<void> {
     fields: ['projectKey', 'treeMode', 'from', 'to']
   });
 
+  await runArangoMigrations(database);
   await seedArangoApplicationData(database);
 }
 
@@ -284,6 +311,12 @@ async function seedArangoApplicationData(database: Database): Promise<void> {
     arangoCollections.externalServices,
     localDatabase.data.externalServices,
     (item) => String(item.id)
+  );
+  await seedCollectionIfEmpty(
+    database,
+    arangoCollections.dashboardMetricLogs,
+    localDatabase.data.dashboardMetricLogs,
+    (item) => item.key
   );
 
   const settingsCollection = database.collection(arangoCollections.settings);

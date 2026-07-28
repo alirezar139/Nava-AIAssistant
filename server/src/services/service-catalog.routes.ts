@@ -30,7 +30,17 @@ const servicePayloadSchema = z.object({
   showInAssistant: z.boolean().optional().default(true)
 });
 
+const serviceRequestSchema = z.object({
+  method: z.enum(serviceMethods).optional().default('POST'),
+  url: z.string().trim().url().max(1000),
+  authorizationHeader: z.string().trim().max(4000).optional().default(''),
+  authHeader: z.string().trim().max(4000).optional().default(''),
+  headersText: z.string().trim().max(6000).optional().default(''),
+  bodyTemplate: z.string().trim().max(12000).optional().default('')
+});
+
 type ExternalServicePayload = z.infer<typeof servicePayloadSchema>;
+type ExternalServiceRequestPayload = z.infer<typeof serviceRequestSchema>;
 
 interface ServiceExecutionResult {
   ok: boolean;
@@ -93,6 +103,27 @@ function toRecord(payload: ExternalServicePayload, existing: ExternalServiceReco
   };
 }
 
+function toDraftService(payload: ExternalServiceRequestPayload): ExternalServiceRecord {
+  const now = new Date().toISOString();
+  return {
+    id: 0,
+    key: 'draft-request',
+    title: 'درخواست آزمایشی',
+    purpose: 'اجرای آزمایشی سرویس پیش از ذخیره',
+    sectionTitle: 'درخواست آزمایشی',
+    method: payload.method as ExternalServiceMethod,
+    url: payload.url,
+    authorizationHeader: payload.authorizationHeader,
+    authHeader: payload.authHeader,
+    headersText: payload.headersText,
+    bodyTemplate: payload.bodyTemplate,
+    isActive: true,
+    showInAssistant: false,
+    createdAt: now,
+    updatedAt: now
+  };
+}
+
 function hasHeader(headers: Record<string, string>, name: string): boolean {
   const normalized = name.toLowerCase();
   return Object.keys(headers).some((key) => key.toLowerCase() === normalized);
@@ -103,7 +134,12 @@ function parseExtraHeaders(value: string): Record<string, string> | null {
   if (!trimmed) return {};
 
   if (trimmed.startsWith('{')) {
-    const parsed = JSON.parse(trimmed) as unknown;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(trimmed) as unknown;
+    } catch {
+      return null;
+    }
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
     return Object.fromEntries(
       Object.entries(parsed)
@@ -212,6 +248,16 @@ serviceCatalogRouter.get('/active', requireAuth(), async (_request, response) =>
       .filter((service) => service.isActive && service.showInAssistant)
       .map(toPublicService)
   );
+});
+
+serviceCatalogRouter.post('/test', requireAuth(['admin']), async (request: AuthRequest, response) => {
+  const result = serviceRequestSchema.safeParse(request.body);
+  if (!result.success) {
+    sendError(response, 400, 'SERVICE_REQUEST_INVALID', 'اطلاعات درخواست سرویس معتبر نیست.');
+    return;
+  }
+
+  response.json(await executeService(toDraftService(result.data), request));
 });
 
 serviceCatalogRouter.post('/', requireAuth(['admin']), async (request, response) => {

@@ -7,6 +7,25 @@ import { TroubleshootingTree } from '../models/troubleshooting-tree.models';
 import { environment } from '../../../environments/environment';
 
 export type FaqPayload = Pick<FaqRecord, 'question' | 'answer' | 'category' | 'keywords'>;
+
+export interface PaginationQuery {
+  page: number;
+  pageSize: number;
+  search?: string;
+  category?: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PaginatedFaqResponse extends PaginatedResponse<FaqRecord> {
+  categories: string[];
+}
+
 export interface DiagnosticRatingPayload {
   rating: number;
   ratingComment?: string;
@@ -42,6 +61,11 @@ export type PublicExternalServiceRecord = Omit<
 >;
 
 export type ExternalServicePayload = Omit<ExternalServiceRecord, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type ExternalServiceRequestPayload = Pick<
+  ExternalServicePayload,
+  'method' | 'url' | 'authorizationHeader' | 'authHeader' | 'headersText' | 'bodyTemplate'
+>;
 
 export interface ExternalServiceExecutionResult {
   ok: boolean;
@@ -82,6 +106,26 @@ export type TicketServiceSettingsPayload = Pick<
   | 'requestTypeMappings'
 >;
 
+export type DashboardMetricKey =
+  | 'activeFaqs'
+  | 'userRequests'
+  | 'engagedUsers'
+  | 'faqCoverageRate'
+  | 'diagnosticCases'
+  | 'treeNodes'
+  | 'treeEdges'
+  | 'activeServices'
+  | 'sahandSubmitted';
+
+export interface DashboardMetricLogRecord {
+  key: DashboardMetricKey;
+  label: string;
+  value: number;
+  order: number;
+  source: string;
+  updatedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
@@ -90,6 +134,14 @@ export class ApiService {
 
   getFaqs(): Observable<FaqRecord[]> {
     return this.http.get<FaqRecord[]>(`${this.apiUrl}/faqs`);
+  }
+
+  getDashboardMetricLogs(): Observable<DashboardMetricLogRecord[]> {
+    return this.http.get<DashboardMetricLogRecord[]>(`${this.apiUrl}/dashboard/metric-logs`);
+  }
+
+  getFaqPage(query: PaginationQuery): Observable<PaginatedFaqResponse> {
+    return this.http.get<PaginatedFaqResponse>(`${this.apiUrl}/faqs${this.toQueryString(query)}`);
   }
 
   createFaq(payload: FaqPayload): Observable<FaqRecord> {
@@ -114,6 +166,14 @@ export class ApiService {
 
   getConversations(): Observable<ConversationRecord[]> {
     return this.http.get<ConversationRecord[]>(`${this.apiUrl}/conversations`);
+  }
+
+  getConversationPage(
+    query: Pick<PaginationQuery, 'page' | 'pageSize' | 'search'>
+  ): Observable<PaginatedResponse<ConversationRecord>> {
+    return this.http.get<PaginatedResponse<ConversationRecord>>(
+      `${this.apiUrl}/conversations${this.toQueryString(query)}`
+    );
   }
 
   logConversation(
@@ -200,7 +260,24 @@ export class ApiService {
     return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/${id}/test`, {});
   }
 
+  testExternalServiceDraft(
+    payload: ExternalServiceRequestPayload
+  ): Observable<ExternalServiceExecutionResult> {
+    return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/test`, payload);
+  }
+
   runExternalService(id: number): Observable<ExternalServiceExecutionResult> {
     return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/${id}/run`, {});
+  }
+
+  private toQueryString<T extends object>(query: T): string {
+    const params = new URLSearchParams();
+    Object.entries(query as Record<string, string | number | undefined>).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        params.set(key, String(value));
+      }
+    });
+    const serialized = params.toString();
+    return serialized ? `?${serialized}` : '';
   }
 }
