@@ -83,6 +83,7 @@ app-theme-toggle.theme-switch {
   --orb-opacity-rest: 0.58;
   --orb-opacity-peak: 0.74;
   --orb-opacity-mid: 0.64;
+  --orb-duration: 24s;
 
   position: absolute;
   width: clamp(92px, 8vw, 142px);
@@ -107,7 +108,7 @@ app-theme-toggle.theme-switch {
     inset -18px -18px 34px color-mix(in srgb, var(--primary-950) 12%, transparent);
   filter: saturate(1.14);
   font-size: 0;
-  animation: question-orb 36s ease-in-out infinite;
+  animation: question-orb var(--orb-duration) ease-in-out infinite;
 }
 
 .qa-question::after {
@@ -128,6 +129,7 @@ app-theme-toggle.theme-switch {
 .q1 {
   --orb-from: #2fb4a5;
   --orb-to: #d09a36;
+  --orb-duration: 24s;
   top: 13%;
   left: 21%;
   animation-delay: 0s;
@@ -136,6 +138,7 @@ app-theme-toggle.theme-switch {
 .q2 {
   --orb-from: #1684bd;
   --orb-to: #18a67d;
+  --orb-duration: 22s;
   top: 57%;
   left: 13%;
   animation-delay: 2.2s;
@@ -144,6 +147,7 @@ app-theme-toggle.theme-switch {
 .q3 {
   --orb-from: #d28a2e;
   --orb-to: #0f86a6;
+  --orb-duration: 25s;
   right: 8%;
   top: 14%;
   animation-delay: 4.4s;
@@ -152,6 +156,7 @@ app-theme-toggle.theme-switch {
 .q4 {
   --orb-from: #74b77c;
   --orb-to: #218b76;
+  --orb-duration: 23s;
   right: 12%;
   bottom: 14%;
   animation-delay: 6.6s;
@@ -160,6 +165,7 @@ app-theme-toggle.theme-switch {
 .q5 {
   --orb-from: #2fbfc0;
   --orb-to: #c37a2c;
+  --orb-duration: 21s;
   top: 70%;
   right: 48%;
   animation-delay: 8.8s;
@@ -541,42 +547,6 @@ form > button[type='submit']:disabled {
   cursor: wait;
 }
 
-.demo {
-  margin-top: 13px;
-  padding: 12px 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border: 1px solid var(--crystal-edge);
-  border-radius: 14px;
-  color: var(--color-secondary);
-  background:
-    linear-gradient(125deg, color-mix(in srgb, #ffffff 42%, transparent), transparent 44%),
-    var(--crystal-soft);
-  box-shadow: inset 1px 1px 0 var(--crystal-edge);
-  font-size: var(--font-xs);
-  line-height: 1.55;
-}
-
-.demo b {
-  color: var(--color-metric);
-  font-size: var(--font-sm);
-}
-
-.demo button {
-  padding: 0;
-  border: 0;
-  color: inherit;
-  background: transparent;
-  box-shadow: none;
-  font: inherit;
-  text-align: right;
-}
-
-.demo button:hover {
-  color: var(--color-link);
-}
-
 :host-context([data-theme='dark']) .qa-question {
   --orb-opacity-rest: 0.48;
   --orb-opacity-peak: 0.66;
@@ -682,8 +652,7 @@ form > button[type='submit']:disabled {
   color: #edf8f5;
 }
 
-:host-context([data-theme='dark']) .card-heading p,
-:host-context([data-theme='dark']) .demo {
+:host-context([data-theme='dark']) .card-heading p {
   color: rgba(209, 226, 220, 0.78);
 }
 
@@ -717,8 +686,7 @@ form > button[type='submit']:disabled {
   background: rgba(255, 255, 255, 0.08);
 }
 
-:host-context([data-theme='dark']) .captcha-image,
-:host-context([data-theme='dark']) .demo {
+:host-context([data-theme='dark']) .captcha-image {
   border-color: rgba(132, 194, 177, 0.28);
   background: linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%), rgba(8, 35, 29, 0.7);
   box-shadow: inset 1px 1px 0 rgba(222, 249, 241, 0.1);
@@ -928,7 +896,6 @@ form > button[type='submit']:disabled {
 
 .card-heading,
 form,
-.demo,
 .field-shell,
 .password-field,
 .captcha-field {
@@ -965,15 +932,6 @@ form > button[type='submit'] {
 
 form > button[type='submit'] {
   width: 100%;
-}
-
-.demo {
-  gap: 8px;
-}
-
-.demo button {
-  line-height: 1.8;
-  overflow-wrap: anywhere;
 }
 
 @media (max-width: 560px) {

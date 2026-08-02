@@ -112,10 +112,5 @@
       <p class="error" role="alert" [class.visible]="error">{{ error || ' ' }}</p>
       <button type="submit" [disabled]="loading">{{ loading ? 'در حال ورود...' : 'ورود به سامانه' }}</button>
     </form>
-    <div class="demo">
-      <b>حساب‌های آزمایشی</b>
-      <button type="button" (click)="useDemoAccount('admin')">مدیر: admin / Admin&#64;123</button>
-      <button type="button" (click)="useDemoAccount('user')">کاربر: user / User&#64;123</button>
-    </div>
   </section>
 </main>

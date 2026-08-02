@@ -41,6 +41,7 @@ import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
 import { TroubleshootingTreeImportService } from '../../services/troubleshooting-tree-import.service';
+import { appVersionInfo } from '../../../../../environments/version';
 
 type PendingConfirmation =
   | { type: 'delete'; faq: FaqRecord }
@@ -54,6 +55,7 @@ type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
 type TreeCanvasTool = 'select' | 'pan' | 'add-node' | 'connect';
 type DeviceViewportMode = 'mobile' | 'tablet' | 'desktop';
+type DeviceViewportPreference = 'auto' | DeviceViewportMode;
 
 interface PerformanceMetric {
   label: string;
@@ -153,11 +155,27 @@ export class AdminDashboardComponent implements OnInit {
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
   adminMenuCollapsed = false;
-  readonly appVersion = '0.1.0';
+  readonly appVersion = appVersionInfo.version;
+  readonly appVersionTitle = [
+    `نسخه ${appVersionInfo.version}`,
+    `Git ${appVersionInfo.git.describe}`,
+    `${appVersionInfo.git.branch}@${appVersionInfo.git.commit}`,
+    appVersionInfo.git.dirty ? 'دارای تغییرات ذخیره‌نشده' : ''
+  ]
+    .filter(Boolean)
+    .join(' | ');
+  readonly deviceViewportOptions: Array<{ value: DeviceViewportPreference; label: string; hint: string }> = [
+    { value: 'auto', label: 'خودکار', hint: 'هماهنگ با اندازه پنجره' },
+    { value: 'desktop', label: 'دسکتاپ', hint: 'چیدمان کامل' },
+    { value: 'tablet', label: 'تبلت', hint: 'چیدمان میانی' },
+    { value: 'mobile', label: 'موبایل', hint: 'چیدمان فشرده' }
+  ];
+  deviceViewportPreference: DeviceViewportPreference = 'auto';
   deviceViewportMode: DeviceViewportMode = 'desktop';
   editingId: number | null = null;
   editingServiceId: number | null = null;
   detailFaq: FaqRecord | null = null;
+  detailConversation: ConversationRecord | null = null;
   form: FaqPayload = this.emptyForm();
   editForm: FaqPayload = this.emptyForm();
   serviceForm: ExternalServicePayload = this.emptyExternalServiceForm();
@@ -186,6 +204,7 @@ export class AdminDashboardComponent implements OnInit {
   currentPage = 1;
   pageSize = 5;
   readonly pageSizeOptions = [5, 10, 20, 50];
+  private faqPageRequestId = 0;
   reportCurrentPage = 1;
   reportPageSize = 6;
   readonly reportPageSizeOptions = [6, 12, 24, 48];
@@ -1340,6 +1359,10 @@ export class AdminDashboardComponent implements OnInit {
     return Math.min(this.currentPage * this.pageSize, this.faqTotalCount);
   }
 
+  trackFaqById(_index: number, faq: FaqRecord): number {
+    return faq.id;
+  }
+
   getFaqDescription(faq: FaqRecord): string {
     return this.extractAnswerSection(faq.answer, /توضیحات/) || faq.answer;
   }
@@ -1426,16 +1449,48 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  setDeviceViewportPreference(preference: DeviceViewportPreference): void {
+    this.deviceViewportPreference = preference;
+    this.updateDeviceViewportMode();
+    this.changeDetector.markForCheck();
+  }
+
+  cycleDeviceViewportPreference(): void {
+    const sequence: DeviceViewportPreference[] = ['auto', 'desktop', 'tablet', 'mobile'];
+    const currentIndex = sequence.indexOf(this.deviceViewportPreference);
+    const nextPreference = sequence[(currentIndex + 1) % sequence.length];
+    this.setDeviceViewportPreference(nextPreference);
+  }
+
   get deviceViewportLabel(): string {
+    if (this.deviceViewportPreference === 'auto') return 'نمایش خودکار';
     if (this.deviceViewportMode === 'mobile') return 'نمایش موبایل';
     if (this.deviceViewportMode === 'tablet') return 'نمایش تبلت';
     return 'نمایش دسکتاپ';
   }
 
   get deviceViewportHint(): string {
+    if (this.deviceViewportPreference === 'auto') return 'تشخیص بر اساس اندازه صفحه';
     if (this.deviceViewportMode === 'mobile') return 'چیدمان فشرده';
     if (this.deviceViewportMode === 'tablet') return 'چیدمان میانی';
     return 'چیدمان کامل';
+  }
+
+  get deviceViewportStateLabel(): string {
+    if (this.deviceViewportPreference === 'auto') {
+      return `اکنون: ${this.getDetectedViewportLabel()}`;
+    }
+    return 'انتخاب دستی';
+  }
+
+  get deviceViewportTitle(): string {
+    return `${this.deviceViewportLabel} - ${this.deviceViewportStateLabel}`;
+  }
+
+  private getDetectedViewportLabel(): string {
+    if (this.deviceViewportMode === 'mobile') return 'موبایل';
+    if (this.deviceViewportMode === 'tablet') return 'تبلت';
+    return 'دسکتاپ';
   }
 
   setTreeManagementView(view: TreeManagementView): void {
@@ -1507,12 +1562,20 @@ export class AdminDashboardComponent implements OnInit {
 
   private updateDeviceViewportMode(): void {
     if (typeof window === 'undefined') return;
-    const width = window.innerWidth;
-    const nextMode: DeviceViewportMode = width < 640 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop';
+    const nextMode: DeviceViewportMode =
+      this.deviceViewportPreference === 'auto'
+        ? this.detectDeviceViewportMode(window.innerWidth)
+        : this.deviceViewportPreference;
     if (this.deviceViewportMode !== nextMode) {
       this.deviceViewportMode = nextMode;
       this.changeDetector.markForCheck();
     }
+  }
+
+  private detectDeviceViewportMode(width: number): DeviceViewportMode {
+    if (width < 640) return 'mobile';
+    if (width < 1024) return 'tablet';
+    return 'desktop';
   }
 
   private loadPerformanceData(force = false): void {
@@ -1662,6 +1725,10 @@ export class AdminDashboardComponent implements OnInit {
 
   showFaqDetails(faq: FaqRecord): void {
     this.detailFaq = faq;
+  }
+
+  showConversationDetails(conversation: ConversationRecord): void {
+    this.detailConversation = conversation;
   }
 
   saveEditedFaq(): void {
@@ -1906,14 +1973,17 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  setPageSize(size: number): void {
-    this.pageSize = size;
+  setPageSize(size: number | string): void {
+    const nextSize = Number(size);
+    this.pageSize = this.pageSizeOptions.includes(nextSize) ? nextSize : this.pageSizeOptions[0];
     this.currentPage = 1;
     this.loadFaqs();
   }
 
-  goToPage(page: number): void {
-    this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+  goToPage(page: number | string): void {
+    const nextPage = this.normalizeFaqPage(Number(page));
+    if (nextPage === this.currentPage && this.faqs.length) return;
+    this.currentPage = nextPage;
     this.loadFaqs();
   }
 
@@ -1952,6 +2022,10 @@ export class AdminDashboardComponent implements OnInit {
 
   closeDetailDialog(): void {
     this.detailFaq = null;
+  }
+
+  closeConversationDialog(): void {
+    this.detailConversation = null;
   }
 
   openFilePicker(): void {
@@ -3670,15 +3744,35 @@ export class AdminDashboardComponent implements OnInit {
     if (useGlobalLoading) {
       this.loading = true;
     }
+    const requestId = ++this.faqPageRequestId;
+    const requestPage = this.currentPage;
+    const requestPageSize = this.pageSize;
     this.api
       .getFaqPage({
-        page: this.currentPage,
-        pageSize: this.pageSize,
+        page: requestPage,
+        pageSize: requestPageSize,
         search: this.searchTerm.trim(),
         category: this.categoryFilter
       })
       .subscribe({
         next: (result) => {
+          if (requestId !== this.faqPageRequestId) return;
+          const responsePage = Number(result.page) || requestPage;
+          const responsePageSize = Number(result.pageSize) || requestPageSize;
+          const normalizedPage = this.normalizeFaqPage(responsePage, result.total, responsePageSize);
+          if (normalizedPage !== responsePage && result.total > 0) {
+            this.currentPage = normalizedPage;
+            this.pageSize = responsePageSize;
+            this.faqTotalCount = result.total;
+            this.faqCategories = result.categories;
+            this.loading = false;
+            this.saving = false;
+            this.changeDetector.markForCheck();
+            this.loadFaqs(showNotification);
+            return;
+          }
+          this.currentPage = normalizedPage;
+          this.pageSize = responsePageSize;
           this.faqs = result.items;
           this.faqTotalCount = result.total;
           this.faqCategories = result.categories;
@@ -3873,7 +3967,14 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private normalizePaginationPage(): void {
-    this.currentPage = Math.min(Math.max(this.currentPage, 1), this.totalPages);
+    this.currentPage = this.normalizeFaqPage(this.currentPage);
+  }
+
+  private normalizeFaqPage(page: number, total = this.faqTotalCount, pageSize = this.pageSize): number {
+    const safePage = Number.isFinite(page) ? Math.trunc(page) : 1;
+    const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? pageSize : this.pageSizeOptions[0];
+    const pageCount = Math.max(1, Math.ceil(total / safePageSize));
+    return Math.min(Math.max(safePage, 1), pageCount);
   }
 
   private extractAnswerSection(answer: string, label: RegExp): string {

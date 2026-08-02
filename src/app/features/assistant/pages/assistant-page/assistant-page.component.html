@@ -473,7 +473,14 @@
           <input type="checkbox" disabled />
           Create another
         </label>
-        <button type="button" class="create-button" disabled>{{ ticketPrimaryActionLabel }}</button>
+        <button
+          type="button"
+          class="create-button"
+          [disabled]="ticketSubmitting || ticketAutomationState !== 'failed'"
+          (click)="submitTicketFromDialog()"
+        >
+          {{ ticketPrimaryActionLabel }}
+        </button>
         <button
           type="button"
           class="cancel-button"

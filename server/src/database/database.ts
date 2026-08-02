@@ -57,6 +57,8 @@ export interface DiagnosticCaseRecord {
   externalTicketId?: string | null;
   externalTrackingId?: string | null;
   externalTicketStatus?: 'not_configured' | 'submitted' | 'failed' | null;
+  externalTicketStatusCode?: number | null;
+  externalTicketError?: string | null;
   similarIssueCount?: number;
   similarUserCount?: number;
   duplicateOfDiagnosticId?: number | null;
@@ -275,6 +277,8 @@ database.data.diagnosticCases.forEach((item) => {
   item.rating ??= null;
   item.ratingComment ??= '';
   item.ratingSubmittedAt ??= null;
+  item.externalTicketStatusCode ??= null;
+  item.externalTicketError ??= null;
 });
 
 if (!database.data.users.some((user) => user.username === 'admin')) {

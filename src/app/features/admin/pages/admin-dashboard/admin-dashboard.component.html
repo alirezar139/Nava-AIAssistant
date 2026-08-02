@@ -265,29 +265,59 @@
           [class.device-tablet]="deviceViewportMode === 'tablet'"
           [class.device-desktop]="deviceViewportMode === 'desktop'"
         >
-          <div class="admin-device-indicator" [attr.title]="deviceViewportLabel">
-            <span class="device-icon" aria-hidden="true">
-              <svg *ngIf="deviceViewportMode === 'mobile'" viewBox="0 0 24 24">
-                <rect x="7" y="3" width="10" height="18" rx="2.5"></rect>
-                <path d="M10 18h4"></path>
-              </svg>
-              <svg *ngIf="deviceViewportMode === 'tablet'" viewBox="0 0 24 24">
-                <rect x="5" y="3" width="14" height="18" rx="2.8"></rect>
-                <path d="M11 18h2"></path>
-              </svg>
-              <svg *ngIf="deviceViewportMode === 'desktop'" viewBox="0 0 24 24">
-                <rect x="3" y="5" width="18" height="12" rx="2"></rect>
-                <path d="M8 21h8M12 17v4"></path>
-              </svg>
-            </span>
-            <span class="device-copy">
-              <b>{{ deviceViewportLabel }}</b>
-              <small>{{ deviceViewportHint }}</small>
-            </span>
+          <div
+            class="admin-device-panel"
+            [class.auto-mode]="deviceViewportPreference === 'auto'"
+            [attr.title]="deviceViewportTitle"
+          >
+            <button
+              type="button"
+              class="admin-device-indicator"
+              [attr.aria-label]="deviceViewportTitle"
+              (click)="cycleDeviceViewportPreference()"
+            >
+              <span class="device-icon" aria-hidden="true">
+                <svg *ngIf="deviceViewportPreference === 'auto'" viewBox="0 0 24 24">
+                  <path d="M4 12a8 8 0 0 1 13.7-5.7"></path>
+                  <path d="M18 3v4h-4"></path>
+                  <path d="M20 12a8 8 0 0 1-13.7 5.7"></path>
+                  <path d="M6 21v-4h4"></path>
+                  <path d="M12 8v4l3 2"></path>
+                </svg>
+                <svg *ngIf="deviceViewportPreference !== 'auto' && deviceViewportMode === 'mobile'" viewBox="0 0 24 24">
+                  <rect x="7" y="3" width="10" height="18" rx="2.5"></rect>
+                  <path d="M10 18h4"></path>
+                </svg>
+                <svg *ngIf="deviceViewportPreference !== 'auto' && deviceViewportMode === 'tablet'" viewBox="0 0 24 24">
+                  <rect x="5" y="3" width="14" height="18" rx="2.8"></rect>
+                  <path d="M11 18h2"></path>
+                </svg>
+                <svg *ngIf="deviceViewportPreference !== 'auto' && deviceViewportMode === 'desktop'" viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+                  <path d="M8 21h8M12 17v4"></path>
+                </svg>
+              </span>
+              <span class="device-copy">
+                <b>{{ deviceViewportLabel }}</b>
+                <small>{{ deviceViewportHint }} - {{ deviceViewportStateLabel }}</small>
+              </span>
+            </button>
+            <label class="device-mode-select">
+              <span>حالت نمایش</span>
+              <select
+                [ngModel]="deviceViewportPreference"
+                (ngModelChange)="setDeviceViewportPreference($event)"
+                aria-label="انتخاب حالت نمایش"
+              >
+                <option *ngFor="let option of deviceViewportOptions" [ngValue]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </label>
           </div>
-          <div class="admin-version-badge" title="نسخه سامانه">
+          <div class="admin-version-badge" [title]="appVersionTitle">
             <span>نسخه سامانه</span>
-            <b>v{{ appVersion }}</b>
+            <b dir="ltr">{{ appVersion }}</b>
           </div>
         </div>
       </aside>
@@ -433,7 +463,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let faq of paginatedFaqs" [class.selected]="selectedFaqIds.has(faq.id)">
+                  <tr *ngFor="let faq of paginatedFaqs; trackBy: trackFaqById" [class.selected]="selectedFaqIds.has(faq.id)">
                     <td class="select-col" data-label="انتخاب">
                       <input
                         type="checkbox"
@@ -535,12 +565,27 @@
           <div class="empty" *ngIf="conversationsLoaded && conversationTotalCount && !conversations.length">
             نتیجه‌ای مطابق جست‌وجو پیدا نشد.
           </div>
-          <div class="reports" *ngFor="let item of conversationsLoaded ? displayedConversations : []">
+          <div
+            class="reports report-preview"
+            *ngFor="let item of conversationsLoaded ? displayedConversations : []"
+            role="button"
+            tabindex="0"
+            (click)="showConversationDetails(item)"
+            (keydown.enter)="showConversationDetails(item)"
+            (keydown.space)="$event.preventDefault(); showConversationDetails(item)"
+          >
             <div class="user-avatar">{{ item.userFullName.charAt(0) }}</div>
             <div class="report-content">
               <div class="report-meta">
                 <b>{{ item.userFullName }}</b
                 ><span>{{ item.createdAt | date: 'yyyy/MM/dd - HH:mm' }}</span>
+                <button
+                  type="button"
+                  class="report-open"
+                  (click)="$event.stopPropagation(); showConversationDetails(item)"
+                >
+                  مشاهده گفت‌وگوی کامل
+                </button>
               </div>
               <p class="question">{{ item.question }}</p>
               <p class="answer"><b>پاسخ دستیار:</b> {{ item.answer }}</p>
@@ -2961,6 +3006,53 @@
       </section>
     </div>
   </main>
+
+  <div
+    class="modal-backdrop conversation-detail-backdrop"
+    *ngIf="detailConversation as conversation"
+    (click)="closeConversationDialog()"
+  >
+    <section
+      class="confirm-modal conversation-detail-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="conversation-detail-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="conversation-detail-header">
+        <div>
+          <span>گفت‌وگوی کامل کاربر</span>
+          <h2 id="conversation-detail-title">{{ conversation.userFullName }}</h2>
+          <small>
+            {{ conversation.username }} · {{ conversation.createdAt | date: 'yyyy/MM/dd - HH:mm' }}
+          </small>
+        </div>
+        <button type="button" class="close" aria-label="بستن" (click)="closeConversationDialog()">×</button>
+      </header>
+
+      <div class="conversation-detail-meta">
+        <span *ngIf="conversation.matchedFaqId !== null">FAQ شماره {{ formatCount(conversation.matchedFaqId) }}</span>
+        <span *ngIf="conversation.matchedFaqId === null">بدون پاسخ قطعی از FAQ</span>
+        <span *ngIf="conversation.rating">امتیاز: {{ formatRating(conversation.rating) }}</span>
+        <span *ngIf="!conversation.rating">بدون امتیاز</span>
+      </div>
+
+      <div class="conversation-timeline">
+        <article class="conversation-bubble user">
+          <span>پیام کاربر</span>
+          <p>{{ conversation.question }}</p>
+        </article>
+        <article class="conversation-bubble assistant">
+          <span>پاسخ دستیار</span>
+          <p>{{ conversation.answer }}</p>
+        </article>
+      </div>
+
+      <div class="modal-actions single">
+        <button type="button" class="confirm" (click)="closeConversationDialog()">بستن گفتگو</button>
+      </div>
+    </section>
+  </div>
 
   <div class="modal-backdrop" *ngIf="detailFaq" (click)="closeDetailDialog()">
     <section

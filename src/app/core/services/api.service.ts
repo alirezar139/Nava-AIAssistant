@@ -200,6 +200,10 @@ export class ApiService {
     return this.http.post<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/analyze`, {});
   }
 
+  submitDiagnosticTicket(id: number): Observable<DiagnosticCaseRecord> {
+    return this.http.post<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/submit-ticket`, {});
+  }
+
   rateDiagnosticCase(id: number, payload: DiagnosticRatingPayload): Observable<DiagnosticCaseRecord> {
     return this.http.patch<DiagnosticCaseRecord>(`${this.apiUrl}/diagnostics/${id}/rating`, payload);
   }

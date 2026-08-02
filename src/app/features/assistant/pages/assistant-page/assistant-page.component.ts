@@ -262,14 +262,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       return this.diagnosticCase.duplicateNotice;
     if (this.ticketAutomationState === 'submitted') return this.formatTicketReceiptText();
     if (this.ticketAutomationState === 'failed')
-      return this.ticketErrorMessage || 'خطای ثبت تیکت را بررسی کنید.';
+      return this.ticketErrorMessage || this.diagnosticCase?.externalTicketError || 'خطای ثبت تیکت را بررسی کنید.';
     if (this.ticketAutomationState === 'idle') return 'هنوز مسیر به مرحله ثبت تیکت نرسیده است.';
     return 'کاربر نیازی به تکمیل یا تایید فرم ندارد؛ ثبت به صورت خودکار انجام می‌شود.';
   }
 
   get ticketPrimaryActionLabel(): string {
     if (this.ticketAutomationState === 'submitted') return 'ثبت شد';
-    if (this.ticketAutomationState === 'failed') return 'ناموفق';
+    if (this.ticketAutomationState === 'failed') return 'تلاش دوباره';
     if (this.ticketSubmitting) return 'در حال ثبت خودکار';
     return 'Create';
   }
@@ -347,6 +347,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private submitAutomaticTicket(): void {
     if (this.ticketSubmitting || !this.isTicketDraftValid()) return;
 
+    if (this.ticketAutomationState === 'failed' && this.diagnosticCase) {
+      this.retrySahandTicket();
+      return;
+    }
+
     this.ticketSubmitting = true;
     this.ticketAutomationState = 'submitting';
     this.ticketErrorMessage = '';
@@ -361,35 +366,63 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
         this.changeDetector.markForCheck();
 
         this.api.analyzeDiagnosticCase(createdCase.id).subscribe({
-          next: (analyzedCase) => {
-            this.diagnosticCase = analyzedCase;
-            this.ticketAutomationState = 'submitted';
-            this.supportStage = 'handoff';
-            const severityLabel = this.formatSeverity(analyzedCase.severity);
-            const ticketReceipt = this.formatTicketReceipt(
-              analyzedCase.id,
-              analyzedCase.externalTicketStatus,
-              analyzedCase.externalTicketId,
-              analyzedCase.externalTrackingId
-            );
-            const submittedText = analyzedCase.duplicateNotice || 'تیکت ثبت شد و تحلیل اولیه انجام شد.';
-            this.messages.push({
-              role: 'assistant',
-              text: `${submittedText}\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${
-                analyzedCase.analysisSummary ?? ''
-              }\nپیشنهاد: ${analyzedCase.recommendation ?? '-'}`
-            });
-            this.ticketSubmitting = false;
-            this.ratingMessage = '';
-            this.changeDetector.markForCheck();
-            this.scrollToLatest();
-          },
+          next: (analyzedCase) => this.applyTicketResult(analyzedCase, true),
           error: (error: unknown) =>
             this.handleDiagnosticError(error, 'پرونده ثبت شد، اما تحلیل اولیه انجام نشد.')
         });
       },
       error: (error: unknown) => this.handleDiagnosticError(error, 'ثبت پرونده بررسی انجام نشد.')
     });
+  }
+
+  private retrySahandTicket(): void {
+    const diagnosticId = this.diagnosticCase?.id;
+    if (!diagnosticId || this.ticketSubmitting) return;
+
+    this.ticketSubmitting = true;
+    this.ticketAutomationState = 'submitting';
+    this.ticketErrorMessage = '';
+    this.changeDetector.markForCheck();
+
+    this.api.submitDiagnosticTicket(diagnosticId).subscribe({
+      next: (updatedCase) => this.applyTicketResult(updatedCase, true),
+      error: (error: unknown) => this.handleDiagnosticError(error, 'ارسال دوباره تیکت به سهند انجام نشد.')
+    });
+  }
+
+  private applyTicketResult(diagnosticCase: DiagnosticCaseRecord, appendMessage: boolean): void {
+    this.diagnosticCase = diagnosticCase;
+    const sahandSubmitted = diagnosticCase.externalTicketStatus === 'submitted';
+    this.ticketAutomationState = sahandSubmitted ? 'submitted' : 'failed';
+    this.supportStage = sahandSubmitted ? 'handoff' : 'ticket';
+    this.ticketErrorMessage = sahandSubmitted
+      ? ''
+      : diagnosticCase.externalTicketError ||
+        'پرونده داخلی ثبت شد، اما ارسال به سهند انجام نشد. تنظیمات سرویس سهند را بررسی کنید و دوباره تلاش کنید.';
+
+    if (appendMessage) {
+      const severityLabel = this.formatSeverity(diagnosticCase.severity);
+      const ticketReceipt = this.formatTicketReceipt(
+        diagnosticCase.id,
+        diagnosticCase.externalTicketStatus,
+        diagnosticCase.externalTicketId,
+        diagnosticCase.externalTrackingId
+      );
+      const submittedText = sahandSubmitted
+        ? diagnosticCase.duplicateNotice || 'تیکت ثبت شد و تحلیل اولیه انجام شد.'
+        : this.ticketErrorMessage;
+      this.messages.push({
+        role: 'assistant',
+        text: `${submittedText}\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${
+          diagnosticCase.analysisSummary ?? ''
+        }\nپیشنهاد: ${diagnosticCase.recommendation ?? '-'}`
+      });
+    }
+
+    this.ticketSubmitting = false;
+    this.ratingMessage = '';
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
   }
 
   closeTicketDialog(): void {
@@ -686,7 +719,20 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.currentTreeNodeText = state.node.text;
 
     if (this.isTicketNode(state.node.text)) {
-      this.startTicketFlow(this.buildTreeProblemText(state.node.text), state.node);
+      this.startTicketFlow(
+        this.buildTreeProblemText(state.node.text),
+        state.node,
+        'مسیر انتخاب‌شده به مرحله ثبت تیکت رسید. تیکت سهند به صورت خودکار در حال ثبت است.'
+      );
+      return;
+    }
+
+    if (this.isResolutionCheckNode(state.node.text)) {
+      this.startTicketFlow(
+        this.buildTreeProblemText(state.node.text),
+        state.node,
+        'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. تیکت سهند به صورت خودکار در حال ثبت است.'
+      );
       return;
     }
 
@@ -915,16 +961,21 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
     this.currentTreeNodeId = state.node.id;
     this.currentTreeNodeText = state.node.text;
-    this.activeTreeOptions = state.options;
+    const shouldSubmitTicket =
+      !initial && (this.isResolutionCheckNode(state.node.text) || this.shouldSubmitTicketInsteadOfResolutionCheck(state));
+    const displayText = this.stripResolutionCheckText(state.node.text);
+    this.activeTreeOptions = shouldSubmitTicket ? [] : state.options;
 
-    const message: ChatMessage = {
-      role: 'assistant',
-      text: state.node.text,
-      treeOptions: this.activeTreeOptions.length ? this.activeTreeOptions : undefined
-    };
+    const message: ChatMessage | null = displayText
+      ? {
+          role: 'assistant',
+          text: displayText,
+          treeOptions: this.activeTreeOptions.length ? this.activeTreeOptions : undefined
+        }
+      : null;
 
     if (initial) {
-      this.messages = [message];
+      this.messages = message ? [message] : [];
       this.changeDetector.markForCheck();
       this.scrollToLatest();
       return;
@@ -932,10 +983,18 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
     this.typing = true;
     this.typingTimer = setTimeout(() => {
-      this.messages.push(message);
+      if (message) this.messages.push(message);
       this.typing = false;
       this.changeDetector.markForCheck();
       this.scrollToLatest();
+
+      if (shouldSubmitTicket) {
+        this.startTicketFlow(
+          this.buildTreeProblemText(state.node.text),
+          state.node,
+          'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. تیکت سهند به صورت خودکار در حال ثبت است.'
+        );
+      }
     }, 300);
   }
 
@@ -1003,12 +1062,42 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return normalizedText.includes('ثبت تیکت');
   }
 
+  private isResolutionCheckNode(text: string): boolean {
+    const normalizedText = this.normalizeTreeText(text);
+    return (
+      normalizedText.includes('مشکل برطرف شد') ||
+      normalizedText.includes('پاسخ برای کاربر کافی بود')
+    );
+  }
+
+  private stripResolutionCheckText(text: string): string {
+    return text
+      .replace(/\s*آیا\s+مشکل\s+برطرف\s+شد\s*؟?/gi, '')
+      .replace(/\s*آیا\s+پاسخ\s+برای\s+کاربر\s+کافی\s+بود\s*؟?/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private shouldSubmitTicketInsteadOfResolutionCheck(state: {
+    options: Array<{ label: string; targetId: string }>;
+  }): boolean {
+    if (!this.treeIndex) return false;
+    return state.options.some((option) => {
+      const target = this.treeIndex?.nodes.get(option.targetId);
+      return this.isResolutionCheckNode(option.label) || Boolean(target && this.isResolutionCheckNode(target.text));
+    });
+  }
+
   private isEndNode(text: string): boolean {
     return this.normalizeTreeText(text).includes('پایان');
   }
 
   private buildTreeProblemText(currentText: string): string {
-    return [...this.treeTrail, currentText].filter(Boolean).join(' > ');
+    return [...this.treeTrail, currentText]
+      .map((item) => this.stripResolutionCheckText(item))
+      .filter(Boolean)
+      .filter((item) => !this.isResolutionCheckNode(item))
+      .join(' > ');
   }
 
   private answerFromFaqOrStartTicket(
@@ -1084,7 +1173,11 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return { matches, answer, matchedFaq };
   }
 
-  private startTicketFlow(problem: string, sourceNode?: { id: string; text: string }): void {
+  private startTicketFlow(
+    problem: string,
+    sourceNode?: { id: string; text: string },
+    noticeText = 'در FAQ پاسخ قطعی پیدا نشد. تیکت سهند به صورت خودکار با مسیر انتخاب‌شده در حال ثبت است.'
+  ): void {
     this.diagnosticDraft = this.createAutomaticDiagnostic(problem, sourceNode);
     this.diagnosticCase = null;
     this.diagnosticStep = null;
@@ -1096,7 +1189,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.supportStage = 'ticket';
     this.messages.push({
       role: 'assistant',
-      text: 'در FAQ پاسخ قطعی پیدا نشد. تیکت سهند به صورت خودکار با مسیر انتخاب‌شده در حال ثبت است.'
+      text: noticeText
     });
     this.changeDetector.markForCheck();
     this.scrollToLatest();
@@ -1108,19 +1201,20 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     sourceNode?: { id: string; text: string }
   ): DiagnosticPayload {
     const mappedNodeId = sourceNode?.id || this.currentTreeNodeId;
-    const mappedNodeText = sourceNode?.text || this.currentTreeNodeText;
+    const mappedNodeText = this.stripResolutionCheckText(sourceNode?.text || this.currentTreeNodeText);
     const cleanPath = this.treeTrail
-      .map((item) => item.trim())
+      .map((item) => this.stripResolutionCheckText(item.trim()))
       .filter((item) => item && !this.isDecisionLabel(item));
     const meaningfulPath = cleanPath.filter((item) => !this.isTicketNode(item));
-    const leaf = meaningfulPath[meaningfulPath.length - 1] || problem || 'نیازمند بررسی پشتیبانی';
+    const problemText = this.stripResolutionCheckText(problem);
+    const leaf = meaningfulPath[meaningfulPath.length - 1] || problemText || 'نیازمند بررسی پشتیبانی';
     const domain = meaningfulPath[0] || 'پلتفرم تحلیل روابط';
     const middlePath = meaningfulPath.slice(1);
-    const fullPath = [...meaningfulPath, problem].filter(Boolean).join(' > ');
+    const fullPath = [...meaningfulPath, problemText].filter(Boolean).join(' > ');
 
     return {
       title: this.limitText(`درخواست پشتیبانی - ${leaf}`, 120),
-      problem: this.limitText(problem || fullPath || leaf, 3000),
+      problem: this.limitText(problemText || fullPath || leaf, 3000),
       systemName: this.resolveProjectScopedSystemName(domain),
       processName: this.limitText(middlePath.join(' / ') || leaf || 'مسیر درختواره پشتیبانی', 260),
       scenario: this.limitText(fullPath || leaf, 4000),

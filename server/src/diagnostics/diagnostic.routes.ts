@@ -5,7 +5,7 @@ import { AuthRequest } from '../common/types.js';
 import { DiagnosticCaseRecord } from '../database/database.js';
 import { diagnosticRepository } from '../database/repositories.js';
 import { sendError } from '../common/api-error.js';
-import { submitSahandTicket } from '../sahand/sahand-ticket.service.js';
+import { SahandTicketPayload, submitSahandTicket } from '../sahand/sahand-ticket.service.js';
 
 export const diagnosticRouter = Router();
 
@@ -26,6 +26,33 @@ const diagnosticRatingSchema = z.object({
   rating: z.number().int().min(1).max(5),
   ratingComment: z.string().trim().max(1000).optional().default('')
 });
+
+function buildTicketPayloadFromCase(
+  diagnosticCase: DiagnosticCaseRecord,
+  requester: { username: string; fullName: string }
+): SahandTicketPayload {
+  return {
+    title: diagnosticCase.title.slice(0, 120),
+    description: [
+      `Title: ${diagnosticCase.title}`,
+      `Problem: ${diagnosticCase.problem}`,
+      `System: ${diagnosticCase.systemName}`,
+      `Process: ${diagnosticCase.processName}`,
+      `Scenario: ${diagnosticCase.scenario}`,
+      `Serial: ${diagnosticCase.serialNumber || '-'}`,
+      `Error: ${diagnosticCase.errorText || '-'}`,
+      `Evidence: ${diagnosticCase.evidence || '-'}`,
+      `Tree node: ${diagnosticCase.treeNodeId || '-'} ${diagnosticCase.treeNodeText || ''}`.trim()
+    ].join('\n'),
+    requester,
+    metadata: {
+      source: 'nava-ai-assistant',
+      localDiagnosticId: String(diagnosticCase.id),
+      treeNodeId: diagnosticCase.treeNodeId,
+      treeNodeText: diagnosticCase.treeNodeText
+    }
+  };
+}
 
 diagnosticRouter.get('/', requireAuth(['admin']), async (_request, response) => {
   response.json(await diagnosticRepository.listWithUsers());
@@ -57,6 +84,8 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     externalTicketId: null,
     externalTrackingId: null,
     externalTicketStatus: null,
+    externalTicketStatusCode: null,
+    externalTicketError: null,
     similarIssueCount: 1,
     similarUserCount: 1,
     duplicateOfDiagnosticId: null,
@@ -105,9 +134,36 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
   diagnosticCase.externalTicketId = ticketResult.ticketId;
   diagnosticCase.externalTrackingId = ticketResult.trackingId;
   diagnosticCase.externalTicketStatus = ticketResult.status;
+  diagnosticCase.externalTicketStatusCode = ticketResult.statusCode;
+  diagnosticCase.externalTicketError = ticketResult.errorMessage;
 
   await diagnosticRepository.create(diagnosticCase);
   response.status(201).json(diagnosticCase);
+});
+
+diagnosticRouter.post('/:id/submit-ticket', requireAuth(), async (request: AuthRequest, response) => {
+  const id = Number(request.params['id']);
+  const item = await diagnosticRepository.findById(id);
+  if (!item || !request.user || (request.user.role !== 'admin' && item.userId !== request.user.id)) {
+    sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
+    return;
+  }
+
+  const ticketResult = await submitSahandTicket(
+    buildTicketPayloadFromCase(item, {
+      username: request.user.username,
+      fullName: request.user.fullName
+    })
+  );
+
+  item.externalTicketId = ticketResult.ticketId;
+  item.externalTrackingId = ticketResult.trackingId;
+  item.externalTicketStatus = ticketResult.status;
+  item.externalTicketStatusCode = ticketResult.statusCode;
+  item.externalTicketError = ticketResult.errorMessage;
+
+  await diagnosticRepository.save(item);
+  response.json(item);
 });
 
 diagnosticRouter.patch('/:id/rating', requireAuth(), async (request: AuthRequest, response) => {
