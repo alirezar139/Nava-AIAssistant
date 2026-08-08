@@ -208,6 +208,7 @@ export class AdminDashboardComponent implements OnInit {
   reportCurrentPage = 1;
   reportPageSize = 6;
   readonly reportPageSizeOptions = [6, 12, 24, 48];
+  private readonly deviceViewportPreferenceStorageKey = 'nava-admin-device-viewport-preference';
   serviceCurrentPage = 1;
   servicePageSize = 4;
   readonly servicePageSizeOptions = [4, 8, 12, 24];
@@ -1420,6 +1421,7 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.restoreDeviceViewportPreference();
     this.updateDeviceViewportMode();
     this.refresh();
   }
@@ -1450,13 +1452,28 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   setDeviceViewportPreference(preference: DeviceViewportPreference): void {
+    if (!this.deviceViewportOptions.some((option) => option.value === preference)) {
+      return;
+    }
     this.deviceViewportPreference = preference;
+    this.persistDeviceViewportPreference();
     this.updateDeviceViewportMode();
     this.changeDetector.markForCheck();
   }
 
   cycleDeviceViewportPreference(): void {
-    const sequence: DeviceViewportPreference[] = ['auto', 'desktop', 'tablet', 'mobile'];
+    if (this.deviceViewportPreference === 'auto') {
+      const nextPreference: DeviceViewportPreference =
+        this.deviceViewportMode === 'desktop'
+          ? 'tablet'
+          : this.deviceViewportMode === 'tablet'
+            ? 'mobile'
+            : 'desktop';
+      this.setDeviceViewportPreference(nextPreference);
+      return;
+    }
+
+    const sequence: DeviceViewportPreference[] = ['desktop', 'tablet', 'mobile', 'auto'];
     const currentIndex = sequence.indexOf(this.deviceViewportPreference);
     const nextPreference = sequence[(currentIndex + 1) % sequence.length];
     this.setDeviceViewportPreference(nextPreference);
@@ -1491,6 +1508,27 @@ export class AdminDashboardComponent implements OnInit {
     if (this.deviceViewportMode === 'mobile') return 'موبایل';
     if (this.deviceViewportMode === 'tablet') return 'تبلت';
     return 'دسکتاپ';
+  }
+
+  private restoreDeviceViewportPreference(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const savedPreference = window.localStorage.getItem(this.deviceViewportPreferenceStorageKey);
+      if (this.deviceViewportOptions.some((option) => option.value === savedPreference)) {
+        this.deviceViewportPreference = savedPreference as DeviceViewportPreference;
+      }
+    } catch {
+      // Storage can be unavailable in restricted browser contexts.
+    }
+  }
+
+  private persistDeviceViewportPreference(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(this.deviceViewportPreferenceStorageKey, this.deviceViewportPreference);
+    } catch {
+      // The selector still works for the current session if persistence fails.
+    }
   }
 
   setTreeManagementView(view: TreeManagementView): void {

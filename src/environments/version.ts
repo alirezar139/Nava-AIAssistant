@@ -2,11 +2,11 @@
 export const appVersionInfo = {
   "version": "0.1.0",
   "git": {
-    "describe": "v0.1.0-dirty",
+    "describe": "v0.1.0-1-gd2afa41-dirty",
     "tag": "v0.1.0",
     "branch": "main",
-    "commit": "abba578",
+    "commit": "d2afa41",
     "dirty": true,
-    "commitDate": "2026-07-28T07:51:22+03:30"
+    "commitDate": "2026-08-02T08:51:59+03:30"
   }
 } as const;

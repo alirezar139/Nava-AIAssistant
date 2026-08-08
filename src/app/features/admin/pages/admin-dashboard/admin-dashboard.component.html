@@ -1,4 +1,11 @@
-<div class="admin-shell">
+<div
+  class="admin-shell"
+  [class.viewport-auto]="deviceViewportPreference === 'auto'"
+  [class.viewport-manual]="deviceViewportPreference !== 'auto'"
+  [class.viewport-mobile]="deviceViewportMode === 'mobile'"
+  [class.viewport-tablet]="deviceViewportMode === 'tablet'"
+  [class.viewport-desktop]="deviceViewportMode === 'desktop'"
+>
   <header>
     <a class="brand" routerLink="/admin" aria-label="صفحه اصلی پنل مدیریت">
       <app-brand-logo class="brand-logo" />
@@ -77,6 +84,11 @@
       class="admin-workspace"
       [class.faq-workspace]="activeTab === 'faqs'"
       [class.admin-workspace-menu-collapsed]="adminMenuCollapsed"
+      [class.viewport-auto]="deviceViewportPreference === 'auto'"
+      [class.viewport-manual]="deviceViewportPreference !== 'auto'"
+      [class.viewport-mobile]="deviceViewportMode === 'mobile'"
+      [class.viewport-tablet]="deviceViewportMode === 'tablet'"
+      [class.viewport-desktop]="deviceViewportMode === 'desktop'"
     >
       <aside class="admin-menu" [class.collapsed]="adminMenuCollapsed" aria-label="منوی پنل مدیریت">
         <button
