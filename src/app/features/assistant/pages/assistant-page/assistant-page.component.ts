@@ -1224,7 +1224,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       treeNodeText: mappedNodeText,
       evidence: this.limitText(
         [
-          `ثبت خودکار از صفحه کاربر راهیار`,
+          `ثبت خودکار از صفحه کاربر نوا`,
           `پروژه: ${this.activeProjectKey}`,
           `تعداد انتخاب‌های کاربر: ${this.treeTrail.length.toLocaleString('fa-IR')}`,
           `مسیر: ${fullPath || leaf}`,

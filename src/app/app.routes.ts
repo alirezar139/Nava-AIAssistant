@@ -4,13 +4,13 @@ import { authGuard } from './core/guards/auth.guard';
 export const appRoutes: Routes = [
   {
     path: 'login',
-    title: 'راهیار | ورود',
+    title: 'نوا | ورود',
     loadComponent: () =>
       import('./features/auth/pages/login/login.component').then((component) => component.LoginComponent)
   },
   {
     path: 'assistant',
-    title: 'دستیار راهیار',
+    title: 'دستیار نوا',
     canActivate: [authGuard],
     data: { role: 'user' },
     loadComponent: () =>
@@ -20,7 +20,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'admin',
-    title: 'مدیریت راهیار',
+    title: 'مدیریت نوا',
     canActivate: [authGuard],
     data: { role: 'admin' },
     loadComponent: () =>

@@ -34,7 +34,7 @@ if (-not (Test-Path -LiteralPath $serverEntry)) {
   throw 'server/dist/main.js was not found. Build and package the app again.'
 }
 
-Write-Host "Nava AI Assistant is starting at http://$($env:HOST):$($env:PORT)"
+Write-Host "نوا is starting at http://$($env:HOST):$($env:PORT)"
 Write-Host 'Press Ctrl+C to stop the server.'
 
 & node $serverEntry

@@ -154,7 +154,7 @@ export class AdminDashboardComponent implements OnInit {
   dashboardMetricLogMap = new Map<DashboardMetricLogRecord['key'], DashboardMetricLogRecord>();
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
-  adminMenuCollapsed = false;
+  adminMenuCollapsed = true;
   readonly appVersion = appVersionInfo.version;
   readonly appVersionTitle = [
     `نسخه ${appVersionInfo.version}`,
@@ -3666,7 +3666,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private buildVisioCorePropertiesXml(timestamp: string): string {
-    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>Troubleshooting Tree</dc:title><dc:creator>Nava AI Assistant</dc:creator><cp:lastModifiedBy>Nava AI Assistant</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:modified><dc:language>fa-IR</dc:language></cp:coreProperties>`;
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>Troubleshooting Tree</dc:title><dc:creator>نوا</dc:creator><cp:lastModifiedBy>نوا</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${timestamp}</dcterms:modified><dc:language>fa-IR</dc:language></cp:coreProperties>`;
   }
 
   private createZipArchive(entries: Array<[string, string | Uint8Array]>): Uint8Array {

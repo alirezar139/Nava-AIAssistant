@@ -27407,3 +27407,645 @@ button.admin-device-indicator:focus-visible {
   }
 }
 
+/* Stable admin menu layout: one compact tab when closed, one readable top dock when open. */
+.admin-shell .admin-workspace,
+.admin-shell .admin-workspace.faq-workspace,
+.admin-shell .admin-workspace.admin-workspace-menu-collapsed,
+.admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed,
+.admin-shell .admin-workspace.faq-workspace:not(.admin-workspace-menu-collapsed) {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-areas:
+    'admin-menu'
+    'admin-content' !important;
+  gap: clamp(18px, 2vw, 30px) !important;
+  align-items: start !important;
+  inline-size: min(100%, 1760px) !important;
+  max-inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  margin-inline: auto !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu {
+  grid-area: admin-menu !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 20 !important;
+}
+
+.admin-shell .admin-workspace > .admin-content,
+.admin-shell .admin-workspace.faq-workspace > .admin-content {
+  grid-area: admin-content !important;
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu.collapsed,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed {
+  position: sticky !important;
+  inset-block-start: 12px !important;
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  inline-size: max-content !important;
+  max-inline-size: 100% !important;
+  min-block-size: 54px !important;
+  padding: 6px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 70%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-strong) 78%, transparent)),
+    color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  box-shadow: 0 14px 30px rgba(34, 42, 54, 0.12) !important;
+  overflow: visible !important;
+  backdrop-filter: blur(16px) saturate(1.08) !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-heading,
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-status,
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-list,
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-tree-submenu,
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-footer {
+  display: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-toggle,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  inline-size: auto !important;
+  min-inline-size: 168px !important;
+  min-block-size: 42px !important;
+  padding: 8px 18px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--text-strong) !important;
+  box-shadow: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-toggle span,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle span {
+  display: inline !important;
+  min-inline-size: 0 !important;
+  white-space: nowrap !important;
+  line-height: 1.35 !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-toggle svg,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle svg {
+  inline-size: 22px !important;
+  block-size: 22px !important;
+  flex: 0 0 auto !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed),
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+  position: sticky !important;
+  inset-block-start: 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(150px, 190px) minmax(230px, 0.72fr) minmax(0, 2.35fr) minmax(260px, 0.85fr) !important;
+  grid-template-areas: 'controls heading nav footer' !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  min-block-size: 0 !important;
+  padding: clamp(12px, 1.15vw, 18px) !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 70%, transparent) !important;
+  border-radius: 30px !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-strong) 78%, transparent)),
+    color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  box-shadow: 0 22px 50px rgba(34, 42, 54, 0.12) !important;
+  overflow: visible !important;
+  backdrop-filter: blur(18px) saturate(1.08) !important;
+  box-sizing: border-box !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle {
+  grid-area: controls !important;
+  align-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  min-block-size: 50px !important;
+  padding: 8px 14px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 74%, transparent) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  color: var(--text-strong) !important;
+  box-shadow: 0 10px 22px rgba(37, 42, 58, 0.08) !important;
+  white-space: nowrap !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle svg,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle svg {
+  inline-size: 21px !important;
+  block-size: 21px !important;
+  flex: 0 0 auto !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-heading,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-heading {
+  grid-area: heading !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 4px !important;
+  min-inline-size: 0 !important;
+  padding: 8px 16px !important;
+  border: 0 !important;
+  border-inline-end: 4px solid var(--accent) !important;
+  border-radius: 22px !important;
+  background: color-mix(in srgb, var(--surface) 64%, transparent) !important;
+  text-align: right !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-heading span,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-heading span,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-heading small,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-heading small {
+  display: block !important;
+  min-inline-size: 0 !important;
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.6 !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-heading strong,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-heading strong {
+  display: block !important;
+  min-inline-size: 0 !important;
+  color: var(--text-strong) !important;
+  font-size: clamp(1.08rem, 1.15vw, 1.32rem) !important;
+  line-height: 1.45 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-status,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-status,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-group-label,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-group-label,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-tree-submenu,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-tree-submenu {
+  display: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+  grid-area: nav !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) 42px !important;
+  grid-template-areas: 'icon copy count' !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-inline-size: 0 !important;
+  inline-size: 100% !important;
+  min-block-size: 72px !important;
+  padding: 10px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 74%, transparent) !important;
+  border-radius: 20px !important;
+  background: color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  color: var(--text-strong) !important;
+  box-shadow: 0 10px 22px rgba(37, 42, 58, 0.055) !important;
+  text-align: right !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button::before,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button::after,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button::before,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button::after {
+  content: none !important;
+  display: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button:hover,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button:hover {
+  transform: translateY(-1px) !important;
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--admin-line)) !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button.active,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--brand), var(--accent-strong)) !important;
+  border-color: color-mix(in srgb, var(--accent) 76%, transparent) !important;
+  border-block-end: 4px solid var(--gold) !important;
+  box-shadow: 0 16px 32px color-mix(in srgb, var(--brand) 22%, transparent) !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-icon,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-icon {
+  grid-area: icon !important;
+  place-self: center !important;
+  inline-size: 42px !important;
+  block-size: 42px !important;
+  min-inline-size: 42px !important;
+  border-radius: 15px !important;
+  background: color-mix(in srgb, var(--accent-soft) 72%, transparent) !important;
+  color: var(--brand) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) button.active .menu-icon,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) button.active .menu-icon {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-copy,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-copy {
+  grid-area: copy !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 3px !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-copy b,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-copy b,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-copy small,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-copy small {
+  display: -webkit-box !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  letter-spacing: 0 !important;
+  text-overflow: ellipsis !important;
+  -webkit-box-orient: vertical !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-copy b,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-copy b {
+  font-size: 0.94rem !important;
+  line-height: 1.45 !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .menu-copy small,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .menu-copy small {
+  font-size: 0.72rem !important;
+  line-height: 1.5 !important;
+  color: currentColor !important;
+  opacity: 0.82 !important;
+  -webkit-line-clamp: 2 !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list em,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list em {
+  grid-area: count !important;
+  position: static !important;
+  place-self: center !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  inline-size: 42px !important;
+  block-size: 32px !important;
+  min-inline-size: 42px !important;
+  margin: 0 !important;
+  padding: 0 6px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 70%, transparent) !important;
+  border-radius: 999px !important;
+  background: color-mix(in srgb, var(--surface-strong) 86%, transparent) !important;
+  color: var(--brand) !important;
+  box-shadow: none !important;
+  font-size: 0.78rem !important;
+  font-style: normal !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button.active em,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button.active em {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-footer,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-footer {
+  grid-area: footer !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(82px, 0.34fr) !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+  min-inline-size: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: visible !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-device-panel,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-device-panel,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-version-badge,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-version-badge {
+  display: grid !important;
+  align-content: center !important;
+  min-inline-size: 0 !important;
+  min-block-size: 72px !important;
+  padding: 9px 10px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 68%, transparent) !important;
+  border-radius: 18px !important;
+  background: color-mix(in srgb, var(--surface) 82%, transparent) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-device-indicator,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-device-indicator {
+  display: grid !important;
+  grid-template-columns: 36px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-inline-size: 0 !important;
+  inline-size: 100% !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .device-icon,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .device-icon {
+  inline-size: 36px !important;
+  block-size: 36px !important;
+  min-inline-size: 36px !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .device-copy,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .device-copy {
+  min-inline-size: 0 !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .device-copy b,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .device-copy b,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .device-copy small,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .device-copy small,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-version-badge span,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-version-badge span,
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-version-badge b,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-version-badge b {
+  display: block !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  line-height: 1.45 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  letter-spacing: 0 !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-version-badge,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-version-badge {
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-version-badge b,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-version-badge b {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  font-size: 0.92rem !important;
+}
+
+.admin-shell .admin-workspace > .admin-menu:not(.collapsed) .device-mode-select,
+.admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .device-mode-select {
+  display: none !important;
+}
+
+@media (max-width: 1480px) {
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) minmax(250px, 340px) !important;
+    grid-template-areas:
+      'controls heading footer'
+      'nav nav nav' !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed),
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) {
+    position: relative !important;
+    inset-block-start: auto !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      'controls'
+      'heading'
+      'nav'
+      'footer' !important;
+    gap: 10px !important;
+    padding: 12px !important;
+    border-radius: 26px !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-toggle {
+    justify-self: start !important;
+    inline-size: auto !important;
+    min-inline-size: 160px !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-footer,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-footer {
+    grid-template-columns: minmax(0, 1fr) minmax(92px, 120px) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-shell .admin-workspace,
+  .admin-shell .admin-workspace.faq-workspace {
+    gap: 14px !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu.collapsed,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed {
+    justify-self: stretch !important;
+    inline-size: 100% !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu.collapsed .admin-menu-toggle,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu.collapsed .admin-menu-toggle {
+    inline-size: 100% !important;
+    min-inline-size: 0 !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+    grid-template-columns: 38px minmax(0, 1fr) !important;
+    grid-template-areas:
+      'icon count'
+      'copy copy' !important;
+    min-block-size: 110px !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list em,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list em {
+    justify-self: end !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-footer,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-footer {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-shell .admin-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button,
+  .admin-shell .admin-workspace.faq-workspace > .admin-menu:not(.collapsed) .admin-menu-list > button {
+    grid-template-columns: 42px minmax(0, 1fr) 42px !important;
+    grid-template-areas: 'icon copy count' !important;
+    min-block-size: 80px !important;
+  }
+}
+
+/* Keep the collapsed admin menu as a top tab, never as a broken side rail. */
+.admin-shell .admin-workspace.admin-workspace-menu-collapsed,
+.admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-areas:
+    'admin-menu'
+    'admin-content' !important;
+  row-gap: clamp(10px, 1.4vw, 18px) !important;
+}
+
+.admin-shell .admin-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed,
+.admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed {
+  grid-area: admin-menu !important;
+  justify-self: end !important;
+  align-self: start !important;
+  inline-size: auto !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  block-size: auto !important;
+  min-block-size: 0 !important;
+  max-block-size: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  position: sticky !important;
+  inset-block-start: 10px !important;
+  inset-inline: auto !important;
+  z-index: 20 !important;
+}
+
+.admin-shell .admin-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle,
+.admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  inline-size: auto !important;
+  min-inline-size: clamp(154px, 18vw, 220px) !important;
+  max-inline-size: 100% !important;
+  block-size: 50px !important;
+  min-block-size: 50px !important;
+  padding: 0 18px !important;
+  border: 1px solid color-mix(in srgb, var(--admin-line) 70%, transparent) !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface-strong) 90%, transparent), color-mix(in srgb, var(--surface) 78%, transparent)),
+    color-mix(in srgb, var(--surface-strong) 82%, transparent) !important;
+  box-shadow: 0 16px 34px rgba(17, 43, 51, 0.14) !important;
+  color: var(--ink) !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+.admin-shell .admin-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle span,
+.admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle span {
+  display: inline !important;
+  writing-mode: horizontal-tb !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  letter-spacing: 0 !important;
+  font-size: 0.92rem !important;
+  line-height: 1 !important;
+}
+
+@media (max-width: 720px) {
+  .admin-shell .admin-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed,
+  .admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed {
+    justify-self: stretch !important;
+  }
+
+  .admin-shell .admin-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle,
+  .admin-shell .admin-workspace.faq-workspace.admin-workspace-menu-collapsed > .admin-menu.collapsed .admin-menu-toggle {
+    inline-size: 100% !important;
+    min-inline-size: 0 !important;
+  }
+}
+
