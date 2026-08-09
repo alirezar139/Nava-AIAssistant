@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .angular/
+.codex/
 release/
 .idea/
 *.log
