@@ -31627,3 +31627,413 @@ button.admin-device-indicator:focus-visible {
   }
 }
 
+/* Final responsive guard for the admin dashboard.
+   Older viewport rules above can over-compress columns at medium widths; this
+   layer keeps Persian UI text readable and prevents vertical letter wrapping. */
+.admin-shell,
+.admin-shell * {
+  box-sizing: border-box;
+}
+
+.admin-shell {
+  inline-size: 100%;
+  max-inline-size: 100vw;
+  overflow-x: clip;
+}
+
+.admin-shell main,
+.admin-shell.viewport-auto main,
+.admin-shell.viewport-manual main,
+.admin-shell.viewport-desktop main,
+.admin-shell.viewport-tablet main,
+.admin-shell.viewport-mobile main {
+  inline-size: min(100%, 1880px) !important;
+  max-inline-size: calc(100vw - clamp(1rem, 3vw, 3rem)) !important;
+  margin-inline: auto !important;
+  transform: none !important;
+  min-inline-size: 0 !important;
+}
+
+.admin-shell main > *,
+.admin-shell .admin-workspace,
+.admin-shell .admin-content,
+.admin-shell .faq-layout,
+.admin-shell .faq-list-card,
+.admin-shell .faq-editor-card,
+.admin-shell .admin-menu {
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+}
+
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4,
+.admin-shell label,
+.admin-shell button,
+.admin-shell .section-title span,
+.admin-shell .section-title h2,
+.admin-shell .admin-menu-heading h2,
+.admin-shell .admin-menu-heading small,
+.admin-shell .menu-copy b,
+.admin-shell .menu-copy small,
+.admin-shell main > .stats > article > span,
+.admin-shell main > .stats > article > strong,
+.admin-shell main > .stats > article > small {
+  white-space: normal !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  line-height: 1.55 !important;
+  min-inline-size: 0 !important;
+}
+
+.admin-shell .welcome {
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  min-block-size: clamp(150px, 18vw, 250px) !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: clamp(1rem, 3vw, 2.5rem) !important;
+  padding: clamp(1.25rem, 3vw, 3rem) !important;
+}
+
+.admin-shell .welcome h1 {
+  max-inline-size: 100% !important;
+  font-size: clamp(2.1rem, 4vw, 5rem) !important;
+  line-height: 1.25 !important;
+}
+
+.admin-shell main > .stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(260px, 1fr)) !important;
+  gap: clamp(.85rem, 1.6vw, 1.4rem) !important;
+  inline-size: 100% !important;
+}
+
+.admin-shell main > .stats > article {
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) minmax(72px, max-content) !important;
+  grid-template-areas:
+    "icon title value"
+    "icon hint value" !important;
+  align-items: center !important;
+  gap: .35rem 1rem !important;
+  min-block-size: 112px !important;
+  padding: 1.2rem 1.35rem !important;
+  overflow: hidden !important;
+}
+
+.admin-shell main > .stats > article .stat-icon {
+  grid-area: icon;
+}
+
+.admin-shell main > .stats > article > span:not(.stat-icon) {
+  grid-area: title;
+  display: block !important;
+}
+
+.admin-shell main > .stats > article > small {
+  grid-area: hint;
+  display: block !important;
+}
+
+.admin-shell main > .stats > article > strong {
+  grid-area: value;
+  justify-self: center;
+  white-space: nowrap !important;
+}
+
+.admin-shell .admin-workspace,
+.admin-shell .admin-workspace.faq-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-areas:
+    "admin-menu"
+    "content" !important;
+  align-items: start !important;
+  gap: clamp(1rem, 1.8vw, 1.6rem) !important;
+  inline-size: 100% !important;
+}
+
+.admin-shell .admin-menu {
+  grid-area: admin-menu !important;
+  inline-size: 100% !important;
+  block-size: auto !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) {
+  display: grid !important;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr) minmax(210px, 270px) !important;
+  grid-template-areas: "toggle nav footer" !important;
+  align-items: stretch !important;
+  padding: clamp(1rem, 1.8vw, 1.5rem) !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) .admin-menu-toggle {
+  grid-area: toggle !important;
+  position: static !important;
+  justify-self: stretch !important;
+  inline-size: auto !important;
+  min-inline-size: 140px !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) .admin-menu-list {
+  grid-area: nav !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(150px, 1fr)) !important;
+  gap: .8rem !important;
+  align-self: center !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) .admin-menu-list > button {
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  min-block-size: 82px !important;
+  padding: .8rem .95rem !important;
+  border-width: 1px !important;
+  box-shadow: 0 12px 26px rgba(19, 46, 57, .08) !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) .admin-menu-footer {
+  grid-area: footer !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: .8rem !important;
+  min-inline-size: 180px !important;
+}
+
+.admin-shell .admin-menu:not(.collapsed) .admin-device-panel,
+.admin-shell .admin-menu:not(.collapsed) .admin-version-badge {
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+}
+
+.admin-shell .admin-menu.collapsed {
+  display: grid !important;
+  grid-template-columns: auto !important;
+  justify-content: end !important;
+  padding: .75rem !important;
+  inline-size: 100% !important;
+  min-block-size: auto !important;
+}
+
+.admin-shell .admin-menu.collapsed .admin-menu-toggle {
+  justify-self: end !important;
+  inline-size: auto !important;
+  min-inline-size: 150px !important;
+  min-block-size: 46px !important;
+}
+
+.admin-shell .admin-menu.collapsed > :not(.admin-menu-toggle) {
+  display: none !important;
+}
+
+.admin-shell .admin-content.faq-layout {
+  grid-area: content !important;
+  display: grid !important;
+  grid-template-columns: minmax(380px, 38fr) minmax(330px, 34fr) !important;
+  gap: clamp(1rem, 1.8vw, 1.5rem) !important;
+  align-items: stretch !important;
+  inline-size: 100% !important;
+}
+
+.admin-shell .faq-list-card,
+.admin-shell .faq-editor-card {
+  min-block-size: 0 !important;
+  overflow: hidden !important;
+}
+
+.admin-shell .faq-editor-card form {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 1rem 1.25rem !important;
+  align-items: end !important;
+}
+
+.admin-shell .faq-editor-card form label:first-of-type,
+.admin-shell .faq-editor-card form label:nth-of-type(4) {
+  grid-column: 1 / -1 !important;
+}
+
+.admin-shell .faq-editor-card .import-faq-button {
+  justify-self: start !important;
+}
+
+.admin-shell .faq-editor-card .submit-button {
+  grid-column: 1 / -1 !important;
+  justify-self: center !important;
+  inline-size: min(320px, 100%) !important;
+  min-block-size: 58px !important;
+}
+
+.admin-shell .faq-list-card .table-tools {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, .6fr) auto !important;
+  gap: .9rem !important;
+  align-items: end !important;
+}
+
+.admin-shell .faq-list-card .table-wrap {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  border: 1px solid rgba(18, 78, 82, .32) !important;
+}
+
+.admin-shell .faq-list-card table {
+  min-inline-size: 720px !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+}
+
+.admin-shell .faq-list-card thead tr,
+.admin-shell .faq-list-card tbody tr {
+  border-block-end: 1px solid rgba(18, 78, 82, .24) !important;
+}
+
+.admin-shell .faq-list-card th,
+.admin-shell .faq-list-card td {
+  border: 0 !important;
+  vertical-align: middle !important;
+  padding: .9rem 1rem !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.65 !important;
+}
+
+.admin-shell .faq-list-card th:first-child,
+.admin-shell .faq-list-card td:first-child {
+  inline-size: 52px !important;
+  text-align: center !important;
+}
+
+.admin-shell .faq-list-card th:last-child,
+.admin-shell .faq-list-card td:last-child {
+  inline-size: 88px !important;
+  text-align: center !important;
+}
+
+.admin-shell .faq-list-card .row-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+}
+
+@media (max-width: 1380px) {
+  .admin-shell main > .stats {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  }
+
+  .admin-shell .admin-content.faq-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      "toggle"
+      "nav"
+      "footer" !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-toggle {
+    position: static !important;
+    justify-self: end !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(3, minmax(160px, 1fr)) !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-footer {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, auto) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .admin-shell main,
+  .admin-shell.viewport-auto main,
+  .admin-shell.viewport-manual main,
+  .admin-shell.viewport-desktop main,
+  .admin-shell.viewport-tablet main,
+  .admin-shell.viewport-mobile main {
+    max-inline-size: calc(100vw - 1rem) !important;
+  }
+
+  .admin-shell .welcome {
+    grid-template-columns: 1fr !important;
+    min-block-size: auto !important;
+  }
+
+  .admin-shell main > .stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell main > .stats > article {
+    grid-template-columns: 58px minmax(0, 1fr) minmax(56px, max-content) !important;
+    min-block-size: 96px !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-footer {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .faq-editor-card form,
+  .admin-shell .faq-list-card .table-tools {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .faq-editor-card form label,
+  .admin-shell .faq-editor-card form label:first-of-type,
+  .admin-shell .faq-editor-card form label:nth-of-type(4) {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-shell {
+    padding-inline: .75rem !important;
+  }
+
+  .admin-shell .welcome h1,
+  .admin-shell .faq-editor-card .section-title h2,
+  .admin-shell .faq-list-card .section-title h2 {
+    font-size: clamp(1.9rem, 10vw, 3rem) !important;
+    line-height: 1.35 !important;
+  }
+
+  .admin-shell main > .stats > article {
+    grid-template-columns: 54px minmax(0, 1fr) !important;
+    grid-template-areas:
+      "icon value"
+      "title title"
+      "hint hint" !important;
+    text-align: start !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-shell .admin-menu:not(.collapsed) .admin-menu-list > button {
+    min-block-size: 72px !important;
+  }
+
+  .admin-shell .faq-list-card .table-wrap {
+    overflow: visible !important;
+  }
+
+  .admin-shell .faq-list-card table {
+    min-inline-size: 0 !important;
+  }
+}
+
