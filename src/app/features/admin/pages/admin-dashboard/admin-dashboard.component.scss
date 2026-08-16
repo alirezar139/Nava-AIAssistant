@@ -8482,6 +8482,53 @@ td b {
   color: var(--color-heading) !important;
 }
 
+/* ---------- Left rail (zoom/navigate) unified with the right icon rail ---------- */
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > button {
+  flex: 0 0 auto !important;
+  min-height: 34px !important;
+  min-width: 0 !important;
+  padding: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  color: var(--color-secondary) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > button:hover:not(:disabled) {
+  color: var(--color-heading) !important;
+  background: color-mix(in srgb, var(--color-link) 10%, transparent) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > button:disabled {
+  opacity: 0.4 !important;
+  background: transparent !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > span {
+  flex: 0 0 auto !important;
+  padding: 4px 0 !important;
+  color: var(--color-secondary) !important;
+  text-align: center !important;
+  font-size: 0.76rem !important;
+  font-weight: 900 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > span:first-of-type {
+  margin-top: 4px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
+}
+
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-designer-frame {
   grid-column: 2 !important;
   grid-row: 2 !important;
