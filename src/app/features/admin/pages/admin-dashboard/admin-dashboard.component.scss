@@ -7131,6 +7131,14 @@ td b {
   min-width: 0 !important;
 }
 
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop {
+  align-items: stretch !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop > .admin-content {
+  min-height: 0 !important;
+}
+
 /* ---------- Menu shell (always expanded) ---------- */
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu {
@@ -7487,7 +7495,7 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .admin-content.faq-layout {
-  height: calc(100vh - 480px) !important;
+  height: 100% !important;
   min-height: 460px !important;
   align-items: stretch !important;
 }
