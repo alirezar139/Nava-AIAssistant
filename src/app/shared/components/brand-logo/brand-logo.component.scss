@@ -2,19 +2,87 @@
   display: inline-grid;
   place-items: center;
   overflow: hidden;
-  padding: 6px;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 28% 22%, color-mix(in srgb, #fff 30%, transparent), transparent 60%),
+    radial-gradient(circle at 28% 22%, color-mix(in srgb, #fff 26%, transparent), transparent 60%),
     linear-gradient(145deg, var(--primary-700), var(--primary-950) 62%, var(--accent-600));
   box-shadow:
     0 10px 22px color-mix(in srgb, var(--primary-900) 26%, transparent),
     inset 0 1px color-mix(in srgb, #fff 40%, transparent);
 }
 
-.brand-logo-img {
+.brand-logo-inner {
+  display: grid;
+  place-items: center;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-family-base);
+  font-weight: 900;
+  font-size: 65%;
+  line-height: 1;
+  color: #f6cf6b;
+  text-shadow:
+    0 1px 0 color-mix(in srgb, #7a5410 70%, transparent),
+    0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+.brand-word {
+  display: none;
+}
+
+:host.full {
+  width: auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+:host.full .brand-logo-inner {
+  display: contents;
+}
+
+:host.full .brand-mark {
+  flex: 0 0 auto;
+  font-size: 2.5rem;
+}
+
+:host.full .brand-word {
+  flex: 0 0 auto;
+  display: grid;
+  gap: 6px;
+  padding-inline-start: 14px;
+  border-inline-start: 1px solid color-mix(in srgb, #f6cf6b 42%, transparent);
+}
+
+:host.full .brand-word strong {
+  color: #fff7e4;
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+:host.full .brand-word small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: color-mix(in srgb, #f6cf6b 82%, #fff);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  direction: ltr;
+  text-align: right;
+}
+
+.brand-word-icon {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  fill: color-mix(in srgb, #f6cf6b 82%, #fff);
 }
