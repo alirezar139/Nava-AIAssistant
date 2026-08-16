@@ -1595,71 +1595,75 @@
                       </span>
                     </div>
                     <div class="tree-map-controls" aria-label="پیمایش و بزرگ‌نمایی">
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="نود قبلی"
-                        aria-label="نود قبلی"
-                        (click)="selectAdjacentTreeNode(-1)"
-                      >
-                        <span class="tool-icon" aria-hidden="true">‹</span><span class="tool-label">نود قبلی</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="تمرکز روی نود"
-                        aria-label="تمرکز روی نود"
-                        (click)="centerSelectedTreeNode()"
-                        [disabled]="!selectedTreeNode"
-                      >
-                        <span class="tool-icon" aria-hidden="true">⊙</span><span class="tool-label">تمرکز روی نود</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="نود بعدی"
-                        aria-label="نود بعدی"
-                        (click)="selectAdjacentTreeNode(1)"
-                      >
-                        <span class="tool-icon" aria-hidden="true">›</span><span class="tool-label">نود بعدی</span>
-                      </button>
-                      <span>{{ treeZoomPercent }}</span>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="کوچک‌تر"
-                        aria-label="کوچک‌تر"
-                        (click)="zoomTree(-0.1)"
-                      >
-                        <span class="tool-icon" aria-hidden="true">−</span><span class="tool-label">کوچک‌تر</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="نمای کلی"
-                        aria-label="نمای کلی"
-                        (click)="fitTreeToViewport()"
-                      >
-                        <span class="tool-icon" aria-hidden="true">□</span><span class="tool-label">نمای کلی</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="اندازه اصلی"
-                        aria-label="اندازه اصلی"
-                        (click)="resetTreeZoom()"
-                      >
-                        <span class="tool-icon" aria-hidden="true">1:1</span><span class="tool-label">اندازه اصلی</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="ghost"
-                        title="بزرگ‌تر"
-                        aria-label="بزرگ‌تر"
-                        (click)="zoomTree(0.1)"
-                      >
-                        <span class="tool-icon" aria-hidden="true">+</span><span class="tool-label">بزرگ‌تر</span>
-                      </button>
+                      <div class="tree-tool-group" role="group" aria-label="پیمایش بین نودها">
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="نود قبلی"
+                          aria-label="نود قبلی"
+                          (click)="selectAdjacentTreeNode(-1)"
+                        >
+                          <span class="tool-icon" aria-hidden="true">‹</span><span class="tool-label">نود قبلی</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="تمرکز روی نود"
+                          aria-label="تمرکز روی نود"
+                          (click)="centerSelectedTreeNode()"
+                          [disabled]="!selectedTreeNode"
+                        >
+                          <span class="tool-icon" aria-hidden="true">⊙</span><span class="tool-label">تمرکز روی نود</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="نود بعدی"
+                          aria-label="نود بعدی"
+                          (click)="selectAdjacentTreeNode(1)"
+                        >
+                          <span class="tool-icon" aria-hidden="true">›</span><span class="tool-label">نود بعدی</span>
+                        </button>
+                      </div>
+                      <div class="tree-tool-group" role="group" aria-label="بزرگ‌نمایی">
+                        <span class="tree-zoom-readout">{{ treeZoomPercent }}</span>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="کوچک‌تر"
+                          aria-label="کوچک‌تر"
+                          (click)="zoomTree(-0.1)"
+                        >
+                          <span class="tool-icon" aria-hidden="true">−</span><span class="tool-label">کوچک‌تر</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="نمای کلی"
+                          aria-label="نمای کلی"
+                          (click)="fitTreeToViewport()"
+                        >
+                          <span class="tool-icon" aria-hidden="true">□</span><span class="tool-label">نمای کلی</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="اندازه اصلی"
+                          aria-label="اندازه اصلی"
+                          (click)="resetTreeZoom()"
+                        >
+                          <span class="tool-icon" aria-hidden="true">1:1</span><span class="tool-label">اندازه اصلی</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="ghost"
+                          title="بزرگ‌تر"
+                          aria-label="بزرگ‌تر"
+                          (click)="zoomTree(0.1)"
+                        >
+                          <span class="tool-icon" aria-hidden="true">+</span><span class="tool-label">بزرگ‌تر</span>
+                        </button>
+                      </div>
                     </div>
                     <div class="tree-designer-frame">
                       <div class="tree-ruler-corner"></div>
