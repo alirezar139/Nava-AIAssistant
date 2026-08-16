@@ -9003,9 +9003,29 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box {
   padding: 12px !important;
+  display: grid !important;
+  gap: 8px !important;
   border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
   border-radius: 16px !important;
   background: color-mix(in srgb, var(--color-link) 6%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box strong {
+  color: var(--color-secondary) !important;
+  font-size: 0.76rem !important;
+  font-weight: 950 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box input,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box select {
+  width: 100% !important;
+  min-height: 40px !important;
+  padding: 8px 12px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 11px !important;
+  color: var(--color-body) !important;
+  background: color-mix(in srgb, var(--surface) 90%, transparent) !important;
+  font: inherit !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edge-editor {
