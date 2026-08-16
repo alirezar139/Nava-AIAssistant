@@ -8386,8 +8386,11 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-workbench {
   margin-top: 18px !important;
+  height: 100% !important;
+  min-height: 0 !important;
   display: grid !important;
-  grid-template-columns: minmax(290px, 340px) minmax(0, 1fr) !important;
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) minmax(0, auto) !important;
   grid-template-areas:
     'browser canvas'
     'editor canvas' !important;
@@ -8395,12 +8398,22 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-canvas-card {
+  min-height: 0 !important;
   display: grid !important;
   grid-template-columns: clamp(112px, 8vw, 156px) minmax(0, 1fr) clamp(166px, 12vw, 220px) !important;
-  grid-template-rows: minmax(0, 1fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
   direction: ltr !important;
   border-radius: 20px !important;
   overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-canvas-card > .section-title {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  direction: rtl !important;
+  padding: 14px 18px 10px !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border)) !important;
+  background: color-mix(in srgb, var(--surface) 90%, transparent) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls,
@@ -8421,17 +8434,17 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls {
   grid-column: 1 !important;
-  grid-row: 1 !important;
+  grid-row: 2 !important;
   border-inline-end: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border)) !important;
-  border-radius: 20px 0 0 20px !important;
+  border-radius: 0 0 0 20px !important;
   background: color-mix(in srgb, var(--surface) 90%, transparent) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar {
   grid-column: 3 !important;
-  grid-row: 1 !important;
+  grid-row: 2 !important;
   border-inline-start: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border)) !important;
-  border-radius: 0 20px 20px 0 !important;
+  border-radius: 0 0 20px 0 !important;
   background: color-mix(in srgb, var(--surface) 90%, transparent) !important;
 }
 
@@ -8470,7 +8483,7 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-designer-frame {
   grid-column: 2 !important;
-  grid-row: 1 !important;
+  grid-row: 2 !important;
   min-height: 0 !important;
   display: grid !important;
   grid-template-columns: 34px minmax(0, 1fr) !important;
@@ -8705,21 +8718,38 @@ td b {
 
 /* ---------- Node browser: shapes palette + search + list + editor ---------- */
 
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-side-panel {
+  padding: 14px !important;
+  display: grid !important;
+  align-content: start !important;
+  gap: 12px !important;
+}
+
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser {
   grid-area: browser !important;
-  padding: 8px !important;
-  display: grid !important;
-  grid-template-columns: minmax(520px, 1.5fr) minmax(250px, 0.55fr) minmax(230px, 0.45fr) !important;
-  grid-template-areas:
-    'shapes search summary'
-    'shapes nodes paging' !important;
-  gap: 8px !important;
-  align-items: stretch !important;
+  min-height: 0 !important;
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scrollbar-gutter: stable !important;
+  border-radius: 20px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, #fff 30%, transparent), transparent 60%),
+    color-mix(in srgb, var(--surface) 84%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser > .section-title {
+  flex: 0 0 auto !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-shapes-library {
-  grid-area: shapes !important;
-  min-height: 0 !important;
+  flex: 0 0 auto !important;
+  max-height: 280px !important;
+  min-height: 200px !important;
   padding: 10px !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -8736,16 +8766,75 @@ td b {
   background: color-mix(in srgb, var(--surface) 70%, transparent) !important;
 }
 
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-search {
+  grid-area: shapeSearch !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-stencil-list {
+  grid-area: standards !important;
+  max-height: 92px !important;
+  display: grid !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  align-content: start !important;
+  padding-inline-end: 2px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-standard-note {
+  grid-area: standardNote !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-palette-grid {
+  grid-area: palette !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-rows: min-content !important;
+  gap: 8px !important;
+  align-content: start !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding-inline-end: 4px !important;
+  scrollbar-gutter: stable !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-palette-grid button {
+  flex: none !important;
+  width: 100% !important;
+  min-height: 74px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .shape-apply {
+  grid-area: apply !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser > .search-field {
+  flex: 0 0 auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination-summary {
+  flex: 0 0 auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-list-note {
+  flex: 0 0 auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination {
+  flex: 0 0 auto !important;
+}
+
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list-title {
-  grid-area: nodeTitle !important;
+  flex: 0 0 auto !important;
   display: flex !important;
   margin: 0 !important;
   font-size: 0.9rem !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list {
-  grid-area: nodes !important;
-  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  min-height: 100px !important;
   padding-inline-end: 2px !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -8842,12 +8931,20 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-panel {
   grid-area: editor !important;
-  padding: 8px !important;
+  min-height: 0 !important;
+  max-height: 320px !important;
+  padding: 12px !important;
   display: flex !important;
-  gap: 8px !important;
+  flex-direction: column !important;
+  gap: 10px !important;
   align-items: stretch !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border-radius: 20px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, #fff 30%, transparent), transparent 60%),
+    color-mix(in srgb, var(--surface) 84%, transparent) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions {
@@ -8877,13 +8974,6 @@ td b {
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--color-link) 12%, transparent), transparent),
     color-mix(in srgb, var(--surface) 82%, transparent) !important;
-}
-
-.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-side-panel {
-  padding: 14px !important;
-  display: grid !important;
-  align-content: start !important;
-  gap: 12px !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar {
