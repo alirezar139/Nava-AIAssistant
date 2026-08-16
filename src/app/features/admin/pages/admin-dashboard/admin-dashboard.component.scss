@@ -8068,6 +8068,115 @@ td b {
   gap: 8px !important;
 }
 
+/* ---------- Tree action buttons: primary / ghost / disabled (Visio-style, colorful) ---------- */
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-actions button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modal-actions button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-close-confirm button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edge-editor button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-empty-state button {
+  min-height: 42px !important;
+  padding: 10px 16px !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  color: #fff !important;
+  background:
+    radial-gradient(circle at 22% 12%, color-mix(in srgb, #fff 26%, transparent), transparent 48%),
+    linear-gradient(135deg, var(--primary-700), var(--primary-950)) !important;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary-950) 26%, transparent) !important;
+  font-size: 0.82rem !important;
+  font-weight: 950 !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-actions button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modal-actions button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions button:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-empty-state button:hover:not(:disabled) {
+  filter: brightness(1.08) !important;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-950) 32%, transparent) !important;
+  transform: translateY(-1px) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-actions .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modal-actions .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-close-confirm .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edge-editor .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-empty-actions .ghost {
+  color: var(--color-heading) !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 26%, var(--border)) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #fff 42%, transparent), transparent 68%),
+    color-mix(in srgb, var(--color-link) 10%, var(--surface)) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-actions .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modal-actions .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions .ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-link) 18%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--color-link) 44%, var(--border)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-toolbar button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-actions button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modal-actions button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-close-confirm button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-modeling-toolbar button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-pagination button:disabled,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.55 !important;
+  filter: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-create-primary-actions button {
+  min-height: 48px !important;
+  padding: 11px 18px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  background: linear-gradient(135deg, #ffffff, #dff8f2) !important;
+  color: #0c3855 !important;
+  font-size: 0.82rem !important;
+  font-weight: 950 !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-create-primary-actions button:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-create-primary-actions .ghost {
+  color: #f7fffd !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+}
+
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-preview-note {
   padding: 12px 14px !important;
   border: 1px solid color-mix(in srgb, var(--color-link) 28%, var(--border)) !important;
@@ -8467,6 +8576,133 @@ td b {
   text-anchor: middle !important;
 }
 
+/* ---------- Node shapes: gradient fills + state colors (Visio-style) ---------- */
+
+.tree-node-fill-stop-default-a {
+  stop-color: color-mix(in srgb, var(--color-link) 14%, var(--surface));
+}
+
+.tree-node-fill-stop-default-b {
+  stop-color: color-mix(in srgb, var(--color-link) 32%, var(--surface));
+}
+
+.tree-node-fill-stop-active-a {
+  stop-color: color-mix(in srgb, var(--color-link) 40%, var(--surface));
+}
+
+.tree-node-fill-stop-active-b {
+  stop-color: color-mix(in srgb, var(--color-link) 62%, var(--surface));
+}
+
+.tree-node-fill-stop-start-a {
+  stop-color: color-mix(in srgb, #17b88f 24%, var(--surface));
+}
+
+.tree-node-fill-stop-start-b {
+  stop-color: color-mix(in srgb, #17b88f 46%, var(--surface));
+}
+
+.tree-node-fill-stop-connecting-a {
+  stop-color: color-mix(in srgb, #e0932c 28%, var(--surface));
+}
+
+.tree-node-fill-stop-connecting-b {
+  stop-color: color-mix(in srgb, #e0932c 50%, var(--surface));
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-shape {
+  fill: url(#tree-node-fill-default) !important;
+  stroke: color-mix(in srgb, var(--color-link) 42%, var(--border)) !important;
+  stroke-width: 1.6 !important;
+  filter: drop-shadow(0 8px 14px color-mix(in srgb, var(--primary-950) 18%, transparent)) !important;
+  transition: filter 0.15s ease, stroke-width 0.15s ease, transform 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node:hover .node-shape {
+  filter: drop-shadow(0 14px 22px color-mix(in srgb, var(--primary-950) 24%, transparent)) !important;
+  stroke-width: 2.1 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-shape-outline,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-shape-detail {
+  fill: none !important;
+  stroke: color-mix(in srgb, var(--color-link) 48%, var(--border)) !important;
+  stroke-width: 1.2 !important;
+  pointer-events: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-shape-detail.muted {
+  stroke: color-mix(in srgb, var(--color-link) 26%, var(--border)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-shape-detail-fill {
+  fill: color-mix(in srgb, var(--color-link) 22%, transparent) !important;
+  stroke: none !important;
+  pointer-events: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .parenthesis-shape {
+  stroke-width: 5 !important;
+  stroke-linecap: round !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .thick-shape {
+  stroke-width: 4 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .dashed-shape {
+  stroke-dasharray: 10 7 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .erd-table-shape,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .erd-lookup-shape {
+  fill: color-mix(in srgb, #ffffff 76%, var(--surface)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .erd-lookup-shape {
+  stroke: color-mix(in srgb, var(--accent-600) 62%, var(--border)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node.active .node-shape {
+  fill: url(#tree-node-fill-active) !important;
+  stroke: var(--color-link) !important;
+  stroke-width: 2.4 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node.active .node-shape-outline,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node.active .node-shape-detail {
+  stroke: var(--color-link) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node.start .node-shape {
+  fill: url(#tree-node-fill-start) !important;
+  stroke: color-mix(in srgb, #128f6f 70%, var(--border)) !important;
+  stroke-width: 2.1 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node.connecting-source .node-shape {
+  fill: url(#tree-node-fill-connecting) !important;
+  stroke: color-mix(in srgb, #b9711c 82%, var(--border)) !important;
+  stroke-dasharray: 8 5 !important;
+  stroke-width: 2.6 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node text {
+  fill: var(--color-heading) !important;
+  font-size: 11.5px !important;
+  font-weight: 950 !important;
+  text-anchor: middle !important;
+  paint-order: stroke !important;
+  stroke: color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  stroke-width: 3px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-svg-node .node-meta {
+  fill: var(--color-secondary) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+}
+
 /* ---------- Node browser: shapes palette + search + list + editor ---------- */
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser {
@@ -8517,6 +8753,51 @@ td b {
   gap: 7px !important;
   overflow: auto !important;
   scrollbar-gutter: stable !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list button {
+  width: 100% !important;
+  min-height: 54px !important;
+  padding: 9px 11px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 5px 10px !important;
+  align-items: center !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+  border-radius: 16px !important;
+  color: var(--color-body) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #fff 46%, transparent), transparent),
+    color-mix(in srgb, var(--surface) 88%, transparent) !important;
+  text-align: right !important;
+  transition: transform 0.15s ease, border-color 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list button:hover {
+  border-color: color-mix(in srgb, var(--color-link) 34%, var(--border)) !important;
+  transform: translateY(-1px) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list button.active {
+  border-color: color-mix(in srgb, var(--color-link) 48%, var(--border)) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-link) 20%, transparent), transparent),
+    var(--surface) !important;
+  box-shadow: inset -4px 0 0 color-mix(in srgb, var(--color-link) 84%, var(--primary-950)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list b {
+  color: var(--color-heading) !important;
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  line-height: 1.8 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-list span {
+  color: var(--color-subtle) !important;
+  direction: ltr !important;
+  font-family: var(--font-family-base) !important;
+  font-size: 0.72rem !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-list-note {
