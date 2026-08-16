@@ -7141,11 +7141,11 @@ td b {
   min-width: 0 !important;
 }
 
-.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop {
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop.faq-workspace {
   align-items: stretch !important;
 }
 
-.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop > .admin-content {
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop.faq-workspace > .admin-content {
   min-height: 0 !important;
 }
 
@@ -9065,7 +9065,7 @@ td b {
   padding: 12px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
+  gap: 8px !important;
   align-items: stretch !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
@@ -9074,6 +9074,7 @@ td b {
   background:
     linear-gradient(160deg, color-mix(in srgb, #fff 30%, transparent), transparent 60%),
     color-mix(in srgb, var(--surface) 84%, transparent) !important;
+  box-shadow: inset 0 -22px 14px -18px color-mix(in srgb, var(--primary-950) 16%, transparent) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-actions {
@@ -9083,9 +9084,9 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-edit-box {
-  padding: 12px !important;
+  padding: 10px !important;
   display: grid !important;
-  gap: 8px !important;
+  gap: 6px !important;
   border: 1px solid color-mix(in srgb, var(--color-link) 14%, var(--border)) !important;
   border-radius: 16px !important;
   background: color-mix(in srgb, var(--color-link) 6%, transparent) !important;
