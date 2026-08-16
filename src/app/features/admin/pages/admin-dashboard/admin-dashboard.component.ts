@@ -154,7 +154,6 @@ export class AdminDashboardComponent implements OnInit {
   dashboardMetricLogMap = new Map<DashboardMetricLogRecord['key'], DashboardMetricLogRecord>();
   troubleshootingTree: TroubleshootingTree | null = null;
   activeTab: AdminTab = 'faqs';
-  adminMenuCollapsed = true;
   readonly appVersion = appVersionInfo.version;
   readonly appVersionTitle = [
     `نسخه ${appVersionInfo.version}`,
@@ -1436,19 +1435,6 @@ export class AdminDashboardComponent implements OnInit {
       this.activeTab = tab;
       this.loadActiveTabData();
     }
-    this.collapseAdminMenu();
-  }
-
-  toggleAdminMenu(): void {
-    this.adminMenuCollapsed = !this.adminMenuCollapsed;
-    this.changeDetector.markForCheck();
-  }
-
-  collapseAdminMenu(): void {
-    if (!this.adminMenuCollapsed) {
-      this.adminMenuCollapsed = true;
-      this.changeDetector.markForCheck();
-    }
   }
 
   setDeviceViewportPreference(preference: DeviceViewportPreference): void {
@@ -1540,7 +1526,6 @@ export class AdminDashboardComponent implements OnInit {
     const shouldLoadTree = this.activeTab !== 'tree';
     this.treeManagementView = view;
     this.activeTab = 'tree';
-    this.collapseAdminMenu();
     if (shouldLoadTree) {
       this.loadActiveTabData();
       return;

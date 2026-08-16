@@ -53,8 +53,11 @@
             <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
           </svg>
         </div>
-        <span>FAQ فعال</span><strong>{{ formatCount(loggedFaqCount) }}</strong
-        ><small>پرسش و پاسخ ثبت‌شده</small>
+        <div class="stat-copy">
+          <span>FAQ فعال</span>
+          <small>پرسش و پاسخ ثبت‌شده</small>
+        </div>
+        <strong>{{ formatCount(loggedFaqCount) }}</strong>
       </article>
       <article>
         <div class="stat-icon">
@@ -63,9 +66,11 @@
             <path d="M8 9h8M8 13h5"></path>
           </svg>
         </div>
-        <span>درخواست کاربران</span
-        ><strong>{{ formatCount(loggedConversationCount) }}</strong
-        ><small>گفت‌وگوی ثبت‌شده</small>
+        <div class="stat-copy">
+          <span>درخواست کاربران</span>
+          <small>گفت‌وگوی ثبت‌شده</small>
+        </div>
+        <strong>{{ formatCount(loggedConversationCount) }}</strong>
       </article>
       <article>
         <div class="stat-icon">
@@ -75,36 +80,24 @@
             <path d="M3 20c.5-4 2.5-6 6-6s5.5 2 6 6M15 15c3 0 5 1.5 6 4"></path>
           </svg>
         </div>
-        <span>کاربران درگیر</span><strong>{{ formatCount(loggedUniqueUserCount) }}</strong
-        ><small>کاربر دارای درخواست</small>
+        <div class="stat-copy">
+          <span>کاربران درگیر</span>
+          <small>کاربر دارای درخواست</small>
+        </div>
+        <strong>{{ formatCount(loggedUniqueUserCount) }}</strong>
       </article>
     </section>
 
     <div
       class="admin-workspace"
       [class.faq-workspace]="activeTab === 'faqs'"
-      [class.admin-workspace-menu-collapsed]="adminMenuCollapsed"
       [class.viewport-auto]="deviceViewportPreference === 'auto'"
       [class.viewport-manual]="deviceViewportPreference !== 'auto'"
       [class.viewport-mobile]="deviceViewportMode === 'mobile'"
       [class.viewport-tablet]="deviceViewportMode === 'tablet'"
       [class.viewport-desktop]="deviceViewportMode === 'desktop'"
     >
-      <aside class="admin-menu" [class.collapsed]="adminMenuCollapsed" aria-label="منوی پنل مدیریت">
-        <button
-          type="button"
-          class="admin-menu-toggle"
-          [attr.aria-expanded]="!adminMenuCollapsed"
-          [attr.aria-label]="adminMenuCollapsed ? 'باز کردن منوی مدیریت' : 'جمع کردن منوی مدیریت'"
-          [attr.title]="adminMenuCollapsed ? 'باز کردن منوی مدیریت' : 'جمع کردن منوی مدیریت'"
-          (click)="toggleAdminMenu()"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 5h16M4 12h16M4 19h16"></path>
-            <path [attr.d]="adminMenuCollapsed ? 'M9 8l4 4-4 4' : 'M15 8l-4 4 4 4'"></path>
-          </svg>
-          <span>{{ adminMenuCollapsed ? 'منوی مدیریت' : 'جمع کردن منو' }}</span>
-        </button>
+      <aside class="admin-menu" aria-label="منوی پنل مدیریت">
         <div class="admin-menu-heading">
           <span>مرکز کنترل</span>
           <strong>پنل مدیریت سامانه</strong>
