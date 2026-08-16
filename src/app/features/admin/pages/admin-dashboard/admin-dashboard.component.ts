@@ -218,6 +218,7 @@ export class AdminDashboardComponent implements OnInit {
   pendingConfirmation: PendingConfirmation | null = null;
   selectedFaqIds = new Set<number>();
   treeSelectedNodeId = '';
+  treeSidebarTab: 'shapes' | 'nodes' | 'editor' = 'shapes';
   treeNodeTextDraft = '';
   treeNewChildText = '';
   treeLinkTargetId = '';
@@ -2242,12 +2243,17 @@ export class AdminDashboardComponent implements OnInit {
     const node = this.treeNodes.find((item) => item.id === nodeId);
     if (!node) return;
     this.treeSelectedNodeId = node.id;
+    this.treeSidebarTab = 'editor';
     this.treeNodeTextDraft = node.text;
     this.treeActiveShape = node.shape ?? 'process';
     this.treeLinkTargetId = this.availableTreeTargets[0]?.id ?? '';
     this.syncTreePageWithSelection();
     this.rebuildTreeOutgoingEdges();
     this.rebuildTreePreview();
+  }
+
+  setTreeSidebarTab(tab: 'shapes' | 'nodes' | 'editor'): void {
+    this.treeSidebarTab = tab;
   }
 
   focusTreeNode(nodeId: string): void {

@@ -1314,7 +1314,28 @@
                 </section>
 
                 <section class="tree-workbench" *ngIf="troubleshootingTree && !treeLoading">
-                  <aside class="tree-side-panel tree-node-browser">
+                  <div class="tree-sidebar-tabs" role="tablist" aria-label="نوار کناری">
+                    <button
+                      type="button"
+                      role="tab"
+                      [attr.aria-selected]="treeSidebarTab !== 'editor'"
+                      [class.active]="treeSidebarTab !== 'editor'"
+                      (click)="setTreeSidebarTab('shapes')"
+                    >
+                      کتابخانه و نودها
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      [attr.aria-selected]="treeSidebarTab === 'editor'"
+                      [class.active]="treeSidebarTab === 'editor'"
+                      [disabled]="!selectedTreeNode"
+                      (click)="setTreeSidebarTab('editor')"
+                    >
+                      ویرایش نود
+                    </button>
+                  </div>
+                  <aside class="tree-side-panel tree-node-browser" [hidden]="treeSidebarTab === 'editor'">
                     <div class="section-title compact">
                       <div>
                         <span>استاندارد شکل‌ها</span>
@@ -2487,7 +2508,11 @@
                     </div>
                   </section>
 
-                  <aside class="tree-side-panel tree-editor-panel" *ngIf="selectedTreeNode as node">
+                  <aside
+                    class="tree-side-panel tree-editor-panel"
+                    *ngIf="selectedTreeNode as node"
+                    [hidden]="treeSidebarTab !== 'editor'"
+                  >
                     <div class="section-title compact">
                       <div>
                         <span>ویرایش نود</span>

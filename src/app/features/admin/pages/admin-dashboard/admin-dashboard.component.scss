@@ -8391,14 +8391,54 @@ td b {
   min-height: 0 !important;
   display: grid !important;
   grid-template-columns: minmax(320px, 380px) minmax(0, 1fr) !important;
-  grid-template-rows: minmax(0, 1fr) minmax(0, auto) !important;
+  grid-template-rows: 52px minmax(0, 1fr) !important;
   grid-template-areas:
-    'browser canvas'
-    'editor canvas' !important;
-  gap: 18px !important;
+    'tabs canvas'
+    'sidebar canvas' !important;
+  gap: 12px 18px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-sidebar-tabs {
+  grid-area: tabs !important;
+  height: 52px !important;
+  min-height: 0 !important;
+  max-height: 52px !important;
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-sidebar-tabs button {
+  flex: 1 1 0 !important;
+  min-height: 40px !important;
+  padding: 8px 14px !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 16%, var(--border)) !important;
+  border-radius: 13px !important;
+  color: var(--color-secondary) !important;
+  background: color-mix(in srgb, var(--surface) 84%, transparent) !important;
+  font-size: 0.8rem !important;
+  font-weight: 900 !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-sidebar-tabs button.active {
+  color: #fff !important;
+  border-color: transparent !important;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-950)) !important;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--primary-950) 22%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-sidebar-tabs button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser[hidden],
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-panel[hidden] {
+  display: none !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-canvas-card {
+  grid-area: canvas !important;
   min-height: 0 !important;
   display: grid !important;
   grid-template-columns: clamp(112px, 8vw, 156px) minmax(0, 1fr) clamp(166px, 12vw, 220px) !important;
@@ -8774,7 +8814,7 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-node-browser {
-  grid-area: browser !important;
+  grid-area: sidebar !important;
   min-height: 0 !important;
   padding: 12px !important;
   display: flex !important;
@@ -8795,9 +8835,9 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-shapes-library {
-  flex: 0 0 auto !important;
-  max-height: 280px !important;
-  min-height: 200px !important;
+  flex: 0 1 380px !important;
+  max-height: 380px !important;
+  min-height: 220px !important;
   padding: 10px !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
@@ -8978,9 +9018,8 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-editor-panel {
-  grid-area: editor !important;
+  grid-area: sidebar !important;
   min-height: 0 !important;
-  max-height: 320px !important;
   padding: 12px !important;
   display: flex !important;
   flex-direction: column !important;
