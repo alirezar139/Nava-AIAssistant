@@ -7486,6 +7486,36 @@ td b {
   align-items: start !important;
 }
 
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .admin-content.faq-layout {
+  height: calc(100vh - 480px) !important;
+  min-height: 460px !important;
+  align-items: stretch !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-editor-card,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-editor-card form {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-inline-end: 4px !important;
+  align-content: start !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card .table-wrap {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-inline-end: 4px !important;
+}
+
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-tablet .admin-content.faq-layout,
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-mobile .admin-content.faq-layout {
   grid-template-columns: minmax(0, 1fr) !important;
