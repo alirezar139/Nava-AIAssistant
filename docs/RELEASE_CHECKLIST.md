@@ -41,8 +41,8 @@ npm start
 
 بررسی کنید:
 
-- `http://127.0.0.1:3000/api/health` مقدار `status: ok` بدهد.
-- `http://localhost:4200/` باز شود.
+- `http://127.0.0.1:4300/api/health` مقدار `status: ok` بدهد.
+- `http://localhost:4310/` باز شود.
 - ورود مدیر با حساب توسعه کار کند.
 - ورود کاربر با حساب توسعه کار کند.
 
@@ -54,11 +54,11 @@ npm run start:webapp
 
 بررسی کنید:
 
-- `http://127.0.0.1:3000/` باز شود.
+- `http://127.0.0.1:4300/` باز شود.
 - refresh روی routeهای داخل برنامه خطای `404` ندهد.
-- `http://127.0.0.1:3000/api/health` همچنان مقدار `status: ok` بدهد.
-- `http://127.0.0.1:3000/manifest.webmanifest` قابل دریافت باشد.
-- `http://127.0.0.1:3000/nava-service-worker.js` قابل دریافت باشد.
+- `http://127.0.0.1:4300/api/health` همچنان مقدار `status: ok` بدهد.
+- `http://127.0.0.1:4300/manifest.webmanifest` قابل دریافت باشد.
+- `http://127.0.0.1:4300/nava-service-worker.js` قابل دریافت باشد.
 
 ## Smoke Test کارکردی
 

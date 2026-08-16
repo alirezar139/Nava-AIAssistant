@@ -41,8 +41,8 @@ powershell -ExecutionPolicy Bypass -File .\start-webapp.ps1
 
 ## مسیرهای مهم
 
-- صفحه برنامه: `http://SERVER_IP:3000/`
-- سلامت API: `http://SERVER_IP:3000/api/health`
+- صفحه برنامه: `http://SERVER_IP:4300/`
+- سلامت API: `http://SERVER_IP:4300/api/health`
 - داده runtime: `server/data/database.json`
 
 پوشه `server/data` در اولین اجرای برنامه ساخته می‌شود و نباید بین نسخه‌های

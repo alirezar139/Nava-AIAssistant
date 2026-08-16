@@ -75,7 +75,7 @@ npm start
 آدرس برنامه:
 
 ```text
-http://localhost:4200/
+http://localhost:4310/
 ```
 
 در حالت توسعه، درخواست‌های `/api` از طریق `proxy.conf.json` به API محلی منتقل
@@ -84,7 +84,7 @@ http://localhost:4200/
 بررسی سلامت API:
 
 ```text
-http://127.0.0.1:3000/api/health
+http://127.0.0.1:4300/api/health
 ```
 
 ## اجرای وب‌اپ روی ویندوز
@@ -101,7 +101,7 @@ npm run start:webapp
 می‌شود:
 
 ```text
-http://127.0.0.1:3000/
+http://127.0.0.1:4300/
 ```
 
 روی ویندوز می‌توانید اسکریپت آماده را اجرا کنید. اگر خروجی build وجود نداشته
@@ -130,7 +130,7 @@ API این متغیرها را می‌خواند:
 
 | متغیر                       | اجباری              | توضیح                                |
 | --------------------------- | ------------------- | ------------------------------------ |
-| `PORT`                      | خیر                 | پورت API. مقدار پیش‌فرض `3000` است.  |
+| `PORT`                      | خیر                 | پورت API. مقدار پیش‌فرض `4300` است.  |
 | `JWT_SECRET`                | برای محیط واقعی بله | کلید امضای JWT.                      |
 | `DB_PROVIDER`               | خیر                 | مقدار `lowdb` یا `arango`.           |
 | `ARANGO_URL`                | خیر                 | آدرس ArangoDB.                       |
@@ -183,9 +183,9 @@ node server/dist/main.js
 
 | فرمان                           | کاربرد                                                 |
 | ------------------------------- | ------------------------------------------------------ |
-| `npm start`                     | اجرای Angular روی `localhost:4200` همراه با proxy API. |
+| `npm start`                     | اجرای Angular روی `localhost:4310` همراه با proxy API. |
 | `npm run start:api`             | اجرای API در حالت watch.                               |
-| `node server/dist/main.js`      | اجرای API build شده روی `127.0.0.1:3000`.              |
+| `node server/dist/main.js`      | اجرای API build شده روی `127.0.0.1:4300`.              |
 | `npm run start:webapp`          | اجرای نسخه build شده وب‌اپ روی پورت API.               |
 | `npm run build`                 | ساخت خروجی فرانت‌اند.                                  |
 | `npm run build:all`             | ساخت فرانت‌اند و بک‌اند.                               |

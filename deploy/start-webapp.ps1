@@ -27,7 +27,7 @@ if (-not $env:HOST) {
 }
 
 if (-not $env:PORT) {
-  $env:PORT = '3000'
+  $env:PORT = '4300'
 }
 
 if (-not (Test-Path -LiteralPath $serverEntry)) {

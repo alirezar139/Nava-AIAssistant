@@ -69,7 +69,7 @@ npm --prefix server run dev
 بررسی سلامت API:
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3000/api/health
+Invoke-RestMethod http://127.0.0.1:4300/api/health
 ```
 
 نمونه پاسخ:
@@ -170,7 +170,7 @@ Invoke-RestMethod http://127.0.0.1:3000/api/health
 پس از راه‌اندازی API با Arango:
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3000/api/health
+Invoke-RestMethod http://127.0.0.1:4300/api/health
 ```
 
 سپس با حساب مدیر وارد شوید و این بخش‌ها را بررسی کنید:

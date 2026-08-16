@@ -7,7 +7,7 @@ bootstrapApplication(AppComponent, appConfig).catch((error: unknown) => console.
 const shouldRegisterServiceWorker =
   'serviceWorker' in navigator &&
   window.location.protocol.startsWith('http') &&
-  window.location.port !== '4200';
+  window.location.port !== '4310';
 
 if (shouldRegisterServiceWorker) {
   window.addEventListener('load', () => {

@@ -1,9 +1,9 @@
-const defaultOrigins = ['http://localhost:4200', 'http://127.0.0.1:4200'];
+const defaultOrigins = ['http://localhost:4310', 'http://127.0.0.1:4310'];
 const databaseProvider = (process.env['DB_PROVIDER'] ?? 'lowdb').trim().toLowerCase();
 
 export const config = {
   host: process.env['HOST'] ?? '127.0.0.1',
-  port: Number(process.env['PORT'] ?? 3000),
+  port: Number(process.env['PORT'] ?? 4300),
   jwtSecret: process.env['JWT_SECRET'] ?? 'change-this-secret-before-production',
   databaseProvider: databaseProvider === 'arango' ? 'arango' : 'lowdb',
   dataDirectory: process.env['RAHYAR_DATA_DIR'] ?? '',

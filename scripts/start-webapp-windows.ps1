@@ -21,7 +21,7 @@ if (-not $env:HOST) {
 }
 
 if (-not $env:PORT) {
-  $env:PORT = '3000'
+  $env:PORT = '4300'
 }
 
 $url = "http://$($env:HOST):$($env:PORT)"

@@ -34,7 +34,7 @@ npm --prefix server install
 
 | متغیر                       | پیش‌فرض                 | توضیح                                         |
 | --------------------------- | ----------------------- | --------------------------------------------- |
-| `PORT`                      | `3000`                  | پورت API.                                     |
+| `PORT`                      | `4300`                  | پورت API.                                     |
 | `JWT_SECRET`                | مقدار محلی              | کلید امضای JWT. خارج از توسعه باید تغییر کند. |
 | `DB_PROVIDER`               | `lowdb`                 | نوع ذخیره‌سازی. برای Arango مقدار `arango`.   |
 | `RAHYAR_DATA_DIR`           | خالی                    | مسیر فایل LowDB در صورت نیاز به تغییر.        |
@@ -175,7 +175,7 @@ npm run start:api
 سلامت API:
 
 ```text
-http://127.0.0.1:3000/api/health
+http://127.0.0.1:4300/api/health
 ```
 
 ### اجرای API از خروجی build شده
@@ -195,7 +195,7 @@ node server/dist/main.js
 انتظار:
 
 ```text
-API listening on http://127.0.0.1:3000
+API listening on http://127.0.0.1:4300
 ```
 
 ### اجرای فرانت‌اند
@@ -210,11 +210,11 @@ npm start
 آدرس برنامه:
 
 ```text
-http://localhost:4200/
+http://localhost:4310/
 ```
 
 در اجرای توسعه، Angular مسیرهای `/api` را با تنظیمات `proxy.conf.json` به
-`http://127.0.0.1:3000` منتقل می‌کند. بنابراین API باید قبل از استفاده از
+`http://127.0.0.1:4300` منتقل می‌کند. بنابراین API باید قبل از استفاده از
 فرانت‌اند اجرا شده باشد.
 
 تا زمان استفاده از برنامه، هر دو ترمینال باید باز بمانند. توقف سرویس با `Ctrl+C`
@@ -242,15 +242,15 @@ npm start
 3. سلامت سرویس‌ها را بررسی کنید:
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3000/api/health
-Invoke-WebRequest http://localhost:4200 -UseBasicParsing
+Invoke-RestMethod http://127.0.0.1:4300/api/health
+Invoke-WebRequest http://localhost:4310 -UseBasicParsing
 ```
 
 خروجی قابل قبول:
 
 - API مقدار `{"status":"ok"}` برگرداند.
 - فرانت‌اند status code `200` بدهد.
-- پورت `3000` برای API و پورت `4200` برای Angular در وضعیت `LISTENING` باشند.
+- پورت `4300` برای API و پورت `4310` برای Angular در وضعیت `LISTENING` باشند.
 
 ## اجرای وب‌اپ روی ویندوز
 
@@ -271,7 +271,7 @@ npm run start:webapp
 در این حالت Express هم API و هم فایل‌های Angular را از یک آدرس سرو می‌کند:
 
 ```text
-http://127.0.0.1:3000/
+http://127.0.0.1:4300/
 ```
 
 اسکریپت آماده ویندوز همین روند را ساده می‌کند. اگر خروجی build وجود نداشته
@@ -307,7 +307,7 @@ npm run webapp:windows
 2. آدرس برنامه را در Chrome یا Microsoft Edge باز کنید:
 
 ```text
-http://127.0.0.1:3000/
+http://127.0.0.1:4300/
 ```
 
 3. از منوی مرورگر گزینه نصب app را انتخاب کنید. در Edge معمولا مسیر
@@ -319,9 +319,9 @@ http://127.0.0.1:3000/
 
 - صفحه را یک بار با `Ctrl+F5` تازه‌سازی کنید.
 - بررسی کنید `manifest.webmanifest` از آدرس
-  `http://127.0.0.1:3000/manifest.webmanifest` باز شود.
+  `http://127.0.0.1:4300/manifest.webmanifest` باز شود.
 - بررسی کنید `nava-service-worker.js` از آدرس
-  `http://127.0.0.1:3000/nava-service-worker.js` باز شود.
+  `http://127.0.0.1:4300/nava-service-worker.js` باز شود.
 - اگر قبلا نسخه قدیمی را نصب کرده‌اید، آن را uninstall و دوباره نصب کنید.
 
 ## حساب‌های توسعه
@@ -336,15 +336,15 @@ http://127.0.0.1:3000/
 ## بررسی سلامت
 
 ```powershell
-Invoke-RestMethod http://127.0.0.1:3000/api/health
-Invoke-WebRequest http://localhost:4200 -UseBasicParsing
+Invoke-RestMethod http://127.0.0.1:4300/api/health
+Invoke-WebRequest http://localhost:4310 -UseBasicParsing
 ```
 
 انتظار:
 
 - API مقدار `status: ok` برگرداند.
 - فرانت‌اند status code `200` بدهد.
-- در اجرای وب‌اپ تولیدی، `Invoke-WebRequest http://127.0.0.1:3000 -UseBasicParsing`
+- در اجرای وب‌اپ تولیدی، `Invoke-WebRequest http://127.0.0.1:4300 -UseBasicParsing`
   هم status code `200` بدهد.
 
 ## Build
@@ -382,18 +382,18 @@ npm run build:all
 
 ### فرانت‌اند باز نمی‌شود
 
-بررسی کنید `npm start` هنوز اجراست و پورت `4200` listen می‌کند:
+بررسی کنید `npm start` هنوز اجراست و پورت `4310` listen می‌کند:
 
 ```powershell
-Get-NetTCPConnection -LocalPort 4200 -State Listen
+Get-NetTCPConnection -LocalPort 4310 -State Listen
 ```
 
 ### API در دسترس نیست
 
-بررسی کنید `npm run start:api` هنوز اجراست و پورت `3000` listen می‌کند:
+بررسی کنید `npm run start:api` هنوز اجراست و پورت `4300` listen می‌کند:
 
 ```powershell
-Get-NetTCPConnection -LocalPort 3000 -State Listen
+Get-NetTCPConnection -LocalPort 4300 -State Listen
 ```
 
 اگر لاگ API خطای زیر را نشان داد:
@@ -418,7 +418,7 @@ node server/dist/main.js
 پردازش مالک پورت را پیدا کنید:
 
 ```powershell
-Get-NetTCPConnection -LocalPort 4200,3000 -State Listen
+Get-NetTCPConnection -LocalPort 4310,4300 -State Listen
 ```
 
 فقط پردازشی را متوقف کنید که متعلق به خودتان است و دیگر لازم ندارید.
