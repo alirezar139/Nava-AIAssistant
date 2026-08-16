@@ -9142,3 +9142,79 @@ td b {
   background: rgba(7, 28, 24, 0.86) !important;
 }
 
+/* =====================================================================
+   App-wide button color standardization
+   One consistent visual language for every button role across the
+   whole admin dashboard (not just the tree editor): primary (default
+   action), ghost/cancel (secondary), and danger (destructive).
+   ===================================================================== */
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .actions button:not(.ghost):not(.cancel):not(.danger):not(.link),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .modal-actions button:not(.ghost):not(.cancel):not(.danger):not(.link):not(.close),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .service-actions button:not(.ghost):not(.cancel):not(.danger):not(.link),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .section-title > button,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .import,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .refresh,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .send-request,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .report-open {
+  color: #fff !important;
+  border: 0 !important;
+  background:
+    radial-gradient(circle at 24% 14%, color-mix(in srgb, #fff 20%, transparent), transparent 46%),
+    linear-gradient(135deg, var(--primary-700), var(--primary-950)) !important;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--primary-950) 22%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .actions button:not(.ghost):not(.cancel):not(.danger):not(.link):hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .modal-actions button:not(.ghost):not(.cancel):not(.danger):not(.link):not(.close):hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .service-actions button:not(.ghost):not(.cancel):not(.danger):not(.link):hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .import:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .refresh:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .send-request:hover:not(:disabled) {
+  filter: brightness(1.06) !important;
+  box-shadow: 0 14px 26px color-mix(in srgb, var(--primary-950) 28%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .ghost,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .cancel {
+  color: var(--color-heading) !important;
+  border: 1px solid color-mix(in srgb, var(--color-link) 22%, var(--border)) !important;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #fff 40%, transparent), transparent 68%),
+    color-mix(in srgb, var(--color-link) 8%, var(--surface)) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .ghost:hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .cancel:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-link) 42%, var(--border)) !important;
+  background: color-mix(in srgb, var(--color-link) 15%, var(--surface)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell button.danger:not(.link),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell button.bulk-delete {
+  color: #fff !important;
+  border: 0 !important;
+  background: linear-gradient(135deg, var(--danger), color-mix(in srgb, var(--danger) 68%, #000)) !important;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--danger) 28%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell button.danger:not(.link):hover:not(:disabled),
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell button.bulk-delete:hover:not(:disabled) {
+  filter: brightness(1.08) !important;
+  box-shadow: 0 14px 26px color-mix(in srgb, var(--danger) 34%, transparent) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .link.danger {
+  color: var(--danger) !important;
+  border-color: color-mix(in srgb, var(--danger) 26%, transparent) !important;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface)) !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell button:disabled {
+  filter: none !important;
+  opacity: 0.55 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
