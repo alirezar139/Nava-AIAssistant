@@ -4515,7 +4515,17 @@ tbody tr.selected::after {
 
 /* Toolbar refinement: icon-led commands with a quieter, more deliberate finish */
 
+.tool-label {
+  overflow: hidden;
+  color: inherit;
+  font-size: 0.74rem;
+  font-weight: 850;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .tool-icon {
+  flex: 0 0 auto;
   width: 30px;
   height: 30px;
   display: inline-grid;
@@ -8500,7 +8510,7 @@ td b {
   grid-area: canvas !important;
   min-height: 0 !important;
   display: grid !important;
-  grid-template-columns: clamp(112px, 8vw, 156px) minmax(0, 1fr) clamp(166px, 12vw, 220px) !important;
+  grid-template-columns: clamp(150px, 11vw, 190px) minmax(0, 1fr) clamp(196px, 15vw, 250px) !important;
   grid-template-rows: auto minmax(0, 1fr) !important;
   direction: ltr !important;
   border-radius: 20px !important;
@@ -8561,8 +8571,12 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-tool-group button {
-  min-height: 30px !important;
-  padding: 6px 9px !important;
+  min-height: 34px !important;
+  width: 100% !important;
+  padding: 5px 9px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   border: 0 !important;
   border-radius: 10px !important;
   color: var(--color-secondary) !important;
@@ -8586,11 +8600,12 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-map-controls > button {
   flex: 0 0 auto !important;
   min-height: 34px !important;
-  min-width: 0 !important;
-  padding: 6px !important;
+  width: 100% !important;
+  padding: 5px 8px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
   border: 0 !important;
   border-radius: 10px !important;
   color: var(--color-secondary) !important;
