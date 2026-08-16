@@ -8877,9 +8877,9 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-shapes-library {
-  flex: 0 1 380px !important;
-  max-height: 380px !important;
-  min-height: 220px !important;
+  flex: 0 0 380px !important;
+  height: 380px !important;
+  min-height: 380px !important;
   padding: 10px !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
