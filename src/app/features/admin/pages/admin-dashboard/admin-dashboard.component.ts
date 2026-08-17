@@ -201,8 +201,8 @@ export class AdminDashboardComponent implements OnInit {
   reportSearchTerm = '';
   categoryFilter = '';
   currentPage = 1;
-  pageSize = 5;
-  readonly pageSizeOptions = [5, 10, 20, 50];
+  pageSize = 2;
+  readonly pageSizeOptions = [2, 5, 10, 20, 50];
   private faqPageRequestId = 0;
   reportCurrentPage = 1;
   reportPageSize = 6;

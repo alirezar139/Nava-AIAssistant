@@ -1060,36 +1060,6 @@ tbody tr:hover td {
   width: min(780px, 100%);
   text-align: right;
 }
-
-.faq-detail-grid {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.faq-detail-grid article {
-  padding: 14px 16px;
-  border: 1px solid rgba(39, 88, 75, 0.1);
-  border-radius: 16px;
-  background: rgba(247, 251, 249, 0.74);
-}
-
-.faq-detail-grid span {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--primary-800);
-  font-size: 11px;
-  font-weight: 900;
-}
-
-.faq-detail-grid p {
-  margin: 0;
-  color: #284b43;
-  font-size: 12px;
-  line-height: 2;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
 .modal-icon {
   display: grid;
   place-items: center;
@@ -1927,29 +1897,9 @@ td b {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.faq-detail-grid {
-  grid-template-columns: 1fr 1fr;
-}
-
-.faq-detail-grid article:first-child,
-.faq-detail-grid article:nth-child(2),
-.faq-detail-grid article:nth-child(3) {
-  grid-column: 1 / -1;
-}
-
-.faq-detail-grid article {
-  box-shadow:
-    inset 0 1px rgba(255, 255, 255, 0.82),
-    0 10px 22px rgba(20, 67, 56, 0.05);
-}
-
 @media (max-width: 750px) {
   tbody td {
     height: auto;
-  }
-
-  .faq-detail-grid {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -1973,8 +1923,7 @@ header,
 .table-tools,
 .selection-toolbar,
 .pagination-bar,
-.reports,
-.faq-detail-grid article {
+.reports {
   color: var(--color-body);
   border-color: var(--crystal-edge);
   background: linear-gradient(118deg, var(--crystal-shine), transparent 34%), var(--crystal-surface);
@@ -7036,13 +6985,13 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .stats article {
   display: grid !important;
-  grid-template-columns: 58px minmax(0, 1fr) auto !important;
+  grid-template-columns: 46px minmax(0, 1fr) auto !important;
   align-items: center !important;
-  column-gap: 16px !important;
+  column-gap: 14px !important;
   min-width: 0 !important;
-  min-height: 112px !important;
+  min-height: 76px !important;
   overflow: hidden !important;
-  padding: 20px 22px !important;
+  padding: 12px 18px !important;
   border: 1px solid rgba(255, 255, 255, 0.85) !important;
   border-radius: 18px !important;
   background: color-mix(in srgb, var(--surface) 88%, transparent) !important;
@@ -7050,20 +6999,20 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .stats .stat-icon {
-  width: 56px !important;
-  height: 56px !important;
+  width: 44px !important;
+  height: 44px !important;
   display: grid !important;
   place-items: center !important;
   border: 1px solid rgba(255, 255, 255, 0.78) !important;
-  border-radius: 15px !important;
+  border-radius: 13px !important;
   color: var(--primary-700) !important;
   background: linear-gradient(145deg, rgba(225, 240, 234, 0.88), rgba(255, 255, 255, 0.62)) !important;
   box-shadow: 0 9px 20px rgba(20, 70, 58, 0.09) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .stats .stat-icon svg {
-  width: 24px !important;
-  height: 24px !important;
+  width: 19px !important;
+  height: 19px !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 1.7 !important;
@@ -7095,7 +7044,7 @@ td b {
   color: var(--color-body) !important;
   font-size: clamp(0.78rem, 0.86vw, 0.92rem) !important;
   line-height: 1.6 !important;
-  opacity: 0.85 !important;
+  opacity: 0.94 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .stats article > strong {
@@ -7154,8 +7103,8 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
-  padding: 14px !important;
+  gap: 5px !important;
+  padding: 10px !important;
   border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border)) !important;
   border-radius: 26px !important;
   background:
@@ -7172,26 +7121,24 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-heading {
   flex: 0 0 auto !important;
   display: grid !important;
-  gap: 4px !important;
-  padding: 14px 16px !important;
-  border-radius: 20px !important;
+  gap: 2px !important;
+  padding: 7px 12px !important;
+  border-radius: 16px !important;
   background: color-mix(in srgb, var(--surface) 70%, transparent) !important;
   min-width: 0 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-heading span {
-  font-size: 0.78rem !important;
-  opacity: 0.8 !important;
+  font-size: 0.72rem !important;
+  opacity: 0.92 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-heading strong {
-  font-size: 1.05rem !important;
+  font-size: 0.94rem !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-heading small {
-  opacity: 0.85 !important;
-  line-height: 1.6 !important;
-  white-space: normal !important;
+  display: none !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-status {
@@ -7200,10 +7147,10 @@ td b {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 8px !important;
-  padding: 10px 14px !important;
-  border-radius: 16px !important;
+  padding: 5px 12px !important;
+  border-radius: 14px !important;
   background: color-mix(in srgb, var(--surface) 60%, transparent) !important;
-  font-size: 0.82rem !important;
+  font-size: 0.76rem !important;
   min-width: 0 !important;
 }
 
@@ -7212,26 +7159,26 @@ td b {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) !important;
   align-content: start !important;
-  gap: 8px !important;
+  gap: 3px !important;
   min-height: 0 !important;
   min-width: 0 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .menu-group-label {
-  padding: 6px 6px 0 !important;
-  font-size: 0.72rem !important;
-  opacity: 0.7 !important;
+  padding: 3px 6px 0 !important;
+  font-size: 0.68rem !important;
+  opacity: 0.88 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-list > button {
   display: grid !important;
-  grid-template-columns: 40px minmax(0, 1fr) auto !important;
+  grid-template-columns: 28px minmax(0, 1fr) auto !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 12px !important;
+  gap: 7px !important;
+  padding: 5px 9px !important;
   min-width: 0 !important;
   border: 1px solid transparent !important;
-  border-radius: 16px !important;
+  border-radius: 14px !important;
   background: transparent !important;
   color: inherit !important;
   text-align: start !important;
@@ -7248,19 +7195,19 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .menu-icon {
-  width: 36px !important;
-  height: 36px !important;
+  width: 26px !important;
+  height: 26px !important;
   flex: 0 0 auto !important;
   display: grid !important;
   place-items: center !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   color: var(--color-link) !important;
   background: color-mix(in srgb, var(--color-link) 10%, var(--surface)) !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .menu-icon svg {
-  width: 20px !important;
-  height: 20px !important;
+  width: 15px !important;
+  height: 15px !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 1.8 !important;
@@ -7275,16 +7222,13 @@ td b {
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .menu-copy b {
-  font-size: 0.88rem !important;
+  font-size: 0.85rem !important;
   white-space: normal !important;
   overflow-wrap: anywhere !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .menu-copy small {
-  font-size: 0.74rem !important;
-  opacity: 0.75 !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
+  display: none !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-menu-list > button > em {
@@ -7316,7 +7260,7 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-tree-submenu-head span {
   font-size: 0.7rem !important;
-  opacity: 0.75 !important;
+  opacity: 0.9 !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-tree-submenu-head strong {
@@ -7325,7 +7269,7 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-tree-submenu-head small {
   font-size: 0.72rem !important;
-  opacity: 0.75 !important;
+  opacity: 0.92 !important;
   white-space: normal !important;
 }
 
@@ -7349,7 +7293,7 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-tree-submenu > button i {
   font-style: normal !important;
-  opacity: 0.6 !important;
+  opacity: 0.82 !important;
   font-size: 0.78rem !important;
 }
 
@@ -7367,7 +7311,7 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-tree-submenu > button small {
   font-size: 0.7rem !important;
-  opacity: 0.75 !important;
+  opacity: 0.92 !important;
   white-space: normal !important;
   overflow-wrap: anywhere !important;
 }
@@ -7382,8 +7326,8 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-device-panel,
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-version-badge {
   min-width: 0 !important;
-  padding: 10px 12px !important;
-  border-radius: 16px !important;
+  padding: 7px 10px !important;
+  border-radius: 14px !important;
   background: color-mix(in srgb, var(--surface) 60%, transparent) !important;
 }
 
@@ -7429,26 +7373,9 @@ td b {
   white-space: normal !important;
 }
 
-.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .device-copy small {
-  font-size: 0.7rem !important;
-  opacity: 0.75 !important;
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-}
-
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .device-copy small,
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .device-mode-select {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  margin-top: 8px !important;
-  font-size: 0.74rem !important;
-}
-
-.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .device-mode-select select {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  max-width: 130px !important;
+  display: none !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-version-badge {
@@ -7516,7 +7443,91 @@ td b {
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
+  gap: 6px !important;
+  padding: 10px !important;
   overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card > .section-title,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .table-tools,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .selection-toolbar,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar {
+  margin: 0 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card > .section-title {
+  padding: 0 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card > .section-title h2 {
+  font-size: 1.1rem !important;
+  line-height: 1.3 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card > .section-title span {
+  font-size: 0.7rem !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card > .section-title > small {
+  padding: 3px 8px !important;
+  font-size: 0.68rem !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .table-tools {
+  padding: 6px 8px !important;
+  gap: 6px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .table-tools label > span {
+  margin-bottom: 2px !important;
+  font-size: 0.68rem !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .search-field,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .search-field input,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .table-tools select,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .result-count {
+  min-height: 24px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .table-tools label {
+  gap: 1px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .selection-toolbar {
+  padding: 4px 8px !important;
+  font-size: 0.72rem !important;
+  min-height: 0 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .selection-toolbar button {
+  min-height: 24px !important;
+  padding: 2px 8px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar {
+  padding: 6px 8px !important;
+  gap: 6px 10px !important;
+  font-size: 0.68rem !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar .page-size select {
+  min-height: 26px !important;
+  padding: 2px 6px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar .pagination-actions {
+  min-height: 0 !important;
+  gap: 4px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar .pagination-actions button {
+  min-height: 26px !important;
+  padding: 2px 8px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-list-card .pagination-bar .pagination-actions span {
+  white-space: nowrap !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-editor-card form {
@@ -7525,6 +7536,25 @@ td b {
   overflow-y: auto !important;
   padding-inline-end: 4px !important;
   align-content: start !important;
+  gap: 10px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-editor-card label {
+  gap: 3px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-editor-card input,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-editor-card select {
+  padding: 7px 10px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-editor-card .actions {
+  margin-top: 2px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .faq-editor-card .actions button {
+  min-height: 34px !important;
+  padding: 6px 14px !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card .table-wrap {
@@ -7532,6 +7562,13 @@ td b {
   min-height: 0 !important;
   overflow-y: auto !important;
   padding-inline-end: 4px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card > .section-title,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card > .table-tools,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card > .selection-toolbar,
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-desktop .faq-list-card > .pagination-bar {
+  flex: 0 0 auto !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-workspace.viewport-tablet .admin-content.faq-layout,
@@ -7567,19 +7604,19 @@ td b {
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-content.faq-layout .table-wrap tbody {
   display: grid !important;
-  gap: 10px !important;
+  gap: 5px !important;
   width: 100% !important;
 }
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-content.faq-layout .table-wrap tbody tr {
   display: grid !important;
-  grid-template-columns: 22px minmax(0, 1fr) auto auto !important;
+  grid-template-columns: 18px minmax(0, 1fr) auto auto !important;
   grid-template-rows: auto auto !important;
   align-items: center !important;
-  gap: 6px 10px !important;
+  gap: 3px 6px !important;
   width: 100% !important;
   min-width: 0 !important;
-  padding: 11px 14px !important;
+  padding: 5px 8px !important;
   border: 1px solid color-mix(in srgb, var(--color-link) 12%, var(--border)) !important;
   border-radius: 14px !important;
   background:
@@ -7612,11 +7649,12 @@ td b {
   grid-row: 1 !important;
   color: var(--color-heading) !important;
   font-weight: 800 !important;
-  line-height: 1.6 !important;
+  font-size: 0.86rem !important;
+  line-height: 1.4 !important;
   display: -webkit-box !important;
   -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 2 !important;
-  line-clamp: 2 !important;
+  -webkit-line-clamp: 1 !important;
+  line-clamp: 1 !important;
   overflow: hidden !important;
 }
 
@@ -7641,6 +7679,53 @@ td b {
   grid-row: 2 !important;
   justify-self: end !important;
   align-self: center !important;
+}
+
+/* ---------- FAQ detail modal ---------- */
+
+.faq-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.faq-detail-grid article:nth-child(-n + 3) {
+  grid-column: 1 / -1;
+}
+
+.faq-detail-grid article {
+  padding: 14px 16px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 16px;
+  color: var(--color-body);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 34%), var(--crystal-surface);
+  box-shadow: var(--crystal-shadow), inset 1px 1px 0 var(--crystal-edge);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.faq-detail-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--primary-800);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.faq-detail-grid p {
+  margin: 0;
+  color: #284b43;
+  font-size: 12px;
+  line-height: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 750px) {
+  .faq-detail-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ---------- Dark theme ---------- */
@@ -9259,5 +9344,84 @@ td b {
   opacity: 0.55 !important;
   box-shadow: none !important;
   cursor: not-allowed !important;
+}
+
+/* ---------- Welcome header: title and refresh action share one compact row ---------- */
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .welcome {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  height: auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .welcome > div {
+  min-width: 0 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .welcome h1 {
+  margin: 4px 0 !important;
+  font-size: clamp(1.35rem, 1.9vw, 1.7rem) !important;
+  line-height: 1.3 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .welcome p {
+  margin: 0 !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .welcome .refresh {
+  flex: 0 0 auto !important;
+}
+
+/* ---------- Desktop: the shell fills the viewport once; only the workspace
+   panels (sidebar menu / content pane) scroll internally, so the page
+   itself never grows taller than the screen. ---------- */
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop > header {
+  flex: 0 0 auto !important;
+  height: 54px !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop > main {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  gap: 14px !important;
+  padding-block: 14px 16px !important;
+  overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop .admin-workspace {
+  height: 100% !important;
+  min-height: 0 !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop .admin-menu {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop .admin-menu-list {
+  flex: 0 0 auto !important;
+}
+
+.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.viewport-desktop .admin-content {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-inline-end: 4px !important;
 }
 
