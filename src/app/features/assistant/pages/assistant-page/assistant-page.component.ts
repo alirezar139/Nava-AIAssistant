@@ -72,6 +72,7 @@ interface SupportProgressItem {
 })
 export class AssistantPageComponent implements OnInit, OnDestroy {
   @ViewChild('conversation') conversation?: ElementRef<HTMLDivElement>;
+  @ViewChild('supportProgressList') supportProgressList?: ElementRef<HTMLOListElement>;
 
   faqs: FaqRecord[] = [];
   messages: ChatMessage[] = [];
@@ -86,7 +87,29 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   documentReading = false;
   documentError = '';
   ticketDialogOpen = false;
-  ticketSubmitting = false;
+  cancelAvailableDuringSubmit = false;
+  private _ticketSubmitting = false;
+  private cancelDelayTimer: ReturnType<typeof setTimeout> | null = null;
+
+  get ticketSubmitting(): boolean {
+    return this._ticketSubmitting;
+  }
+
+  set ticketSubmitting(value: boolean) {
+    this._ticketSubmitting = value;
+    if (this.cancelDelayTimer) {
+      clearTimeout(this.cancelDelayTimer);
+      this.cancelDelayTimer = null;
+    }
+    this.cancelAvailableDuringSubmit = false;
+    if (value) {
+      this.cancelDelayTimer = setTimeout(() => {
+        this.cancelAvailableDuringSubmit = true;
+        this.changeDetector.markForCheck();
+      }, 4000);
+    }
+  }
+
   ticketAutomationState: TicketAutomationState = 'idle';
   ticketErrorMessage = '';
   ratingSubmitting = false;
@@ -94,7 +117,17 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   externalServices: PublicExternalServiceRecord[] = [];
   serviceRunResult: ExternalServiceExecutionResult | null = null;
   runningServiceId: number | null = null;
-  supportStage: SupportStage = 'selecting';
+  private _supportStage: SupportStage = 'selecting';
+
+  get supportStage(): SupportStage {
+    return this._supportStage;
+  }
+
+  set supportStage(value: SupportStage) {
+    if (this._supportStage === value) return;
+    this._supportStage = value;
+    this.scrollActiveSupportStepIntoView();
+  }
   welcomeOverlayVisible = false;
   readonly userWriteDisabled = false;
   private treeIndex: TroubleshootingTreeIndex | null = null;
@@ -247,7 +280,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   get ticketStatusText(): string {
-    if (this.ticketAutomationState === 'preparing') return 'در حال آماده‌سازی اطلاعات';
+    if (this.ticketAutomationState === 'preparing') return 'آماده ثبت؛ منتظر تایید شماست';
     if (this.ticketAutomationState === 'submitting') return 'در حال ارسال به سهند';
     if (this.ticketAutomationState === 'analyzing') return 'ثبت شد؛ تحلیل اولیه در حال انجام است';
     if (this.ticketAutomationState === 'submitted' && this.diagnosticCase?.duplicateNotice)
@@ -258,6 +291,9 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   get ticketStatusHint(): string {
+    if (this.ticketAutomationState === 'preparing') {
+      return 'اطلاعات آماده است؛ تیکت فقط با زدن دکمه Create ثبت می‌شود، نه قبل از آن.';
+    }
     if (this.ticketAutomationState === 'submitted' && this.diagnosticCase?.duplicateNotice)
       return this.diagnosticCase.duplicateNotice;
     if (this.ticketAutomationState === 'submitted') return this.formatTicketReceiptText();
@@ -270,8 +306,25 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   get ticketPrimaryActionLabel(): string {
     if (this.ticketAutomationState === 'submitted') return 'ثبت شد';
     if (this.ticketAutomationState === 'failed') return 'تلاش دوباره';
-    if (this.ticketSubmitting) return 'در حال ثبت خودکار';
+    if (this.ticketSubmitting) return 'در حال ثبت';
     return 'Create';
+  }
+
+  // Submission only ever happens from a direct click on this button
+  // (handlePrimaryTicketAction -> submitTicketFromDialog). There is no timer or
+  // automatic path that calls submitAutomaticTicket on its own.
+  get ticketPrimaryActionDisabled(): boolean {
+    if (this.ticketSubmitting) return true;
+    if (this.ticketAutomationState === 'submitted') return !this.selectedCaseRating;
+    return false;
+  }
+
+  handlePrimaryTicketAction(): void {
+    if (this.ticketAutomationState === 'submitted') {
+      this.closeTicketDialog();
+      return;
+    }
+    this.submitTicketFromDialog();
   }
 
   get showCaseRating(): boolean {
@@ -311,8 +364,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
 
     if (this.awaitingInitialProblem) {
       this.awaitingInitialProblem = false;
+      const jump = this.findTreePathByExactLabel(question);
+      if (jump) {
+        this.treeTrail = jump.path;
+        this.showTreeNode(jump.targetId);
+        return;
+      }
+      const state = this.treeStartNodeId ? this.resolveInitialTreeState(this.treeStartNodeId) : null;
       this.treeTrail = [question];
-      this.showTreeNode(this.treeStartNodeId);
+      if (state) this.showTreeNode(state.node.id);
+      else this.showTreeNode(this.treeStartNodeId);
       return;
     }
 
@@ -321,8 +382,64 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const jump = this.findTreePathByExactLabel(question);
+    if (jump) {
+      this.treeTrail = jump.path;
+      this.showTreeNode(jump.targetId);
+      return;
+    }
+
     this.treeTrail = [];
     this.answerFromFaqOrStartTicket(question);
+  }
+
+  // Typed text only matches this.activeTreeOptions (the CURRENT node's own
+  // children) via findTreeOption above. If the user instead types a word that
+  // names a node/option elsewhere in the tree (e.g. "کندی"), and that label is
+  // unambiguous across the whole tree, jump straight there instead of discarding
+  // what they typed and falling back to a generic FAQ search. Ambiguous labels
+  // (reused across multiple branches, e.g. "بله"/"ثبت تیکت") are left alone since
+  // there'd be no reliable way to know which occurrence was meant.
+  private findTreePathByExactLabel(query: string): { targetId: string; path: string[] } | null {
+    if (!this.treeIndex) return null;
+    const normalizedQuery = this.normalizeTreeText(query);
+    if (!normalizedQuery) return null;
+
+    const candidates: { from: string; to: string; label: string }[] = [];
+    for (const edges of this.treeIndex.outgoing.values()) {
+      for (const edge of edges) {
+        const label = (edge.label?.trim() || this.treeIndex.nodes.get(edge.to)?.text || '').trim();
+        if (label && this.normalizeTreeText(label) === normalizedQuery) {
+          candidates.push({ from: edge.from, to: edge.to, label });
+        }
+      }
+    }
+    if (candidates.length !== 1) return null;
+
+    const target = candidates[0];
+    const pathToParent = this.findPathFromStart(target.from);
+    if (!pathToParent) return null;
+    return { targetId: target.to, path: [...pathToParent, target.label] };
+  }
+
+  private findPathFromStart(targetNodeId: string): string[] | null {
+    if (!this.treeIndex || !this.treeStartNodeId) return null;
+    if (targetNodeId === this.treeStartNodeId) return [];
+
+    const queue: Array<{ nodeId: string; path: string[] }> = [{ nodeId: this.treeStartNodeId, path: [] }];
+    const visited = new Set<string>([this.treeStartNodeId]);
+    while (queue.length) {
+      const current = queue.shift();
+      if (!current) break;
+      const options = this.treeService.getOptions(this.treeIndex, current.nodeId);
+      for (const option of options) {
+        if (option.targetId === targetNodeId) return [...current.path, option.label];
+        if (visited.has(option.targetId)) continue;
+        visited.add(option.targetId);
+        queue.push({ nodeId: option.targetId, path: [...current.path, option.label] });
+      }
+    }
+    return null;
   }
 
   private captureDiagnosticAnswer(value: string): void {
@@ -426,7 +543,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   closeTicketDialog(): void {
-    if (this.ticketSubmitting) return;
+    if (this.ticketSubmitting && !this.cancelAvailableDuringSubmit) return;
     this.ticketDialogOpen = false;
   }
 
@@ -719,19 +836,19 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.currentTreeNodeText = state.node.text;
 
     if (this.isTicketNode(state.node.text)) {
-      this.startTicketFlow(
+      this.confirmBeforeTicketFlow(
         this.buildTreeProblemText(state.node.text),
         state.node,
-        'مسیر انتخاب‌شده به مرحله ثبت تیکت رسید. تیکت سهند به صورت خودکار در حال ثبت است.'
+        'مسیر انتخاب‌شده به مرحله ثبت تیکت رسید. فرم تیکت آماده می‌شود؛ برای ثبت نهایی در سهند باید دکمه Create را در پنجره تایید بزنید.'
       );
       return;
     }
 
     if (this.isResolutionCheckNode(state.node.text)) {
-      this.startTicketFlow(
+      this.confirmBeforeTicketFlow(
         this.buildTreeProblemText(state.node.text),
         state.node,
-        'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. تیکت سهند به صورت خودکار در حال ثبت است.'
+        'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. فرم تیکت آماده می‌شود؛ برای ثبت نهایی در سهند باید دکمه Create را در پنجره تایید بزنید.'
       );
       return;
     }
@@ -847,6 +964,16 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
           behavior: this.theme.motionEnabled ? 'smooth' : 'auto'
         });
       }
+    });
+  }
+
+  private scrollActiveSupportStepIntoView(): void {
+    requestAnimationFrame(() => {
+      const activeItem = this.supportProgressList?.nativeElement.querySelector('li.active');
+      activeItem?.scrollIntoView({
+        behavior: this.theme.motionEnabled ? 'smooth' : 'auto',
+        block: 'nearest'
+      });
     });
   }
 
@@ -989,17 +1116,17 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       this.scrollToLatest();
 
       if (shouldSubmitTicket) {
-        this.startTicketFlow(
+        this.confirmBeforeTicketFlow(
           this.buildTreeProblemText(state.node.text),
           state.node,
-          'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. تیکت سهند به صورت خودکار در حال ثبت است.'
+          'برای این مورد مسیر پیگیری باید با ثبت تیکت ادامه پیدا کند. فرم تیکت آماده می‌شود؛ برای ثبت نهایی در سهند باید دکمه Create را در پنجره تایید بزنید.'
         );
       }
     }, 300);
   }
 
   private showInitialProblemPrompt(): void {
-    const state = this.treeStartNodeId ? this.getTreeNodeState(this.treeStartNodeId) : null;
+    const state = this.treeStartNodeId ? this.resolveInitialTreeState(this.treeStartNodeId) : null;
     this.currentTreeNodeId = state?.node.id ?? '';
     this.currentTreeNodeText = state?.node.text ?? '';
     this.activeTreeOptions = state?.options ?? [];
@@ -1057,6 +1184,34 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     };
   }
 
+  /**
+   * The opening message always shows a fixed greeting instead of any node's own text, so
+   * intro/connector nodes here can be skipped purely by their single-unlabeled-edge shape —
+   * unlike getTreeNodeState, node text length doesn't matter since we never display it.
+   */
+  private resolveInitialTreeState(startNodeId: string): {
+    node: NonNullable<ReturnType<TroubleshootingTreeService['resolveDisplayNode']>>;
+    options: Array<{ label: string; targetId: string }>;
+  } | null {
+    if (!this.treeIndex) return null;
+    const visited = new Set<string>();
+    let nodeId = startNodeId;
+
+    while (!visited.has(nodeId)) {
+      visited.add(nodeId);
+      const node = this.treeIndex.nodes.get(nodeId);
+      if (!node) return null;
+      const options = this.treeService.getOptions(this.treeIndex, nodeId);
+      const edges = this.treeIndex.outgoing.get(nodeId) ?? [];
+      const isSingleUnlabeledEdge = options.length === 1 && !edges[0]?.label?.trim();
+      const isSentinel = this.isTicketNode(node.text) || this.isResolutionCheckNode(node.text);
+      if (!isSingleUnlabeledEdge || isSentinel) return { node, options };
+      nodeId = options[0]!.targetId;
+    }
+
+    return null;
+  }
+
   private isTicketNode(text: string): boolean {
     const normalizedText = this.normalizeTreeText(text);
     return normalizedText.includes('ثبت تیکت');
@@ -1093,11 +1248,14 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private buildTreeProblemText(currentText: string): string {
-    return [...this.treeTrail, currentText]
+    const steps = [...this.treeTrail, currentText]
       .map((item) => this.stripResolutionCheckText(item))
       .filter(Boolean)
-      .filter((item) => !this.isResolutionCheckNode(item))
-      .join(' > ');
+      .filter((item) => !this.isResolutionCheckNode(item));
+    // currentText is the reached node's own text, which for leaf/category nodes
+    // is often identical to the option label already at the end of treeTrail
+    // (e.g. clicking "سیتریکس" lands on a node whose text is also "سیتریکس").
+    return steps.filter((step, index) => step !== steps[index - 1]).join(' > ');
   }
 
   private answerFromFaqOrStartTicket(
@@ -1118,11 +1276,12 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
           text: fromTree
             ? 'این مورد را در FAQ بررسی کردم؛ پاسخ پیشنهادی:'
             : 'پاسخ پیشنهادی بر اساس FAQ موجود:',
-          matches: reliableMatches
+          matches: reliableMatches,
+          faqResolution: { question, sourceNode }
         };
         this.messages.push(faqMessage);
       } else {
-        this.startTicketFlow(question, sourceNode);
+        this.confirmBeforeTicketFlow(question, sourceNode);
       }
 
       this.typing = false;
@@ -1173,10 +1332,44 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return { matches, answer, matchedFaq };
   }
 
+  private confirmBeforeTicketFlow(
+    problem: string,
+    sourceNode?: { id: string; text: string },
+    noticeText?: string
+  ): void {
+    this.messages.push({
+      role: 'assistant',
+      text: 'پاسخ قطعی برای این مورد پیدا نشد. در صورتی که پاسخ مناسبی دریافت نکردید، تیکت سهند را ثبت کنید.',
+      ticketConfirmation: { problem, sourceNode, noticeText }
+    });
+    this.changeDetector.markForCheck();
+    this.scrollToLatest();
+  }
+
+  acceptAutoTicket(message: ChatMessage): void {
+    if (!message.ticketConfirmation || message.ticketConfirmation.resolved) return;
+    const { problem, sourceNode, noticeText } = message.ticketConfirmation;
+    message.ticketConfirmation.resolved = 'accepted';
+    this.startTicketFlow(problem, sourceNode, noticeText);
+  }
+
+  markFaqResolved(message: ChatMessage): void {
+    if (!message.faqResolution || message.faqResolution.resolved) return;
+    message.faqResolution.resolved = 'yes';
+    this.changeDetector.markForCheck();
+  }
+
+  continueAfterFaq(message: ChatMessage): void {
+    if (!message.faqResolution || message.faqResolution.resolved) return;
+    message.faqResolution.resolved = 'no';
+    const { question, sourceNode } = message.faqResolution;
+    this.confirmBeforeTicketFlow(question, sourceNode);
+  }
+
   private startTicketFlow(
     problem: string,
     sourceNode?: { id: string; text: string },
-    noticeText = 'در FAQ پاسخ قطعی پیدا نشد. تیکت سهند به صورت خودکار با مسیر انتخاب‌شده در حال ثبت است.'
+    noticeText = 'در FAQ پاسخ قطعی پیدا نشد. فرم تیکت با مسیر انتخاب‌شده آماده می‌شود؛ برای ثبت نهایی در سهند باید دکمه Create را در پنجره تایید بزنید.'
   ): void {
     this.diagnosticDraft = this.createAutomaticDiagnostic(problem, sourceNode);
     this.diagnosticCase = null;
@@ -1193,7 +1386,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     });
     this.changeDetector.markForCheck();
     this.scrollToLatest();
-    this.submitAutomaticTicket();
   }
 
   private createAutomaticDiagnostic(
@@ -1208,9 +1400,13 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const meaningfulPath = cleanPath.filter((item) => !this.isTicketNode(item));
     const problemText = this.stripResolutionCheckText(problem);
     const leaf = meaningfulPath[meaningfulPath.length - 1] || problemText || 'نیازمند بررسی پشتیبانی';
-    const domain = meaningfulPath[0] || 'پلتفرم تحلیل روابط';
+    const domain = meaningfulPath[0] || 'تحلیل داده';
     const middlePath = meaningfulPath.slice(1);
-    const fullPath = [...meaningfulPath, problemText].filter(Boolean).join(' > ');
+    // problemText (built by buildTreeProblemText) already IS the tree path joined
+    // into one string, so appending it after meaningfulPath here would repeat the
+    // whole path a second time. Only fall back to it when there's no tree path at
+    // all (e.g. a free-text question that skipped the tree).
+    const fullPath = meaningfulPath.length ? meaningfulPath.join(' > ') : problemText;
 
     return {
       title: this.limitText(`درخواست پشتیبانی - ${leaf}`, 120),
@@ -1240,7 +1436,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     if (normalizedDomain.includes('سیتریکس')) return 'محیط سیتریکس';
     if (normalizedDomain.includes('دیتابیس')) return 'دیتابیس';
     if (normalizedDomain.includes('زیرساخت')) return 'زیرساخت';
-    return 'پلتفرم تحلیل روابط';
+    return 'تحلیل داده';
   }
 
   private resolveProjectScopedSystemName(domain: string): string {

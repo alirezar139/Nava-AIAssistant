@@ -60,9 +60,25 @@ export class TroubleshootingTreeService {
     visited: Set<string>
   ): boolean {
     if (visited.has(node.id)) return false;
+    if (this.isSentinelNode(node.text)) return false;
     const edges = index.outgoing.get(node.id) ?? [];
     if (edges.length !== 1 || edges[0].label?.trim()) return false;
     return node.text.length <= 36;
+  }
+
+  // Nodes whose text marks a hand-off into the real Sahand ticket flow (see
+  // isTicketNode/isResolutionCheckNode in assistant-page.component.ts). They're
+  // often short with a single follow-on edge, which otherwise looks exactly like
+  // a skippable connector node — skipping one here would silently bypass the
+  // actual ticket submission and land the user straight on a downstream "success"
+  // node without ever calling the API.
+  private isSentinelNode(text: string): boolean {
+    const normalized = text.replace(/\s+/g, ' ').trim().toLocaleLowerCase('fa-IR');
+    return (
+      normalized.includes('ثبت تیکت') ||
+      normalized.includes('مشکل برطرف شد') ||
+      normalized.includes('پاسخ برای کاربر کافی بود')
+    );
   }
 }
 

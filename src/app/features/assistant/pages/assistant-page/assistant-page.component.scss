@@ -395,7 +395,7 @@ main.assistant-layout {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   overflow-y: auto;
   border: 0;
   background: transparent;
@@ -404,7 +404,7 @@ main.assistant-layout {
 }
 
 .panel-section {
-  padding: 16px;
+  padding: 12px;
 }
 
 .operator-card {
@@ -416,10 +416,10 @@ main.assistant-layout {
 .knowledge-state {
   min-height: auto;
   margin: 0;
-  padding: 16px;
+  padding: 12px;
   place-items: stretch;
   text-align: right;
-  gap: 12px;
+  gap: 10px;
 }
 
 .knowledge-icon {
@@ -2201,11 +2201,11 @@ main.assistant-layout {
 }
 
 .data-panel {
-  gap: var(--assistant-gap);
+  gap: 8px;
 }
 
 .panel-section {
-  padding: 18px;
+  padding: 12px;
 }
 
 .operator-card,
@@ -2785,4 +2785,20 @@ main.assistant-layout {
   box-shadow:
     0 10px 22px color-mix(in srgb, var(--assistant-primary) 14%, transparent),
     inset 1px 1px 0 color-mix(in srgb, #fff 22%, transparent);
+}
+
+.ticket-confirmation .confirm-ticket {
+  border-color: color-mix(in srgb, var(--assistant-primary) 55%, transparent);
+  background: var(--assistant-primary);
+  color: #fff;
+  font-weight: 750;
+}
+
+.ticket-confirmation .confirm-ticket:disabled {
+  opacity: 0.55;
+}
+
+.ticket-confirmation .confirm-ticket.chosen {
+  opacity: 1;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--assistant-primary) 45%, transparent);
 }

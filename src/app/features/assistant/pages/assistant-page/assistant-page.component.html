@@ -8,7 +8,7 @@
     <div class="welcome-card">
       <app-brand-logo class="welcome-mark" />
       <span>نوا</span>
-      <h2>به نوا، دستیار پشتیبانی سامانه‌های تحلیلی خوش آمدید.</h2>
+      <h2>به نوا، دستیار پشتیبانی تحلیل داده خوش آمدید.</h2>
       <p>
         مشکل را مرحله‌به‌مرحله بررسی می‌کنم، در FAQ می‌گردم و اگر پاسخ قطعی پیدا نشد مسیر ثبت تیکت سهند را
         آماده می‌کنم.
@@ -153,7 +153,7 @@
             <strong>روند پیگیری</strong>
             <small>وضعیت فعلی پرونده برای پشتیبان</small>
           </div>
-          <ol>
+          <ol #supportProgressList>
             <li
               *ngFor="let step of supportProgressSteps; index as index"
               [class.done]="isSupportStepDone(index)"
@@ -203,7 +203,7 @@
               </button>
             </div>
           </div>
-          <ng-container *ngFor="let message of messages">
+          <ng-container *ngFor="let message of messages; last as isLastMessage">
             <div class="message" [class.user]="message.role === 'user'">
               <div class="avatar">
                 @if (message.role === 'user') {
@@ -226,7 +226,7 @@
                   <button
                     type="button"
                     *ngFor="let option of message.treeOptions"
-                    [disabled]="typing"
+                    [disabled]="typing || !isLastMessage"
                     (click)="selectTreeOption(option)"
                   >
                     {{ option.label }}
@@ -236,10 +236,39 @@
                   <button
                     type="button"
                     *ngFor="let reply of message.quickReplies"
-                    [disabled]="typing"
+                    [disabled]="typing || !isLastMessage"
                     (click)="useQuickReply(reply)"
                   >
                     {{ reply }}
+                  </button>
+                </div>
+                <div class="tree-options ticket-confirmation" *ngIf="message.ticketConfirmation">
+                  <button
+                    type="button"
+                    class="confirm-ticket"
+                    [disabled]="!!message.ticketConfirmation.resolved || !isLastMessage"
+                    [class.chosen]="message.ticketConfirmation.resolved === 'accepted'"
+                    (click)="acceptAutoTicket(message)"
+                  >
+                    ثبت تیکت
+                  </button>
+                </div>
+                <div class="tree-options faq-resolution" *ngIf="message.faqResolution && !message.faqResolution.resolved">
+                  <button
+                    type="button"
+                    class="confirm-ticket"
+                    [disabled]="!isLastMessage"
+                    (click)="markFaqResolved(message)"
+                  >
+                    مشکلم حل شد
+                  </button>
+                  <button
+                    type="button"
+                    class="decline-ticket"
+                    [disabled]="!isLastMessage"
+                    (click)="continueAfterFaq(message)"
+                  >
+                    ادامه می‌دم، حل نشد
                   </button>
                 </div>
                 <div
@@ -247,7 +276,9 @@
                   *ngIf="
                     message.role === 'assistant' &&
                     !message.treeOptions?.length &&
-                    !message.quickReplies?.length
+                    !message.quickReplies?.length &&
+                    !message.ticketConfirmation &&
+                    (!message.faqResolution || message.faqResolution.resolved === 'yes')
                   "
                 >
                   <span>{{ message.ratingMessage || 'به این پاسخ امتیاز دهید' }}</span>
@@ -314,7 +345,7 @@
       </section>
     </section>
   </main>
-  <footer>نوا <span>•</span> نسخه آزمایشی ۰.۲</footer>
+  <footer>نوا <span>•</span> نسخه آزمایشی ۰.1</footer>
 
   <section class="ticket-modal-backdrop" *ngIf="ticketDialogOpen" role="presentation">
     <article class="ticket-modal sahand-modal" role="dialog" aria-label="پیش‌نمایش ثبت خودکار تیکت سهند">
@@ -351,7 +382,7 @@
           <label>Issue Type<span>*</span></label>
           <div class="sahand-select">
             <i class="issue-icon" aria-hidden="true"></i>
-            <strong>پلتفرم تحلیل داده</strong>
+            <strong>تحلیل داده</strong>
             <b aria-hidden="true">⌄</b>
           </div>
           <button type="button" class="sahand-help" disabled>?</button>
@@ -420,7 +451,7 @@
         </div>
 
         <div class="sahand-row compact">
-          <label>لیسنس پلتفرم - تحلیل روابط</label>
+          <label>لیسنس پلتفرم - تحلیل داده</label>
           <div class="sahand-select small">
             <strong>None</strong>
             <b aria-hidden="true">⌄</b>
@@ -476,15 +507,15 @@
         <button
           type="button"
           class="create-button"
-          [disabled]="ticketSubmitting || ticketAutomationState !== 'failed'"
-          (click)="submitTicketFromDialog()"
+          [disabled]="ticketPrimaryActionDisabled"
+          (click)="handlePrimaryTicketAction()"
         >
           {{ ticketPrimaryActionLabel }}
         </button>
         <button
           type="button"
           class="cancel-button"
-          [disabled]="ticketSubmitting"
+          [disabled]="ticketSubmitting && !cancelAvailableDuringSubmit"
           (click)="closeTicketDialog()"
         >
           Cancel

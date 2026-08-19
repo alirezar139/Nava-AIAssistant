@@ -25,6 +25,17 @@ export interface ChatMessage {
   ratingSubmitted?: boolean;
   ratingSubmitting?: boolean;
   ratingMessage?: string;
+  ticketConfirmation?: {
+    problem: string;
+    sourceNode?: { id: string; text: string };
+    noticeText?: string;
+    resolved?: 'accepted';
+  };
+  faqResolution?: {
+    question: string;
+    sourceNode?: { id: string; text: string };
+    resolved?: 'yes' | 'no';
+  };
 }
 
 export interface FaqRecord {
