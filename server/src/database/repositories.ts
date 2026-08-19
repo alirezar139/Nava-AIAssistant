@@ -64,8 +64,8 @@ type ArangoRecord<T> = T & {
 
 const ticketServiceSettingsKey = 'ticket_service';
 
-function normalizeDiagnosticText(value: string): string {
-  return value
+function normalizeDiagnosticText(value: string | null | undefined): string {
+  return (value ?? '')
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .replace(/\s+/g, ' ')
@@ -88,7 +88,9 @@ function isSimilarDiagnosticCase(
 ): boolean {
   if (source.id === candidate.id) return false;
 
-  if (source.treeNodeId.trim() && source.treeNodeId.trim() === candidate.treeNodeId.trim()) {
+  const sourceTreeNodeId = (source.treeNodeId ?? '').trim();
+  const candidateTreeNodeId = (candidate.treeNodeId ?? '').trim();
+  if (sourceTreeNodeId && sourceTreeNodeId === candidateTreeNodeId) {
     return true;
   }
 

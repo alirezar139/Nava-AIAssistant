@@ -141,7 +141,7 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
         ...(authHeader ? { Auth: authHeader } : {})
       },
       body: JSON.stringify(requestBody),
-      signal: AbortSignal.timeout(15000)
+      signal: AbortSignal.timeout(45000)
     });
     const responseBody = await response.text();
 
@@ -173,12 +173,19 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
 
     return { status: 'submitted', ticketId, trackingId, statusCode: response.status, errorMessage: null };
   } catch (error) {
+    const isTimeout =
+      error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+
     return {
       status: 'failed',
       ticketId: null,
       trackingId: null,
       statusCode: null,
-      errorMessage: error instanceof Error ? compactErrorMessage(error.message) : 'Sahand request failed.'
+      errorMessage: isTimeout
+        ? 'سرویس سهند در زمان مقرر پاسخ نداد. ممکن است تیکت با تأخیر ثبت شده باشد؛ لطفاً از طریق سهند بررسی کنید یا دوباره تلاش کنید.'
+        : error instanceof Error
+          ? compactErrorMessage(error.message)
+          : 'برقراری ارتباط با سرویس سهند ممکن نشد.'
     };
   }
 }
