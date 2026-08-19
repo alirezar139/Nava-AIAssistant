@@ -243,6 +243,7 @@ export class TroubleshootingTreeImportService {
       const pageKey = pageName.replace(/[^a-z0-9]+/gi, '_');
       const connectorTexts = new Map<string, string>();
       const connectorIds = new Set<string>();
+      const connectorShapes = new Map<string, Element>();
       const connectGroups = new Map<string, Element[]>();
 
       for (const connect of Array.from(document.getElementsByTagName('Connect'))) {
@@ -263,6 +264,7 @@ export class TroubleshootingTreeImportService {
         const isConnector = connectorIds.has(shapeId) || this.isVisioConnector(shape, textValue);
         if (isConnector) {
           connectorIds.add(shapeId);
+          connectorShapes.set(shapeId, shape);
           if (textValue) connectorTexts.set(shapeId, textValue);
           continue;
         }
@@ -296,13 +298,31 @@ export class TroubleshootingTreeImportService {
       }
       pageYOffset += positionedDrafts.length ? Math.max(900, (maxY - minY) * 120 + 360) : 1100;
 
+      // A connector only produces a Connect record for the end(s) actually glued to a
+      // shape's connection point in Visio. Large hand-drawn diagrams routinely have a few
+      // connectors where one end was dropped near a shape but never snapped to it, so that
+      // end has no Connect record at all. Rather than silently dropping the whole edge (or
+      // guessing from array order, which is not reliable), fall back to the connector's own
+      // raw endpoint coordinates and match them to the nearest shape on the page.
       for (const [connectorId, connects] of connectGroups.entries()) {
         const begin = connects.find((connect) => (connect.getAttribute('FromCell') ?? '').includes('Begin'));
         const end = connects.find((connect) => (connect.getAttribute('FromCell') ?? '').includes('End'));
-        const fallbackBegin = connects[0];
-        const fallbackEnd = connects[1];
-        const fromSheet = begin?.getAttribute('ToSheet') ?? fallbackBegin?.getAttribute('ToSheet') ?? '';
-        const toSheet = end?.getAttribute('ToSheet') ?? fallbackEnd?.getAttribute('ToSheet') ?? '';
+        let fromSheet = begin?.getAttribute('ToSheet') ?? '';
+        let toSheet = end?.getAttribute('ToSheet') ?? '';
+
+        const connectorShape = connectorShapes.get(connectorId);
+        if (connectorShape && !fromSheet) {
+          const beginPoint = this.getVisioConnectorEndpoint(connectorShape, 'Begin');
+          const nearestShapeId = this.findNearestVisioShapeId(beginPoint, pageNodeDrafts, toSheet);
+          if (nearestShapeId) fromSheet = nearestShapeId;
+        }
+        if (connectorShape && !toSheet) {
+          const endPoint = this.getVisioConnectorEndpoint(connectorShape, 'End');
+          const nearestShapeId = this.findNearestVisioShapeId(endPoint, pageNodeDrafts, fromSheet);
+          if (nearestShapeId) toSheet = nearestShapeId;
+        }
+
+        if (!fromSheet || !toSheet) continue;
         const from = `${pageKey}_${fromSheet}`;
         const to = `${pageKey}_${toSheet}`;
         if (!nodes.has(from) || !nodes.has(to) || from === to) continue;
@@ -524,7 +544,13 @@ export class TroubleshootingTreeImportService {
 
   private resolveStartNodeId(nodes: TroubleshootingTreeNode[], edges: TroubleshootingTreeEdge[]): string {
     const incoming = new Set(edges.map((edge) => edge.to));
-    return nodes.find((node) => !incoming.has(node.id))?.id ?? nodes[0]?.id ?? '';
+    const outgoing = new Set(edges.map((edge) => edge.from));
+    const roots = nodes.filter((node) => !incoming.has(node.id));
+    // Diagrams often contain a stray label or title shape with no connections at all
+    // (no incoming AND no outgoing edge). It technically qualifies as a "root" but isn't
+    // part of the actual flow, so prefer a root that leads somewhere.
+    const connectedRoot = roots.find((node) => outgoing.has(node.id));
+    return connectedRoot?.id ?? roots[0]?.id ?? nodes[0]?.id ?? '';
   }
 
   private async unzipTextEntries(buffer: ArrayBuffer): Promise<Map<string, string>> {
@@ -635,6 +661,36 @@ export class TroubleshootingTreeImportService {
       x: this.numberOrNull(this.getVisioCellValue(shape, 'PinX')),
       y: this.numberOrNull(this.getVisioCellValue(shape, 'PinY'))
     };
+  }
+
+  private getVisioConnectorEndpoint(
+    connector: Element,
+    end: 'Begin' | 'End'
+  ): { x: number | null; y: number | null } {
+    return {
+      x: this.numberOrNull(this.getVisioCellValue(connector, `${end}X`)),
+      y: this.numberOrNull(this.getVisioCellValue(connector, `${end}Y`))
+    };
+  }
+
+  private findNearestVisioShapeId(
+    point: { x: number | null; y: number | null },
+    drafts: VisioNodeDraft[],
+    excludeShapeId: string
+  ): string | null {
+    if (point.x === null || point.y === null) return null;
+    const maxDistance = 3;
+    let bestId: string | null = null;
+    let bestDistance = maxDistance;
+    for (const draft of drafts) {
+      if (draft.shapeId === excludeShapeId || draft.pinX === null || draft.pinY === null) continue;
+      const distance = Math.hypot(draft.pinX - point.x, draft.pinY - point.y);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestId = draft.shapeId;
+      }
+    }
+    return bestId;
   }
 
   private getVisioCellValue(shape: Element, name: string): string {
