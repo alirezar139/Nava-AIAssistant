@@ -1,4 +1,4 @@
-export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated';
+export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated' | 'closed';
 export type DiagnosticSeverity = 'low' | 'medium' | 'high';
 
 export interface DiagnosticPayload {
@@ -35,6 +35,7 @@ export interface DiagnosticCaseRecord extends DiagnosticPayload {
   ratingSubmittedAt?: string | null;
   createdAt: string;
   analyzedAt: string | null;
+  closedAt?: string | null;
   userFullName?: string;
   username?: string;
 }

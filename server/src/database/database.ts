@@ -35,7 +35,7 @@ export interface ConversationRecord {
   createdAt: string;
 }
 
-export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated';
+export type DiagnosticStatus = 'draft' | 'analyzed' | 'escalated' | 'closed';
 
 export interface DiagnosticCaseRecord {
   id: number;
@@ -68,6 +68,7 @@ export interface DiagnosticCaseRecord {
   ratingSubmittedAt?: string | null;
   createdAt: string;
   analyzedAt: string | null;
+  closedAt?: string | null;
 }
 
 export interface TicketServiceSettingsRecord {

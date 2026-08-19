@@ -228,3 +228,18 @@ diagnosticRouter.post('/:id/analyze', requireAuth(), async (request: AuthRequest
   await diagnosticRepository.save(item);
   response.json(item);
 });
+
+diagnosticRouter.post('/:id/close', requireAuth(), async (request: AuthRequest, response) => {
+  const id = Number(request.params['id']);
+  const item = await diagnosticRepository.findById(id);
+  if (!item || (request.user?.role !== 'admin' && item.userId !== request.user?.id)) {
+    sendError(response, 404, 'DIAGNOSTIC_NOT_FOUND', 'پرونده بررسی پیدا نشد.');
+    return;
+  }
+
+  item.status = 'closed';
+  item.closedAt = new Date().toISOString();
+
+  await diagnosticRepository.save(item);
+  response.json(item);
+});
