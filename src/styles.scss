@@ -64,10 +64,10 @@
   --color-metric: #925b1f;
   --color-metric-soft: #f5e5ca;
   --color-link: #176454;
-  --font-xs: 10px;
-  --font-sm: 11px;
-  --font-md: 13px;
-  --font-lg: 18px;
+  --font-xs: 11px;
+  --font-sm: 12px;
+  --font-md: 14px;
+  --font-lg: 19px;
   --crystal-surface: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.96) 0%,
@@ -395,6 +395,7 @@
 }
 html {
   scroll-behavior: smooth;
+  font-size: 17px;
 }
 body {
   margin: 0;
