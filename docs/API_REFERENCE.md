@@ -68,12 +68,12 @@ Authorization: Bearer <jwt>
 
 ### `GET /auth/captcha`
 
-یک چالش CAPTCHA محلی ایجاد می‌کند.
+یک چالش CAPTCHA محلی ایجاد می‌کند. تصویر به‌صورت PNG رستری‌شده روی سرور تولید می‌شود (نه SVG با متن قابل استخراج) تا پاسخ در HTML/کد قابل خواندن نباشد. این دو Endpoint هر کدام به‌ازای هر IP نیز محدود نرخ شده‌اند (`/auth/captcha`: ۲۰ در دقیقه، `/auth/login`: ۱۰ در ۱۰ دقیقه).
 
-| فیلد پاسخ  | نوع    | توضیح                     |
-| ---------- | ------ | ------------------------- |
-| `token`    | string | توکن CAPTCHA برای login.  |
-| `question` | string | پرسش قابل نمایش به کاربر. |
+| فیلد پاسخ | نوع    | توضیح                                                  |
+| --------- | ------ | ------------------------------------------------------- |
+| `token`   | string | توکن یک‌بارمصرف CAPTCHA برای login (اعتبار ۲ دقیقه).    |
+| `image`   | string | تصویر کپچا به‌صورت data URI (`data:image/png;base64,...`). |
 
 ### `POST /auth/login`
 
@@ -86,7 +86,7 @@ Authorization: Bearer <jwt>
   "username": "admin",
   "password": "Admin@123",
   "captchaToken": "uuid",
-  "captchaAnswer": "12"
+  "captchaAnswer": "ABCDEF"
 }
 ```
 

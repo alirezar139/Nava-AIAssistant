@@ -11,6 +11,7 @@
     "start": "node dist/main.js"
   },
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "arangojs": "^10.3.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

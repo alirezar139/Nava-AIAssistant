@@ -5,15 +5,30 @@ import { userRepository } from '../database/repositories.js';
 import { AuthUser } from '../common/types.js';
 import { signToken } from './auth.middleware.js';
 import { captchaService } from './captcha.service.js';
+import { createRateLimiter } from './rate-limit.middleware.js';
 import { sendError } from '../common/api-error.js';
 
 export const authRouter = Router();
 
-authRouter.get('/captcha', (_request, response) => {
+const captchaLimiter = createRateLimiter({
+  windowMs: 60 * 1000,
+  max: 20,
+  code: 'CAPTCHA_RATE_LIMITED',
+  message: 'درخواست کد امنیتی بیش از حد مجاز است. کمی صبر کنید.'
+});
+
+const loginLimiter = createRateLimiter({
+  windowMs: 10 * 60 * 1000,
+  max: 10,
+  code: 'LOGIN_RATE_LIMITED',
+  message: 'تعداد تلاش برای ورود بیش از حد مجاز است. کمی صبر کنید.'
+});
+
+authRouter.get('/captcha', captchaLimiter, (_request, response) => {
   response.json(captchaService.create());
 });
 
-authRouter.post('/login', async (request, response) => {
+authRouter.post('/login', loginLimiter, async (request, response) => {
   const result = z
     .object({
       username: z.string().min(1),
