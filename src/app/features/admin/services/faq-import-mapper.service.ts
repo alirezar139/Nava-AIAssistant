@@ -114,7 +114,7 @@ export class FaqImportMapperService {
   private mapTableLikeTroubleshootingDocument(text: string): FaqPayload[] | null {
     const lines = this.cleanLines(text);
     const payload: FaqPayload[] = [];
-    let category = 'Word';
+    let category = '';
     let current: FaqDraft | null = null;
 
     const flush = (): void => {
@@ -193,7 +193,7 @@ export class FaqImportMapperService {
     numberIndexes.forEach((start, position) => {
       const end = numberIndexes[position + 1] ?? lines.length;
       const blockLines = lines.slice(start + 1, end);
-      const category = this.detectCategoryBefore(lines, start) || 'Word';
+      const category = this.detectCategoryBefore(lines, start);
       const faq = this.mapTroubleshootingBlock(blockLines, category);
       if (faq) payload.push(faq);
     });
@@ -260,7 +260,7 @@ export class FaqImportMapperService {
       .map((lines) => {
         const question = lines.find((line) => this.looksLikeQuestion(line)) ?? lines[0] ?? '';
         const answer = lines.filter((line) => line !== question && !this.isSectionLabel(line)).join('\n');
-        return { question, answer, category: 'Word', keywords: this.buildKeywords(question, 'Word') };
+        return { question, answer, category: '', keywords: this.buildKeywords(question, '') };
       })
       .filter((faq) => faq.question && faq.answer && faq.question !== faq.answer);
   }
@@ -271,8 +271,8 @@ export class FaqImportMapperService {
     return {
       question,
       answer,
-      category: this.extractField(block, CATEGORY_LABELS) || 'Word',
-      keywords: this.extractField(block, KEYWORD_LABELS) || this.buildKeywords(question, 'Word')
+      category: this.extractField(block, CATEGORY_LABELS),
+      keywords: this.extractField(block, KEYWORD_LABELS) || this.buildKeywords(question, '')
     };
   }
 
@@ -363,7 +363,7 @@ export class FaqImportMapperService {
       .join('\n')
       .trim();
     if (question && answer) {
-      payload.push({ question, answer, category: 'Word', keywords: this.buildKeywords(question, 'Word') });
+      payload.push({ question, answer, category: '', keywords: this.buildKeywords(question, '') });
     }
   }
 
