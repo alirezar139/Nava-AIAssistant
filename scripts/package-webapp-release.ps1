@@ -42,8 +42,15 @@ Copy-Item -LiteralPath $frontendDist -Destination (Join-Path $packageRoot 'dist\
 Copy-Item -LiteralPath $serverDist -Destination (Join-Path $packageRoot 'server\dist') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'server\package.json') -Destination (Join-Path $packageRoot 'server\package.json')
 Copy-Item -LiteralPath (Join-Path $root 'server\package-lock.json') -Destination (Join-Path $packageRoot 'server\package-lock.json')
+Copy-Item -LiteralPath (Join-Path $root 'server\prisma.config.ts') -Destination (Join-Path $packageRoot 'server\prisma.config.ts')
+New-Item -ItemType Directory -Force -Path (Join-Path $packageRoot 'server\prisma') | Out-Null
+Copy-Item -LiteralPath (Join-Path $root 'server\prisma\schema.prisma') -Destination (Join-Path $packageRoot 'server\prisma\schema.prisma')
+Copy-Item -LiteralPath (Join-Path $root 'server\prisma\migrations') -Destination (Join-Path $packageRoot 'server\prisma\migrations') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'deploy\.env.example') -Destination (Join-Path $packageRoot '.env.example')
 Copy-Item -LiteralPath (Join-Path $root 'deploy\install-dependencies.ps1') -Destination (Join-Path $packageRoot 'install-dependencies.ps1')
+Copy-Item -LiteralPath (Join-Path $root 'deploy\apply-migrations.ps1') -Destination (Join-Path $packageRoot 'apply-migrations.ps1')
+Copy-Item -LiteralPath (Join-Path $root 'deploy\install-service.ps1') -Destination (Join-Path $packageRoot 'install-service.ps1')
+Copy-Item -LiteralPath (Join-Path $root 'deploy\uninstall-service.ps1') -Destination (Join-Path $packageRoot 'uninstall-service.ps1')
 Copy-Item -LiteralPath (Join-Path $root 'deploy\start-webapp.ps1') -Destination (Join-Path $packageRoot 'start-webapp.ps1')
 Copy-Item -LiteralPath (Join-Path $root 'deploy\README.md') -Destination (Join-Path $packageRoot 'README.md')
 
