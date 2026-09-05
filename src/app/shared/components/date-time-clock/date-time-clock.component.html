@@ -1,0 +1,35 @@
+<div class="date-time-clock" role="status" aria-label="ساعت و تاریخ سامانه">
+  <svg class="clock-face" viewBox="0 0 100 100" aria-hidden="true">
+    <circle class="face-ring" cx="50" cy="50" r="46" />
+    @for (tick of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track tick) {
+      <line
+        class="tick"
+        [class.tick-major]="tick % 3 === 0"
+        x1="50"
+        y1="8"
+        x2="50"
+        y2="14"
+        [attr.transform]="'rotate(' + tick * 30 + ' 50 50)'"
+      />
+    }
+    <line class="hand hand-hour" x1="50" y1="50" x2="50" y2="28" [attr.transform]="'rotate(' + hourDeg + ' 50 50)'" />
+    <line
+      class="hand hand-minute"
+      x1="50"
+      y1="50"
+      x2="50"
+      y2="18"
+      [attr.transform]="'rotate(' + minuteDeg + ' 50 50)'"
+    />
+    <line
+      class="hand hand-second"
+      x1="50"
+      y1="56"
+      x2="50"
+      y2="14"
+      [attr.transform]="'rotate(' + secondDeg + ' 50 50)'"
+    />
+    <circle class="pivot" cx="50" cy="50" r="3" />
+  </svg>
+  <span class="date-label">{{ dateLabel }}</span>
+</div>

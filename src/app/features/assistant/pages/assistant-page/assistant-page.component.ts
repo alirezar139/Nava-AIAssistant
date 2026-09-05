@@ -28,6 +28,7 @@ import {
 } from '../../../../core/services/troubleshooting-tree.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 
 interface ConversationSnapshot {
@@ -65,7 +66,7 @@ interface SupportProgressItem {
 @Component({
   selector: 'app-assistant-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, BrandLogoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, DateTimeClockComponent, BrandLogoComponent],
   templateUrl: './assistant-page.component.html',
   styleUrl: './assistant-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -853,11 +854,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!state.options.length && !this.isEndNode(state.node.text)) {
-      this.answerFromFaqOrStartTicket(this.buildTreeProblemText(state.node.text), true, state.node);
-      return;
-    }
-
     this.showTreeNode(option.targetId);
   }
 
@@ -1241,10 +1237,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       const target = this.treeIndex?.nodes.get(option.targetId);
       return this.isResolutionCheckNode(option.label) || Boolean(target && this.isResolutionCheckNode(target.text));
     });
-  }
-
-  private isEndNode(text: string): boolean {
-    return this.normalizeTreeText(text).includes('پایان');
   }
 
   private buildTreeProblemText(currentText: string): string {
