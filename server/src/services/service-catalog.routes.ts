@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { sendError } from '../common/api-error.js';
 import { AuthRequest } from '../common/types.js';
-import { ExternalServiceMethod, ExternalServiceRecord } from '../database/database.js';
+import { ExternalServiceMethod, ExternalServiceRecord } from '../database/domain-types.js';
 import { externalServiceRepository } from '../database/repositories.js';
 
 export const serviceCatalogRouter = Router();

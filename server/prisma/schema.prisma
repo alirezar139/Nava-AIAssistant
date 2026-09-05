@@ -1,0 +1,300 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum UserRole {
+  admin
+  user
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(64)
+  passwordHash String   @db.VarChar(255)
+  fullName     String   @db.VarChar(150)
+  role         UserRole
+  createdAt    DateTime @default(now())
+
+  conversations   Conversation[]
+  diagnosticCases DiagnosticCase[]
+
+  @@map("users")
+}
+
+model Project {
+  key         String   @id @db.VarChar(80)
+  title       String   @db.VarChar(200)
+  description String   @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  treeSettings TroubleshootingTreeSettings[]
+  treeVersions TroubleshootingTreeVersion[]
+  treeNodes    TroubleshootingNode[]
+  treeEdges    TroubleshootingEdge[]
+
+  @@index([isActive, updatedAt])
+  @@map("projects")
+}
+
+model Faq {
+  id        Int      @id @default(autoincrement())
+  question  String   @db.Text
+  answer    String   @db.Text
+  category  String   @db.VarChar(120)
+  keywords  String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  conversations Conversation[]
+
+  @@index([category])
+  @@index([updatedAt, id])
+  @@index([category, updatedAt, id])
+  @@map("faqs")
+}
+
+model Conversation {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  user              User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  question          String    @db.Text
+  answer            String    @db.Text
+  matchedFaqId      Int?
+  matchedFaq        Faq?      @relation(fields: [matchedFaqId], references: [id], onDelete: SetNull)
+  rating            Int?
+  ratingSubmittedAt DateTime?
+  createdAt         DateTime  @default(now())
+
+  @@index([createdAt, id])
+  @@index([userId, createdAt])
+  @@map("conversations")
+}
+
+enum DiagnosticStatus {
+  draft
+  analyzed
+  escalated
+  closed
+}
+
+enum DiagnosticSeverity {
+  low
+  medium
+  high
+}
+
+enum ExternalTicketStatus {
+  not_configured
+  submitted
+  failed
+}
+
+model DiagnosticCase {
+  id                       Int                   @id @default(autoincrement())
+  userId                   Int
+  user                     User                  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  title                    String                @db.VarChar(250)
+  problem                  String                @db.Text
+  systemName               String                @db.VarChar(190)
+  processName              String                @db.VarChar(190)
+  scenario                 String                @db.Text
+  serialNumber             String                @db.VarChar(190)
+  errorText                String                @db.Text
+  evidence                 String                @db.Text
+  treeNodeId               String                @db.VarChar(190)
+  treeNodeText             String                @db.Text
+  status                   DiagnosticStatus      @default(draft)
+  analysisSummary          String?               @db.Text
+  severity                 DiagnosticSeverity?
+  recommendation           String?               @db.Text
+  externalTicketId         String?               @db.VarChar(190)
+  externalTrackingId       String?               @db.VarChar(190)
+  externalTicketStatus     ExternalTicketStatus?
+  externalTicketStatusCode Int?
+  externalTicketError      String?               @db.Text
+  similarIssueCount        Int                   @default(1)
+  similarUserCount         Int                   @default(1)
+  duplicateOfDiagnosticId  Int?
+  duplicateOf              DiagnosticCase?       @relation("DuplicateOf", fields: [duplicateOfDiagnosticId], references: [id], onDelete: SetNull)
+  duplicatesOfThis         DiagnosticCase[]      @relation("DuplicateOf")
+  duplicateNotice          String?               @db.Text
+  rating                   Int?
+  ratingComment            String?               @db.Text
+  ratingSubmittedAt        DateTime?
+  createdAt                DateTime              @default(now())
+  analyzedAt               DateTime?
+  closedAt                 DateTime?
+
+  @@index([userId, createdAt])
+  @@index([treeNodeId])
+  @@index([status, createdAt])
+  @@index([systemName, processName])
+  @@map("diagnostic_cases")
+}
+
+enum ExternalServiceMethod {
+  GET
+  POST
+  PUT
+  PATCH
+  DELETE
+}
+
+model ExternalService {
+  id                  Int                   @id @default(autoincrement())
+  key                 String                @unique @db.VarChar(120)
+  title               String                @db.VarChar(200)
+  purpose             String                @db.Text
+  sectionTitle        String                @db.VarChar(200)
+  method              ExternalServiceMethod
+  url                 String                @db.VarChar(500)
+  authorizationHeader String?               @db.VarChar(255)
+  authHeader          String?               @db.VarChar(255)
+  headersText         String?               @db.Text
+  bodyTemplate        String?               @db.Text
+  isActive            Boolean               @default(true)
+  showInAssistant     Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@index([isActive, showInAssistant])
+  @@map("external_services")
+}
+
+enum DashboardMetricKey {
+  activeFaqs
+  userRequests
+  engagedUsers
+  faqCoverageRate
+  diagnosticCases
+  treeNodes
+  treeEdges
+  activeServices
+  sahandSubmitted
+}
+
+model DashboardMetricLog {
+  key       DashboardMetricKey @id
+  label     String             @db.VarChar(120)
+  value     Int
+  order     Int
+  source    String             @db.VarChar(40)
+  updatedAt DateTime           @updatedAt
+
+  @@index([order])
+  @@map("dashboard_metric_logs")
+}
+
+model TicketServiceSettings {
+  id                  Int       @id @default(1)
+  url                 String    @default("") @db.VarChar(500)
+  authorizationHeader String?   @db.VarChar(255)
+  authHeader          String?   @db.VarChar(255)
+  raiseOnBehalfOf     String?   @db.VarChar(190)
+  serviceDeskId       String?   @db.VarChar(120)
+  requestTypeId       String?   @db.VarChar(120)
+  updatedAt           DateTime? @updatedAt
+
+  requestTypeMappings TicketRequestTypeMapping[]
+
+  @@map("ticket_service_settings")
+}
+
+model TicketRequestTypeMapping {
+  id                      Int                   @id @default(autoincrement())
+  ticketServiceSettingsId Int
+  ticketServiceSettings   TicketServiceSettings @relation(fields: [ticketServiceSettingsId], references: [id], onDelete: Cascade)
+  nodeId                  String                @db.VarChar(190)
+  nodeLabel               String                @db.VarChar(190)
+  serviceDeskId           String                @db.VarChar(120)
+  requestTypeId           String                @db.VarChar(120)
+
+  @@unique([ticketServiceSettingsId, nodeId])
+  @@map("ticket_request_type_mappings")
+}
+
+enum TreeMode {
+  active
+  draft
+}
+
+model TroubleshootingTreeSettings {
+  projectKey   String    @db.VarChar(80)
+  project      Project   @relation(fields: [projectKey], references: [key], onDelete: Cascade)
+  mode         TreeMode
+  startNodeId  String    @db.VarChar(190)
+  introNodeIds Json
+  version      Int       @default(1)
+  nodeCount    Int       @default(0)
+  edgeCount    Int       @default(0)
+  updatedAt    DateTime  @updatedAt
+  activatedAt  DateTime?
+
+  @@id([projectKey, mode])
+  @@map("troubleshooting_tree_settings")
+}
+
+model TroubleshootingTreeVersion {
+  id          Int       @id @default(autoincrement())
+  projectKey  String    @db.VarChar(80)
+  project     Project   @relation(fields: [projectKey], references: [key], onDelete: Cascade)
+  mode        TreeMode
+  version     Int
+  status      TreeMode
+  nodeCount   Int
+  edgeCount   Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  activatedAt DateTime?
+
+  @@unique([projectKey, mode, version])
+  @@index([status, updatedAt])
+  @@map("troubleshooting_tree_versions")
+}
+
+model TroubleshootingNode {
+  id         Int      @id @default(autoincrement())
+  projectKey String   @db.VarChar(80)
+  project    Project  @relation(fields: [projectKey], references: [key], onDelete: Cascade)
+  treeMode   TreeMode
+  nodeId     String   @db.VarChar(190)
+  text       String   @db.Text
+  shape      String   @default("process") @db.VarChar(40)
+  x          Float?
+  y          Float?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  outgoingEdges TroubleshootingEdge[] @relation("EdgeFrom")
+  incomingEdges TroubleshootingEdge[] @relation("EdgeTo")
+
+  @@unique([projectKey, treeMode, nodeId])
+  @@index([projectKey, treeMode, sortOrder])
+  @@map("troubleshooting_nodes")
+}
+
+model TroubleshootingEdge {
+  id         Int      @id @default(autoincrement())
+  projectKey String   @db.VarChar(80)
+  project    Project  @relation(fields: [projectKey], references: [key], onDelete: Cascade)
+  treeMode   TreeMode
+  fromNodeId Int
+  fromNode   TroubleshootingNode @relation("EdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNodeId   Int
+  toNode     TroubleshootingNode @relation("EdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+  label      String?  @db.VarChar(255)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectKey, treeMode, sortOrder])
+  @@index([fromNodeId, toNodeId])
+  @@map("troubleshooting_edges")
+}

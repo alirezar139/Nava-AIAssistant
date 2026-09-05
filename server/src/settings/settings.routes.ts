@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { config } from '../config/config.js';
-import { TicketServiceSettingsRecord } from '../database/database.js';
+import { TicketServiceSettingsRecord } from '../database/domain-types.js';
 import { settingsRepository } from '../database/repositories.js';
 
 export const settingsRouter = Router();

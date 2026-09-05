@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { AuthRequest } from '../common/types.js';
-import { DiagnosticCaseRecord } from '../database/database.js';
+import { DiagnosticCaseRecord } from '../database/domain-types.js';
 import { diagnosticRepository } from '../database/repositories.js';
 import { sendError } from '../common/api-error.js';
 import { SahandTicketPayload, submitSahandTicket } from '../sahand/sahand-ticket.service.js';
@@ -64,8 +64,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     sendError(response, 400, 'DIAGNOSTIC_INVALID', 'اطلاعات پرونده بررسی معتبر نیست.');
     return;
   }
-  const diagnosticCase: DiagnosticCaseRecord = {
-    id: await diagnosticRepository.nextId(),
+  const diagnosticInput: Omit<DiagnosticCaseRecord, 'id'> = {
     userId: request.user.id,
     title: result.data.title,
     problem: result.data.problem,
@@ -97,15 +96,17 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
     analyzedAt: null
   };
 
-  const similarCases = await diagnosticRepository.findSimilar(diagnosticCase);
-  const similarUserIds = new Set([diagnosticCase.userId, ...similarCases.map((item) => item.userId)]);
-  diagnosticCase.similarIssueCount = similarCases.length + 1;
-  diagnosticCase.similarUserCount = similarUserIds.size;
-  diagnosticCase.duplicateOfDiagnosticId = similarCases[0]?.id ?? null;
-  if (diagnosticCase.similarIssueCount >= 3 && diagnosticCase.similarUserCount >= 2) {
-    diagnosticCase.duplicateNotice =
+  const similarCases = await diagnosticRepository.findSimilar({ ...diagnosticInput, id: -1 });
+  const similarUserIds = new Set([diagnosticInput.userId, ...similarCases.map((item) => item.userId)]);
+  diagnosticInput.similarIssueCount = similarCases.length + 1;
+  diagnosticInput.similarUserCount = similarUserIds.size;
+  diagnosticInput.duplicateOfDiagnosticId = similarCases[0]?.id ?? null;
+  if (diagnosticInput.similarIssueCount >= 3 && diagnosticInput.similarUserCount >= 2) {
+    diagnosticInput.duplicateNotice =
       'تیکت شما به همراه چند مورد مشابه ثبت شده و در حال پیگیری است. مراتب پیگیری خدمت شما اطلاع داده خواهد شد.';
   }
+
+  const diagnosticCase = await diagnosticRepository.create(diagnosticInput);
 
   const ticketResult = await submitSahandTicket({
     title: result.data.title.slice(0, 120),
@@ -137,7 +138,7 @@ diagnosticRouter.post('/', requireAuth(), async (request: AuthRequest, response)
   diagnosticCase.externalTicketStatusCode = ticketResult.statusCode;
   diagnosticCase.externalTicketError = ticketResult.errorMessage;
 
-  await diagnosticRepository.create(diagnosticCase);
+  await diagnosticRepository.save(diagnosticCase);
   response.status(201).json(diagnosticCase);
 });
 

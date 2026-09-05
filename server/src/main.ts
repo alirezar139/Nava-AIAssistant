@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
@@ -12,14 +13,13 @@ import { faqRouter } from './faqs/faq.routes.js';
 import { settingsRouter } from './settings/settings.routes.js';
 import { serviceCatalogRouter } from './services/service-catalog.routes.js';
 import { troubleshootingTreeRouter } from './troubleshooting-tree/troubleshooting-tree.routes.js';
-import './database/database.js';
-import { ensureArangoSchema, getArangoHealth, isArangoEnabled } from './database/arango.js';
+import { usersRouter } from './users/users.routes.js';
+import { prisma } from './database/prisma-client.js';
 import { config } from './config/config.js';
 import { sendError } from './common/api-error.js';
 
-await ensureArangoSchema();
-
 const app = express();
+app.set('trust proxy', true);
 
 app.use((_request, response, next) => {
   const traceId = randomUUID().slice(0, 8);
@@ -30,12 +30,16 @@ app.use((_request, response, next) => {
 app.use(cors({ origin: config.corsOrigins }));
 app.use(express.json({ limit: '10mb' }));
 app.get('/api/health', async (_request, response) => {
-  const arango = await getArangoHealth();
-  response.status(arango.ok ? 200 : 503).json({
-    status: arango.ok ? 'ok' : 'degraded',
-    storage: config.databaseProvider,
-    ...(isArangoEnabled() ? { arango } : {})
-  });
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    response.status(200).json({ status: 'ok', storage: 'mysql' });
+  } catch (error) {
+    response.status(503).json({
+      status: 'degraded',
+      storage: 'mysql',
+      error: error instanceof Error ? error.message : 'Database connection failed'
+    });
+  }
 });
 app.use('/api/auth', authRouter);
 app.use('/api/faqs', faqRouter);
@@ -45,6 +49,7 @@ app.use('/api/diagnostics', diagnosticRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/services', serviceCatalogRouter);
 app.use('/api/troubleshooting-tree', troubleshootingTreeRouter);
+app.use('/api/users', usersRouter);
 
 const frontendDistPath = resolve(dirname(fileURLToPath(import.meta.url)), '../../dist/nava-ai-assistant');
 const frontendIndexPath = join(frontendDistPath, 'index.html');
