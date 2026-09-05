@@ -77,6 +77,30 @@ export interface ExternalServiceExecutionResult {
   errorMessage?: string;
 }
 
+export type UserAccountRole = 'admin' | 'user';
+
+export interface UserAccountRecord {
+  id: number;
+  username: string;
+  fullName: string;
+  role: UserAccountRole;
+  createdAt: string;
+}
+
+export interface CreateUserAccountPayload {
+  username: string;
+  password: string;
+  fullName: string;
+  role: UserAccountRole;
+}
+
+export interface UpdateUserAccountPayload {
+  username: string;
+  fullName: string;
+  role: UserAccountRole;
+  password?: string;
+}
+
 export interface TicketServiceSettings {
   url: string;
   authorizationHeader: string;
@@ -272,6 +296,22 @@ export class ApiService {
 
   runExternalService(id: number): Observable<ExternalServiceExecutionResult> {
     return this.http.post<ExternalServiceExecutionResult>(`${this.apiUrl}/services/${id}/run`, {});
+  }
+
+  getUserAccounts(): Observable<UserAccountRecord[]> {
+    return this.http.get<UserAccountRecord[]>(`${this.apiUrl}/users`);
+  }
+
+  createUserAccount(payload: CreateUserAccountPayload): Observable<UserAccountRecord> {
+    return this.http.post<UserAccountRecord>(`${this.apiUrl}/users`, payload);
+  }
+
+  updateUserAccount(id: number, payload: UpdateUserAccountPayload): Observable<UserAccountRecord> {
+    return this.http.put<UserAccountRecord>(`${this.apiUrl}/users/${id}`, payload);
+  }
+
+  deleteUserAccount(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
 
   private toQueryString<T extends object>(query: T): string {

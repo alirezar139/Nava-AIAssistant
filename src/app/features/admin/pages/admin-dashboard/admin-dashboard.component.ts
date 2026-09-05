@@ -20,6 +20,7 @@ import {
 } from '../../../../core/models/troubleshooting-tree.models';
 import {
   ApiService,
+  CreateUserAccountPayload,
   DashboardMetricLogRecord,
   ExternalServiceExecutionResult,
   ExternalServiceMethod,
@@ -29,7 +30,10 @@ import {
   FaqPayload,
   TicketRequestTypeMapping,
   TicketServiceSettings,
-  TicketServiceSettingsPayload
+  TicketServiceSettingsPayload,
+  UpdateUserAccountPayload,
+  UserAccountRecord,
+  UserAccountRole
 } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ExcelReaderService } from '../../../../core/services/excel-reader.service';
@@ -38,6 +42,8 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { ThemeService } from '../../../../core/services/theme.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
+import { JalaliDateTimePipe } from '../../../../shared/pipes/jalali-date-time.pipe';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
 import { TroubleshootingTreeImportService } from '../../services/troubleshooting-tree-import.service';
@@ -46,10 +52,11 @@ import { appVersionInfo } from '../../../../../environments/version';
 type PendingConfirmation =
   | { type: 'delete'; faq: FaqRecord }
   | { type: 'delete-service'; service: ExternalServiceRecord }
+  | { type: 'delete-user'; user: UserAccountRecord }
   | { type: 'bulk-delete'; ids: number[] }
   | { type: 'import'; payload: FaqPayload[] };
 
-type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services';
+type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services' | 'users';
 type TreeManagementView = 'overview' | 'create' | 'files' | 'editor' | 'versions';
 type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
@@ -132,7 +139,15 @@ interface TreeStarterTemplate {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, BrandLogoComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    ThemeToggleComponent,
+    DateTimeClockComponent,
+    BrandLogoComponent,
+    JalaliDateTimePipe
+  ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -150,6 +165,7 @@ export class AdminDashboardComponent implements OnInit {
   conversationTotalCount = 0;
   diagnosticCases: DiagnosticCaseRecord[] = [];
   externalServices: ExternalServiceRecord[] = [];
+  userAccounts: UserAccountRecord[] = [];
   dashboardMetricLogs: DashboardMetricLogRecord[] = [];
   dashboardMetricLogMap = new Map<DashboardMetricLogRecord['key'], DashboardMetricLogRecord>();
   troubleshootingTree: TroubleshootingTree | null = null;
@@ -173,6 +189,7 @@ export class AdminDashboardComponent implements OnInit {
   deviceViewportMode: DeviceViewportMode = 'desktop';
   editingId: number | null = null;
   editingServiceId: number | null = null;
+  editingUserId: number | null = null;
   detailFaq: FaqRecord | null = null;
   detailConversation: ConversationRecord | null = null;
   form: FaqPayload = this.emptyForm();
@@ -181,6 +198,7 @@ export class AdminDashboardComponent implements OnInit {
   serviceTestResult: ExternalServiceExecutionResult | null = null;
   serviceDraftTesting = false;
   serviceTestingId: number | null = null;
+  userForm: CreateUserAccountPayload = this.emptyUserForm();
   ticketServiceSettings: TicketServiceSettings | null = null;
   ticketServiceForm: TicketServiceSettingsPayload = this.emptyTicketServiceForm();
   requestTypeMappingsText = '';
@@ -191,6 +209,8 @@ export class AdminDashboardComponent implements OnInit {
   diagnosticCasesLoading = false;
   externalServicesLoaded = false;
   externalServicesLoading = false;
+  userAccountsLoaded = false;
+  userAccountsLoading = false;
   dashboardMetricsLoaded = false;
   dashboardMetricsLoading = false;
   ticketServiceSettingsLoaded = false;
@@ -211,6 +231,10 @@ export class AdminDashboardComponent implements OnInit {
   serviceCurrentPage = 1;
   servicePageSize = 4;
   readonly servicePageSizeOptions = [4, 8, 12, 24];
+  userCurrentPage = 1;
+  userPageSize = 8;
+  readonly userPageSizeOptions = [8, 16, 24, 48];
+  readonly userRoles: UserAccountRole[] = ['admin', 'user'];
   readonly serviceMethods: ExternalServiceMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   readonly serviceBodyPlaceholder = '{ "username": "{{username}}", "fullName": "{{fullName}}" }';
   readonly treeAcceptedFormats =
@@ -1344,6 +1368,27 @@ export class AdminDashboardComponent implements OnInit {
     return Math.min(this.serviceActivePage * this.servicePageSize, this.externalServices.length);
   }
 
+  get userTotalPages(): number {
+    return Math.max(1, Math.ceil(this.userAccounts.length / this.userPageSize));
+  }
+
+  get userActivePage(): number {
+    return Math.min(Math.max(this.userCurrentPage, 1), this.userTotalPages);
+  }
+
+  get paginatedUserAccounts(): UserAccountRecord[] {
+    const start = (this.userActivePage - 1) * this.userPageSize;
+    return this.userAccounts.slice(start, start + this.userPageSize);
+  }
+
+  get userPaginationStart(): number {
+    return this.userAccounts.length ? (this.userActivePage - 1) * this.userPageSize + 1 : 0;
+  }
+
+  get userPaginationEnd(): number {
+    return Math.min(this.userActivePage * this.userPageSize, this.userAccounts.length);
+  }
+
   get totalPages(): number {
     return Math.max(1, Math.ceil(this.faqTotalCount / this.pageSize));
   }
@@ -1387,6 +1432,7 @@ export class AdminDashboardComponent implements OnInit {
   get confirmationTitle(): string {
     if (this.pendingConfirmation?.type === 'delete') return 'حذف FAQ';
     if (this.pendingConfirmation?.type === 'delete-service') return 'حذف سرویس';
+    if (this.pendingConfirmation?.type === 'delete-user') return 'حذف کاربر';
     if (this.pendingConfirmation?.type === 'bulk-delete') return 'حذف گروهی FAQ';
     return 'جایگزینی پایگاه دانش';
   }
@@ -1397,6 +1443,9 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (this.pendingConfirmation?.type === 'delete-service') {
       return `سرویس «${this.pendingConfirmation.service.title}» از کاتالوگ سرویس‌ها حذف شود؟`;
+    }
+    if (this.pendingConfirmation?.type === 'delete-user') {
+      return `کاربر «${this.pendingConfirmation.user.fullName}» برای همیشه حذف شود؟`;
     }
     if (this.pendingConfirmation?.type === 'bulk-delete') {
       const count = this.pendingConfirmation.ids.length;
@@ -1561,6 +1610,10 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (this.activeTab === 'services') {
       this.loadExternalServices(force);
+      return;
+    }
+    if (this.activeTab === 'users') {
+      this.loadUserAccounts(force);
     }
   }
 
@@ -1918,6 +1971,60 @@ export class AdminDashboardComponent implements OnInit {
     this.pendingConfirmation = { type: 'delete-service', service };
   }
 
+  saveUserAccount(): void {
+    if (!this.userForm.username.trim() || !this.userForm.fullName.trim()) {
+      this.notifications.error('اطلاعات کاربر ناقص است', 'نام کاربری و نام کامل را کامل کنید.');
+      return;
+    }
+    if (this.editingUserId === null && this.userForm.password.trim().length < 6) {
+      this.notifications.error('رمز عبور نامعتبر است', 'رمز عبور باید حداقل ۶ کاراکتر باشد.');
+      return;
+    }
+
+    this.settingsSaving = true;
+    const payload: UpdateUserAccountPayload = {
+      username: this.userForm.username,
+      fullName: this.userForm.fullName,
+      role: this.userForm.role,
+      ...(this.userForm.password.trim() ? { password: this.userForm.password } : {})
+    };
+    const request$ =
+      this.editingUserId === null
+        ? this.api.createUserAccount(this.userForm)
+        : this.api.updateUserAccount(this.editingUserId, payload);
+
+    request$.subscribe({
+      next: () => {
+        this.notifications.success('کاربر ذخیره شد', 'فهرست حساب‌های کاربری به‌روزرسانی شد.');
+        this.resetUserForm();
+        this.loadUserAccounts(true);
+      },
+      error: (error: unknown) => this.showError(error, 'ذخیره کاربر انجام نشد.')
+    });
+  }
+
+  editUserAccount(user: UserAccountRecord): void {
+    this.editingUserId = user.id;
+    this.userForm = {
+      username: user.username,
+      fullName: user.fullName,
+      role: user.role,
+      password: ''
+    };
+  }
+
+  cancelUserEditing(): void {
+    this.resetUserForm();
+  }
+
+  deleteUserAccount(user: UserAccountRecord): void {
+    if (this.auth.user?.id === user.id) {
+      this.notifications.error('امکان حذف وجود ندارد', 'نمی‌توانید حساب کاربری خودتان را حذف کنید.');
+      return;
+    }
+    this.pendingConfirmation = { type: 'delete-user', user };
+  }
+
   testExternalService(service: ExternalServiceRecord): void {
     this.serviceTestingId = service.id;
     this.serviceTestResult = null;
@@ -2031,6 +2138,15 @@ export class AdminDashboardComponent implements OnInit {
 
   goToServicePage(page: number): void {
     this.serviceCurrentPage = Math.min(Math.max(page, 1), this.serviceTotalPages);
+  }
+
+  setUserPageSize(size: number): void {
+    this.userPageSize = size;
+    this.userCurrentPage = 1;
+  }
+
+  goToUserPage(page: number): void {
+    this.userCurrentPage = Math.min(Math.max(page, 1), this.userTotalPages);
   }
 
   resetForm(): void {
@@ -2819,6 +2935,18 @@ export class AdminDashboardComponent implements OnInit {
           this.loadExternalServices(true);
         },
         error: (error: unknown) => this.showError(error, 'حذف سرویس انجام نشد.')
+      });
+      return;
+    }
+
+    if (confirmation.type === 'delete-user') {
+      this.api.deleteUserAccount(confirmation.user.id).subscribe({
+        next: () => {
+          this.notifications.success('کاربر حذف شد', 'حساب کاربری انتخاب‌شده حذف شد.');
+          this.saving = false;
+          this.loadUserAccounts(true);
+        },
+        error: (error: unknown) => this.showError(error, 'حذف کاربر انجام نشد.')
       });
       return;
     }
@@ -3887,6 +4015,40 @@ export class AdminDashboardComponent implements OnInit {
     this.settingsSaving = false;
   }
 
+  private emptyUserForm(): CreateUserAccountPayload {
+    return {
+      username: '',
+      password: '',
+      fullName: '',
+      role: 'user'
+    };
+  }
+
+  private resetUserForm(): void {
+    this.editingUserId = null;
+    this.userForm = this.emptyUserForm();
+    this.settingsSaving = false;
+  }
+
+  private loadUserAccounts(force = false): void {
+    if (this.userAccountsLoading || (this.userAccountsLoaded && !force)) return;
+    this.userAccountsLoading = true;
+    this.api.getUserAccounts().subscribe({
+      next: (users) => {
+        this.userAccounts = users;
+        this.userCurrentPage = Math.min(this.userCurrentPage, this.userTotalPages);
+        this.userAccountsLoaded = true;
+        this.userAccountsLoading = false;
+        this.settingsSaving = false;
+        this.changeDetector.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.userAccountsLoading = false;
+        this.showError(error, 'به‌روزرسانی فهرست کاربران انجام نشد.');
+      }
+    });
+  }
+
   private loadExternalServices(force = false): void {
     if (this.externalServicesLoading || (this.externalServicesLoaded && !force)) return;
     this.externalServicesLoading = true;
@@ -4033,6 +4195,7 @@ export class AdminDashboardComponent implements OnInit {
     this.conversationsLoading = false;
     this.diagnosticCasesLoading = false;
     this.externalServicesLoading = false;
+    this.userAccountsLoading = false;
     this.ticketServiceSettingsLoading = false;
     this.saving = false;
     this.settingsSaving = false;

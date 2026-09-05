@@ -12,6 +12,7 @@
       <div><b>نوا</b><small>پنل مدیریت دانش و پشتیبانی</small></div>
     </a>
     <div class="header-actions">
+      <app-date-time-clock />
       <app-theme-toggle />
       <div class="account">
         <div class="account-avatar">
@@ -263,6 +264,29 @@
             </span>
             <em>{{ formatCount(loggedActiveServiceCount) }}</em>
           </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'users'"
+            title="مدیریت کاربران"
+            aria-label="مدیریت کاربران"
+            [class.active]="activeTab === 'users'"
+            (click)="setActiveTab('users')"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="9" cy="7" r="3"></circle>
+                <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"></path>
+                <circle cx="17" cy="8" r="2.2"></circle>
+                <path d="M15.5 14.2c2.4.4 4.5 2.5 4.5 5.8"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>مدیریت کاربران</b>
+              <small>مدیریت حساب‌ها و سطح دسترسی کاربران</small>
+            </span>
+            <em>{{ formatCount(userAccounts.length) }}</em>
+          </button>
         </nav>
         <div
           class="admin-menu-footer"
@@ -482,7 +506,7 @@
                     <td data-label="دسته‌بندی">
                       <span class="tag">{{ faq.category || 'عمومی' }}</span>
                     </td>
-                    <td data-label="آخرین تغییر">{{ faq.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}</td>
+                    <td data-label="آخرین تغییر">{{ faq.updatedAt | jalaliDateTime }}</td>
                     <td class="actions-cell" data-label="عملیات">
                       <button
                         type="button"
@@ -583,7 +607,7 @@
             <div class="report-content">
               <div class="report-meta">
                 <b>{{ item.userFullName }}</b
-                ><span>{{ item.createdAt | date: 'yyyy/MM/dd - HH:mm' }}</span>
+                ><span>{{ item.createdAt | jalaliDateTime }}</span>
                 <button
                   type="button"
                   class="report-open"
@@ -756,7 +780,7 @@
                       <div>
                         <strong>{{ item.userFullName || item.username || 'کاربر' }}</strong>
                         <span>{{
-                          item.ratingSubmittedAt || item.createdAt | date: 'yyyy/MM/dd - HH:mm'
+                          item.ratingSubmittedAt || item.createdAt | jalaliDateTime
                         }}</span>
                       </div>
                       <b>{{ formatRating(item.rating || 0) }}</b>
@@ -2951,6 +2975,121 @@
           </section>
         </ng-container>
 
+        <ng-container *ngIf="activeTab === 'users'">
+          <section class="editor-card">
+            <div class="section-title">
+              <div>
+                <span>حساب‌های کاربری</span>
+                <h2>{{ editingUserId === null ? 'افزودن کاربر جدید' : 'ویرایش کاربر' }}</h2>
+              </div>
+              <small>حساب‌های کاربری و سطح دسترسی آن‌ها را مدیریت کنید.</small>
+            </div>
+
+            <form (ngSubmit)="saveUserAccount()">
+              <label class="wide"
+                >نام کاربری<input
+                  dir="ltr"
+                  [(ngModel)]="userForm.username"
+                  name="userAccountUsername"
+                  placeholder="username"
+                  required
+              /></label>
+              <label class="wide"
+                >نام کامل<input
+                  [(ngModel)]="userForm.fullName"
+                  name="userAccountFullName"
+                  placeholder="نام و نام خانوادگی"
+                  required
+              /></label>
+              <label
+                >نقش
+                <select [(ngModel)]="userForm.role" name="userAccountRole">
+                  <option *ngFor="let role of userRoles" [ngValue]="role">
+                    {{ role === 'admin' ? 'مدیر' : 'کاربر' }}
+                  </option>
+                </select>
+              </label>
+              <label
+                >{{ editingUserId === null ? 'رمز عبور' : 'رمز عبور جدید' }}
+                <input
+                  dir="ltr"
+                  type="password"
+                  [(ngModel)]="userForm.password"
+                  name="userAccountPassword"
+                  [placeholder]="editingUserId === null ? 'حداقل ۶ کاراکتر' : 'در صورت نیاز به تغییر پر شود'"
+                  autocomplete="new-password"
+                />
+              </label>
+              <div class="actions wide">
+                <button type="button" class="ghost" *ngIf="editingUserId !== null" (click)="cancelUserEditing()">
+                  انصراف از ویرایش
+                </button>
+                <button type="submit" [disabled]="settingsSaving">
+                  {{
+                    settingsSaving ? 'در حال ذخیره...' : editingUserId === null ? 'ذخیره کاربر' : 'ذخیره تغییرات'
+                  }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="table-card">
+            <div class="section-title">
+              <div>
+                <span>کاربران سامانه</span>
+                <h2>فهرست حساب‌های کاربری</h2>
+              </div>
+              <small>{{ formatCount(userAccountsLoaded ? userAccounts.length : 0) }} کاربر</small>
+            </div>
+            <div class="empty" *ngIf="userAccountsLoading">در حال دریافت کاربران...</div>
+            <div class="empty" *ngIf="userAccountsLoaded && !userAccounts.length">هنوز کاربری ثبت نشده است.</div>
+            <div class="service-grid" *ngIf="userAccountsLoaded && userAccounts.length">
+              <article class="service-card" *ngFor="let user of paginatedUserAccounts">
+                <header>
+                  <span>{{ user.role === 'admin' ? 'مدیر' : 'کاربر' }}</span>
+                  <strong>{{ user.fullName }}</strong>
+                </header>
+                <small dir="ltr">{{ user.username }}</small>
+                <div class="service-badges">
+                  <b>{{ user.createdAt | jalaliDateTime }}</b>
+                </div>
+                <div class="service-actions">
+                  <button type="button" class="ghost" (click)="editUserAccount(user)">ویرایش</button>
+                  <button type="button" class="danger" (click)="deleteUserAccount(user)">حذف</button>
+                </div>
+              </article>
+            </div>
+            <div class="pagination-bar compact-pagination" *ngIf="userAccountsLoaded && userAccounts.length">
+              <div class="pagination-summary">
+                نمایش {{ formatCount(userPaginationStart) }} تا {{ formatCount(userPaginationEnd) }} از
+                {{ formatCount(userAccounts.length) }} کاربر
+              </div>
+              <label class="page-size">
+                تعداد در صفحه
+                <select [ngModel]="userPageSize" (ngModelChange)="setUserPageSize($event)">
+                  <option *ngFor="let option of userPageSizeOptions" [ngValue]="option">
+                    {{ formatCount(option) }}
+                  </option>
+                </select>
+              </label>
+              <div class="pagination-actions">
+                <button type="button" class="ghost" [disabled]="userActivePage === 1" (click)="goToUserPage(userActivePage - 1)">
+                  صفحه قبل
+                </button>
+                <span>صفحه {{ formatCount(userActivePage) }} از {{ formatCount(userTotalPages) }}</span>
+                <button
+                  type="button"
+                  class="ghost"
+                  [disabled]="userActivePage === userTotalPages"
+                  (click)="goToUserPage(userActivePage + 1)"
+                >
+                  صفحه بعد
+                </button>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+
         <section class="editor-card service-config-card" *ngIf="activeTab === 'settings'">
           <div class="section-title">
             <div>
@@ -2958,7 +3097,7 @@
               <h2>سرویس ثبت تیکت</h2>
             </div>
             <small *ngIf="ticketServiceSettings?.updatedAt">
-              آخرین تغییر: {{ ticketServiceSettings?.updatedAt | date: 'yyyy/MM/dd - HH:mm' }}
+              آخرین تغییر: {{ ticketServiceSettings?.updatedAt | jalaliDateTime }}
             </small>
           </div>
 
@@ -3074,7 +3213,7 @@
           <span>گفت‌وگوی کامل کاربر</span>
           <h2 id="conversation-detail-title">{{ conversation.userFullName }}</h2>
           <small>
-            {{ conversation.username }} · {{ conversation.createdAt | date: 'yyyy/MM/dd - HH:mm' }}
+            {{ conversation.username }} · {{ conversation.createdAt | jalaliDateTime }}
           </small>
         </div>
         <button type="button" class="close" aria-label="بستن" (click)="closeConversationDialog()">×</button>
