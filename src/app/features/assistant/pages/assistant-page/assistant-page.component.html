@@ -51,75 +51,9 @@
   </header>
 
   <main class="assistant-layout">
-    <section class="overview-strip" aria-label="مراحل رسیدگی">
-      <article>
-        <span>۰۱</span>
-        <div>
-          <strong>شرح مسئله</strong>
-          <small>علائم، سامانه و متن خطا</small>
-        </div>
-      </article>
-      <article>
-        <span>۰۲</span>
-        <div>
-          <strong>جست‌وجوی FAQ</strong>
-          <small>پاسخ‌های تاییدشده سازمان</small>
-        </div>
-      </article>
-      <article>
-        <span>۰۳</span>
-        <div>
-          <strong>تیکت سهند</strong>
-          <small>در صورت نبود پاسخ قطعی</small>
-        </div>
-      </article>
-    </section>
-
     <section class="workspace user-workspace">
       <aside class="data-panel knowledge-panel" aria-label="اطلاعات پشتیبانی">
-        <section class="panel-section operator-card">
-          <span>نشست فعال</span>
-          <strong>{{ auth.user?.fullName || 'کاربر سامانه' }}</strong>
-          <small>پاسخ‌ها براساس داده‌های ثبت‌شده در پایگاه دانش تولید می‌شوند.</small>
-          <small>کد پروژه فعال: {{ activeProjectKey }}</small>
-        </section>
-
-        <section class="panel-section knowledge-state">
-          <div class="knowledge-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 5h14v14H5zM8 9h8M8 13h5"></path>
-              <path d="m15 16 2 2 4-5"></path>
-            </svg>
-          </div>
-          <div>
-            <strong>{{ loading ? 'در حال دریافت...' : 'پایگاه دانش فعال' }}</strong>
-            <small>{{ faqs.length.toLocaleString('fa-IR') }} پرسش و پاسخ قابل جست‌وجو</small>
-          </div>
-        </section>
-
         <p class="error" *ngIf="error" role="alert">{{ error }}</p>
-
-        <section class="panel-section case-flow">
-          <div class="section-heading">
-            <strong>پرونده پشتیبانی</strong>
-            <small>اطلاعاتی که برای نتیجه دقیق‌تر لازم است</small>
-          </div>
-          <ul>
-            <li><span></span>متن خطا یا نشانه مشکل</li>
-            <li><span></span>مراحل انجام‌شده قبل از خطا</li>
-            <li><span></span>شناسه، سریال یا فایل مستند</li>
-          </ul>
-        </section>
-
-        <section class="panel-section hint">
-          <strong>پرسش دقیق‌تر</strong>
-          <p>کاری که انجام می‌دادید و متن خطا را در یک پیام بنویسید تا مسیر بررسی کوتاه‌تر شود.</p>
-        </section>
-
-        <section class="panel-section support-note">
-          <strong>بدون پاسخ قطعی</strong>
-          <p>اگر مسیر انتخاب‌شده در FAQ پاسخ قطعی نداشته باشد، تیکت سهند به صورت خودکار ثبت می‌شود.</p>
-        </section>
 
         <section
           class="panel-section external-services"
