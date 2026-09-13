@@ -1784,6 +1784,7 @@ export class AdminDashboardComponent implements OnInit {
         this.resetForm();
         this.notifications.success('FAQ اضافه شد', 'پرسش و پاسخ جدید به پایگاه دانش اضافه شد.');
         this.loadDashboardMetricLogs(true);
+        this.currentPage = 1;
         this.loadFaqs();
       },
       error: (error: unknown) => this.showError(error, 'ذخیره FAQ انجام نشد.')
