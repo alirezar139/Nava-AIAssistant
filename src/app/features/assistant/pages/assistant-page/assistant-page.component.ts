@@ -1280,29 +1280,28 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       this.changeDetector.markForCheck();
       this.scrollToLatest();
 
+      if (!reliableMatches.length) return;
       if (this.userWriteDisabled) return;
 
-      this.api
-        .logConversation(question, answer, reliableMatches.length ? (matchedFaq?.id ?? null) : null)
-        .subscribe({
-          next: (conversation) => {
-            if (!faqMessage) return;
-            faqMessage.conversationId = conversation.id;
-            if (faqMessage.rating && !faqMessage.ratingSubmitted) {
-              this.persistMessageRating(faqMessage);
-              return;
-            }
-            this.changeDetector.markForCheck();
-          },
-          error: (error: unknown) => {
-            const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
-            if (faqMessage) {
-              faqMessage.ratingMessage = 'گزارش گفت‌وگو ثبت نشد؛ امتیاز قابل ذخیره نیست.';
-            }
-            this.error = `پاسخ نمایش داده شد، اما ${this.errorMessages.formatMessage(resolved)}`;
-            this.changeDetector.markForCheck();
+      this.api.logConversation(question, answer, matchedFaq?.id ?? null).subscribe({
+        next: (conversation) => {
+          if (!faqMessage) return;
+          faqMessage.conversationId = conversation.id;
+          if (faqMessage.rating && !faqMessage.ratingSubmitted) {
+            this.persistMessageRating(faqMessage);
+            return;
           }
-        });
+          this.changeDetector.markForCheck();
+        },
+        error: (error: unknown) => {
+          const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
+          if (faqMessage) {
+            faqMessage.ratingMessage = 'گزارش گفت‌وگو ثبت نشد؛ امتیاز قابل ذخیره نیست.';
+          }
+          this.error = `پاسخ نمایش داده شد، اما ${this.errorMessages.formatMessage(resolved)}`;
+          this.changeDetector.markForCheck();
+        }
+      });
     }, 500);
   }
 
@@ -1336,6 +1335,17 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     });
     this.changeDetector.markForCheck();
     this.scrollToLatest();
+
+    if (this.userWriteDisabled) return;
+    this.api
+      .logConversation(problem, 'پاسخ قطعی در FAQ موجود پیدا نشد؛ مسیر ثبت تیکت شروع شد.', null)
+      .subscribe({
+        error: (error: unknown) => {
+          const resolved = this.errorMessages.resolve(error, 'ثبت گزارش گفت‌وگو انجام نشد.');
+          this.error = `${this.errorMessages.formatMessage(resolved)}`;
+          this.changeDetector.markForCheck();
+        }
+      });
   }
 
   acceptAutoTicket(message: ChatMessage): void {
