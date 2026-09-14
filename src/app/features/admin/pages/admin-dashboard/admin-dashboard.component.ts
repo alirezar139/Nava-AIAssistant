@@ -44,7 +44,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { ThemeService } from '../../../../core/services/theme.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
-import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { JalaliDateTimePipe } from '../../../../shared/pipes/jalali-date-time.pipe';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { FaqImportMapperService } from '../../services/faq-import-mapper.service';
@@ -146,7 +145,6 @@ interface TreeStarterTemplate {
     FormsModule,
     RouterLink,
     ThemeToggleComponent,
-    DateTimeClockComponent,
     BrandLogoComponent,
     JalaliDateTimePipe
   ],
