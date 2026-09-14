@@ -28,6 +28,7 @@ import {
 } from '../../../../core/services/troubleshooting-tree.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 
 interface ConversationSnapshot {
@@ -65,7 +66,7 @@ interface SupportProgressItem {
 @Component({
   selector: 'app-assistant-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, BrandLogoComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, DateTimeClockComponent, BrandLogoComponent],
   templateUrl: './assistant-page.component.html',
   styleUrl: './assistant-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
