@@ -28,6 +28,8 @@ export class DateTimeClockComponent implements OnInit, OnDestroy {
 
   dateLabel = '';
   timeLabel = '';
+  hourDeg = 0;
+  minuteDeg = 0;
 
   constructor(private readonly changeDetector: ChangeDetectorRef) {}
 
@@ -42,6 +44,12 @@ export class DateTimeClockComponent implements OnInit, OnDestroy {
 
   private updateNow(): void {
     const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    this.hourDeg = (hours % 12) * 30 + minutes * 0.5;
+    this.minuteDeg = minutes * 6 + seconds * 0.1;
     this.dateLabel = this.dateFormatter.format(now);
     this.timeLabel = this.timeFormatter.format(now);
     this.changeDetector.markForCheck();

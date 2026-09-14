@@ -5,8 +5,9 @@
 .date-time-clock {
   display: flex;
   align-items: center;
+  gap: 10px;
   height: 44px;
-  padding: 0 14px;
+  padding: 0 14px 0 8px;
   border: 1px solid var(--crystal-edge);
   border-radius: 14px;
   background: linear-gradient(118deg, var(--crystal-shine), transparent 38%), var(--crystal-soft);
@@ -16,6 +17,50 @@
     inset -1px -1px 0 var(--crystal-inner-edge);
   backdrop-filter: var(--crystal-blur);
   -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.clock-face {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+}
+
+.face-ring {
+  fill: color-mix(in srgb, var(--surface) 70%, transparent);
+  stroke: var(--color-link);
+  stroke-width: 5;
+}
+
+.tick {
+  stroke: var(--color-subtle);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+.tick-major {
+  stroke: var(--color-heading);
+  opacity: 0.9;
+}
+
+.hand {
+  stroke-linecap: round;
+}
+
+.hand-hour {
+  stroke: var(--color-heading);
+  stroke-width: 5;
+}
+
+.hand-minute {
+  stroke: var(--color-heading);
+  stroke-width: 3.4;
+}
+
+.pivot {
+  fill: var(--accent-600);
+  stroke: var(--surface);
+  stroke-width: 1.2;
 }
 
 .clock-copy {
