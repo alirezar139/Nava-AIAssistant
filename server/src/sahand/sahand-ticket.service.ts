@@ -1,5 +1,6 @@
 import { config } from '../config/config.js';
 import { settingsRepository } from '../database/repositories.js';
+import { logger } from '../common/logger.js';
 
 export interface SahandTicketPayload {
   title: string;
@@ -146,12 +147,14 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
     const responseBody = await response.text();
 
     if (!response.ok) {
+      const errorMessage = buildFailureMessage(response.status, response.statusText, responseBody);
+      logger.warn(`sahand ticket submission rejected: ${errorMessage}`, { status: response.status });
       return {
         status: 'failed',
         ticketId: null,
         trackingId: null,
         statusCode: response.status,
-        errorMessage: buildFailureMessage(response.status, response.statusText, responseBody)
+        errorMessage
       };
     }
 
@@ -175,17 +178,32 @@ export async function submitSahandTicket(payload: SahandTicketPayload): Promise<
   } catch (error) {
     const isTimeout =
       error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+    const causeCode =
+      error instanceof Error && error.cause instanceof Error && 'code' in error.cause
+        ? String((error.cause as { code?: unknown }).code)
+        : null;
 
+    let errorMessage: string;
+    if (isTimeout) {
+      errorMessage =
+        'سرویس سهند در زمان مقرر پاسخ نداد. ممکن است تیکت با تأخیر ثبت شده باشد؛ لطفاً از طریق سهند بررسی کنید یا دوباره تلاش کنید.';
+    } else if (causeCode === 'ENOTFOUND') {
+      errorMessage = `آدرس سرویس سهند (${ticketUrl}) شناسایی نشد. اتصال VPN/شبکه داخلی یا صحت آدرس را بررسی کنید.`;
+    } else if (causeCode === 'ECONNREFUSED' || causeCode === 'ETIMEDOUT') {
+      errorMessage = 'اتصال به سرویس سهند برقرار نشد. شبکه یا در دسترس بودن سرویس را بررسی کنید.';
+    } else if (error instanceof Error) {
+      errorMessage = compactErrorMessage(error.message);
+    } else {
+      errorMessage = 'برقراری ارتباط با سرویس سهند ممکن نشد.';
+    }
+
+    logger.warn(`sahand ticket submission failed: ${errorMessage}`, { causeCode });
     return {
       status: 'failed',
       ticketId: null,
       trackingId: null,
       statusCode: null,
-      errorMessage: isTimeout
-        ? 'سرویس سهند در زمان مقرر پاسخ نداد. ممکن است تیکت با تأخیر ثبت شده باشد؛ لطفاً از طریق سهند بررسی کنید یا دوباره تلاش کنید.'
-        : error instanceof Error
-          ? compactErrorMessage(error.message)
-          : 'برقراری ارتباط با سرویس سهند ممکن نشد.'
+      errorMessage
     };
   }
 }
