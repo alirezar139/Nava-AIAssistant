@@ -8100,8 +8100,8 @@ td b {
 /* ---------- Create panel (new-tree flow) ---------- */
 
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-create-panel {
-  display: grid !important;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1.1fr) !important;
+  display: flex !important;
+  flex-direction: column !important;
   gap: 14px !important;
 }
 
@@ -9588,3 +9588,25 @@ td b {
   }
 }
 
+/* Tree create console: stack rail/main/detail when the card is too narrow
+   for the 112px + flexible + 300-360px column layout (matches the two-pane
+   admin content width, ~600-650px, where the columns previously collapsed
+   and overlapped). */
+@media (max-width: 1200px) {
+  .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-visio-start {
+    min-height: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: 'rail' 'main' 'detail' !important;
+  }
+
+  .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-visio-rail {
+    grid-template-rows: none !important;
+    grid-template-columns: auto repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-flow: column !important;
+    align-items: center !important;
+  }
+
+  .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .tree-visio-rail strong {
+    padding: 4px 8px !important;
+  }
+}
