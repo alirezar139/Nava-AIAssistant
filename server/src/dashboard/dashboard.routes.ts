@@ -5,17 +5,17 @@ import { listSystemLogDates, readSystemLog, SystemLogLevel } from './system-log.
 
 export const dashboardRouter = Router();
 
-dashboardRouter.get('/metric-logs', requireAuth(['admin']), async (_request, response) => {
+dashboardRouter.get('/metric-logs', requireAuth(['admin', 'developer']), async (_request, response) => {
   response.setHeader('Cache-Control', 'no-store');
   response.json(await dashboardMetricRepository.list());
 });
 
-dashboardRouter.get('/system-log-dates', requireAuth(['admin']), async (_request, response) => {
+dashboardRouter.get('/system-log-dates', requireAuth(['developer']), async (_request, response) => {
   response.setHeader('Cache-Control', 'no-store');
   response.json(await listSystemLogDates());
 });
 
-dashboardRouter.get('/system-logs', requireAuth(['admin']), async (request, response) => {
+dashboardRouter.get('/system-logs', requireAuth(['developer']), async (request, response) => {
   response.setHeader('Cache-Control', 'no-store');
 
   const dateParam = request.query['date'];

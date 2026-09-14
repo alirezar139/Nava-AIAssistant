@@ -9505,14 +9505,28 @@ td b {
   color: var(--primary-800);
 }
 
+.user-summary-chip.role-developer strong {
+  color: var(--color-link);
+}
+
 .user-avatar.role-admin {
   background: linear-gradient(135deg, var(--accent-600), color-mix(in srgb, var(--accent-600) 65%, black)) !important;
+}
+
+.user-avatar.role-developer {
+  background: linear-gradient(135deg, var(--color-link), color-mix(in srgb, var(--color-link) 65%, black)) !important;
 }
 
 .role-badge.role-admin {
   color: var(--accent-600) !important;
   background: color-mix(in srgb, var(--accent-600) 14%, var(--surface)) !important;
   border-color: color-mix(in srgb, var(--accent-600) 24%, transparent) !important;
+}
+
+.role-badge.role-developer {
+  color: var(--color-link) !important;
+  background: color-mix(in srgb, var(--color-link) 14%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--color-link) 24%, transparent) !important;
 }
 
 .self-badge {

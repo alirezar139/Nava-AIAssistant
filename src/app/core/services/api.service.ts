@@ -77,7 +77,7 @@ export interface ExternalServiceExecutionResult {
   errorMessage?: string;
 }
 
-export type UserAccountRole = 'admin' | 'user';
+export type UserAccountRole = 'admin' | 'user' | 'developer';
 
 export interface UserAccountRecord {
   id: number;

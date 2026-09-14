@@ -238,7 +238,7 @@ async function executeService(
   }
 }
 
-serviceCatalogRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+serviceCatalogRouter.get('/', requireAuth(['admin', 'developer']), async (_request, response) => {
   response.json(await getServices());
 });
 
@@ -250,7 +250,7 @@ serviceCatalogRouter.get('/active', requireAuth(), async (_request, response) =>
   );
 });
 
-serviceCatalogRouter.post('/test', requireAuth(['admin']), async (request: AuthRequest, response) => {
+serviceCatalogRouter.post('/test', requireAuth(['admin', 'developer']), async (request: AuthRequest, response) => {
   const result = serviceRequestSchema.safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'SERVICE_REQUEST_INVALID', 'اطلاعات درخواست سرویس معتبر نیست.');
@@ -260,7 +260,7 @@ serviceCatalogRouter.post('/test', requireAuth(['admin']), async (request: AuthR
   response.json(await executeService(toDraftService(result.data), request));
 });
 
-serviceCatalogRouter.post('/', requireAuth(['admin']), async (request, response) => {
+serviceCatalogRouter.post('/', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = servicePayloadSchema.safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'SERVICE_INVALID', 'اطلاعات سرویس معتبر نیست.');
@@ -276,7 +276,7 @@ serviceCatalogRouter.post('/', requireAuth(['admin']), async (request, response)
   response.status(201).json(record);
 });
 
-serviceCatalogRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
+serviceCatalogRouter.put('/:id', requireAuth(['admin', 'developer']), async (request, response) => {
   const id = Number(request.params['id']);
   const existing = await externalServiceRepository.findById(id);
   if (!existing) {
@@ -299,7 +299,7 @@ serviceCatalogRouter.put('/:id', requireAuth(['admin']), async (request, respons
   response.json(await externalServiceRepository.update(id, updated));
 });
 
-serviceCatalogRouter.delete('/:id', requireAuth(['admin']), async (request, response) => {
+serviceCatalogRouter.delete('/:id', requireAuth(['admin', 'developer']), async (request, response) => {
   const id = Number(request.params['id']);
   const deleted = await externalServiceRepository.delete(id);
   if (!deleted) {
@@ -310,7 +310,7 @@ serviceCatalogRouter.delete('/:id', requireAuth(['admin']), async (request, resp
   response.status(204).send();
 });
 
-serviceCatalogRouter.post('/:id/test', requireAuth(['admin']), async (request: AuthRequest, response) => {
+serviceCatalogRouter.post('/:id/test', requireAuth(['admin', 'developer']), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
   const service = await externalServiceRepository.findById(id);
   if (!service) {

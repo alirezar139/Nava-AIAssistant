@@ -54,7 +54,7 @@ function buildTicketPayloadFromCase(
   };
 }
 
-diagnosticRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+diagnosticRouter.get('/', requireAuth(['admin', 'developer']), async (_request, response) => {
   response.json(await diagnosticRepository.listWithUsers());
 });
 

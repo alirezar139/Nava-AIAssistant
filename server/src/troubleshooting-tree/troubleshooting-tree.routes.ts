@@ -58,7 +58,7 @@ troubleshootingTreeRouter.get('/', async (request, response) => {
   }
 });
 
-troubleshootingTreeRouter.put('/', requireAuth(['admin']), async (request, response) => {
+troubleshootingTreeRouter.put('/', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = troubleshootingTreeSchema.safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'INVALID_TROUBLESHOOTING_TREE', 'ساختار درختواره معتبر نیست.');

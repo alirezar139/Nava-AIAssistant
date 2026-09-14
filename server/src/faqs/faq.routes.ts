@@ -42,7 +42,7 @@ faqRouter.get('/', requireAuth(), async (request, response) => {
   response.json(await faqRepository.list());
 });
 
-faqRouter.post('/', requireAuth(['admin']), async (request, response) => {
+faqRouter.post('/', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = faqSchema.safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'FAQ_INVALID', 'سؤال و پاسخ معتبر وارد کنید.');
@@ -52,7 +52,7 @@ faqRouter.post('/', requireAuth(['admin']), async (request, response) => {
   response.status(201).json(faq);
 });
 
-faqRouter.post('/import', requireAuth(['admin']), async (request, response) => {
+faqRouter.post('/import', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = z.array(faqSchema).min(1).safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'FAQ_IMPORT_INVALID', 'ساختار اطلاعات FAQ معتبر نیست.');
@@ -62,7 +62,7 @@ faqRouter.post('/import', requireAuth(['admin']), async (request, response) => {
   response.json({ count });
 });
 
-faqRouter.post('/bulk-delete', requireAuth(['admin']), async (request, response) => {
+faqRouter.post('/bulk-delete', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = z.object({ ids: z.array(z.number().int().positive()).min(1) }).safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'FAQ_BULK_DELETE_INVALID', 'شناسه‌های FAQ برای حذف معتبر نیستند.');
@@ -73,7 +73,7 @@ faqRouter.post('/bulk-delete', requireAuth(['admin']), async (request, response)
   response.json({ count });
 });
 
-faqRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
+faqRouter.put('/:id', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = faqSchema.safeParse(request.body);
   const id = Number(request.params['id']);
   if (!(await faqRepository.exists(id))) {
@@ -88,7 +88,7 @@ faqRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
   response.json(faq);
 });
 
-faqRouter.delete('/:id', requireAuth(['admin']), async (request, response) => {
+faqRouter.delete('/:id', requireAuth(['admin', 'developer']), async (request, response) => {
   const deleted = await faqRepository.delete(Number(request.params['id']));
   if (!deleted) {
     sendError(response, 404, 'FAQ_NOT_FOUND', 'FAQ موردنظر پیدا نشد.');

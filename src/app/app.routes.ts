@@ -12,7 +12,7 @@ export const appRoutes: Routes = [
     path: 'assistant',
     title: 'دستیار نوا',
     canActivate: [authGuard],
-    data: { role: 'user' },
+    data: { roles: ['user'] },
     loadComponent: () =>
       import('./features/assistant/pages/assistant-page/assistant-page.component').then(
         (component) => component.AssistantPageComponent
@@ -22,7 +22,7 @@ export const appRoutes: Routes = [
     path: 'admin',
     title: 'مدیریت نوا',
     canActivate: [authGuard],
-    data: { role: 'admin' },
+    data: { roles: ['admin', 'developer'] },
     loadComponent: () =>
       import('./features/admin/pages/admin-dashboard/admin-dashboard.component').then(
         (component) => component.AdminDashboardComponent

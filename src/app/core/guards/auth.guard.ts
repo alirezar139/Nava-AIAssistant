@@ -3,15 +3,19 @@ import { CanActivateFn, Router } from '@angular/router';
 import { UserRole } from '../models/auth.models';
 import { AuthService } from '../services/auth.service';
 
+function homeRouteFor(role: UserRole): string {
+  return role === 'admin' || role === 'developer' ? '/admin' : '/assistant';
+}
+
 export const authGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  const expectedRole = route.data['role'] as UserRole | undefined;
+  const allowedRoles = route.data['roles'] as UserRole[] | undefined;
   const user = auth.user;
 
   if (!user) return router.createUrlTree(['/login']);
-  if (expectedRole && user.role !== expectedRole) {
-    return router.createUrlTree([user.role === 'admin' ? '/admin' : '/assistant']);
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return router.createUrlTree([homeRouteFor(user.role)]);
   }
   return true;
 };

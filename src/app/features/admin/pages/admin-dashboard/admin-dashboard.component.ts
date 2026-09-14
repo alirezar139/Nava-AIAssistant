@@ -240,7 +240,7 @@ export class AdminDashboardComponent implements OnInit {
   userCurrentPage = 1;
   userPageSize = 8;
   readonly userPageSizeOptions = [8, 16, 24, 48];
-  readonly userRoles: UserAccountRole[] = ['admin', 'user'];
+  readonly userRoles: UserAccountRole[] = ['admin', 'developer', 'user'];
   userSearchTerm = '';
   userRoleFilter: UserAccountRole | '' = '';
   systemLogDate = '';
@@ -1416,8 +1416,12 @@ export class AdminDashboardComponent implements OnInit {
     return this.userAccounts.filter((user) => user.role === 'admin').length;
   }
 
+  get developerAccountCount(): number {
+    return this.userAccounts.filter((user) => user.role === 'developer').length;
+  }
+
   get regularAccountCount(): number {
-    return this.userAccounts.length - this.adminAccountCount;
+    return this.userAccounts.length - this.adminAccountCount - this.developerAccountCount;
   }
 
   get currentUserId(): number | undefined {
@@ -1427,6 +1431,12 @@ export class AdminDashboardComponent implements OnInit {
   userInitials(fullName: string): string {
     const trimmed = fullName.trim();
     return trimmed ? trimmed[0].toLocaleUpperCase('fa') : '?';
+  }
+
+  roleLabel(role: UserAccountRole): string {
+    if (role === 'admin') return 'مدیر';
+    if (role === 'developer') return 'برنامه‌نویس';
+    return 'کاربر';
   }
 
   get totalPages(): number {

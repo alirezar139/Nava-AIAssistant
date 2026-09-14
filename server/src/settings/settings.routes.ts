@@ -31,7 +31,7 @@ async function getStoredTicketServiceSettings(): Promise<TicketServiceSettingsRe
   return settingsRepository.getTicketServiceSettings();
 }
 
-settingsRouter.get('/ticket-service', requireAuth(['admin']), async (_request, response) => {
+settingsRouter.get('/ticket-service', requireAuth(['admin', 'developer']), async (_request, response) => {
   const stored = await getStoredTicketServiceSettings();
 
   response.json({
@@ -46,7 +46,7 @@ settingsRouter.get('/ticket-service', requireAuth(['admin']), async (_request, r
   });
 });
 
-settingsRouter.put('/ticket-service', requireAuth(['admin']), async (request, response) => {
+settingsRouter.put('/ticket-service', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = ticketServiceSettingsSchema.safeParse(request.body);
 
   if (!result.success) {

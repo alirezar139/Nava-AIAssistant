@@ -3,10 +3,15 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { UserRole } from '../../../../core/models/auth.models';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ErrorMessageService } from '../../../../core/services/error-message.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
+
+function homeRouteFor(role: UserRole): string {
+  return role === 'admin' || role === 'developer' ? '/admin' : '/assistant';
+}
 
 @Component({
   selector: 'app-login',
@@ -35,7 +40,7 @@ export class LoginComponent {
   ) {
     this.refreshCaptcha();
     const user = this.auth.user;
-    if (user) void this.router.navigateByUrl(user.role === 'admin' ? '/admin' : '/assistant');
+    if (user) void this.router.navigateByUrl(homeRouteFor(user.role));
   }
 
   login(): void {
@@ -54,7 +59,7 @@ export class LoginComponent {
         })
       )
       .subscribe({
-        next: ({ user }) => void this.router.navigateByUrl(user.role === 'admin' ? '/admin' : '/assistant'),
+        next: ({ user }) => void this.router.navigateByUrl(homeRouteFor(user.role)),
         error: (error: HttpErrorResponse) => {
           const resolved = this.errorMessages.resolve(error, 'ورود به سامانه انجام نشد.');
           this.error = this.errorMessages.formatMessage(resolved);

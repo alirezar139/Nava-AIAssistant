@@ -9,7 +9,7 @@ import { userRepository } from '../database/repositories.js';
 
 export const usersRouter = Router();
 
-const userRoles = ['admin', 'user'] as const;
+const userRoles = ['admin', 'user', 'developer'] as const;
 
 const createUserSchema = z.object({
   username: z
@@ -45,12 +45,12 @@ function toPublicUser(user: UserRecord): Omit<UserRecord, 'passwordHash'> {
   };
 }
 
-usersRouter.get('/', requireAuth(['admin']), async (_request, response) => {
+usersRouter.get('/', requireAuth(['admin', 'developer']), async (_request, response) => {
   const users = await userRepository.list();
   response.json(users.map(toPublicUser));
 });
 
-usersRouter.post('/', requireAuth(['admin']), async (request, response) => {
+usersRouter.post('/', requireAuth(['admin', 'developer']), async (request, response) => {
   const result = createUserSchema.safeParse(request.body);
   if (!result.success) {
     sendError(response, 400, 'USER_INVALID', 'اطلاعات حساب کاربری معتبر نیست.');
@@ -71,7 +71,7 @@ usersRouter.post('/', requireAuth(['admin']), async (request, response) => {
   response.status(201).json(toPublicUser(created));
 });
 
-usersRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
+usersRouter.put('/:id', requireAuth(['admin', 'developer']), async (request, response) => {
   const id = Number(request.params['id']);
   const existing = await userRepository.findById(id);
   if (!existing) {
@@ -99,7 +99,7 @@ usersRouter.put('/:id', requireAuth(['admin']), async (request, response) => {
   response.json(toPublicUser(updated!));
 });
 
-usersRouter.delete('/:id', requireAuth(['admin']), async (request: AuthRequest, response) => {
+usersRouter.delete('/:id', requireAuth(['admin', 'developer']), async (request: AuthRequest, response) => {
   const id = Number(request.params['id']);
   if (request.user?.id === id) {
     sendError(response, 400, 'CANNOT_DELETE_SELF', 'نمی‌توانید حساب کاربری خودتان را حذف کنید.');

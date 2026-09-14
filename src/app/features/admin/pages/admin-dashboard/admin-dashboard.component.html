@@ -24,7 +24,7 @@
         </div>
         <div>
           <b>{{ auth.user?.fullName }}</b
-          ><small>مدیر سامانه</small>
+          ><small>{{ auth.user?.role === 'developer' ? 'برنامه‌نویس سامانه' : 'مدیر سامانه' }}</small>
         </div>
         <button type="button" (click)="logout()">خروج</button>
       </div>
@@ -290,6 +290,7 @@
           <button
             type="button"
             role="tab"
+            *ngIf="auth.user?.role === 'developer'"
             [attr.aria-selected]="activeTab === 'logs'"
             title="گزارش لاگ سامانه"
             aria-label="گزارش لاگ سامانه"
@@ -3026,7 +3027,7 @@
                 >نقش
                 <select [(ngModel)]="userForm.role" name="userAccountRole">
                   <option *ngFor="let role of userRoles" [ngValue]="role">
-                    {{ role === 'admin' ? 'مدیر' : 'کاربر' }}
+                    {{ roleLabel(role) }}
                   </option>
                 </select>
               </label>
@@ -3062,6 +3063,10 @@
             <article class="user-summary-chip role-admin">
               <span>مدیران</span>
               <strong>{{ formatCount(adminAccountCount) }}</strong>
+            </article>
+            <article class="user-summary-chip role-developer">
+              <span>برنامه‌نویسان</span>
+              <strong>{{ formatCount(developerAccountCount) }}</strong>
             </article>
             <article class="user-summary-chip role-user">
               <span>کاربران عادی</span>
@@ -3103,7 +3108,7 @@
                 <select [(ngModel)]="userRoleFilter" name="userRoleFilter" (ngModelChange)="onUserFiltersChanged()">
                   <option [ngValue]="''">همه نقش‌ها</option>
                   <option *ngFor="let role of userRoles" [ngValue]="role">
-                    {{ role === 'admin' ? 'مدیر' : 'کاربر' }}
+                    {{ roleLabel(role) }}
                   </option>
                 </select>
               </label>
@@ -3118,13 +3123,22 @@
             <div class="service-grid" *ngIf="filteredUserAccounts.length">
               <article class="service-card" *ngFor="let user of paginatedUserAccounts">
                 <header>
-                  <span class="user-avatar" [class.role-admin]="user.role === 'admin'">{{ userInitials(user.fullName) }}</span>
+                  <span
+                    class="user-avatar"
+                    [class.role-admin]="user.role === 'admin'"
+                    [class.role-developer]="user.role === 'developer'"
+                    >{{ userInitials(user.fullName) }}</span
+                  >
                   <strong>{{ user.fullName }}</strong>
                 </header>
                 <small dir="ltr">{{ user.username }}</small>
                 <div class="service-badges">
-                  <b class="role-badge" [class.role-admin]="user.role === 'admin'">
-                    {{ user.role === 'admin' ? 'مدیر' : 'کاربر' }}
+                  <b
+                    class="role-badge"
+                    [class.role-admin]="user.role === 'admin'"
+                    [class.role-developer]="user.role === 'developer'"
+                  >
+                    {{ roleLabel(user.role) }}
                   </b>
                   <b class="self-badge" *ngIf="user.id === currentUserId">حساب شما</b>
                   <b>عضویت: {{ user.createdAt | jalaliDateTime }}</b>
@@ -3174,7 +3188,7 @@
           </section>
         </ng-container>
 
-        <section class="table-card" *ngIf="activeTab === 'logs'">
+        <section class="table-card" *ngIf="activeTab === 'logs' && auth.user?.role === 'developer'">
           <div class="section-title">
             <div>
               <span>گزارش لاگ</span>

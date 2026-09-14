@@ -17,7 +17,7 @@ const conversationListQuerySchema = z.object({
   search: z.string().trim().optional()
 });
 
-conversationRouter.get('/', requireAuth(['admin']), async (request, response) => {
+conversationRouter.get('/', requireAuth(['admin', 'developer']), async (request, response) => {
   const query = conversationListQuerySchema.safeParse(request.query);
   if (!query.success) {
     sendError(response, 400, 'CONVERSATION_QUERY_INVALID', 'پارامترهای صفحه‌بندی گزارش‌ها معتبر نیستند.');
