@@ -9493,3 +9493,63 @@ td b {
   font-weight: 700;
 }
 
+/* System log report: filterable list of backend request/error log lines. */
+.system-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.system-log-list li {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: start;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 0.78rem;
+}
+
+.system-log-list .log-time {
+  color: var(--color-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.system-log-list .log-level {
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--primary-800);
+}
+
+.system-log-list .log-text {
+  color: var(--color-heading);
+  word-break: break-word;
+}
+
+.system-log-list li.level-warn .log-level {
+  color: var(--accent-600);
+}
+
+.system-log-list li.level-error {
+  border-color: color-mix(in srgb, var(--danger) 36%, var(--border));
+  background: color-mix(in srgb, var(--danger) 6%, var(--surface));
+}
+
+.system-log-list li.level-error .log-level {
+  color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .system-log-list li {
+    grid-template-columns: 1fr;
+  }
+}
+

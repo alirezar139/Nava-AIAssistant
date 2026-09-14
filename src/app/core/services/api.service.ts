@@ -150,6 +150,26 @@ export interface DashboardMetricLogRecord {
   updatedAt: string;
 }
 
+export type SystemLogLevel = 'info' | 'warn' | 'error';
+
+export interface SystemLogEntry {
+  timestamp: string;
+  level: SystemLogLevel;
+  text: string;
+}
+
+export interface SystemLogResponse {
+  date: string;
+  entries: SystemLogEntry[];
+}
+
+export interface SystemLogQuery {
+  date?: string;
+  level?: SystemLogLevel;
+  search?: string;
+  limit?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
@@ -162,6 +182,16 @@ export class ApiService {
 
   getDashboardMetricLogs(): Observable<DashboardMetricLogRecord[]> {
     return this.http.get<DashboardMetricLogRecord[]>(`${this.apiUrl}/dashboard/metric-logs`);
+  }
+
+  getSystemLogDates(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/dashboard/system-log-dates`);
+  }
+
+  getSystemLogs(query: SystemLogQuery): Observable<SystemLogResponse> {
+    return this.http.get<SystemLogResponse>(
+      `${this.apiUrl}/dashboard/system-logs${this.toQueryString(query)}`
+    );
   }
 
   getFaqPage(query: PaginationQuery): Observable<PaginatedFaqResponse> {

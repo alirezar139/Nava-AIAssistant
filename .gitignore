@@ -12,6 +12,7 @@ server/node_modules/
 server/dist/
 server/data/
 server/src/generated/
+server/logs/
 server/.env
 server/.env.local
 server/.env.*.local

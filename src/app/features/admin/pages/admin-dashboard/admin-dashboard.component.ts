@@ -28,6 +28,8 @@ import {
   ExternalServiceRequestPayload,
   ExternalServiceRecord,
   FaqPayload,
+  SystemLogEntry,
+  SystemLogLevel,
   TicketRequestTypeMapping,
   TicketServiceSettings,
   TicketServiceSettingsPayload,
@@ -56,7 +58,7 @@ type PendingConfirmation =
   | { type: 'bulk-delete'; ids: number[] }
   | { type: 'import'; payload: FaqPayload[] };
 
-type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services' | 'users';
+type AdminTab = 'faqs' | 'reports' | 'performance' | 'tree' | 'settings' | 'services' | 'users' | 'logs';
 type TreeManagementView = 'overview' | 'create' | 'files' | 'editor' | 'versions';
 type TreeExportFormat = 'json' | 'csv' | 'mermaid' | 'vsdx';
 type TreeWorkspaceMode = 'demo' | 'final';
@@ -166,6 +168,8 @@ export class AdminDashboardComponent implements OnInit {
   diagnosticCases: DiagnosticCaseRecord[] = [];
   externalServices: ExternalServiceRecord[] = [];
   userAccounts: UserAccountRecord[] = [];
+  systemLogEntries: SystemLogEntry[] = [];
+  systemLogDates: string[] = [];
   dashboardMetricLogs: DashboardMetricLogRecord[] = [];
   dashboardMetricLogMap = new Map<DashboardMetricLogRecord['key'], DashboardMetricLogRecord>();
   troubleshootingTree: TroubleshootingTree | null = null;
@@ -211,6 +215,8 @@ export class AdminDashboardComponent implements OnInit {
   externalServicesLoading = false;
   userAccountsLoaded = false;
   userAccountsLoading = false;
+  systemLogsLoaded = false;
+  systemLogsLoading = false;
   dashboardMetricsLoaded = false;
   dashboardMetricsLoading = false;
   ticketServiceSettingsLoaded = false;
@@ -237,6 +243,10 @@ export class AdminDashboardComponent implements OnInit {
   readonly userRoles: UserAccountRole[] = ['admin', 'user'];
   userSearchTerm = '';
   userRoleFilter: UserAccountRole | '' = '';
+  systemLogDate = '';
+  systemLogLevelFilter: SystemLogLevel | '' = '';
+  systemLogSearchTerm = '';
+  readonly systemLogLevels: SystemLogLevel[] = ['error', 'warn', 'info'];
   readonly serviceMethods: ExternalServiceMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   readonly serviceBodyPlaceholder = '{ "username": "{{username}}", "fullName": "{{fullName}}" }';
   readonly treeAcceptedFormats =
@@ -1644,6 +1654,10 @@ export class AdminDashboardComponent implements OnInit {
     }
     if (this.activeTab === 'users') {
       this.loadUserAccounts(force);
+      return;
+    }
+    if (this.activeTab === 'logs') {
+      this.loadSystemLogs(force);
     }
   }
 
@@ -4088,6 +4102,50 @@ export class AdminDashboardComponent implements OnInit {
         this.showError(error, 'به‌روزرسانی فهرست کاربران انجام نشد.');
       }
     });
+  }
+
+  private loadSystemLogs(force = false): void {
+    if (this.systemLogsLoading || (this.systemLogsLoaded && !force)) return;
+    this.systemLogsLoading = true;
+    this.api.getSystemLogDates().subscribe({
+      next: (dates) => {
+        this.systemLogDates = dates;
+        if (!this.systemLogDate && dates.length) {
+          this.systemLogDate = dates[0];
+        }
+        this.changeDetector.markForCheck();
+      },
+      error: () => {
+        // The date list is a convenience filter; the log fetch below still works without it.
+      }
+    });
+    this.api
+      .getSystemLogs({
+        date: this.systemLogDate || undefined,
+        level: this.systemLogLevelFilter || undefined,
+        search: this.systemLogSearchTerm.trim() || undefined
+      })
+      .subscribe({
+        next: (result) => {
+          this.systemLogEntries = result.entries;
+          this.systemLogDate = result.date;
+          this.systemLogsLoaded = true;
+          this.systemLogsLoading = false;
+          this.changeDetector.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.systemLogsLoading = false;
+          this.showError(error, 'دریافت گزارش لاگ انجام نشد.');
+        }
+      });
+  }
+
+  refreshSystemLogs(): void {
+    this.loadSystemLogs(true);
+  }
+
+  onSystemLogFiltersChanged(): void {
+    this.loadSystemLogs(true);
   }
 
   private loadExternalServices(force = false): void {

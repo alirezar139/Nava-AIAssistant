@@ -287,6 +287,27 @@
             </span>
             <em>{{ formatCount(userAccounts.length) }}</em>
           </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="activeTab === 'logs'"
+            title="گزارش لاگ سامانه"
+            aria-label="گزارش لاگ سامانه"
+            [class.active]="activeTab === 'logs'"
+            (click)="setActiveTab('logs')"
+          >
+            <span class="menu-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"></path>
+                <path d="M14 3v5h5"></path>
+                <path d="M8.5 13h7M8.5 16.5h7M8.5 9.5h3"></path>
+              </svg>
+            </span>
+            <span class="menu-copy">
+              <b>گزارش لاگ</b>
+              <small>رویدادها و خطاهای بک‌اند</small>
+            </span>
+          </button>
         </nav>
         <div
           class="admin-menu-footer"
@@ -3152,6 +3173,79 @@
             </div>
           </section>
         </ng-container>
+
+        <section class="table-card" *ngIf="activeTab === 'logs'">
+          <div class="section-title">
+            <div>
+              <span>گزارش لاگ</span>
+              <h2>رویدادها و خطاهای بک‌اند</h2>
+            </div>
+            <small>{{ formatCount(systemLogEntries.length) }} خط</small>
+          </div>
+
+          <div class="table-tools">
+            <label>
+              <span>تاریخ</span>
+              <select
+                [(ngModel)]="systemLogDate"
+                name="systemLogDate"
+                (ngModelChange)="onSystemLogFiltersChanged()"
+              >
+                <option *ngFor="let date of systemLogDates" [ngValue]="date">{{ date }}</option>
+              </select>
+            </label>
+            <label>
+              <span>سطح</span>
+              <select
+                [(ngModel)]="systemLogLevelFilter"
+                name="systemLogLevelFilter"
+                (ngModelChange)="onSystemLogFiltersChanged()"
+              >
+                <option [ngValue]="''">همه سطوح</option>
+                <option *ngFor="let level of systemLogLevels" [ngValue]="level">
+                  {{ level === 'error' ? 'خطا' : level === 'warn' ? 'هشدار' : 'اطلاعات' }}
+                </option>
+              </select>
+            </label>
+            <label>
+              <span>جست‌وجو در متن پیام</span>
+              <div class="search-field">
+                <input
+                  [(ngModel)]="systemLogSearchTerm"
+                  name="systemLogSearchTerm"
+                  (keyup.enter)="onSystemLogFiltersChanged()"
+                  placeholder="متن پیام... (Enter برای جست‌وجو)"
+                />
+                <button
+                  type="button"
+                  *ngIf="systemLogSearchTerm"
+                  (click)="systemLogSearchTerm = ''; onSystemLogFiltersChanged()"
+                  aria-label="پاک‌کردن جست‌وجو"
+                >
+                  ×
+                </button>
+              </div>
+            </label>
+            <button type="button" class="ghost" (click)="refreshSystemLogs()" [disabled]="systemLogsLoading">
+              {{ systemLogsLoading ? 'در حال بروزرسانی...' : 'بروزرسانی' }}
+            </button>
+          </div>
+
+          <div class="empty" *ngIf="systemLogsLoading && !systemLogEntries.length">در حال دریافت لاگ...</div>
+          <div class="empty" *ngIf="!systemLogsLoading && systemLogsLoaded && !systemLogEntries.length">
+            رویدادی با این فیلتر یافت نشد.
+          </div>
+
+          <ul class="system-log-list" *ngIf="systemLogEntries.length">
+            <li *ngFor="let entry of systemLogEntries" [class]="'level-' + entry.level">
+              <span class="log-time" dir="ltr">{{ entry.timestamp }}</span>
+              <span class="log-level">{{
+                entry.level === 'error' ? 'خطا' : entry.level === 'warn' ? 'هشدار' : 'اطلاعات'
+              }}</span>
+              <span class="log-text" dir="ltr">{{ entry.text }}</span>
+            </li>
+          </ul>
+        </section>
 
         <section class="editor-card service-config-card" *ngIf="activeTab === 'settings'">
           <div class="section-title">

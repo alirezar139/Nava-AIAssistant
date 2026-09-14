@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../auth/auth.middleware.js';
 import { sendError } from '../common/api-error.js';
+import { logger } from '../common/logger.js';
 import { getTroubleshootingTree, saveTroubleshootingTree } from './troubleshooting-tree.repository.js';
 
 export const troubleshootingTreeRouter = Router();
@@ -52,7 +53,7 @@ troubleshootingTreeRouter.get('/', async (request, response) => {
     response.setHeader('Cache-Control', mode === 'active' ? 'private, max-age=60' : 'no-store');
     response.json(await getTroubleshootingTree(projectKeyFromRequest(request), mode));
   } catch (error) {
-    console.error(error);
+    logger.error('troubleshooting tree load failed', error);
     sendError(response, 500, 'TROUBLESHOOTING_TREE_LOAD_FAILED', 'درختواره راهبری قابل دریافت نیست.');
   }
 });
@@ -81,7 +82,7 @@ troubleshootingTreeRouter.put('/', requireAuth(['admin']), async (request, respo
       await saveTroubleshootingTree(result.data, projectKeyFromRequest(request), treeModeFromRequest(request))
     );
   } catch (error) {
-    console.error(error);
+    logger.error('troubleshooting tree save failed', error);
     sendError(response, 500, 'TROUBLESHOOTING_TREE_SAVE_FAILED', 'ذخیره درختواره انجام نشد.');
   }
 });
