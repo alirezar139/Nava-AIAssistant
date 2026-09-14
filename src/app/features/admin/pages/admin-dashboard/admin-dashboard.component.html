@@ -82,7 +82,7 @@
           </svg>
         </div>
         <div class="stat-copy">
-          <span>کاربران درگیر</span>
+          <span>کاربران فعال</span>
           <small>کاربر دارای درخواست</small>
         </div>
         <strong>{{ formatCount(loggedUniqueUserCount) }}</strong>
@@ -3033,36 +3033,99 @@
             </form>
           </section>
 
+          <section class="user-summary-row" *ngIf="userAccountsLoaded && userAccounts.length">
+            <article class="user-summary-chip">
+              <span>کل کاربران</span>
+              <strong>{{ formatCount(userAccounts.length) }}</strong>
+            </article>
+            <article class="user-summary-chip role-admin">
+              <span>مدیران</span>
+              <strong>{{ formatCount(adminAccountCount) }}</strong>
+            </article>
+            <article class="user-summary-chip role-user">
+              <span>کاربران عادی</span>
+              <strong>{{ formatCount(regularAccountCount) }}</strong>
+            </article>
+          </section>
+
           <section class="table-card">
             <div class="section-title">
               <div>
                 <span>کاربران سامانه</span>
                 <h2>فهرست حساب‌های کاربری</h2>
               </div>
-              <small>{{ formatCount(userAccountsLoaded ? userAccounts.length : 0) }} کاربر</small>
+              <small>{{ formatCount(userAccountsLoaded ? filteredUserAccounts.length : 0) }} کاربر</small>
             </div>
+
+            <div class="table-tools" *ngIf="userAccountsLoaded && userAccounts.length">
+              <label>
+                <span>جست‌وجو در کاربران</span>
+                <div class="search-field">
+                  <input
+                    [(ngModel)]="userSearchTerm"
+                    name="userSearchTerm"
+                    (ngModelChange)="onUserFiltersChanged()"
+                    placeholder="نام یا نام کاربری..."
+                  />
+                  <button
+                    type="button"
+                    *ngIf="userSearchTerm"
+                    (click)="clearUserSearch()"
+                    aria-label="پاک‌کردن جست‌وجو"
+                  >
+                    ×
+                  </button>
+                </div>
+              </label>
+              <label>
+                <span>نقش</span>
+                <select [(ngModel)]="userRoleFilter" name="userRoleFilter" (ngModelChange)="onUserFiltersChanged()">
+                  <option [ngValue]="''">همه نقش‌ها</option>
+                  <option *ngFor="let role of userRoles" [ngValue]="role">
+                    {{ role === 'admin' ? 'مدیر' : 'کاربر' }}
+                  </option>
+                </select>
+              </label>
+              <span class="result-count">{{ formatCount(filteredUserAccounts.length) }} نتیجه</span>
+            </div>
+
             <div class="empty" *ngIf="userAccountsLoading">در حال دریافت کاربران...</div>
             <div class="empty" *ngIf="userAccountsLoaded && !userAccounts.length">هنوز کاربری ثبت نشده است.</div>
-            <div class="service-grid" *ngIf="userAccountsLoaded && userAccounts.length">
+            <div class="empty" *ngIf="userAccountsLoaded && userAccounts.length && !filteredUserAccounts.length">
+              هیچ کاربری با این جست‌وجو یا فیلتر پیدا نشد.
+            </div>
+            <div class="service-grid" *ngIf="filteredUserAccounts.length">
               <article class="service-card" *ngFor="let user of paginatedUserAccounts">
                 <header>
-                  <span>{{ user.role === 'admin' ? 'مدیر' : 'کاربر' }}</span>
+                  <span class="user-avatar" [class.role-admin]="user.role === 'admin'">{{ userInitials(user.fullName) }}</span>
                   <strong>{{ user.fullName }}</strong>
                 </header>
                 <small dir="ltr">{{ user.username }}</small>
                 <div class="service-badges">
-                  <b>{{ user.createdAt | jalaliDateTime }}</b>
+                  <b class="role-badge" [class.role-admin]="user.role === 'admin'">
+                    {{ user.role === 'admin' ? 'مدیر' : 'کاربر' }}
+                  </b>
+                  <b class="self-badge" *ngIf="user.id === currentUserId">حساب شما</b>
+                  <b>عضویت: {{ user.createdAt | jalaliDateTime }}</b>
                 </div>
                 <div class="service-actions">
                   <button type="button" class="ghost" (click)="editUserAccount(user)">ویرایش</button>
-                  <button type="button" class="danger" (click)="deleteUserAccount(user)">حذف</button>
+                  <button
+                    type="button"
+                    class="danger"
+                    *ngIf="user.id !== currentUserId"
+                    (click)="deleteUserAccount(user)"
+                  >
+                    حذف
+                  </button>
+                  <span class="self-hint" *ngIf="user.id === currentUserId">حذف حساب خودتان ممکن نیست</span>
                 </div>
               </article>
             </div>
-            <div class="pagination-bar compact-pagination" *ngIf="userAccountsLoaded && userAccounts.length">
+            <div class="pagination-bar compact-pagination" *ngIf="filteredUserAccounts.length">
               <div class="pagination-summary">
                 نمایش {{ formatCount(userPaginationStart) }} تا {{ formatCount(userPaginationEnd) }} از
-                {{ formatCount(userAccounts.length) }} کاربر
+                {{ formatCount(filteredUserAccounts.length) }} کاربر
               </div>
               <label class="page-size">
                 تعداد در صفحه

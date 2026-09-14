@@ -235,6 +235,8 @@ export class AdminDashboardComponent implements OnInit {
   userPageSize = 8;
   readonly userPageSizeOptions = [8, 16, 24, 48];
   readonly userRoles: UserAccountRole[] = ['admin', 'user'];
+  userSearchTerm = '';
+  userRoleFilter: UserAccountRole | '' = '';
   readonly serviceMethods: ExternalServiceMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   readonly serviceBodyPlaceholder = '{ "username": "{{username}}", "fullName": "{{fullName}}" }';
   readonly treeAcceptedFormats =
@@ -1166,7 +1168,7 @@ export class AdminDashboardComponent implements OnInit {
       {
         label: 'کل گفت‌وگوها',
         value: this.formatCount(this.loggedConversationCount),
-        hint: `${this.formatCount(this.loggedUniqueUserCount)} کاربر درگیر`,
+        hint: `${this.formatCount(this.loggedUniqueUserCount)} کاربر فعال`,
         tone: 'primary'
       },
       {
@@ -1368,8 +1370,19 @@ export class AdminDashboardComponent implements OnInit {
     return Math.min(this.serviceActivePage * this.servicePageSize, this.externalServices.length);
   }
 
+  get filteredUserAccounts(): UserAccountRecord[] {
+    const query = this.userSearchTerm.trim().toLocaleLowerCase('fa');
+    return this.userAccounts.filter((user) => {
+      const matchesQuery = query
+        ? `${user.fullName} ${user.username}`.toLocaleLowerCase('fa').includes(query)
+        : true;
+      const matchesRole = this.userRoleFilter ? user.role === this.userRoleFilter : true;
+      return matchesQuery && matchesRole;
+    });
+  }
+
   get userTotalPages(): number {
-    return Math.max(1, Math.ceil(this.userAccounts.length / this.userPageSize));
+    return Math.max(1, Math.ceil(this.filteredUserAccounts.length / this.userPageSize));
   }
 
   get userActivePage(): number {
@@ -1378,15 +1391,32 @@ export class AdminDashboardComponent implements OnInit {
 
   get paginatedUserAccounts(): UserAccountRecord[] {
     const start = (this.userActivePage - 1) * this.userPageSize;
-    return this.userAccounts.slice(start, start + this.userPageSize);
+    return this.filteredUserAccounts.slice(start, start + this.userPageSize);
   }
 
   get userPaginationStart(): number {
-    return this.userAccounts.length ? (this.userActivePage - 1) * this.userPageSize + 1 : 0;
+    return this.filteredUserAccounts.length ? (this.userActivePage - 1) * this.userPageSize + 1 : 0;
   }
 
   get userPaginationEnd(): number {
-    return Math.min(this.userActivePage * this.userPageSize, this.userAccounts.length);
+    return Math.min(this.userActivePage * this.userPageSize, this.filteredUserAccounts.length);
+  }
+
+  get adminAccountCount(): number {
+    return this.userAccounts.filter((user) => user.role === 'admin').length;
+  }
+
+  get regularAccountCount(): number {
+    return this.userAccounts.length - this.adminAccountCount;
+  }
+
+  get currentUserId(): number | undefined {
+    return this.auth.user?.id;
+  }
+
+  userInitials(fullName: string): string {
+    const trimmed = fullName.trim();
+    return trimmed ? trimmed[0].toLocaleUpperCase('fa') : '?';
   }
 
   get totalPages(): number {
@@ -1998,10 +2028,20 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.notifications.success('کاربر ذخیره شد', 'فهرست حساب‌های کاربری به‌روزرسانی شد.');
         this.resetUserForm();
+        this.userCurrentPage = 1;
         this.loadUserAccounts(true);
       },
       error: (error: unknown) => this.showError(error, 'ذخیره کاربر انجام نشد.')
     });
+  }
+
+  onUserFiltersChanged(): void {
+    this.userCurrentPage = 1;
+  }
+
+  clearUserSearch(): void {
+    this.userSearchTerm = '';
+    this.userCurrentPage = 1;
   }
 
   editUserAccount(user: UserAccountRecord): void {

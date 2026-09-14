@@ -9431,3 +9431,65 @@ td b {
   padding-inline-end: 4px !important;
 }
 
+/* Users & access management: summary chips, avatar/role styling on top of .service-card. */
+.user-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 4px 16px;
+}
+
+.user-summary-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--primary-950) 6%, transparent);
+}
+
+.user-summary-chip span {
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.user-summary-chip strong {
+  color: var(--color-heading);
+  font-size: 1.15rem;
+  font-weight: 950;
+}
+
+.user-summary-chip.role-admin strong {
+  color: var(--accent-600);
+}
+
+.user-summary-chip.role-user strong {
+  color: var(--primary-800);
+}
+
+.user-avatar.role-admin {
+  background: linear-gradient(135deg, var(--accent-600), color-mix(in srgb, var(--accent-600) 65%, black)) !important;
+}
+
+.role-badge.role-admin {
+  color: var(--accent-600) !important;
+  background: color-mix(in srgb, var(--accent-600) 14%, var(--surface)) !important;
+  border-color: color-mix(in srgb, var(--accent-600) 24%, transparent) !important;
+}
+
+.self-badge {
+  color: #0f8a6b !important;
+  background: color-mix(in srgb, #0f8a6b 12%, var(--surface)) !important;
+  border-color: color-mix(in srgb, #0f8a6b 22%, transparent) !important;
+}
+
+.self-hint {
+  align-self: center;
+  color: var(--color-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
