@@ -7611,7 +7611,8 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-content.faq-layout .table-wrap tbody tr {
   display: grid !important;
   grid-template-columns: 28px minmax(0, 1fr) auto auto !important;
-  grid-template-rows: auto auto auto !important;
+  grid-template-rows: 40px 34px 34px !important;
+  align-content: start !important;
   align-items: center !important;
   gap: 2px 6px !important;
   width: 100% !important;
@@ -7633,6 +7634,7 @@ td b {
 .admin-shell.admin-shell.admin-shell.admin-shell.admin-shell.admin-shell .admin-content.faq-layout .table-wrap tbody td {
   display: block !important;
   min-width: 0 !important;
+  min-height: 0 !important;
   padding: 0 !important;
   border: 0 !important;
   overflow-wrap: anywhere !important;
