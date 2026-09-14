@@ -15,3 +15,5 @@ server/src/generated/
 server/.env
 server/.env.local
 server/.env.*.local
+deploy/db-export/
+*.vsdx
