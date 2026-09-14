@@ -310,9 +310,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return 'Create';
   }
 
-  // Submission only ever happens from a direct click on this button
-  // (handlePrimaryTicketAction -> submitTicketFromDialog). There is no timer or
-  // automatic path that calls submitAutomaticTicket on its own.
   get ticketPrimaryActionDisabled(): boolean {
     if (this.ticketSubmitting) return true;
     if (this.ticketAutomationState === 'submitted') return !this.selectedCaseRating;
@@ -393,13 +390,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     this.answerFromFaqOrStartTicket(question);
   }
 
-  // Typed text only matches this.activeTreeOptions (the CURRENT node's own
-  // children) via findTreeOption above. If the user instead types a word that
-  // names a node/option elsewhere in the tree (e.g. "کندی"), and that label is
-  // unambiguous across the whole tree, jump straight there instead of discarding
-  // what they typed and falling back to a generic FAQ search. Ambiguous labels
-  // (reused across multiple branches, e.g. "بله"/"ثبت تیکت") are left alone since
-  // there'd be no reliable way to know which occurrence was meant.
   private findTreePathByExactLabel(query: string): { targetId: string; path: string[] } | null {
     if (!this.treeIndex) return null;
     const normalizedQuery = this.normalizeTreeText(query);
@@ -1014,9 +1004,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   private persistActiveProjectKey(projectKey: string): void {
     try {
       localStorage.setItem(this.projectStorageKey, projectKey);
-    } catch {
-      // Storage can be unavailable in restricted browser contexts.
-    }
+    } catch {}
   }
 
   private restartConversationForProjectChange(): void {
@@ -1179,11 +1167,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     };
   }
 
-  /**
-   * The opening message always shows a fixed greeting instead of any node's own text, so
-   * intro/connector nodes here can be skipped purely by their single-unlabeled-edge shape —
-   * unlike getTreeNodeState, node text length doesn't matter since we never display it.
-   */
   private resolveInitialTreeState(startNodeId: string): {
     node: NonNullable<ReturnType<TroubleshootingTreeService['resolveDisplayNode']>>;
     options: Array<{ label: string; targetId: string }>;
@@ -1243,9 +1226,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
       .map((item) => this.stripResolutionCheckText(item))
       .filter(Boolean)
       .filter((item) => !this.isResolutionCheckNode(item));
-    // currentText is the reached node's own text, which for leaf/category nodes
-    // is often identical to the option label already at the end of treeTrail
-    // (e.g. clicking "سیتریکس" lands on a node whose text is also "سیتریکس").
     return steps.filter((step, index) => step !== steps[index - 1]).join(' > ');
   }
 
@@ -1403,10 +1383,6 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     const leaf = meaningfulPath[meaningfulPath.length - 1] || problemText || 'نیازمند بررسی پشتیبانی';
     const domain = meaningfulPath[0] || 'تحلیل داده';
     const middlePath = meaningfulPath.slice(1);
-    // problemText (built by buildTreeProblemText) already IS the tree path joined
-    // into one string, so appending it after meaningfulPath here would repeat the
-    // whole path a second time. Only fall back to it when there's no tree path at
-    // all (e.g. a free-text question that skipped the tree).
     const fullPath = meaningfulPath.length ? meaningfulPath.join(' > ') : problemText;
 
     return {
