@@ -5,9 +5,9 @@
 .date-time-clock {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 42px;
-  padding: 0 14px;
+  gap: 10px;
+  height: 44px;
+  padding: 0 14px 0 8px;
   border: 1px solid var(--crystal-edge);
   border-radius: 14px;
   background: linear-gradient(118deg, var(--crystal-shine), transparent 38%), var(--crystal-soft);
@@ -19,33 +19,55 @@
   -webkit-backdrop-filter: var(--crystal-blur);
 }
 
-.clock-icon {
-  width: 18px;
-  height: 18px;
+.clock-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
   flex: 0 0 auto;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--color-link) 32%, transparent);
+}
+
+.clock-icon {
+  width: 15px;
+  height: 15px;
   fill: none;
-  stroke: var(--color-link);
-  stroke-width: 1.8;
+  stroke: currentColor;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+.clock-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.3;
+}
+
 .time-label {
   color: var(--color-heading);
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 850;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.2px;
   white-space: nowrap;
 }
 
 .date-label {
   color: var(--color-subtle);
-  font-size: 10px;
-  font-weight: 750;
+  font-size: 9px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 @media (max-width: 600px) {
+  .date-time-clock {
+    padding-inline-end: 10px;
+  }
   .date-label {
     display: none;
   }
