@@ -2755,6 +2755,11 @@ tbody tr.selected::after {
   text-align: center;
 }
 
+.request-builder-line select option {
+  color: var(--color-heading);
+  background: var(--surface);
+}
+
 .request-builder-line input {
   border: 1px solid color-mix(in srgb, var(--color-link) 18%, var(--border));
   background: color-mix(in srgb, var(--surface) 92%, transparent);
