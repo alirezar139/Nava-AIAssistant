@@ -12,6 +12,7 @@ import { ThemePalette, ThemeService } from '../../../core/services/theme.service
 })
 export class ThemeToggleComponent {
   @Input() customizable = true;
+  @Input() embedded = false;
 
   readonly maxProfileImageSize = 1_500_000;
   readonly paletteOptions: Array<{ id: ThemePalette; label: string }> = [

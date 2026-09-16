@@ -192,6 +192,7 @@ textarea:disabled {
 }
 
 .account-info {
+  position: relative;
   min-width: 0;
   max-width: 260px;
   gap: 10px;
@@ -200,6 +201,77 @@ textarea:disabled {
   border-radius: 8px;
   background: var(--assistant-panel);
   box-shadow: none;
+}
+
+.account-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.account-trigger:hover,
+.account-trigger[aria-expanded='true'] {
+  border-color: var(--assistant-border);
+  background: color-mix(in srgb, #ffffff 24%, transparent);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+}
+
+.account-caret {
+  flex: 0 0 auto;
+  color: var(--assistant-ink);
+  font-size: 0.8rem;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.account-trigger[aria-expanded='true'] .account-caret {
+  transform: rotate(180deg);
+}
+
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  z-index: 50;
+  display: grid;
+  justify-items: stretch;
+  gap: 12px;
+  width: min(340px, calc(100vw - 28px));
+  max-height: min(78vh, 620px);
+  padding: 14px;
+  overflow-y: auto;
+  border: 1px solid var(--assistant-border);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  animation: account-menu-in 0.2s ease;
+}
+
+.account-menu-panel app-theme-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.account-logout {
+  width: 100%;
+}
+
+@keyframes account-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 }
 
 .account-info div {
@@ -230,7 +302,7 @@ textarea:disabled {
   object-fit: cover;
 }
 
-.account-info button,
+.account-logout,
 .welcome-card button,
 .ticket-modal button[type='submit'] {
   min-height: 36px;
@@ -242,7 +314,7 @@ textarea:disabled {
   font-weight: 900;
 }
 
-.account-info button {
+.account-logout {
   padding: 0 14px;
   font-size: 0.82rem;
 }
@@ -2122,6 +2194,7 @@ main.assistant-layout {
 
 .topbar-status,
 .account-info,
+.account-menu-panel,
 .overview-strip article,
 .panel-section,
 .chat-panel,
@@ -2354,6 +2427,7 @@ main.assistant-layout {
 :host-context([data-theme='dark']) .topbar,
 :host-context([data-theme='dark']) .topbar-status,
 :host-context([data-theme='dark']) .account-info,
+:host-context([data-theme='dark']) .account-menu-panel,
 :host-context([data-theme='dark']) .overview-strip article,
 :host-context([data-theme='dark']) .panel-section,
 :host-context([data-theme='dark']) .chat-panel,

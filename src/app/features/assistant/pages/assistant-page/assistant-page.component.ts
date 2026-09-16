@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild
@@ -30,6 +31,7 @@ import { WordReaderService } from '../../../../core/services/word-reader.service
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
+import { ProfileEditComponent } from '../../../../shared/components/profile-edit/profile-edit.component';
 
 interface ConversationSnapshot {
   messages: ChatMessage[];
@@ -66,7 +68,15 @@ interface SupportProgressItem {
 @Component({
   selector: 'app-assistant-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ThemeToggleComponent, DateTimeClockComponent, BrandLogoComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    ThemeToggleComponent,
+    DateTimeClockComponent,
+    BrandLogoComponent,
+    ProfileEditComponent
+  ],
   templateUrl: './assistant-page.component.html',
   styleUrl: './assistant-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -74,6 +84,9 @@ interface SupportProgressItem {
 export class AssistantPageComponent implements OnInit, OnDestroy {
   @ViewChild('conversation') conversation?: ElementRef<HTMLDivElement>;
   @ViewChild('supportProgressList') supportProgressList?: ElementRef<HTMLOListElement>;
+  @ViewChild('accountMenu') accountMenu?: ElementRef<HTMLElement>;
+
+  accountMenuOpen = false;
 
   faqs: FaqRecord[] = [];
   messages: ChatMessage[] = [];
@@ -179,7 +192,7 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     systemName: '',
     processName: 'نام سناریو، فرآیند، جریان داده، گزارش یا پلاگین مرتبط چیست؟ اگر ندارید بنویسید: ندارم',
     scenario: 'سناریوی اجرا را مرحله‌به‌مرحله بنویسید؛ از کجا شروع کردید، چه گزینه‌ای زدید و کجا خطا رخ داد؟',
-    serialNumber: 'سریال، شناسه گزارش، کد رهگیری یا شماره درخواست را وارد کنید. اگر ندارید بنویسید: ندارم',
+    serialNumber: 'شماره سریال را وارد کنید (فقط عدد، حداکثر ۸ رقم).',
     errorText: 'متن دقیق خطا یا پیام سیستم را وارد کنید. اگر خطایی نمایش داده نشده بنویسید: خطا ندارد',
     evidence: 'متن خطا، لاگ، توضیح screenshot یا مستندات مرتبط را وارد کنید. اگر ندارید بنویسید: ندارم',
     treeNodeId: '',
@@ -433,9 +446,21 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  onQuestionInput(): void {
+    if (this.diagnosticStep === 'serialNumber') {
+      this.question = this.question.replace(/\D/g, '').slice(0, 8);
+    }
+  }
+
   private captureDiagnosticAnswer(value: string): void {
     const step = this.diagnosticStep;
     if (!step) return;
+
+    if (step === 'serialNumber' && !/^\d{1,8}$/.test(value.trim())) {
+      this.pushAssistantMessage('شماره سریال باید فقط عدد و حداکثر ۸ رقم باشد؛ لطفاً دوباره وارد کنید.');
+      return;
+    }
+
     this.diagnosticDraft = { ...this.diagnosticDraft, [step]: value };
     const nextStep = this.getNextDiagnosticStep(step);
 
@@ -511,10 +536,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
     if (appendMessage) {
       const severityLabel = this.formatSeverity(diagnosticCase.severity);
       const ticketReceipt = this.formatTicketReceipt(
-        diagnosticCase.id,
         diagnosticCase.externalTicketStatus,
-        diagnosticCase.externalTicketId,
-        diagnosticCase.externalTrackingId
+        diagnosticCase.externalTicketId
       );
       const submittedText = sahandSubmitted
         ? diagnosticCase.duplicateNotice || 'تیکت ثبت شد و تحلیل اولیه انجام شد.'
@@ -523,7 +546,8 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
         role: 'assistant',
         text: `${submittedText}\n${ticketReceipt}\nسطح اهمیت: ${severityLabel}\n${
           diagnosticCase.analysisSummary ?? ''
-        }\nپیشنهاد: ${diagnosticCase.recommendation ?? '-'}`
+        }\nپیشنهاد: ${diagnosticCase.recommendation ?? '-'}`,
+        isTicketReceipt: true
       });
     }
 
@@ -575,37 +599,25 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   }
 
   private formatTicketReceipt(
-    diagnosticId: number,
     status: 'not_configured' | 'submitted' | 'failed' | null | undefined,
-    ticketId: string | null | undefined,
-    trackingId: string | null | undefined
+    ticketId: string | null | undefined
   ): string {
-    const internalTicketNumber = `NAVA-${diagnosticId.toString().padStart(5, '0')}`;
-    const internalTrackingNumber = `TRK-${diagnosticId.toString().padStart(5, '0')}`;
-    const lines = [
-      `شماره تیکت داخلی: ${internalTicketNumber}`,
-      `شماره پیگیری داخلی: ${internalTrackingNumber}`
-    ];
-
     if (status === 'submitted') {
-      lines.push(`شماره تیکت سهند: ${ticketId || 'ثبت شد؛ شماره از سهند دریافت نشد'}`);
-      lines.push(`شماره پیگیری سهند: ${trackingId || ticketId || 'از سهند دریافت نشد'}`);
-    } else if (status === 'failed') {
-      lines.push('وضعیت سهند: ارسال ناموفق بود؛ پرونده داخلی قابل پیگیری است.');
-    } else {
-      lines.push('وضعیت سهند: اتصال هنوز تنظیم نشده؛ پرونده داخلی قابل پیگیری است.');
+      return `شماره تیکت سهند: ${ticketId || 'ثبت شد؛ شماره از سهند دریافت نشد'}`;
     }
 
-    return lines.join('\n');
+    if (status === 'failed') {
+      return 'وضعیت سهند: ارسال ناموفق بود؛ پرونده داخلی قابل پیگیری است.';
+    }
+
+    return 'وضعیت سهند: اتصال هنوز تنظیم نشده؛ پرونده داخلی قابل پیگیری است.';
   }
 
   private formatTicketReceiptText(): string {
     if (!this.diagnosticCase) return 'شماره پیگیری هنوز ایجاد نشده است.';
     return this.formatTicketReceipt(
-      this.diagnosticCase.id,
       this.diagnosticCase.externalTicketStatus,
-      this.diagnosticCase.externalTicketId,
-      this.diagnosticCase.externalTrackingId
+      this.diagnosticCase.externalTicketId
     );
   }
 
@@ -883,6 +895,26 @@ export class AssistantPageComponent implements OnInit, OnDestroy {
   logout(): void {
     this.auth.logout();
     void this.router.navigateByUrl('/login');
+  }
+
+  toggleAccountMenu(): void {
+    this.accountMenuOpen = !this.accountMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeAccountMenuOnOutsideClick(event: MouseEvent): void {
+    if (!this.accountMenuOpen) return;
+    if (this.accountMenu && !this.accountMenu.nativeElement.contains(event.target as Node)) {
+      this.accountMenuOpen = false;
+      this.changeDetector.markForCheck();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  closeAccountMenuOnEscape(): void {
+    if (!this.accountMenuOpen) return;
+    this.accountMenuOpen = false;
+    this.changeDetector.markForCheck();
   }
 
   isTicketDraftValid(): boolean {

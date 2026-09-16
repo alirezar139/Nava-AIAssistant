@@ -32,20 +32,34 @@
     </div>
     <div class="topbar-actions">
       <app-date-time-clock />
-      <app-theme-toggle />
-      <div class="account-info">
-        <div class="account-avatar">
-          @if (theme.profileImage) {
-            <img [src]="theme.profileImage" alt="تصویر پروفایل" />
-          } @else {
-            <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
-          }
-        </div>
-        <div>
-          <b>{{ auth.user?.fullName }}</b>
-          <small>کاربر سامانه</small>
-        </div>
-        <button type="button" (click)="logout()">خروج</button>
+      <div class="account-info" #accountMenu>
+        <button
+          type="button"
+          class="account-trigger"
+          (click)="toggleAccountMenu()"
+          [attr.aria-expanded]="accountMenuOpen"
+          aria-haspopup="menu"
+          aria-controls="account-menu-panel"
+        >
+          <div class="account-avatar">
+            @if (theme.profileImage) {
+              <img [src]="theme.profileImage" alt="تصویر پروفایل" />
+            } @else {
+              <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
+            }
+          </div>
+          <div>
+            <b>{{ auth.user?.fullName }}</b>
+            <small>کاربر سامانه</small>
+          </div>
+          <b class="account-caret" aria-hidden="true">⌄</b>
+        </button>
+
+        <section id="account-menu-panel" class="account-menu-panel" *ngIf="accountMenuOpen" role="menu">
+          <app-profile-edit />
+          <app-theme-toggle [embedded]="true" />
+          <button type="button" class="account-logout" (click)="logout()">خروج</button>
+        </section>
       </div>
     </div>
   </header>
@@ -213,6 +227,7 @@
                     !message.treeOptions?.length &&
                     !message.quickReplies?.length &&
                     !message.ticketConfirmation &&
+                    !message.isTicketReceipt &&
                     (!message.faqResolution || message.faqResolution.resolved === 'yes')
                   "
                 >
@@ -266,6 +281,9 @@
             autocomplete="off"
             [disabled]="loading || typing || ticketDialogOpen || userWriteDisabled"
             [placeholder]="inputPlaceholder"
+            [attr.inputmode]="diagnosticStep === 'serialNumber' ? 'numeric' : null"
+            [attr.maxlength]="diagnosticStep === 'serialNumber' ? 8 : null"
+            (input)="onQuestionInput()"
           /><button
             type="submit"
             [disabled]="loading || typing || ticketDialogOpen || userWriteDisabled"

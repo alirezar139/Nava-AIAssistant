@@ -45,6 +45,12 @@ export class AuthService {
       );
   }
 
+  updateProfile(fullName: string, password?: string): Observable<AuthSession> {
+    return this.http
+      .put<AuthSession>(`${environment.apiUrl}/users/me`, { fullName, password })
+      .pipe(tap((session) => this.sessionService.save(session)));
+  }
+
   logout(): void {
     this.sessionService.clear();
     this.themeService.activateUser(null);

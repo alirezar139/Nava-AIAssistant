@@ -25,6 +25,7 @@ export interface ChatMessage {
   ratingSubmitted?: boolean;
   ratingSubmitting?: boolean;
   ratingMessage?: string;
+  isTicketReceipt?: boolean;
   ticketConfirmation?: {
     problem: string;
     sourceNode?: { id: string; text: string };

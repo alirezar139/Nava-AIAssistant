@@ -13,20 +13,34 @@
     </a>
     <div class="header-actions">
       <app-date-time-clock />
-      <app-theme-toggle />
-      <div class="account">
-        <div class="account-avatar">
-          @if (theme.profileImage) {
-            <img [src]="theme.profileImage" alt="تصویر پروفایل" />
-          } @else {
-            <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
-          }
-        </div>
-        <div>
-          <b>{{ auth.user?.fullName }}</b
-          ><small>{{ auth.user?.role === 'developer' ? 'برنامه‌نویس سامانه' : 'مدیر سامانه' }}</small>
-        </div>
-        <button type="button" (click)="logout()">خروج</button>
+      <div class="account" #accountMenu>
+        <button
+          type="button"
+          class="account-trigger"
+          (click)="toggleAccountMenu()"
+          [attr.aria-expanded]="accountMenuOpen"
+          aria-haspopup="menu"
+          aria-controls="admin-account-menu-panel"
+        >
+          <div class="account-avatar">
+            @if (theme.profileImage) {
+              <img [src]="theme.profileImage" alt="تصویر پروفایل" />
+            } @else {
+              <span>{{ auth.user?.fullName?.slice(0, 1) || 'ن' }}</span>
+            }
+          </div>
+          <div>
+            <b>{{ auth.user?.fullName }}</b
+            ><small>{{ auth.user?.role === 'developer' ? 'برنامه‌نویس سامانه' : 'مدیر سامانه' }}</small>
+          </div>
+          <b class="account-caret" aria-hidden="true">⌄</b>
+        </button>
+
+        <section id="admin-account-menu-panel" class="account-menu-panel" *ngIf="accountMenuOpen" role="menu">
+          <app-profile-edit />
+          <app-theme-toggle [embedded]="true" />
+          <button type="button" class="account-logout" (click)="logout()">خروج</button>
+        </section>
       </div>
     </div>
   </header>

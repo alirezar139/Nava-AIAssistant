@@ -1,0 +1,25 @@
+<form class="profile-edit" (ngSubmit)="save()">
+  <span class="field-title">ویرایش پروفایل</span>
+
+  <label>
+    <span>نام کامل</span>
+    <input [(ngModel)]="fullName" name="profileFullName" autocomplete="name" required />
+  </label>
+
+  <label>
+    <span>رمز عبور جدید</span>
+    <input
+      [(ngModel)]="password"
+      name="profilePassword"
+      type="password"
+      dir="ltr"
+      placeholder="در صورت نیاز به تغییر پر شود"
+      autocomplete="new-password"
+    />
+  </label>
+
+  <p class="profile-message error" *ngIf="error" role="alert">{{ error }}</p>
+  <p class="profile-message success" *ngIf="message && !error">{{ message }}</p>
+
+  <button type="submit" [disabled]="saving">{{ saving ? 'در حال ذخیره...' : 'ذخیره تغییرات' }}</button>
+</form>

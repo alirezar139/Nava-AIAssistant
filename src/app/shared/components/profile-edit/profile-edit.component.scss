@@ -1,0 +1,88 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.profile-edit {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 16px;
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 38%), var(--crystal-soft);
+  box-shadow:
+    0 10px 28px rgba(15, 54, 46, 0.12),
+    inset 1px 1px 0 var(--crystal-edge),
+    inset -1px -1px 0 var(--crystal-inner-edge);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.field-title {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--color-secondary);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+label {
+  display: grid;
+  gap: 4px;
+}
+
+label span {
+  color: var(--color-secondary);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+label input {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 10px;
+  color: var(--color-heading);
+  background: var(--surface);
+  font: inherit;
+  font-size: 12px;
+}
+
+label input:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 1px;
+}
+
+.profile-message {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.6;
+}
+
+.profile-message.error {
+  color: var(--danger);
+}
+
+.profile-message.success {
+  color: var(--primary-700);
+}
+
+button[type='submit'] {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--color-link) 22%, transparent);
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+button[type='submit']:disabled {
+  opacity: 0.7;
+  cursor: default;
+}

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { requireAuth } from '../auth/auth.middleware.js';
+import { requireAuth, signToken } from '../auth/auth.middleware.js';
 import { sendError } from '../common/api-error.js';
-import { AuthRequest } from '../common/types.js';
+import { AuthRequest, AuthUser } from '../common/types.js';
 import { UserRecord } from '../database/domain-types.js';
 import { userRepository } from '../database/repositories.js';
 
@@ -33,6 +33,11 @@ const updateUserSchema = z.object({
   password: z.string().min(6).max(200).optional(),
   fullName: z.string().trim().min(2).max(150),
   role: z.enum(userRoles)
+});
+
+const updateOwnProfileSchema = z.object({
+  fullName: z.string().trim().min(2).max(150),
+  password: z.string().min(6).max(200).optional()
 });
 
 function toPublicUser(user: UserRecord): Omit<UserRecord, 'passwordHash'> {
@@ -69,6 +74,36 @@ usersRouter.post('/', requireAuth(['admin', 'developer']), async (request, respo
     role: result.data.role
   });
   response.status(201).json(toPublicUser(created));
+});
+
+usersRouter.put('/me', requireAuth(), async (request: AuthRequest, response) => {
+  const result = updateOwnProfileSchema.safeParse(request.body);
+  if (!result.success) {
+    sendError(response, 400, 'USER_INVALID', 'اطلاعات معتبر نیست.');
+    return;
+  }
+
+  const existing = await userRepository.findById(request.user!.id);
+  if (!existing) {
+    sendError(response, 404, 'USER_NOT_FOUND', 'کاربر پیدا نشد.');
+    return;
+  }
+
+  const updated = await userRepository.update(existing.id, {
+    username: existing.username,
+    fullName: result.data.fullName,
+    role: existing.role,
+    passwordHash: result.data.password ? bcrypt.hashSync(result.data.password, 10) : undefined
+  });
+
+  const publicUser = toPublicUser(updated!);
+  const authUser: AuthUser = {
+    id: publicUser.id,
+    username: publicUser.username,
+    fullName: publicUser.fullName,
+    role: publicUser.role
+  };
+  response.json({ token: signToken(authUser), user: authUser });
 });
 
 usersRouter.put('/:id', requireAuth(['admin', 'developer']), async (request, response) => {

@@ -44,6 +44,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { ThemeService } from '../../../../core/services/theme.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { ProfileEditComponent } from '../../../../shared/components/profile-edit/profile-edit.component';
 import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { JalaliDateTimePipe } from '../../../../shared/pipes/jalali-date-time.pipe';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
@@ -148,6 +149,7 @@ interface TreeStarterTemplate {
     ThemeToggleComponent,
     DateTimeClockComponent,
     BrandLogoComponent,
+    ProfileEditComponent,
     JalaliDateTimePipe
   ],
   templateUrl: './admin-dashboard.component.html',
@@ -159,6 +161,9 @@ export class AdminDashboardComponent implements OnInit {
   @ViewChild('treeFileInput') treeFileInput?: ElementRef<HTMLInputElement>;
   @ViewChild('treeViewport') treeViewport?: ElementRef<HTMLDivElement>;
   @ViewChild('treeCanvas') treeCanvas?: ElementRef<HTMLDivElement>;
+  @ViewChild('accountMenu') accountMenu?: ElementRef<HTMLElement>;
+
+  accountMenuOpen = false;
 
   faqs: FaqRecord[] = [];
   faqTotalCount = 0;
@@ -2970,6 +2975,26 @@ export class AdminDashboardComponent implements OnInit {
   logout(): void {
     this.auth.logout();
     void this.router.navigateByUrl('/login');
+  }
+
+  toggleAccountMenu(): void {
+    this.accountMenuOpen = !this.accountMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeAccountMenuOnOutsideClick(event: MouseEvent): void {
+    if (!this.accountMenuOpen) return;
+    if (this.accountMenu && !this.accountMenu.nativeElement.contains(event.target as Node)) {
+      this.accountMenuOpen = false;
+      this.changeDetector.markForCheck();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  closeAccountMenuOnEscape(): void {
+    if (!this.accountMenuOpen) return;
+    this.accountMenuOpen = false;
+    this.changeDetector.markForCheck();
   }
 
   confirmPendingAction(): void {

@@ -9629,3 +9629,82 @@ td b {
     padding: 4px 8px !important;
   }
 }
+
+/* Account menu: collapse theme toggle + logout into a dropdown behind the profile trigger */
+.account {
+  position: relative;
+}
+
+.account .account-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 0;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.account .account-trigger:hover,
+.account .account-trigger[aria-expanded='true'] {
+  border-color: var(--crystal-edge);
+  background: var(--crystal-soft);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+}
+
+.account-caret {
+  flex: 0 0 auto;
+  color: var(--color-secondary);
+  font-size: 13px;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.account .account-trigger[aria-expanded='true'] .account-caret {
+  transform: rotate(180deg);
+}
+
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  z-index: 50;
+  display: grid;
+  justify-items: stretch;
+  gap: 12px;
+  width: min(340px, calc(100vw - 28px));
+  max-height: min(78vh, 620px);
+  padding: 14px;
+  overflow-y: auto;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 16px;
+  background: var(--crystal-soft);
+  box-shadow: 0 20px 45px rgba(18, 55, 47, 0.16);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+  animation: account-menu-in 0.2s ease;
+}
+
+.account-menu-panel app-theme-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.account-menu-panel .account-logout {
+  width: 100%;
+}
+
+@keyframes account-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
