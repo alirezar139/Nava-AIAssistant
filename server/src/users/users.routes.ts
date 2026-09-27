@@ -69,7 +69,7 @@ usersRouter.post('/', requireAuth(['admin', 'developer']), async (request, respo
 
   const created = await userRepository.create({
     username: result.data.username,
-    passwordHash: bcrypt.hashSync(result.data.password, 10),
+    passwordHash: await bcrypt.hash(result.data.password, 10),
     fullName: result.data.fullName,
     role: result.data.role
   });
@@ -93,7 +93,7 @@ usersRouter.put('/me', requireAuth(), async (request: AuthRequest, response) => 
     username: existing.username,
     fullName: result.data.fullName,
     role: existing.role,
-    passwordHash: result.data.password ? bcrypt.hashSync(result.data.password, 10) : undefined
+    passwordHash: result.data.password ? await bcrypt.hash(result.data.password, 10) : undefined
   });
 
   const publicUser = toPublicUser(updated!);
@@ -129,7 +129,7 @@ usersRouter.put('/:id', requireAuth(['admin', 'developer']), async (request, res
     username: result.data.username,
     fullName: result.data.fullName,
     role: result.data.role,
-    passwordHash: result.data.password ? bcrypt.hashSync(result.data.password, 10) : undefined
+    passwordHash: result.data.password ? await bcrypt.hash(result.data.password, 10) : undefined
   });
   response.json(toPublicUser(updated!));
 });

@@ -49,7 +49,7 @@ authRouter.post('/login', loginLimiter, async (request, response) => {
 
   const row = await userRepository.findByUsername(result.data.username);
 
-  if (!row || !bcrypt.compareSync(result.data.password, row.passwordHash)) {
+  if (!row || !(await bcrypt.compare(result.data.password, row.passwordHash))) {
     sendError(response, 401, 'CREDENTIALS_INVALID', 'نام کاربری یا رمز عبور صحیح نیست.');
     return;
   }
