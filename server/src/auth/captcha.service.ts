@@ -1,5 +1,26 @@
 import { randomInt, randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
+
+// `loadSystemFonts: true` makes resvg enumerate every installed font on the
+// OS synchronously on each render, which blocks the whole Node event loop
+// (this app is deployed as a Windows service, see install-service.ps1) —
+// noticeably on every login page load and every failed-login captcha retry.
+// Pointing at one known font file by path skips that scan entirely. The
+// project's bundled Persian fonts (src/assets/fonts) don't cover Latin
+// letters, so this falls back to a full system-font load only if the
+// expected Windows font file isn't present (e.g. local non-Windows dev).
+const WINDOWS_FONTS_DIR = path.join(process.env['WINDIR'] ?? 'C:\\Windows', 'Fonts');
+const CAPTCHA_FONT_CANDIDATES: Array<{ file: string; family: string }> = [
+  { file: 'tahoma.ttf', family: 'Tahoma' },
+  { file: 'segoeui.ttf', family: 'Segoe UI' }
+];
+const CAPTCHA_FONT = CAPTCHA_FONT_CANDIDATES.map((candidate) => ({
+  ...candidate,
+  path: path.join(WINDOWS_FONTS_DIR, candidate.file)
+})).find((candidate) => existsSync(candidate.path));
+const CAPTCHA_SVG_FONT_FAMILY = CAPTCHA_FONT ? `'${CAPTCHA_FONT.family}'` : "'Segoe UI',Tahoma,sans-serif";
 
 interface StoredCaptcha {
   answer: string;
@@ -55,7 +76,14 @@ export class CaptchaService {
   // characters as <text> nodes) never leaves the server, only pixels do.
   private rasterize(svg: string): Buffer {
     return new Resvg(svg, {
-      font: { loadSystemFonts: true },
+      font: CAPTCHA_FONT
+        ? {
+            loadSystemFonts: false,
+            fontFiles: [CAPTCHA_FONT.path],
+            defaultFontFamily: CAPTCHA_FONT.family,
+            sansSerifFamily: CAPTCHA_FONT.family
+          }
+        : { loadSystemFonts: true },
       fitTo: { mode: 'zoom', value: 2 }
     })
       .render()
@@ -79,7 +107,7 @@ export class CaptchaService {
         const skew = randomInt(-16, 17);
         const size = 22 + randomInt(0, 9);
         const color = palette[randomInt(palette.length)];
-        return `<text x="${x}" y="${y}" fill="${color}" font-size="${size}" font-family="'Segoe UI',Tahoma,sans-serif" font-weight="800" transform="rotate(${rotation} ${x} ${y}) skewX(${skew})">${character}</text>`;
+        return `<text x="${x}" y="${y}" fill="${color}" font-size="${size}" font-family="${CAPTCHA_SVG_FONT_FAMILY}" font-weight="800" transform="rotate(${rotation} ${x} ${y}) skewX(${skew})">${character}</text>`;
       })
       .join('');
 
@@ -92,7 +120,7 @@ export class CaptchaService {
       const grot = randomInt(-45, 46);
       const gchar = this.characters[randomInt(this.characters.length)];
       const gcolor = ghostPalette[randomInt(ghostPalette.length)];
-      return `<text x="${gx}" y="${gy}" fill="${gcolor}" font-size="${18 + randomInt(0, 12)}" font-family="'Segoe UI',Tahoma,sans-serif" font-weight="700" transform="rotate(${grot} ${gx} ${gy})">${gchar}</text>`;
+      return `<text x="${gx}" y="${gy}" fill="${gcolor}" font-size="${18 + randomInt(0, 12)}" font-family="${CAPTCHA_SVG_FONT_FAMILY}" font-weight="700" transform="rotate(${grot} ${gx} ${gy})">${gchar}</text>`;
     }).join('');
 
     const dots = Array.from({ length: 34 }, () => {
