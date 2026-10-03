@@ -299,6 +299,8 @@ select:focus-visible {
   font-size: 10px;
   cursor: pointer;
   opacity: 0;
+  /* Keeps the button label out of text that users select and copy by hand. */
+  user-select: none;
 }
 
 .log-line:hover .copy-line,
