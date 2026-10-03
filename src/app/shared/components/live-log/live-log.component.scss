@@ -1,0 +1,346 @@
+:host {
+  display: inline-flex;
+}
+
+.live-log-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--crystal-edge);
+  border-radius: 14px;
+  color: var(--color-heading);
+  background: linear-gradient(118deg, var(--crystal-shine), transparent 38%), var(--crystal-soft);
+  box-shadow:
+    0 10px 28px rgba(15, 54, 46, 0.12),
+    inset 1px 1px 0 var(--crystal-edge),
+    inset -1px -1px 0 var(--crystal-inner-edge);
+  backdrop-filter: var(--crystal-blur);
+  -webkit-backdrop-filter: var(--crystal-blur);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.live-log-trigger svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--color-link);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.live-log-trigger:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+.live-log-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(6, 22, 18, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.live-log-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(960px, 100%);
+  max-height: min(760px, calc(100dvh - 32px));
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgba(6, 22, 18, 0.3);
+}
+
+.live-log-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.live-log-header h2 {
+  margin: 2px 0 4px;
+  color: var(--color-heading);
+  font-size: 18px;
+}
+
+.live-log-header p {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary-700);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-700);
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+.pulse.paused {
+  background: var(--accent-600);
+  animation: none;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}
+
+.icon-button {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--color-heading);
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.live-log-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.live-log-tools label {
+  display: grid;
+  gap: 4px;
+}
+
+.live-log-tools label span {
+  color: var(--color-secondary);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.live-log-tools select {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--color-heading);
+  background: var(--surface);
+  font: inherit;
+  font-size: 12px;
+}
+
+.counts {
+  align-self: center;
+  color: var(--color-secondary);
+  font-size: 11px;
+}
+
+.counts b {
+  color: var(--danger);
+}
+
+.tool-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.tool-buttons button {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.tool-buttons .ghost {
+  border: 1px solid var(--border);
+  color: var(--color-heading);
+  background: transparent;
+}
+
+.tool-buttons .primary {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+}
+
+.tool-buttons button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.live-log-message {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.live-log-message.error {
+  color: var(--danger);
+}
+
+.live-log-message.success {
+  color: var(--primary-700);
+}
+
+.live-log-list {
+  flex: 1 1 auto;
+  min-height: 240px;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-heading) 4%, var(--surface));
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 12px;
+  text-align: left;
+}
+
+.empty {
+  padding: 24px;
+  color: var(--color-secondary);
+  font-family: var(--font-family-base);
+  text-align: center;
+  direction: rtl;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: start;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.log-line:hover {
+  background: color-mix(in srgb, var(--color-link) 7%, transparent);
+}
+
+.log-time {
+  color: var(--color-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.log-level {
+  min-width: 44px;
+  color: var(--primary-700);
+  font-weight: 800;
+}
+
+.log-text {
+  color: var(--color-heading);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.level-warn .log-level {
+  color: var(--accent-600);
+}
+
+.level-error {
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+
+.level-error .log-level,
+.level-error .log-text {
+  color: var(--danger);
+}
+
+.copy-line {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--color-secondary);
+  background: var(--surface);
+  font-family: var(--font-family-base);
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.log-line:hover .copy-line,
+.copy-line:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .copy-line {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .live-log-trigger span {
+    display: none;
+  }
+
+  .live-log-trigger {
+    width: 44px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .live-log-dialog {
+    padding: 14px;
+  }
+
+  .tool-buttons {
+    margin-inline-start: 0;
+  }
+
+  .log-line {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .log-text {
+    grid-column: 1 / -1;
+  }
+
+  .copy-line {
+    grid-row: 1;
+    grid-column: 3;
+  }
+}

@@ -1,0 +1,74 @@
+<button
+  type="button"
+  class="live-log-trigger"
+  (click)="openPanel()"
+  aria-haspopup="dialog"
+  title="لاگ زنده سامانه برای گزارش به پشتیبانی"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+    <path d="M7 9l3 3-3 3M12 15h5"></path>
+  </svg>
+  <span>لاگ زنده</span>
+</button>
+
+<div class="live-log-backdrop" *ngIf="open" (click)="closePanel()">
+  <section
+    class="live-log-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="live-log-title"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="live-log-header">
+      <div>
+        <span class="eyebrow">
+          <i class="pulse" [class.paused]="paused" aria-hidden="true"></i>
+          {{ paused ? 'متوقف' : 'زنده' }}
+        </span>
+        <h2 id="live-log-title">لاگ زنده سامانه</h2>
+        <p>در صورت بروز مشکل، لاگ را کپی کرده و همراه شرح مشکل برای تیم پشتیبانی ارسال کنید.</p>
+      </div>
+      <button type="button" class="icon-button" (click)="closePanel()" aria-label="بستن">×</button>
+    </header>
+
+    <div class="live-log-tools">
+      <label>
+        <span>سطح</span>
+        <select [(ngModel)]="levelFilter" name="liveLogLevel">
+          <option [ngValue]="''">همه سطوح</option>
+          <option *ngFor="let level of levels" [ngValue]="level">{{ levelLabel(level) }}</option>
+        </select>
+      </label>
+      <small class="counts">
+        {{ visibleEntries.length.toLocaleString('fa-IR') }} خط
+        <b *ngIf="errorCount">· {{ errorCount.toLocaleString('fa-IR') }} خطا</b>
+      </small>
+      <div class="tool-buttons">
+        <button type="button" class="ghost" (click)="togglePause()">{{ paused ? 'ادامه' : 'توقف' }}</button>
+        <button type="button" class="ghost" (click)="clearView()" [disabled]="!entries.length">
+          پاک‌کردن نما
+        </button>
+        <button type="button" class="primary" (click)="copyAll()" [disabled]="!visibleEntries.length">
+          کپی لاگ برای پشتیبانی
+        </button>
+      </div>
+    </div>
+
+    <p class="live-log-message error" *ngIf="error" role="alert">{{ error }}</p>
+    <p class="live-log-message success" *ngIf="notice" role="status">{{ notice }}</p>
+
+    <div class="live-log-list" #logList dir="ltr">
+      <div class="empty" *ngIf="loading">در حال دریافت لاگ...</div>
+      <div class="empty" *ngIf="!loading && !visibleEntries.length">هنوز رویدادی ثبت نشده است.</div>
+      <div class="log-line" *ngFor="let entry of visibleEntries" [class]="'level-' + entry.level">
+        <span class="log-time">{{ timeLabel(entry.timestamp) }}</span>
+        <span class="log-level">{{ entry.level.toUpperCase() }}</span>
+        <span class="log-text">{{ entry.text }}</span>
+        <button type="button" class="copy-line" (click)="copyEntry(entry)" aria-label="کپی این خط">
+          کپی
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

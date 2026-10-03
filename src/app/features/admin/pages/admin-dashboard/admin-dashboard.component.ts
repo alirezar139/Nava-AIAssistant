@@ -45,6 +45,7 @@ import { ThemeService } from '../../../../core/services/theme.service';
 import { WordReaderService } from '../../../../core/services/word-reader.service';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { ProfileEditComponent } from '../../../../shared/components/profile-edit/profile-edit.component';
+import { LiveLogComponent } from '../../../../shared/components/live-log/live-log.component';
 import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { JalaliDateTimePipe } from '../../../../shared/pipes/jalali-date-time.pipe';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
@@ -150,6 +151,7 @@ interface TreeStarterTemplate {
     DateTimeClockComponent,
     BrandLogoComponent,
     ProfileEditComponent,
+    LiveLogComponent,
     JalaliDateTimePipe
   ],
   templateUrl: './admin-dashboard.component.html',

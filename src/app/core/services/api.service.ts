@@ -170,6 +170,19 @@ export interface SystemLogQuery {
   limit?: number;
 }
 
+export interface LiveLogEntry {
+  seq: number;
+  timestamp: string;
+  level: SystemLogLevel;
+  text: string;
+}
+
+export interface LiveLogResponse {
+  bootId: string;
+  lastSeq: number;
+  entries: LiveLogEntry[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
@@ -191,6 +204,12 @@ export class ApiService {
   getSystemLogs(query: SystemLogQuery): Observable<SystemLogResponse> {
     return this.http.get<SystemLogResponse>(
       `${this.apiUrl}/dashboard/system-logs${this.toQueryString(query)}`
+    );
+  }
+
+  getLiveLogs(after: number): Observable<LiveLogResponse> {
+    return this.http.get<LiveLogResponse>(
+      `${this.apiUrl}/dashboard/live-logs${this.toQueryString({ after })}`
     );
   }
 

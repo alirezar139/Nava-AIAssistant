@@ -32,6 +32,7 @@ import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle
 import { DateTimeClockComponent } from '../../../../shared/components/date-time-clock/date-time-clock.component';
 import { BrandLogoComponent } from '../../../../shared/components/brand-logo/brand-logo.component';
 import { ProfileEditComponent } from '../../../../shared/components/profile-edit/profile-edit.component';
+import { LiveLogComponent } from '../../../../shared/components/live-log/live-log.component';
 
 interface ConversationSnapshot {
   messages: ChatMessage[];
@@ -75,7 +76,8 @@ interface SupportProgressItem {
     ThemeToggleComponent,
     DateTimeClockComponent,
     BrandLogoComponent,
-    ProfileEditComponent
+    ProfileEditComponent,
+    LiveLogComponent
   ],
   templateUrl: './assistant-page.component.html',
   styleUrl: './assistant-page.component.scss',
