@@ -3,12 +3,8 @@
   place-items: center;
   overflow: hidden;
   border-radius: inherit;
-  background:
-    radial-gradient(circle at 28% 22%, color-mix(in srgb, #fff 26%, transparent), transparent 60%),
-    linear-gradient(145deg, var(--primary-700), var(--primary-950) 62%, var(--accent-600));
-  box-shadow:
-    0 10px 22px color-mix(in srgb, var(--primary-900) 26%, transparent),
-    inset 0 1px color-mix(in srgb, #fff 40%, transparent);
+  /* The logo artwork is a transparent PNG, so the mark sits directly on the page. */
+  background: transparent;
 }
 
 .brand-logo-inner {
@@ -19,16 +15,10 @@
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
-  font-family: var(--font-family-base);
-  font-weight: 900;
-  font-size: 78%;
-  line-height: 1;
-  color: #f6cf6b;
-  text-shadow:
-    0 1px 0 color-mix(in srgb, #7a5410 70%, transparent),
-    0 3px 8px rgba(0, 0, 0, 0.35);
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand-word {
@@ -38,6 +28,12 @@
 :host.full {
   width: auto;
   padding: 12px 20px;
+  background:
+    radial-gradient(circle at 28% 22%, color-mix(in srgb, #fff 26%, transparent), transparent 60%),
+    linear-gradient(145deg, var(--primary-700), var(--primary-950) 62%, var(--accent-600));
+  box-shadow:
+    0 10px 22px color-mix(in srgb, var(--primary-900) 26%, transparent),
+    inset 0 1px color-mix(in srgb, #fff 40%, transparent);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -49,7 +45,8 @@
 
 :host.full .brand-mark {
   flex: 0 0 auto;
-  font-size: 3.4rem;
+  width: 3.4rem;
+  height: 3.4rem;
 }
 
 :host.full .brand-word {

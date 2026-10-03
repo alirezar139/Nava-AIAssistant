@@ -87,6 +87,7 @@ server/
 | فایل                                                    | کاربرد                                       |
 | ------------------------------------------------------- | -------------------------------------------- |
 | `src/assets/troubleshooting-tree.json`                  | درخت تصمیم عیب‌یابی.                         |
+| `src/assets/brand/`                                     | لوگو، favicon و آیکون‌های نصب PWA.           |
 | `src/manifest.webmanifest`                              | اطلاعات نصب PWA.                             |
 | `src/nava-service-worker.js`                            | cache سبک فایل‌های رابط و fallback.          |
 | `src/app/core/services/theme.service.ts`                | تنظیمات تم و avatar هر کاربر.                |

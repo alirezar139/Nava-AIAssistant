@@ -1,5 +1,11 @@
-const CACHE_NAME = 'nava-ai-assistant-v1';
-const SHELL_URLS = ['/', '/index.html', '/manifest.webmanifest', '/assets/brand-logo.jpg'];
+const CACHE_NAME = 'nava-ai-assistant-v2';
+const SHELL_URLS = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/assets/brand/nava-logo-192.png',
+  '/assets/brand/favicon-32.png'
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_URLS)));
