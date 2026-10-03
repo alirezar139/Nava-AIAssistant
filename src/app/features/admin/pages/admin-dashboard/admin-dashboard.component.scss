@@ -1319,6 +1319,17 @@ nav button {
   overflow: visible;
 }
 
+/* With overflow visible, the rotated shine band sticks out of the card and adds
+   horizontal scroll to the content area; draw the same diagonal band inside it. */
+.table-card::before {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  background: linear-gradient(109deg, transparent -12%, var(--crystal-shine) 12%, transparent 36%);
+}
+
 .table-card > .section-title {
   padding: 4px 2px 18px;
   border-bottom: 1px solid rgba(45, 89, 77, 0.1);
