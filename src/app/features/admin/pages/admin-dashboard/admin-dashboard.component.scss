@@ -5265,7 +5265,18 @@ td b {
   overflow: hidden !important;
 }
 
-.conversation-detail-header {
+/* Bare `header` rules for the page top bar (fixed height, sticky, glass background)
+   also match this modal header; reset them so the title and meta can grow. */
+.conversation-detail-modal .conversation-detail-header {
+  position: static !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   min-width: 0 !important;
   display: flex !important;
   align-items: flex-start !important;
