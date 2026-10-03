@@ -1,3 +1,5 @@
+@use '../../styles/buttons';
+
 :host {
   display: inline-flex;
 }
@@ -194,15 +196,11 @@ select:focus-visible {
 }
 
 .tool-buttons .ghost {
-  border: 1px solid var(--border);
-  color: var(--color-heading);
-  background: transparent;
+  @include buttons.ghost;
 }
 
 .tool-buttons .primary {
-  border: 0;
-  color: #fff;
-  background: linear-gradient(135deg, var(--primary-700), var(--accent-600));
+  @include buttons.primary;
 }
 
 .tool-buttons button:disabled {

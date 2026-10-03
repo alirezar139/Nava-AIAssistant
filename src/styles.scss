@@ -490,6 +490,63 @@ textarea::placeholder {
 button:not(:disabled):active {
   transform: translateY(1px);
 }
+
+/* Button design tokens, consumed by the mixins in app/shared/styles/_buttons.scss.
+   Built from the palette variables so every palette and dark mode follow automatically. */
+:root {
+  --btn-sheen: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.3) 50%, transparent 62%);
+  --btn-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 56%);
+  --btn-primary-fill: linear-gradient(165deg, var(--primary-700), var(--primary-800) 52%, var(--primary-950));
+  --btn-primary-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 1px 2px color-mix(in srgb, var(--primary-950) 30%, transparent),
+    0 6px 16px color-mix(in srgb, var(--primary-950) 22%, transparent);
+  --btn-primary-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    0 0 0 3px color-mix(in srgb, var(--accent-600) 24%, transparent),
+    0 10px 24px color-mix(in srgb, var(--primary-950) 28%, transparent);
+  --btn-danger-fill: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--danger) 86%, #fff),
+    var(--danger) 52%,
+    color-mix(in srgb, var(--danger) 62%, #000)
+  );
+  --btn-danger-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 1px 2px color-mix(in srgb, var(--danger) 30%, transparent),
+    0 6px 16px color-mix(in srgb, var(--danger) 26%, transparent);
+  --btn-danger-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 0 0 3px color-mix(in srgb, var(--danger) 20%, transparent),
+    0 10px 24px color-mix(in srgb, var(--danger) 32%, transparent);
+  /* Gold matches the logo artwork; used for the main brand call to action. */
+  --btn-gold-fill: linear-gradient(165deg, #fbe6a2, #e6b952 46%, #b4822a);
+  --btn-gold-color: #3a2605;
+  --btn-gold-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(120, 78, 10, 0.35),
+    0 1px 2px rgba(120, 78, 10, 0.3), 0 6px 16px rgba(180, 130, 42, 0.32);
+  --btn-gold-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -1px 0 rgba(120, 78, 10, 0.35),
+    0 0 0 3px rgba(230, 185, 82, 0.3), 0 10px 24px rgba(180, 130, 42, 0.4);
+  --btn-ghost-fill: linear-gradient(180deg, color-mix(in srgb, var(--surface) 60%, #fff), var(--surface));
+  --btn-ghost-border: color-mix(in srgb, var(--color-link) 20%, var(--border));
+  --btn-ghost-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px color-mix(in srgb, var(--primary-950) 8%, transparent),
+    0 3px 8px color-mix(in srgb, var(--primary-950) 5%, transparent);
+  --btn-ghost-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 3px color-mix(in srgb, var(--color-link) 14%, transparent),
+    0 6px 14px color-mix(in srgb, var(--primary-950) 10%, transparent);
+}
+
+:root[data-theme='dark'] {
+  --btn-ghost-fill: linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #fff), var(--surface));
+  --btn-ghost-border: color-mix(in srgb, var(--color-link) 34%, var(--border));
+  --btn-ghost-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.22);
+  --btn-ghost-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 0 3px color-mix(in srgb, var(--color-link) 26%, transparent),
+    0 6px 14px rgba(0, 0, 0, 0.3);
+}
 button:disabled {
   cursor: not-allowed;
   opacity: 0.58;

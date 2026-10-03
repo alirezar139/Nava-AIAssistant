@@ -1,3 +1,5 @@
+@use '../../../../shared/styles/buttons';
+
 :host {
   display: block;
   min-height: 100vh;
@@ -522,22 +524,10 @@ input:focus {
 form > button[type='submit'] {
   min-height: 46px;
   padding: 11px 16px;
-  border: 0;
   border-radius: 14px;
-  color: #ffffff;
-  background: linear-gradient(135deg, var(--primary-800), var(--primary-950));
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-900) 22%, transparent);
   font-size: var(--font-sm);
   font-weight: 900;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
-}
-
-form > button[type='submit']:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 34px color-mix(in srgb, var(--primary-900) 27%, transparent);
+  @include buttons.primary;
 }
 
 form > button[type='submit']:disabled {
@@ -688,11 +678,6 @@ form > button[type='submit']:disabled {
   border-color: rgba(132, 194, 177, 0.28);
   background: linear-gradient(125deg, rgba(255, 255, 255, 0.08), transparent 44%), rgba(8, 35, 29, 0.7);
   box-shadow: inset 1px 1px 0 rgba(222, 249, 241, 0.1);
-}
-
-:host-context([data-theme='dark']) form > button[type='submit'] {
-  background: linear-gradient(135deg, #0f74a9, #073e62);
-  box-shadow: 0 14px 30px rgba(7, 63, 98, 0.36);
 }
 
 :host-context([data-theme='dark']) .q1 {

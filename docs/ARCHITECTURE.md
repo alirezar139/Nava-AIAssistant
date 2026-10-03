@@ -190,7 +190,9 @@ env اولویت دارند. هنگام ارسال به سهند، ابتدا `t
 `ThemeService` تنظیمات هر کاربر را ذخیره می‌کند و CSS custom propertyهای سراسری
 را روی root سند اعمال می‌کند. صفحه کاربر، ادمین و ورود از همین tokenها
 استفاده می‌کنند. لوگو تصویر ثابت `src/assets/brand/nava-logo-192.png` است و با تم
-تغییر رنگ نمی‌دهد.
+تغییر رنگ نمی‌دهد. ظاهر دکمه‌ها (primary، ghost، danger و gold) از tokenهای `--btn-*`
+در `src/styles.scss` و mixinهای `src/app/shared/styles/_buttons.scss` می‌آید تا همه
+صفحه‌ها یک زبان بصری داشته باشند.
 
 ## محدودیت‌های فعلی
 

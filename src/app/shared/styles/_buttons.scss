@@ -1,0 +1,99 @@
+// Shared button looks. Colors come from the --btn-* tokens in src/styles.scss.
+// Pass `!important` as $imp where a page stylesheet already forces button styles.
+
+@mixin _surface($fill, $shadow, $imp) {
+  background-color: transparent $imp;
+  // Sheen (swept across on hover), even top gloss, then the role's fill.
+  background-image:
+    var(--btn-sheen),
+    var(--btn-gloss),
+    $fill $imp;
+  background-size:
+    260% 100%,
+    100% 100%,
+    100% 100% $imp;
+  background-position:
+    130% 0,
+    0 0,
+    0 0 $imp;
+  background-repeat: no-repeat $imp;
+  box-shadow: $shadow $imp;
+  filter: none $imp;
+  transition:
+    background-position 0.7s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease $imp;
+}
+
+@mixin _hover($shadow, $imp) {
+  background-position:
+    -30% 0,
+    0 0,
+    0 0 $imp;
+  box-shadow: $shadow $imp;
+  transform: translateY(-1px) $imp;
+}
+
+@mixin _focus($imp) {
+  &:focus-visible {
+    outline: 2px solid var(--color-link) $imp;
+    outline-offset: 2px $imp;
+  }
+}
+
+@mixin primary($imp: null) {
+  color: #fff $imp;
+  border: 0 $imp;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18) $imp;
+  @include _surface(var(--btn-primary-fill), var(--btn-primary-shadow), $imp);
+  @include _focus($imp);
+  &:hover:not(:disabled) {
+    @include _hover(var(--btn-primary-shadow-hover), $imp);
+  }
+}
+
+@mixin danger($imp: null) {
+  color: #fff $imp;
+  border: 0 $imp;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18) $imp;
+  @include _surface(var(--btn-danger-fill), var(--btn-danger-shadow), $imp);
+  @include _focus($imp);
+  &:hover:not(:disabled) {
+    @include _hover(var(--btn-danger-shadow-hover), $imp);
+  }
+}
+
+@mixin gold($imp: null) {
+  color: var(--btn-gold-color) $imp;
+  border: 0 $imp;
+  @include _surface(var(--btn-gold-fill), var(--btn-gold-shadow), $imp);
+  @include _focus($imp);
+  &:hover:not(:disabled) {
+    @include _hover(var(--btn-gold-shadow-hover), $imp);
+  }
+}
+
+@mixin ghost($imp: null) {
+  color: var(--color-heading) $imp;
+  border: 1px solid var(--btn-ghost-border) $imp;
+  @include _surface(var(--btn-ghost-fill), var(--btn-ghost-shadow), $imp);
+  // The white sheen is invisible on a light fill; keep only gloss and fill.
+  background-image:
+    var(--btn-gloss),
+    var(--btn-ghost-fill) $imp;
+  background-size:
+    100% 100%,
+    100% 100% $imp;
+  background-position:
+    0 0,
+    0 0 $imp;
+  @include _focus($imp);
+  &:hover:not(:disabled) {
+    color: var(--color-link) $imp;
+    border-color: color-mix(in srgb, var(--color-link) 42%, var(--border)) $imp;
+    box-shadow: var(--btn-ghost-shadow-hover) $imp;
+    transform: translateY(-1px) $imp;
+  }
+}

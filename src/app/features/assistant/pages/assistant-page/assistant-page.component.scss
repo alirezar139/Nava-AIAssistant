@@ -1,4 +1,6 @@
-﻿:host {
+﻿@use '../../../../shared/styles/buttons';
+
+:host {
   --assistant-bg: var(--page-bg);
   --assistant-panel: var(--surface);
   --assistant-panel-soft: var(--surface-soft);
@@ -2874,4 +2876,23 @@ main.assistant-layout {
 .ticket-confirmation .confirm-ticket.chosen {
   opacity: 1;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--assistant-primary) 45%, transparent);
+}
+
+/* Shared button looks (app/shared/styles/_buttons.scss); !important because earlier
+   light/dark rules above set these buttons with higher specificity. */
+.composer button {
+  @include buttons.gold(!important);
+}
+
+.conversation-actions button,
+.document-tools label,
+.sahand-toolbar button,
+.sahand-editor-footer button,
+.sahand-footer button,
+.ticket-modal footer button {
+  @include buttons.ghost(!important);
+}
+
+.ticket-confirmation .confirm-ticket {
+  @include buttons.primary(!important);
 }
