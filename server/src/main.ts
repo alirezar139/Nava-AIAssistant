@@ -28,6 +28,9 @@ app.use((request, response, next) => {
   response.setHeader('X-Trace-Id', traceId);
   const start = Date.now();
   response.on('finish', () => {
+    // Live-log polls fire every few seconds per open viewer; logging them would flood the
+    // log with its own reads. Failed polls still get logged below.
+    if (request.originalUrl.startsWith('/api/dashboard/live-logs') && response.statusCode < 400) return;
     const line = `${request.method} ${request.originalUrl} ${response.statusCode} ${Date.now() - start}ms`;
     if (response.statusCode >= 500) logger.error(line, { traceId });
     else if (response.statusCode >= 400) logger.warn(line, { traceId });
